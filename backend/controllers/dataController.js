@@ -7045,7 +7045,7 @@ const customerSearchdata = async (req, res) => {
       .input("balance_type", sql.VarChar(50), balance_type)
       .input("default_customer", sql.NVarChar, default_customer)
       .query(`EXEC sp_customer_details_info_Ramya @mode,@customer_code,@company_code,@customer_name,@status,@panno,@customer_gst_no,@customer_addr_1,'','','',@customer_area,@customer_state,
-      @customer_country,'','','',@customer_mobile_no,'' ,'',0,@opening_balance,@balance_type,'','','','',@default_customer,'','','',NULL,NULL,NULL,NULL,NULL,null,null,null`);
+      @customer_country,'','','',@customer_mobile_no,'' ,'',0,@opening_balance,@balance_type,'','','','','','',@default_customer,'','','',NULL,NULL,NULL,NULL,NULL,null,null,null`);
 
     // Send response
     if (result.recordset.length > 0) {
@@ -7742,7 +7742,7 @@ const getCustomerSearchdata = async (req, res) => {
       .input("opening_balance", sql.Decimal(18, 2), opening_balance)
       .input("balance_type", sql.VarChar(50), balance_type)
       .query(`EXEC sp_customer_details_info_Ramya @mode,@customer_code,@company_code,@customer_name,@status,@panno,@customer_gst_no,@customer_addr_1,@customer_addr_2,@customer_addr_3,@customer_addr_4,
-          @customer_area,@customer_state,@customer_country,'','','',@customer_mobile_no,@customer_fax_no,'',0,@opening_balance,@balance_type,'','','','','','',NULL,NULL,NULL,null,null,null,null,null`);
+          @customer_area,@customer_state,@customer_country,'','','',@customer_mobile_no,@customer_fax_no,'',0,@opening_balance,@balance_type,'','','','','','','','','','',NULL,NULL,NULL,null,null,null,null,null`);
 
     // Send response
     if (result.recordset.length > 0) {
