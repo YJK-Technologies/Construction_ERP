@@ -2945,9 +2945,6 @@ function Purchase() {
     { site_id: "ST-002", site_name: "Secondary Distribution Hub", location: "Sector 4", status: "Active" },
     { site_id: "ST-003", site_name: "North Regional Transit Yard", location: "Gate 2", status: "Maintenance" },
     { site_id: "ST-004", site_name: "Coastal Logistics Terminal", location: "Pier 11", status: "Active" },
-    { site_id: "ST-004", site_name: "Coastal Logistics Terminal", location: "Pier 11", status: "Active" },
-    { site_id: "ST-004", site_name: "Coastal Logistics Terminal", location: "Pier 11", status: "Active" },
-    { site_id: "ST-004", site_name: "Coastal Logistics Terminal", location: "Pier 11", status: "Active" },
   ];
 
   const [showSiteDropdown, setShowSiteDropdown] = useState(false);

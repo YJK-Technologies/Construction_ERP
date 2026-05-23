@@ -229,7 +229,6 @@ function AttriDetInput({ }) {
       <div className="">
         <div class="">
           {loading && <LoadingScreen />}
-
           <ToastContainer position="top-right" className="toast-design" theme="colored" />
           <div class="row ">
             <div class="col-md-12 text-center">

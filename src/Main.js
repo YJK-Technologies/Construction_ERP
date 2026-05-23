@@ -151,6 +151,8 @@ import WeekOff from "./WeekOff.js";
 import ClientInfo from "./ClientInfo.js";
 import ADDClientInfo from "./AddClientInfo.js";
 import Payment from "./Payment.js";
+import SiteMaster from "./SiteGrid.js";
+import AddSiteMaster from "./AddSiteMaster.js";
 
 function Main() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -335,6 +337,8 @@ function Main() {
      { path: "/ClientInfo", component: <ClientInfo /> },
      { path: "/ADDClientInfo", component: <ADDClientInfo /> },
      { path: "/Payment", component: <Payment /> },
+     { path: "/AddSiteMaster", component: <AddSiteMaster /> },
+     { path: "/SiteMaster", component: <SiteMaster /> },
   ];
  
   return (
