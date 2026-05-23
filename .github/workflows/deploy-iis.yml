@@ -12,7 +12,16 @@ jobs:
     steps:
 
       # -------------------------------------------------
-      # 0️⃣ ENABLE WINDOWS LONG PATH SUPPORT
+      # 1️⃣ CHECKOUT REPOSITORY
+      # -------------------------------------------------
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          clean: true
+          fetch-depth: 0
+
+      # -------------------------------------------------
+      # 2️⃣ ENABLE WINDOWS LONG PATHS
       # -------------------------------------------------
       - name: Enable Git Long Paths
         shell: powershell
@@ -20,64 +29,18 @@ jobs:
           git config --system core.longpaths true
 
       # -------------------------------------------------
-      # 1️⃣ CLEAN OLD WORKSPACE (ROBUST WINDOWS SAFE)
+      # 3️⃣ CAPTURE JOB START TIME
       # -------------------------------------------------
-      - name: Clean runner workspace
+      - name: Capture Job Start Time
         shell: powershell
         run: |
-          Write-Host "Cleaning old workspace..."
-
-          $workspace = $env:GITHUB_WORKSPACE
-          $emptyDir = "D:\empty-folder"
-
-          # Create reusable empty folder
-          if (!(Test-Path $emptyDir)) {
-            New-Item -ItemType Directory -Path $emptyDir | Out-Null
-          }
-
-          if (Test-Path $workspace) {
-
-            Write-Host "Removing old files using robocopy mirror..."
-
-            # Mirror empty directory into workspace
-            robocopy $emptyDir $workspace /MIR /R:1 /W:1
-
-            # Robocopy success codes are <= 7
-            if ($LASTEXITCODE -gt 7) {
-              Write-Error "Workspace cleanup failed with Robocopy exit code $LASTEXITCODE"
-              exit $LASTEXITCODE
-            }
-
-            # Remove remaining hidden/system items safely
-            Get-ChildItem $workspace -Force -ErrorAction SilentlyContinue |
-              Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
-
-            Write-Host "Workspace cleaned successfully."
-          }
-
-      # -------------------------------------------------
-      # 2️⃣ Capture JOB START TIME
-      # -------------------------------------------------
-      - name: Capture Job Start Time (IST)
-        shell: powershell
-        run: |
-          $ist = Get-Date
           $log = "D:\Action-Runners\construction-runner\_diag\job-runtime-IST.log"
 
-          "START | $($ist.ToString('yyyy-MM-dd HH:mm:ss')) | Repo=$env:GITHUB_REPOSITORY | RunId=$env:GITHUB_RUN_ID" |
+          "START | $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') | Repo=$env:GITHUB_REPOSITORY | RunId=$env:GITHUB_RUN_ID" |
           Out-File -Append $log
 
       # -------------------------------------------------
-      # 3️⃣ Checkout Repository
-      # -------------------------------------------------
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          clean: false
-          fetch-depth: 0
-
-      # -------------------------------------------------
-      # 4️⃣ Setup Node.js
+      # 4️⃣ SETUP NODE
       # -------------------------------------------------
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -85,111 +48,80 @@ jobs:
           node-version: 20
 
       # -------------------------------------------------
-      # 5️⃣ Sync BACKEND code to IIS
+      # 5️⃣ BACKEND DEPLOY
       # -------------------------------------------------
-      - name: Sync backend code to IIS
+      - name: Sync backend to IIS
         shell: powershell
         run: |
           $src = "$env:GITHUB_WORKSPACE\backend"
           $dest = "C:\inetpub\wwwroot\Construction_ERP\server"
 
           if (!(Test-Path $src)) {
-            Write-Error "Backend source folder not found: $src"
+            Write-Error "Backend folder not found."
             exit 1
           }
 
-          Write-Host "Syncing backend files..."
-
           robocopy $src $dest /MIR /XD node_modules .git
 
-          if ($LASTEXITCODE -le 7) {
-            Write-Host "Backend sync completed successfully."
-            exit 0
-          }
-          else {
-            Write-Error "Robocopy backend sync failed with code $LASTEXITCODE"
+          if ($LASTEXITCODE -gt 7) {
             exit $LASTEXITCODE
           }
 
       # -------------------------------------------------
-      # 6️⃣ Install Backend Dependencies
+      # 6️⃣ INSTALL BACKEND PACKAGES
       # -------------------------------------------------
       - name: Install backend dependencies
         shell: powershell
         run: |
-          $backendPath = "C:\inetpub\wwwroot\Construction_ERP\server"
-
-          cd $backendPath
-
-          Write-Host "Cleaning backend node_modules..."
-
-          if (Test-Path node_modules) {
-            Remove-Item node_modules -Recurse -Force -ErrorAction SilentlyContinue
-          }
-
-          Write-Host "Installing backend packages..."
+          cd C:\inetpub\wwwroot\Construction_ERP\server
 
           npm ci --legacy-peer-deps
 
       # -------------------------------------------------
-      # 7️⃣ Restart Backend using NSSM
+      # 7️⃣ RESTART BACKEND (NSSM)
       # -------------------------------------------------
-      - name: Restart backend (NSSM)
+      - name: Restart backend service
         shell: powershell
         run: |
-          $serviceName = "Construction_ERP"
+          $service = "Construction_ERP"
 
-          $nssm = "C:\Windows\System32\nssm.exe"
+          if (Get-Service -Name $service -ErrorAction SilentlyContinue) {
 
-          $node = "C:\Program Files\nodejs\node.exe"
+            Restart-Service $service -Force
 
-          $app = "C:\inetpub\wwwroot\Construction_ERP\server\https.js"
+            Write-Host "Service restarted."
 
-          $appDir = "C:\inetpub\wwwroot\Construction_ERP\server"
+          } else {
 
-          if (Get-Service -Name $serviceName -ErrorAction SilentlyContinue) {
+            $nssm = "C:\Windows\System32\nssm.exe"
 
-              Write-Host "Service exists. Restarting..."
+            $node = "C:\Program Files\nodejs\node.exe"
 
-              & $nssm restart $serviceName
-          }
-          else {
+            $app = "C:\inetpub\wwwroot\Construction_ERP\server\https.js"
 
-              Write-Host "Creating NSSM service..."
+            $dir = "C:\inetpub\wwwroot\Construction_ERP\server"
 
-              & $nssm install $serviceName $node $app
+            & $nssm install $service $node $app
 
-              & $nssm set $serviceName AppDirectory $appDir
+            & $nssm set $service AppDirectory $dir
 
-              & $nssm set $serviceName Start SERVICE_AUTO_START
+            & $nssm set $service Start SERVICE_AUTO_START
 
-              & $nssm set $serviceName AppStdout "$appDir\nssm-out.log"
-
-              & $nssm set $serviceName AppStderr "$appDir\nssm-err.log"
-
-              & $nssm start $serviceName
+            & $nssm start $service
           }
 
       # -------------------------------------------------
-      # 8️⃣ Install Frontend Dependencies
+      # 8️⃣ INSTALL FRONTEND PACKAGES
       # -------------------------------------------------
       - name: Install frontend dependencies
         shell: powershell
         run: |
           cd $env:GITHUB_WORKSPACE
 
-          Write-Host "Cleaning frontend node_modules..."
-
-          if (Test-Path node_modules) {
-            Remove-Item node_modules -Recurse -Force -ErrorAction SilentlyContinue
-          }
-
-          Write-Host "Installing frontend packages..."
-
           npm ci --legacy-peer-deps
 
       # -------------------------------------------------
-      # 9️⃣ Build Frontend
+      # 9️⃣ BUILD FRONTEND
       # -------------------------------------------------
       - name: Build frontend
         shell: powershell
@@ -199,48 +131,32 @@ jobs:
           $env:CI = "false"
           $env:GENERATE_SOURCEMAP = "false"
 
-          Write-Host "Building frontend..."
-
           npm run build
 
       # -------------------------------------------------
-      # 🔟 Deploy Frontend to IIS
+      # 🔟 DEPLOY FRONTEND
       # -------------------------------------------------
       - name: Deploy frontend to IIS
         shell: powershell
         run: |
-          $buildSrc = "$env:GITHUB_WORKSPACE\build"
+          $src = "$env:GITHUB_WORKSPACE\build"
 
-          $buildDest = "C:\inetpub\wwwroot\Construction_ERP\build"
+          $dest = "C:\inetpub\wwwroot\Construction_ERP\build"
 
-          if (!(Test-Path $buildSrc)) {
-            Write-Error "Build folder not found."
-            exit 1
-          }
+          robocopy $src $dest /MIR /XF web.config
 
-          Write-Host "Deploying frontend build..."
-
-          robocopy $buildSrc $buildDest /MIR /XF web.config
-
-          if ($LASTEXITCODE -le 7) {
-            Write-Host "Frontend deployment completed."
-            exit 0
-          }
-          else {
-            Write-Error "Frontend deployment failed with code $LASTEXITCODE"
+          if ($LASTEXITCODE -gt 7) {
             exit $LASTEXITCODE
           }
 
       # -------------------------------------------------
-      # 1️⃣1️⃣ Capture JOB END TIME
+      # 1️⃣1️⃣ CAPTURE JOB END TIME
       # -------------------------------------------------
-      - name: Capture Job End Time (IST)
+      - name: Capture Job End Time
         if: always()
         shell: powershell
         run: |
-          $ist = Get-Date
-
           $log = "D:\Action-Runners\construction-runner\_diag\job-runtime-IST.log"
 
-          "END | $($ist.ToString('yyyy-MM-dd HH:mm:ss')) | Repo=$env:GITHUB_REPOSITORY | RunId=$env:GITHUB_RUN_ID | Status=${{ job.status }}" |
+          "END | $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') | Repo=$env:GITHUB_REPOSITORY | RunId=$env:GITHUB_RUN_ID | Status=${{ job.status }}" |
           Out-File -Append $log
