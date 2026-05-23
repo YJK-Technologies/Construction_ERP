@@ -7065,10 +7065,7 @@ const getcustomercode = async (req, res) => {
   const { company_code } = req.body;
 
   try {
-    // Connect to the database
     const pool = await connection.connectToDatabase();
-
-    // Execute the query
     const result = await pool
       .request()
       .input("mode", sql.NVarChar, "F")
@@ -7076,11 +7073,10 @@ const getcustomercode = async (req, res) => {
       .query(`EXEC sp_customer_info_hdr @mode,@company_code,'','','','','','','','',null,
                         null,null,null,null,null,null,null`);
 
-    // Send response
     if (result.recordset.length > 0) {
-      res.status(200).json(result.recordset); // 200 OK if data is found
+      res.status(200).json(result.recordset); 
     } else {
-      res.status(404).json("Data not found"); // 404 Not Found if no data is found
+      res.status(404).json("Data not found");
     }
   } catch (err) {
     console.error("Error", err);
@@ -34797,11 +34793,8 @@ const Expired = async (req, res) => {
 // Code added by Dinesh Gokul 21-05-2026
 // Auto-generated Node.js CRUD for sp_SiteMaster
 const SiteMasterInsert = async (req, res) => {
-  const {
-  site_id, site_name, site_location, client_code, client_name, project_type, start_date, end_date, site_status, total_budget, is_active, keyfield, Warehouses, Tolerance_Type, Tolerance_values, data_deleted,
-  created_by,
-  company_code
-} = req.body;
+  const { site_id, site_name, site_location, client_code, project_type, start_date, end_date, site_status, total_budget, status, keyfield, Warehouses, Tolerance_Type, Tolerance_values, data_deleted,
+  created_by, company_code } = req.body;
 
   try {
     const pool = await sql.connect(dbConfig);
@@ -34811,13 +34804,12 @@ const SiteMasterInsert = async (req, res) => {
       .input("site_name", sql.NVarChar, site_name)
       .input("site_location", sql.NVarChar, site_location)
       .input("client_code", sql.NVarChar, client_code)
-      .input("client_name", sql.NVarChar, client_name)
       .input("project_type", sql.NVarChar, project_type)
       .input("start_date", sql.Date, start_date)
       .input("end_date", sql.Date, end_date)
       .input("site_status", sql.NVarChar, site_status)
       .input("total_budget", sql.Decimal(14, 3), total_budget)
-      .input("is_active", sql.NVarChar, is_active)
+      .input("status", sql.NVarChar, status)
       .input("keyfield", sql.NVarChar, keyfield)
       .input("Warehouses", sql.NVarChar, Warehouses)
       .input("Tolerance_Type", sql.NVarChar, Tolerance_Type)
@@ -34825,7 +34817,7 @@ const SiteMasterInsert = async (req, res) => {
       .input("data_deleted", sql.NVarChar, data_deleted)
       .input("company_code", sql.NVarChar, company_code)
       .input("created_by", sql.NVarChar, created_by)
-      .query(`EXEC sp_SiteMaster @mode, @site_id, @site_name, @site_location, @client_code, @client_name, @project_type, @start_date, @end_date, @site_status, @total_budget, @is_active, @keyfield, @Warehouses, @Tolerance_Type, @Tolerance_values, @data_deleted, @company_code, @created_by, ''`);
+      .query(`EXEC sp_SiteMaster @mode, @site_id, @site_name, @site_location, @client_code, @project_type, @start_date, @end_date, @site_status, @total_budget, @status, @keyfield, @Warehouses, @Tolerance_Type, @Tolerance_values, @data_deleted, @company_code, @created_by, ''`);
 
     res.status(200).json({ success: true, message: "SiteMaster insertd successfully" });
   } catch (err) {
@@ -34835,12 +34827,8 @@ const SiteMasterInsert = async (req, res) => {
 };
 
 const SiteMasterUpdate = async (req, res) => {
-  const {
-  site_id, site_name, site_location, client_code, client_name, project_type, start_date, end_date, site_status, total_budget, is_active, keyfield, Warehouses, Tolerance_Type, Tolerance_values, data_deleted,
-  created_by,
-  modified_by,
-  company_code
-} = req.body;
+  const { site_id, site_name, site_location, client_code, project_type, start_date, end_date, site_status, total_budget, status, keyfield, Warehouses, Tolerance_Type, Tolerance_values, data_deleted,
+  created_by, modified_by, company_code } = req.body;
 
   try {
     const pool = await sql.connect(dbConfig);
@@ -34850,13 +34838,12 @@ const SiteMasterUpdate = async (req, res) => {
       .input("site_name", sql.NVarChar, site_name)
       .input("site_location", sql.NVarChar, site_location)
       .input("client_code", sql.NVarChar, client_code)
-      .input("client_name", sql.NVarChar, client_name)
       .input("project_type", sql.NVarChar, project_type)
       .input("start_date", sql.Date, start_date)
       .input("end_date", sql.Date, end_date)
       .input("site_status", sql.NVarChar, site_status)
       .input("total_budget", sql.Decimal(14, 3), total_budget)
-      .input("is_active", sql.NVarChar, is_active)
+      .input("status", sql.NVarChar, status)
       .input("keyfield", sql.NVarChar, keyfield)
       .input("Warehouses", sql.NVarChar, Warehouses)
       .input("Tolerance_Type", sql.NVarChar, Tolerance_Type)
@@ -34865,7 +34852,7 @@ const SiteMasterUpdate = async (req, res) => {
       .input("company_code", sql.NVarChar, company_code)
       .input("created_by", sql.NVarChar, created_by)
       .input("modified_by", sql.NVarChar, modified_by)
-      .query(`EXEC sp_SiteMaster @mode, @site_id, @site_name, @site_location, @client_code, @client_name, @project_type, @start_date, @end_date, @site_status, @total_budget, @is_active, @keyfield, @Warehouses, @Tolerance_Type, @Tolerance_values, @data_deleted, @company_code, @created_by, @modified_by`);
+      .query(`EXEC sp_SiteMaster @mode, @site_id, @site_name, @site_location, @client_code, @project_type, @start_date, @end_date, @site_status, @total_budget, @status, @keyfield, @Warehouses, @Tolerance_Type, @Tolerance_values, @data_deleted, @company_code, @created_by, @modified_by`);
 
     res.status(200).json({ success: true, message: "SiteMaster updated successfully" });
   } catch (err) {
@@ -34873,70 +34860,9 @@ const SiteMasterUpdate = async (req, res) => {
     res.status(500).json({ message: err.message || "Internal Server Error" });
   }
 };
-
-const SiteMasterDelete = async (req, res) => {
-  const {
-  site_id, keyfield, company_code
-} = req.body;
-
-  try {
-    const pool = await sql.connect(dbConfig);
-    await pool.request()
-      .input("mode", sql.NVarChar, "D")
-      .input("site_id", sql.NVarChar, site_id)
-      .input("keyfield", sql.NVarChar, keyfield)
-      .input("company_code", sql.NVarChar, company_code)
-      .query(`EXEC sp_SiteMaster @mode, @site_id, '', '', '', '', '', '', '', '', 0, '', @keyfield, '', '', 0, '', @company_code, '', ''`);
-
-    res.status(200).json({ success: true, message: "SiteMaster deleted successfully" });
-  } catch (err) {
-    console.error("Error during SiteMaster delete:", err);
-    res.status(500).json({ message: err.message || "Internal Server Error" });
-  }
-};
 // Code ended by Dinesh Gokul 21-05-2026
 
 // Code added by Dinesh Gokul 21-05-2026
-// ---------- HEADER LOOP CRUD ----------
-// Auto-generated SiteMasterLoopInsert API for sp_SiteMaster
-const SiteMasterLoopInsert = async (req, res) => {
-  const SiteMasterData = req.body.SiteMasterData;
-  if (!SiteMasterData || !SiteMasterData.length) {
-    return res.status(400).json("Invalid or empty SiteMasterData array.");
-  }
-
-  try {
-    const pool = await sql.connect(dbConfig);
-    for (const item of SiteMasterData) {
-      await pool.request()
-        .input("mode", sql.NVarChar, "I")
-        .input("site_id", sql.NVarChar, item.site_id)
-        .input("site_name", sql.NVarChar, item.site_name)
-        .input("site_location", sql.NVarChar, item.site_location)
-        .input("client_code", sql.NVarChar, item.client_code)
-        .input("client_name", sql.NVarChar, item.client_name)
-        .input("project_type", sql.NVarChar, item.project_type)
-        .input("start_date", sql.Date, item.start_date)
-        .input("end_date", sql.Date, item.end_date)
-        .input("site_status", sql.NVarChar, item.site_status)
-        .input("total_budget", sql.Decimal(14, 3), item.total_budget)
-        .input("is_active", sql.NVarChar, item.is_active)
-        .input("keyfield", sql.NVarChar, item.keyfield)
-        .input("Warehouses", sql.NVarChar, item.Warehouses)
-        .input("Tolerance_Type", sql.NVarChar, item.Tolerance_Type)
-        .input("Tolerance_values", sql.Decimal(10, 3), item.Tolerance_values)
-        .input("data_deleted", sql.NVarChar, item.data_deleted)
-        .input("company_code", sql.NVarChar, item.company_code)
-        .input("created_by", sql.NVarChar, item.created_by)
-        .query(`EXEC sp_SiteMaster @mode, @site_id, @site_name, @site_location, @client_code, @client_name, @project_type, @start_date, @end_date, @site_status, @total_budget, @is_active, @keyfield, @Warehouses, @Tolerance_Type, @Tolerance_values, @data_deleted, @company_code, @created_by, ''`);
-    }
-    res.status(200).json("SiteMaster data inserted successfully");
-  } catch (err) {
-    console.error("Error in SiteMasterLoopInsert:", err);
-    res.status(500).json({ message: err.message || "Internal Server Error" });
-  }
-};
-
 // Auto-generated SiteMasterLoopUpdate API for sp_SiteMaster
 const SiteMasterLoopUpdate = async (req, res) => {
   const SiteMasterData = req.body.SiteMasterData;
@@ -34953,22 +34879,20 @@ const SiteMasterLoopUpdate = async (req, res) => {
         .input("site_name", sql.NVarChar, item.site_name)
         .input("site_location", sql.NVarChar, item.site_location)
         .input("client_code", sql.NVarChar, item.client_code)
-        .input("client_name", sql.NVarChar, item.client_name)
         .input("project_type", sql.NVarChar, item.project_type)
         .input("start_date", sql.Date, item.start_date)
         .input("end_date", sql.Date, item.end_date)
         .input("site_status", sql.NVarChar, item.site_status)
         .input("total_budget", sql.Decimal(14, 3), item.total_budget)
-        .input("is_active", sql.NVarChar, item.is_active)
+        .input("status", sql.NVarChar, item.status)
         .input("keyfield", sql.NVarChar, item.keyfield)
         .input("Warehouses", sql.NVarChar, item.Warehouses)
         .input("Tolerance_Type", sql.NVarChar, item.Tolerance_Type)
         .input("Tolerance_values", sql.Decimal(10, 3), item.Tolerance_values)
         .input("data_deleted", sql.NVarChar, item.data_deleted)
-        .input("company_code", sql.NVarChar, item.company_code)
-        .input("created_by", sql.NVarChar, item.created_by)
-        .input("modified_by", sql.NVarChar, item.modified_by)
-        .query(`EXEC sp_SiteMaster @mode, @site_id, @site_name, @site_location, @client_code, @client_name, @project_type, @start_date, @end_date, @site_status, @total_budget, @is_active, @keyfield, @Warehouses, @Tolerance_Type, @Tolerance_values, @data_deleted, @company_code, @created_by, @modified_by`);
+        .input("company_code", sql.NVarChar, req.headers['company_code'])
+        .input("modified_by", sql.NVarChar, req.headers['modified-by'])
+        .query(`EXEC sp_SiteMaster @mode, @site_id, @site_name, @site_location, @client_code, @project_type, @start_date, @end_date, @site_status, @total_budget, @status, @keyfield, @Warehouses, @Tolerance_Type, @Tolerance_values, @data_deleted, @company_code, '', @modified_by`);
     }
     res.status(200).json("SiteMaster data updated successfully");
   } catch (err) {
@@ -34989,10 +34913,9 @@ const SiteMasterLoopDelete = async (req, res) => {
     for (const item of SiteMasterData) {
       await pool.request()
         .input("mode", sql.NVarChar, "D")
-        .input("site_id", sql.NVarChar, item.site_id)
         .input("keyfield", sql.NVarChar, item.keyfield)
-        .input("company_code", sql.NVarChar, item.company_code)
-        .query(`EXEC sp_SiteMaster @mode, @site_id, '', '', '', '', '', '', '', '', 0, '', @keyfield, '', '', 0, '', @company_code, '', ''`);
+        .input("company_code", sql.NVarChar, req.headers['company_code'])
+        .query(`EXEC sp_SiteMaster @mode, '', '', '', '', '', '', '', '', 0, '', @keyfield, '', '', 0, '', @company_code, '', ''`);
     }
     res.status(200).json("SiteMaster data deleted successfully");
   } catch (err) {
@@ -35990,6 +35913,212 @@ const getbalance_type = async (req, res) => {
   }
 };
 //code ended by sakthi on 05-21-26
+
+//Code added by pavun on 23-05-2026
+const getProjectType = async (req, res) => {
+  const { company_code } = req.body;
+  try {
+    const pool = await connection.connectToDatabase();
+    const result = await pool
+      .request()
+      .input("company_code", sql.NVarChar, company_code)
+      .query(
+        "EXEC sp_attribute_Info 'F',@company_code,'Project Type','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+      );
+
+    res.json(result.recordset);
+  } catch (err) {
+    console.error("Error", err);
+    res.status(500).json({ message: err.message || 'Internal Server Error' });
+  }
+};
+
+const getSiteStatus = async (req, res) => {
+  const { company_code } = req.body;
+  try {
+    const pool = await connection.connectToDatabase();
+    const result = await pool
+      .request()
+      .input("company_code", sql.NVarChar, company_code)
+      .query(
+        "EXEC sp_attribute_Info 'F',@company_code,'Site Status','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+      );
+
+    res.json(result.recordset);
+  } catch (err) {
+    console.error("Error", err);
+    res.status(500).json({ message: err.message || 'Internal Server Error' });
+  }
+};
+
+const getToleranceType = async (req, res) => {
+  const { company_code } = req.body;
+  try {
+    const pool = await connection.connectToDatabase();
+    const result = await pool
+      .request()
+      .input("company_code", sql.NVarChar, company_code)
+      .query(
+        "EXEC sp_attribute_Info 'F',@company_code,'Tolerance Type','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+      );
+
+    res.json(result.recordset);
+  } catch (err) {
+    console.error("Error", err);
+    res.status(500).json({ message: err.message || 'Internal Server Error' });
+  }
+};
+
+const getWarehouseCodeDrop = async (req, res) => {
+  const { company_code } = req.body;
+
+  try {
+    const pool = await connection.connectToDatabase();
+    const result = await pool
+      .request()
+      .input("mode", sql.NVarChar, "F")
+      .input("company_code", sql.NVarChar, company_code)
+      .query(`EXEC sp_warehouse_info @mode, @company_code,'', '', '', '', '', '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL`);
+
+    res.json(result.recordset);
+  } catch (err) {
+    console.error("Error", err);
+    res.status(500).json({ message: err.message || 'Internal Server Error' });
+  }
+};
+
+const searchCriteriaSiteMaster = async (req, res) => {
+  const { site_id, site_name, site_location, client_code, project_type, start_date, end_date, site_status, total_budget, status, keyfield, Warehouses, Tolerance_Type, Tolerance_values, company_code } = req.body;
+
+  try {
+    const pool = await sql.connect(dbConfig);
+    const result = await pool
+      .request()
+      .input("mode", sql.NVarChar, "SC")
+      .input("site_id", sql.NVarChar, site_id)
+      .input("site_name", sql.NVarChar, site_name)
+      .input("site_location", sql.NVarChar, site_location)
+      .input("client_code", sql.NVarChar, client_code)
+      .input("project_type", sql.NVarChar, project_type)
+      .input("start_date", sql.NVarChar, start_date)
+      .input("end_date", sql.NVarChar, end_date)
+      .input("site_status", sql.NVarChar, site_status)
+      .input("total_budget", sql.Decimal(14, 3), total_budget)
+      .input("status", sql.NVarChar, status)
+      .input("Warehouses", sql.NVarChar, Warehouses)
+      .input("Tolerance_Type", sql.NVarChar, Tolerance_Type)
+      .input("Tolerance_values", sql.Decimal(10, 3), Tolerance_values)
+      .input("company_code", sql.NVarChar, company_code)
+      .query(`EXEC sp_SiteMaster @mode, @site_id, @site_name, @site_location, @client_code, @project_type, @start_date, @end_date, @site_status, @total_budget, @status, '', @Warehouses, @Tolerance_Type, @Tolerance_values, '', @company_code, '', ''`);
+
+    if (result.recordset.length > 0) {
+      res.status(200).json(result.recordset);
+    } else {
+      res.status(404).json("Data not found"); 
+    }
+  } catch (err) {
+    console.error("Error during SiteMaster update:", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+};
+
+const getSiteMaster = async (req, res) => {
+  const { company_code } = req.body;
+
+  try {
+    const pool = await sql.connect(dbConfig);
+    const result = await pool
+      .request()
+      .input("mode", sql.NVarChar, "F")
+      .input("company_code", sql.NVarChar, company_code)
+      .query(`EXEC sp_SiteMaster @mode, '', '', '', '', '', '', '', '', 0, '', '', '', '', 0, '', @company_code, '', ''`);
+
+    if (result.recordset.length > 0) {
+      res.status(200).json(result.recordset);
+    } else {
+      res.status(404).json("Data not found"); 
+    }
+  } catch (err) {
+    console.error("Error during SiteMaster update:", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+};
+
+// Auto-generated Node.js CRUD for sp_SiteWarehouseMapping
+const SiteWarehouseMappingInsert = async (req, res) => {
+  const { company_code, site_id, warehouse_code, remarks, status, Is_Primary, created_by } = req.body;
+
+  try {
+    const pool = await sql.connect(dbConfig);
+    await pool.request()
+      .input("mode", sql.NVarChar, "I")
+      .input("company_code", sql.NVarChar, company_code)
+      .input("site_id", sql.NVarChar, site_id)
+      .input("warehouse_code", sql.NVarChar, warehouse_code)
+      .input("remarks", sql.NVarChar, remarks)
+      .input("status", sql.NVarChar, status)
+      .input("Is_Primary", sql.NVarChar, Is_Primary)
+      .input("created_by", sql.NVarChar, created_by)
+      .query(`EXEC sp_SiteWarehouseMapping @mode, @company_code, @site_id, @warehouse_code, '', @remarks, @status, '', @Is_Primary, '', @created_by, ''`);
+
+    res.status(200).json({ success: true, message: "SiteWarehouseMapping insertd successfully" });
+  } catch (err) {
+    console.error("Error during SiteWarehouseMapping insert:", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+};
+
+const SiteWarehouseMappingLoopUpdate = async (req, res) => {
+  const SiteWarehouseMappingData = req.body.SiteWarehouseMappingData;
+  if (!SiteWarehouseMappingData || !SiteWarehouseMappingData.length) {
+    return res.status(400).json("Invalid or empty SiteWarehouseMappingData array.");
+  }
+
+  try {
+    const pool = await sql.connect(dbConfig);
+    for (const item of SiteWarehouseMappingData) {
+      await pool.request()
+        .input("mode", sql.NVarChar, "U")
+        .input("company_code", sql.NVarChar, req.headers['company_code'])
+        .input("site_id", sql.NVarChar, item.site_id)
+        .input("warehouse_code", sql.NVarChar, item.warehouse_code)
+        .input("remarks", sql.NVarChar, item.remarks)
+        .input("status", sql.NVarChar, item.status)
+        .input("keyfield", sql.NVarChar, item.keyfield)
+        .input("Is_Primary", sql.NVarChar, item.Is_Primary)
+        .input("modified_by", sql.NVarChar, req.headers['modified_by'])
+        .query(`EXEC sp_SiteWarehouseMapping @mode, @company_code, @site_id, @warehouse_code, '', @remarks, @status, @keyfield, @Is_Primary, '', '', @modified_by`);
+    }
+    res.status(200).json("SiteWarehouseMapping data updated successfully");
+  } catch (err) {
+    console.error("Error in SiteWarehouseMappingLoopUpdate:", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+};
+
+const SiteWarehouseMappingLoopDelete = async (req, res) => {
+  const SiteWarehouseMappingData = req.body.SiteWarehouseMappingData;
+  if (!SiteWarehouseMappingData || !SiteWarehouseMappingData.length) {
+    return res.status(400).json("Invalid or empty SiteWarehouseMappingData array.");
+  }
+
+  try {
+    const pool = await sql.connect(dbConfig);
+    for (const item of SiteWarehouseMappingData) {
+      await pool.request()
+        .input("mode", sql.NVarChar, "D")
+        .input("keyfield", sql.NVarChar, item.keyfield)
+        .input("company_code", sql.NVarChar, req.headers['company_code'])
+        .query(`EXEC sp_SiteWarehouseMapping @mode, @company_code, '', '', '', '', '', @keyfield, '', '', '', ''`);
+    }
+    res.status(200).json("SiteWarehouseMapping data deleted successfully");
+  } catch (err) {
+    console.error("Error in SiteWarehouseMappingLoopDelete:", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+};
+
+//Code ended by pavun on 23-05-2026
 
 //code added by sakthi on 05-22-26
 // Auto-generated Node.js CRUD for sp_opening_balance
@@ -37484,8 +37613,6 @@ module.exports = {
   Expired,
   SiteMasterInsert, 
   SiteMasterUpdate, 
-  SiteMasterDelete,
-  SiteMasterLoopInsert, 
   SiteMasterLoopUpdate, 
   SiteMasterLoopDelete,
   Pending_vendorInsert, 
@@ -37525,7 +37652,16 @@ module.exports = {
   opening_balanceLoopInsert, 
   opening_balanceLoopUpdate, 
   opening_balanceLoopDelete,
-  OpeningBalanceSC
+  OpeningBalanceSC,
+  getProjectType,
+  getSiteStatus,
+  getToleranceType,
+  getWarehouseCodeDrop,
+  searchCriteriaSiteMaster,
+  getSiteMaster,
+  SiteWarehouseMappingInsert,
+  SiteWarehouseMappingLoopUpdate,
+  SiteWarehouseMappingLoopDelete,
 
 
 };

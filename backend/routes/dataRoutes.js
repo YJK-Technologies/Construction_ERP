@@ -1168,8 +1168,6 @@ router.post("/Gate_Pass_TransactionLoopUpdate", dataController.Gate_Pass_Transac
 router.post("/Gate_Pass_TransactionLoopDelete", dataController.Gate_Pass_TransactionLoopDelete)
 router.post("/SiteMasterInsert", dataController.SiteMasterInsert)
 router.post("/SiteMasterUpdate", dataController.SiteMasterUpdate)
-router.post("/SiteMasterDelete", dataController.SiteMasterDelete)
-router.post("/SiteMasterLoopInsert", dataController.SiteMasterLoopInsert)
 router.post("/SiteMasterLoopUpdate", dataController.SiteMasterLoopUpdate)
 router.post("/SiteMasterLoopDelete", dataController.SiteMasterLoopDelete)
 router.post("/Pending_vendorInsert", dataController.Pending_vendorInsert)
