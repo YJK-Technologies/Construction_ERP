@@ -7045,7 +7045,7 @@ const customerSearchdata = async (req, res) => {
       .input("balance_type", sql.VarChar(50), balance_type)
       .input("default_customer", sql.NVarChar, default_customer)
       .query(`EXEC sp_customer_details_info_Ramya @mode,@customer_code,@company_code,@customer_name,@status,@panno,@customer_gst_no,@customer_addr_1,'','','',@customer_area,@customer_state,
-      @customer_country,'','','',@customer_mobile_no,'' ,'',0,@opening_balance,@balance_type,'','','','',@default_customer,'','','',NULL,NULL,NULL,NULL,NULL,null,null,null`);
+      @customer_country,'','','',@customer_mobile_no,'' ,'',0,@opening_balance,@balance_type,'','','','','','',@default_customer,'','','',NULL,NULL,NULL,NULL,NULL,null,null,null`);
 
     // Send response
     if (result.recordset.length > 0) {
@@ -7065,10 +7065,7 @@ const getcustomercode = async (req, res) => {
   const { company_code } = req.body;
 
   try {
-    // Connect to the database
     const pool = await connection.connectToDatabase();
-
-    // Execute the query
     const result = await pool
       .request()
       .input("mode", sql.NVarChar, "F")
@@ -7076,11 +7073,10 @@ const getcustomercode = async (req, res) => {
       .query(`EXEC sp_customer_info_hdr @mode,@company_code,'','','','','','','','',null,
                         null,null,null,null,null,null,null`);
 
-    // Send response
     if (result.recordset.length > 0) {
-      res.status(200).json(result.recordset); // 200 OK if data is found
+      res.status(200).json(result.recordset); 
     } else {
-      res.status(404).json("Data not found"); // 404 Not Found if no data is found
+      res.status(404).json("Data not found");
     }
   } catch (err) {
     console.error("Error", err);
@@ -7742,7 +7738,7 @@ const getCustomerSearchdata = async (req, res) => {
       .input("opening_balance", sql.Decimal(18, 2), opening_balance)
       .input("balance_type", sql.VarChar(50), balance_type)
       .query(`EXEC sp_customer_details_info_Ramya @mode,@customer_code,@company_code,@customer_name,@status,@panno,@customer_gst_no,@customer_addr_1,@customer_addr_2,@customer_addr_3,@customer_addr_4,
-          @customer_area,@customer_state,@customer_country,'','','',@customer_mobile_no,@customer_fax_no,'',0,@opening_balance,@balance_type,'','','','','','',NULL,NULL,NULL,null,null,null,null,null`);
+          @customer_area,@customer_state,@customer_country,'','','',@customer_mobile_no,@customer_fax_no,'',0,@opening_balance,@balance_type,'','','','','','','','','','',NULL,NULL,NULL,null,null,null,null,null`);
 
     // Send response
     if (result.recordset.length > 0) {
@@ -34797,11 +34793,8 @@ const Expired = async (req, res) => {
 // Code added by Dinesh Gokul 21-05-2026
 // Auto-generated Node.js CRUD for sp_SiteMaster
 const SiteMasterInsert = async (req, res) => {
-  const {
-  site_id, site_name, site_location, client_code, client_name, project_type, start_date, end_date, site_status, total_budget, is_active, keyfield, Warehouses, Tolerance_Type, Tolerance_values, data_deleted,
-  created_by,
-  company_code
-} = req.body;
+  const { site_id, site_name, site_location, client_code, project_type, start_date, end_date, site_status, total_budget, status, keyfield, Warehouses, Tolerance_Type, Tolerance_values, data_deleted,
+  created_by, company_code } = req.body;
 
   try {
     const pool = await sql.connect(dbConfig);
@@ -34811,13 +34804,12 @@ const SiteMasterInsert = async (req, res) => {
       .input("site_name", sql.NVarChar, site_name)
       .input("site_location", sql.NVarChar, site_location)
       .input("client_code", sql.NVarChar, client_code)
-      .input("client_name", sql.NVarChar, client_name)
       .input("project_type", sql.NVarChar, project_type)
       .input("start_date", sql.Date, start_date)
       .input("end_date", sql.Date, end_date)
       .input("site_status", sql.NVarChar, site_status)
       .input("total_budget", sql.Decimal(14, 3), total_budget)
-      .input("is_active", sql.NVarChar, is_active)
+      .input("status", sql.NVarChar, status)
       .input("keyfield", sql.NVarChar, keyfield)
       .input("Warehouses", sql.NVarChar, Warehouses)
       .input("Tolerance_Type", sql.NVarChar, Tolerance_Type)
@@ -34825,7 +34817,7 @@ const SiteMasterInsert = async (req, res) => {
       .input("data_deleted", sql.NVarChar, data_deleted)
       .input("company_code", sql.NVarChar, company_code)
       .input("created_by", sql.NVarChar, created_by)
-      .query(`EXEC sp_SiteMaster @mode, @site_id, @site_name, @site_location, @client_code, @client_name, @project_type, @start_date, @end_date, @site_status, @total_budget, @is_active, @keyfield, @Warehouses, @Tolerance_Type, @Tolerance_values, @data_deleted, @company_code, @created_by, ''`);
+      .query(`EXEC sp_SiteMaster @mode, @site_id, @site_name, @site_location, @client_code, @project_type, @start_date, @end_date, @site_status, @total_budget, @status, @keyfield, @Warehouses, @Tolerance_Type, @Tolerance_values, @data_deleted, @company_code, @created_by, ''`);
 
     res.status(200).json({ success: true, message: "SiteMaster insertd successfully" });
   } catch (err) {
@@ -34835,12 +34827,8 @@ const SiteMasterInsert = async (req, res) => {
 };
 
 const SiteMasterUpdate = async (req, res) => {
-  const {
-  site_id, site_name, site_location, client_code, client_name, project_type, start_date, end_date, site_status, total_budget, is_active, keyfield, Warehouses, Tolerance_Type, Tolerance_values, data_deleted,
-  created_by,
-  modified_by,
-  company_code
-} = req.body;
+  const { site_id, site_name, site_location, client_code, project_type, start_date, end_date, site_status, total_budget, status, keyfield, Warehouses, Tolerance_Type, Tolerance_values, data_deleted,
+  created_by, modified_by, company_code } = req.body;
 
   try {
     const pool = await sql.connect(dbConfig);
@@ -34850,13 +34838,12 @@ const SiteMasterUpdate = async (req, res) => {
       .input("site_name", sql.NVarChar, site_name)
       .input("site_location", sql.NVarChar, site_location)
       .input("client_code", sql.NVarChar, client_code)
-      .input("client_name", sql.NVarChar, client_name)
       .input("project_type", sql.NVarChar, project_type)
       .input("start_date", sql.Date, start_date)
       .input("end_date", sql.Date, end_date)
       .input("site_status", sql.NVarChar, site_status)
       .input("total_budget", sql.Decimal(14, 3), total_budget)
-      .input("is_active", sql.NVarChar, is_active)
+      .input("status", sql.NVarChar, status)
       .input("keyfield", sql.NVarChar, keyfield)
       .input("Warehouses", sql.NVarChar, Warehouses)
       .input("Tolerance_Type", sql.NVarChar, Tolerance_Type)
@@ -34865,7 +34852,7 @@ const SiteMasterUpdate = async (req, res) => {
       .input("company_code", sql.NVarChar, company_code)
       .input("created_by", sql.NVarChar, created_by)
       .input("modified_by", sql.NVarChar, modified_by)
-      .query(`EXEC sp_SiteMaster @mode, @site_id, @site_name, @site_location, @client_code, @client_name, @project_type, @start_date, @end_date, @site_status, @total_budget, @is_active, @keyfield, @Warehouses, @Tolerance_Type, @Tolerance_values, @data_deleted, @company_code, @created_by, @modified_by`);
+      .query(`EXEC sp_SiteMaster @mode, @site_id, @site_name, @site_location, @client_code, @project_type, @start_date, @end_date, @site_status, @total_budget, @status, @keyfield, @Warehouses, @Tolerance_Type, @Tolerance_values, @data_deleted, @company_code, @created_by, @modified_by`);
 
     res.status(200).json({ success: true, message: "SiteMaster updated successfully" });
   } catch (err) {
@@ -34873,70 +34860,9 @@ const SiteMasterUpdate = async (req, res) => {
     res.status(500).json({ message: err.message || "Internal Server Error" });
   }
 };
-
-const SiteMasterDelete = async (req, res) => {
-  const {
-  site_id, keyfield, company_code
-} = req.body;
-
-  try {
-    const pool = await sql.connect(dbConfig);
-    await pool.request()
-      .input("mode", sql.NVarChar, "D")
-      .input("site_id", sql.NVarChar, site_id)
-      .input("keyfield", sql.NVarChar, keyfield)
-      .input("company_code", sql.NVarChar, company_code)
-      .query(`EXEC sp_SiteMaster @mode, @site_id, '', '', '', '', '', '', '', '', 0, '', @keyfield, '', '', 0, '', @company_code, '', ''`);
-
-    res.status(200).json({ success: true, message: "SiteMaster deleted successfully" });
-  } catch (err) {
-    console.error("Error during SiteMaster delete:", err);
-    res.status(500).json({ message: err.message || "Internal Server Error" });
-  }
-};
 // Code ended by Dinesh Gokul 21-05-2026
 
 // Code added by Dinesh Gokul 21-05-2026
-// ---------- HEADER LOOP CRUD ----------
-// Auto-generated SiteMasterLoopInsert API for sp_SiteMaster
-const SiteMasterLoopInsert = async (req, res) => {
-  const SiteMasterData = req.body.SiteMasterData;
-  if (!SiteMasterData || !SiteMasterData.length) {
-    return res.status(400).json("Invalid or empty SiteMasterData array.");
-  }
-
-  try {
-    const pool = await sql.connect(dbConfig);
-    for (const item of SiteMasterData) {
-      await pool.request()
-        .input("mode", sql.NVarChar, "I")
-        .input("site_id", sql.NVarChar, item.site_id)
-        .input("site_name", sql.NVarChar, item.site_name)
-        .input("site_location", sql.NVarChar, item.site_location)
-        .input("client_code", sql.NVarChar, item.client_code)
-        .input("client_name", sql.NVarChar, item.client_name)
-        .input("project_type", sql.NVarChar, item.project_type)
-        .input("start_date", sql.Date, item.start_date)
-        .input("end_date", sql.Date, item.end_date)
-        .input("site_status", sql.NVarChar, item.site_status)
-        .input("total_budget", sql.Decimal(14, 3), item.total_budget)
-        .input("is_active", sql.NVarChar, item.is_active)
-        .input("keyfield", sql.NVarChar, item.keyfield)
-        .input("Warehouses", sql.NVarChar, item.Warehouses)
-        .input("Tolerance_Type", sql.NVarChar, item.Tolerance_Type)
-        .input("Tolerance_values", sql.Decimal(10, 3), item.Tolerance_values)
-        .input("data_deleted", sql.NVarChar, item.data_deleted)
-        .input("company_code", sql.NVarChar, item.company_code)
-        .input("created_by", sql.NVarChar, item.created_by)
-        .query(`EXEC sp_SiteMaster @mode, @site_id, @site_name, @site_location, @client_code, @client_name, @project_type, @start_date, @end_date, @site_status, @total_budget, @is_active, @keyfield, @Warehouses, @Tolerance_Type, @Tolerance_values, @data_deleted, @company_code, @created_by, ''`);
-    }
-    res.status(200).json("SiteMaster data inserted successfully");
-  } catch (err) {
-    console.error("Error in SiteMasterLoopInsert:", err);
-    res.status(500).json({ message: err.message || "Internal Server Error" });
-  }
-};
-
 // Auto-generated SiteMasterLoopUpdate API for sp_SiteMaster
 const SiteMasterLoopUpdate = async (req, res) => {
   const SiteMasterData = req.body.SiteMasterData;
@@ -34953,22 +34879,20 @@ const SiteMasterLoopUpdate = async (req, res) => {
         .input("site_name", sql.NVarChar, item.site_name)
         .input("site_location", sql.NVarChar, item.site_location)
         .input("client_code", sql.NVarChar, item.client_code)
-        .input("client_name", sql.NVarChar, item.client_name)
         .input("project_type", sql.NVarChar, item.project_type)
         .input("start_date", sql.Date, item.start_date)
         .input("end_date", sql.Date, item.end_date)
         .input("site_status", sql.NVarChar, item.site_status)
         .input("total_budget", sql.Decimal(14, 3), item.total_budget)
-        .input("is_active", sql.NVarChar, item.is_active)
+        .input("status", sql.NVarChar, item.status)
         .input("keyfield", sql.NVarChar, item.keyfield)
         .input("Warehouses", sql.NVarChar, item.Warehouses)
         .input("Tolerance_Type", sql.NVarChar, item.Tolerance_Type)
         .input("Tolerance_values", sql.Decimal(10, 3), item.Tolerance_values)
         .input("data_deleted", sql.NVarChar, item.data_deleted)
-        .input("company_code", sql.NVarChar, item.company_code)
-        .input("created_by", sql.NVarChar, item.created_by)
-        .input("modified_by", sql.NVarChar, item.modified_by)
-        .query(`EXEC sp_SiteMaster @mode, @site_id, @site_name, @site_location, @client_code, @client_name, @project_type, @start_date, @end_date, @site_status, @total_budget, @is_active, @keyfield, @Warehouses, @Tolerance_Type, @Tolerance_values, @data_deleted, @company_code, @created_by, @modified_by`);
+        .input("company_code", sql.NVarChar, req.headers['company_code'])
+        .input("modified_by", sql.NVarChar, req.headers['modified-by'])
+        .query(`EXEC sp_SiteMaster @mode, @site_id, @site_name, @site_location, @client_code, @project_type, @start_date, @end_date, @site_status, @total_budget, @status, @keyfield, @Warehouses, @Tolerance_Type, @Tolerance_values, @data_deleted, @company_code, '', @modified_by`);
     }
     res.status(200).json("SiteMaster data updated successfully");
   } catch (err) {
@@ -34989,10 +34913,9 @@ const SiteMasterLoopDelete = async (req, res) => {
     for (const item of SiteMasterData) {
       await pool.request()
         .input("mode", sql.NVarChar, "D")
-        .input("site_id", sql.NVarChar, item.site_id)
         .input("keyfield", sql.NVarChar, item.keyfield)
-        .input("company_code", sql.NVarChar, item.company_code)
-        .query(`EXEC sp_SiteMaster @mode, @site_id, '', '', '', '', '', '', '', '', 0, '', @keyfield, '', '', 0, '', @company_code, '', ''`);
+        .input("company_code", sql.NVarChar, req.headers['company_code'])
+        .query(`EXEC sp_SiteMaster @mode, '', '', '', '', '', '', '', '', 0, '', @keyfield, '', '', 0, '', @company_code, '', ''`);
     }
     res.status(200).json("SiteMaster data deleted successfully");
   } catch (err) {
@@ -35199,7 +35122,8 @@ const ExpensesInsert = async (req, res) => {
   const {
   expense_no, expense_date, expense_type, reference_type, reference_code, reference_name, payment_mode, amount, description, is_approved, is_closed, keyfield, data_deleted,
   created_by,
-  company_code
+  company_code,
+  Expens_Sno
 } = req.body;
 
   try {
@@ -35219,9 +35143,12 @@ const ExpensesInsert = async (req, res) => {
       .input("is_closed", sql.NVarChar, is_closed)
       .input("keyfield", sql.NVarChar, keyfield)
       .input("data_deleted", sql.NVarChar, data_deleted)
+      .input("Expens_Sno", sql.Int, Expens_Sno)
       .input("company_code", sql.NVarChar, company_code)
       .input("created_by", sql.NVarChar, created_by)
-      .query(`EXEC sp_Expenses @mode, @expense_no, @expense_date, @expense_type, @reference_type, @reference_code, @reference_name, @payment_mode, @amount, @description, @is_approved, @is_closed, @keyfield, @data_deleted, @company_code, @created_by, ''`);
+      .query(`EXEC sp_Expenses_Details @mode, @expense_no, @expense_date, @expense_type, @reference_type, @reference_code, 
+        @reference_name, @payment_mode, @amount, @description, @is_approved, @is_closed, @keyfield, 
+        @data_deleted, @Expens_Sno, @company_code, @created_by, ''`);
 
     res.status(200).json({ success: true, message: "Expenses insertd successfully" });
   } catch (err) {
@@ -35235,7 +35162,8 @@ const ExpensesUpdate = async (req, res) => {
   expense_no, expense_date, expense_type, reference_type, reference_code, reference_name, payment_mode, amount, description, is_approved, is_closed, keyfield, data_deleted,
   created_by,
   modified_by,
-  company_code
+  company_code,
+  Expens_Sno
 } = req.body;
 
   try {
@@ -35255,10 +35183,11 @@ const ExpensesUpdate = async (req, res) => {
       .input("is_closed", sql.NVarChar, is_closed)
       .input("keyfield", sql.NVarChar, keyfield)
       .input("data_deleted", sql.NVarChar, data_deleted)
+      .input("Expens_Sno", sql.Int, Expens_Sno)
       .input("company_code", sql.NVarChar, company_code)
       .input("created_by", sql.NVarChar, created_by)
       .input("modified_by", sql.NVarChar, modified_by)
-      .query(`EXEC sp_Expenses @mode, @expense_no, @expense_date, @expense_type, @reference_type, @reference_code, @reference_name, @payment_mode, @amount, @description, @is_approved, @is_closed, @keyfield, @data_deleted, @company_code, @created_by, @modified_by`);
+      .query(`EXEC sp_Expenses_Details @mode, @expense_no, @expense_date, @expense_type, @reference_type, @reference_code, @reference_name, @payment_mode, @amount, @description, @is_approved, @is_closed, @keyfield, @data_deleted,@Expens_Sno, @company_code, @created_by, @modified_by`);
 
     res.status(200).json({ success: true, message: "Expenses updated successfully" });
   } catch (err) {
@@ -35280,8 +35209,8 @@ const ExpensesDelete = async (req, res) => {
       .input("expense_no", sql.NVarChar, expense_no)
       .input("keyfield", sql.NVarChar, keyfield)
       .input("company_code", sql.NVarChar, company_code)
-      .query(`EXEC sp_Expenses @mode, @expense_no, '', '', '', '', 
-        '', '', 0, '', '', '', @keyfield, '', 
+      .query(`EXEC sp_Expenses_Details @mode, @expense_no, '', '', '', '', 
+        '', '', 0, '', '', '', @keyfield, '', '',
         @company_code, '', ''`);
 
     res.status(200).json({ success: true, message: "Expenses deleted successfully" });
@@ -35318,9 +35247,10 @@ const ExpensesLoopInsert = async (req, res) => {
         .input("is_closed", sql.NVarChar, item.is_closed)
         .input("keyfield", sql.NVarChar, item.keyfield)
         .input("data_deleted", sql.NVarChar, item.data_deleted)
+        .input("Expens_Sno", sql.Int, item.Expens_Sno)
         .input("company_code", sql.NVarChar, item.company_code)
         .input("created_by", sql.NVarChar, item.created_by)
-        .query(`EXEC sp_Expenses @mode, @expense_no, @expense_date, @expense_type, @reference_type, @reference_code, @reference_name, @payment_mode, @amount, @description, @is_approved, @is_closed, @keyfield, @data_deleted, @company_code, @created_by, ''`);
+        .query(`EXEC sp_Expenses_Details @mode, @expense_no, @expense_date, @expense_type, @reference_type, @reference_code, @reference_name, @payment_mode, @amount, @description, @is_approved, @is_closed, @keyfield, @data_deleted, @Expens_Sno, @company_code, @created_by, ''`);
     }
     res.status(200).json("Expenses data inserted successfully");
   } catch (err) {
@@ -35354,10 +35284,11 @@ const ExpensesLoopUpdate = async (req, res) => {
         .input("is_closed", sql.NVarChar, item.is_closed)
         .input("keyfield", sql.NVarChar, item.keyfield)
         .input("data_deleted", sql.NVarChar, item.data_deleted)
+        .input("Expens_Sno", sql.Int, item.Expens_Sno)
         .input("company_code", sql.NVarChar, item.company_code)
         .input("created_by", sql.NVarChar, item.created_by)
         .input("modified_by", sql.NVarChar, item.modified_by)
-        .query(`EXEC sp_Expenses @mode, @expense_no, @expense_date, @expense_type, @reference_type, @reference_code, @reference_name, @payment_mode, @amount, @description, @is_approved, @is_closed, @keyfield, @data_deleted, @company_code, @created_by, @modified_by`);
+        .query(`EXEC sp_Expenses_Details @mode, @expense_no, @expense_date, @expense_type, @reference_type, @reference_code, @reference_name, @payment_mode, @amount, @description, @is_approved, @is_closed, @keyfield, @data_deleted, @Expens_Sno, @company_code, @created_by, @modified_by`);
     }
     res.status(200).json("Expenses data updated successfully");
   } catch (err) {
@@ -35381,9 +35312,9 @@ const ExpensesLoopDelete = async (req, res) => {
         .input("expense_no", sql.NVarChar, item.expense_no)
         .input("keyfield", sql.NVarChar, item.keyfield)
         .input("company_code", sql.NVarChar, item.company_code)
-        .query(`EXEC sp_Expenses @mode, @expense_no, '', '', '', 
+        .query(`EXEC sp_Expenses_Details @mode, @expense_no, '', '', '', 
           '', '', '', '', '', '', '', 
-          @keyfield, '', @company_code, '', ''`);
+          @keyfield, '', '', @company_code, '', ''`);
     }
     res.status(200).json("Expenses data deleted successfully");
   } catch (err) {
@@ -35991,6 +35922,855 @@ const getbalance_type = async (req, res) => {
 };
 //code ended by sakthi on 05-21-26
 
+//Code added by pavun on 23-05-2026
+const getProjectType = async (req, res) => {
+  const { company_code } = req.body;
+  try {
+    const pool = await connection.connectToDatabase();
+    const result = await pool
+      .request()
+      .input("company_code", sql.NVarChar, company_code)
+      .query(
+        "EXEC sp_attribute_Info 'F',@company_code,'Project Type','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+      );
+
+    res.json(result.recordset);
+  } catch (err) {
+    console.error("Error", err);
+    res.status(500).json({ message: err.message || 'Internal Server Error' });
+  }
+};
+
+const getSiteStatus = async (req, res) => {
+  const { company_code } = req.body;
+  try {
+    const pool = await connection.connectToDatabase();
+    const result = await pool
+      .request()
+      .input("company_code", sql.NVarChar, company_code)
+      .query(
+        "EXEC sp_attribute_Info 'F',@company_code,'Site Status','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+      );
+
+    res.json(result.recordset);
+  } catch (err) {
+    console.error("Error", err);
+    res.status(500).json({ message: err.message || 'Internal Server Error' });
+  }
+};
+
+const getToleranceType = async (req, res) => {
+  const { company_code } = req.body;
+  try {
+    const pool = await connection.connectToDatabase();
+    const result = await pool
+      .request()
+      .input("company_code", sql.NVarChar, company_code)
+      .query(
+        "EXEC sp_attribute_Info 'F',@company_code,'Tolerance Type','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+      );
+
+    res.json(result.recordset);
+  } catch (err) {
+    console.error("Error", err);
+    res.status(500).json({ message: err.message || 'Internal Server Error' });
+  }
+};
+
+const getWarehouseCodeDrop = async (req, res) => {
+  const { company_code } = req.body;
+
+  try {
+    const pool = await connection.connectToDatabase();
+    const result = await pool
+      .request()
+      .input("mode", sql.NVarChar, "F")
+      .input("company_code", sql.NVarChar, company_code)
+      .query(`EXEC sp_warehouse_info @mode, @company_code,'', '', '', '', '', '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL`);
+
+    res.json(result.recordset);
+  } catch (err) {
+    console.error("Error", err);
+    res.status(500).json({ message: err.message || 'Internal Server Error' });
+  }
+};
+
+const searchCriteriaSiteMaster = async (req, res) => {
+  const { site_id, site_name, site_location, client_code, project_type, start_date, end_date, site_status, total_budget, status, keyfield, Warehouses, Tolerance_Type, Tolerance_values, company_code } = req.body;
+
+  try {
+    const pool = await sql.connect(dbConfig);
+    const result = await pool
+      .request()
+      .input("mode", sql.NVarChar, "SC")
+      .input("site_id", sql.NVarChar, site_id)
+      .input("site_name", sql.NVarChar, site_name)
+      .input("site_location", sql.NVarChar, site_location)
+      .input("client_code", sql.NVarChar, client_code)
+      .input("project_type", sql.NVarChar, project_type)
+      .input("start_date", sql.NVarChar, start_date)
+      .input("end_date", sql.NVarChar, end_date)
+      .input("site_status", sql.NVarChar, site_status)
+      .input("total_budget", sql.Decimal(14, 3), total_budget)
+      .input("status", sql.NVarChar, status)
+      .input("Warehouses", sql.NVarChar, Warehouses)
+      .input("Tolerance_Type", sql.NVarChar, Tolerance_Type)
+      .input("Tolerance_values", sql.Decimal(10, 3), Tolerance_values)
+      .input("company_code", sql.NVarChar, company_code)
+      .query(`EXEC sp_SiteMaster @mode, @site_id, @site_name, @site_location, @client_code, @project_type, @start_date, @end_date, @site_status, @total_budget, @status, '', @Warehouses, @Tolerance_Type, @Tolerance_values, '', @company_code, '', ''`);
+
+    if (result.recordset.length > 0) {
+      res.status(200).json(result.recordset);
+    } else {
+      res.status(404).json("Data not found"); 
+    }
+  } catch (err) {
+    console.error("Error during SiteMaster update:", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+};
+
+const getSiteMaster = async (req, res) => {
+  const { company_code } = req.body;
+
+  try {
+    const pool = await sql.connect(dbConfig);
+    const result = await pool
+      .request()
+      .input("mode", sql.NVarChar, "F")
+      .input("company_code", sql.NVarChar, company_code)
+      .query(`EXEC sp_SiteMaster @mode, '', '', '', '', '', '', '', '', 0, '', '', '', '', 0, '', @company_code, '', ''`);
+
+    if (result.recordset.length > 0) {
+      res.status(200).json(result.recordset);
+    } else {
+      res.status(404).json("Data not found"); 
+    }
+  } catch (err) {
+    console.error("Error during SiteMaster update:", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+};
+
+// Auto-generated Node.js CRUD for sp_SiteWarehouseMapping
+const SiteWarehouseMappingInsert = async (req, res) => {
+  const { company_code, site_id, warehouse_code, remarks, status, Is_Primary, created_by } = req.body;
+
+  try {
+    const pool = await sql.connect(dbConfig);
+    await pool.request()
+      .input("mode", sql.NVarChar, "I")
+      .input("company_code", sql.NVarChar, company_code)
+      .input("site_id", sql.NVarChar, site_id)
+      .input("warehouse_code", sql.NVarChar, warehouse_code)
+      .input("remarks", sql.NVarChar, remarks)
+      .input("status", sql.NVarChar, status)
+      .input("Is_Primary", sql.NVarChar, Is_Primary)
+      .input("created_by", sql.NVarChar, created_by)
+      .query(`EXEC sp_SiteWarehouseMapping @mode, @company_code, @site_id, @warehouse_code, '', @remarks, @status, '', @Is_Primary, '', @created_by, ''`);
+
+    res.status(200).json({ success: true, message: "SiteWarehouseMapping insertd successfully" });
+  } catch (err) {
+    console.error("Error during SiteWarehouseMapping insert:", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+};
+
+const SiteWarehouseMappingLoopUpdate = async (req, res) => {
+  const SiteWarehouseMappingData = req.body.SiteWarehouseMappingData;
+  if (!SiteWarehouseMappingData || !SiteWarehouseMappingData.length) {
+    return res.status(400).json("Invalid or empty SiteWarehouseMappingData array.");
+  }
+
+  try {
+    const pool = await sql.connect(dbConfig);
+    for (const item of SiteWarehouseMappingData) {
+      await pool.request()
+        .input("mode", sql.NVarChar, "U")
+        .input("company_code", sql.NVarChar, req.headers['company_code'])
+        .input("site_id", sql.NVarChar, item.site_id)
+        .input("warehouse_code", sql.NVarChar, item.warehouse_code)
+        .input("remarks", sql.NVarChar, item.remarks)
+        .input("status", sql.NVarChar, item.status)
+        .input("keyfield", sql.NVarChar, item.keyfield)
+        .input("Is_Primary", sql.NVarChar, item.Is_Primary)
+        .input("modified_by", sql.NVarChar, req.headers['modified_by'])
+        .query(`EXEC sp_SiteWarehouseMapping @mode, @company_code, @site_id, @warehouse_code, '', @remarks, @status, @keyfield, @Is_Primary, '', '', @modified_by`);
+    }
+    res.status(200).json("SiteWarehouseMapping data updated successfully");
+  } catch (err) {
+    console.error("Error in SiteWarehouseMappingLoopUpdate:", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+};
+
+const SiteWarehouseMappingLoopDelete = async (req, res) => {
+  const SiteWarehouseMappingData = req.body.SiteWarehouseMappingData;
+  if (!SiteWarehouseMappingData || !SiteWarehouseMappingData.length) {
+    return res.status(400).json("Invalid or empty SiteWarehouseMappingData array.");
+  }
+
+  try {
+    const pool = await sql.connect(dbConfig);
+    for (const item of SiteWarehouseMappingData) {
+      await pool.request()
+        .input("mode", sql.NVarChar, "D")
+        .input("keyfield", sql.NVarChar, item.keyfield)
+        .input("company_code", sql.NVarChar, req.headers['company_code'])
+        .query(`EXEC sp_SiteWarehouseMapping @mode, @company_code, '', '', '', '', '', @keyfield, '', '', '', ''`);
+    }
+    res.status(200).json("SiteWarehouseMapping data deleted successfully");
+  } catch (err) {
+    console.error("Error in SiteWarehouseMappingLoopDelete:", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+};
+
+//Code ended by pavun on 23-05-2026
+
+//code added by sakthi on 05-22-26
+// Auto-generated Node.js CRUD for sp_opening_balance
+
+const opening_balanceInsert = async (req, res) => {
+  const {
+  transaction_no, financial_year, entry_date, party_type, party_code, keyfield, opening_amount, balance_type, remarks, status, data_deleted,
+  created_date,
+  modified_date,
+  created_by,
+  modified_by,
+  company_code
+} = req.body;
+
+  try {
+    const pool = await sql.connect(dbConfig);
+    await pool.request()
+      .input("mode", sql.NVarChar, "I")
+      .input("transaction_no", sql.NVarChar, transaction_no)
+      .input("financial_year", sql.NVarChar, financial_year)
+      .input("entry_date", sql.Date, entry_date)
+      .input("party_type", sql.NVarChar, party_type)
+      .input("party_code", sql.NVarChar, party_code)
+      .input("keyfield", sql.NVarChar, keyfield)
+      .input("opening_amount", sql.Decimal(18, 2), opening_amount)
+      .input("balance_type", sql.NVarChar, balance_type)
+      .input("remarks", sql.NVarChar, remarks)
+      .input("status", sql.NVarChar, status)
+      .input("data_deleted", sql.Bit, data_deleted)
+      .input("company_code", sql.NVarChar, company_code)
+      .input("created_by", sql.NVarChar, created_by)
+      .input("created_date", sql.DateTime, created_date)
+      .input("modified_by", sql.NVarChar, modified_by)
+      .input("modified_date", sql.DateTime, modified_date)
+      .query(`EXEC sp_opening_balance @mode, @transaction_no, @financial_year, @entry_date, @party_type, @party_code, @keyfield, @opening_amount, @balance_type, @remarks, @status, @data_deleted, @company_code, @created_by, @created_date, @modified_by, @modified_date`);
+
+    res.status(200).json({ success: true, message: "opening_balance insertd successfully" });
+  } catch (err) {
+    console.error("Error during opening_balance insert:", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+};
+
+const opening_balanceUpdate = async (req, res) => {
+  const {
+  transaction_no, financial_year, entry_date, party_type, party_code, keyfield, opening_amount, balance_type, remarks, status, data_deleted,
+  created_date,
+  modified_date,
+  created_by,
+  modified_by,
+  company_code
+} = req.body;
+
+  try {
+    const pool = await sql.connect(dbConfig);
+    await pool.request()
+      .input("mode", sql.NVarChar, "U")
+      .input("transaction_no", sql.NVarChar, transaction_no)
+      .input("financial_year", sql.NVarChar, financial_year)
+      .input("entry_date", sql.Date, entry_date)
+      .input("party_type", sql.NVarChar, party_type)
+      .input("party_code", sql.NVarChar, party_code)
+      .input("keyfield", sql.NVarChar, keyfield)
+      .input("opening_amount", sql.Decimal(18, 2), opening_amount)
+      .input("balance_type", sql.NVarChar, balance_type)
+      .input("remarks", sql.NVarChar, remarks)
+      .input("status", sql.NVarChar, status)
+      .input("data_deleted", sql.Bit, data_deleted)
+      .input("company_code", sql.NVarChar, company_code)
+      .input("created_by", sql.NVarChar, created_by)
+      .input("created_date", sql.DateTime, created_date)
+      .input("modified_by", sql.NVarChar, modified_by)
+      .input("modified_date", sql.DateTime, modified_date)
+      .query(`EXEC sp_opening_balance @mode, @transaction_no, @financial_year, @entry_date, @party_type, @party_code, @keyfield, @opening_amount, @balance_type, @remarks, @status, @data_deleted, @company_code, @created_by, @created_date, @modified_by, @modified_date`);
+
+    res.status(200).json({ success: true, message: "opening_balance updated successfully" });
+  } catch (err) {
+    console.error("Error during opening_balance update:", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+};
+
+const opening_balanceDelete = async (req, res) => {
+  const {
+  transaction_no, financial_year, entry_date, party_type, party_code, keyfield, opening_amount, balance_type, remarks, status, data_deleted,
+  created_date,
+  modified_date,
+  created_by,
+  modified_by,
+  company_code
+} = req.body;
+
+  try {
+    const pool = await sql.connect(dbConfig);
+    await pool.request()
+      .input("mode", sql.NVarChar, "D")
+      .input("transaction_no", sql.NVarChar, transaction_no)
+      .input("financial_year", sql.NVarChar, financial_year)
+      .input("entry_date", sql.Date, entry_date)
+      .input("party_type", sql.NVarChar, party_type)
+      .input("party_code", sql.NVarChar, party_code)
+      .input("keyfield", sql.NVarChar, keyfield)
+      .input("opening_amount", sql.Decimal(18, 2), opening_amount)
+      .input("balance_type", sql.NVarChar, balance_type)
+      .input("remarks", sql.NVarChar, remarks)
+      .input("status", sql.NVarChar, status)
+      .input("data_deleted", sql.Bit, data_deleted)
+      .input("company_code", sql.NVarChar, company_code)
+      .input("created_by", sql.NVarChar, created_by)
+      .input("created_date", sql.DateTime, created_date)
+      .input("modified_by", sql.NVarChar, modified_by)
+      .input("modified_date", sql.DateTime, modified_date)
+      .query(`EXEC sp_opening_balance @mode, @transaction_no, @financial_year, @entry_date, @party_type, @party_code, @keyfield, @opening_amount, @balance_type, @remarks, @status, @data_deleted, @company_code, @created_by, @created_date, @modified_by, @modified_date`);
+
+    res.status(200).json({ success: true, message: "opening_balance deleted successfully" });
+  } catch (err) {
+    console.error("Error during opening_balance delete:", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+};
+//code Ended by sakthi on 05-22-26
+
+//code added by sakthi on 05-22-26
+// ---------- HEADER LOOP CRUD ----------
+// Auto-generated opening_balanceLoopInsert API for sp_opening_balance
+// const opening_balanceLoopInsert = async (req, res) => {
+//   const opening_balanceData = req.body.opening_balanceData;
+//   if (!opening_balanceData || !opening_balanceData.length) {
+//     return res.status(400).json("Invalid or empty opening_balanceData array.");
+//   }
+
+//   try {
+//     const pool = await sql.connect(dbConfig);
+//     for (const item of opening_balanceData) {
+//       await pool.request()
+//         .input("mode", sql.NVarChar, "I")
+//         .input("transaction_no", sql.NVarChar, item.transaction_no)
+//         .input("financial_year", sql.NVarChar, item.financial_year)
+//         .input("entry_date", sql.Date, item.entry_date)
+//         .input("party_type", sql.NVarChar, item.party_type)
+//         .input("party_code", sql.NVarChar, item.party_code)
+//         .input("keyfield", sql.NVarChar, item.keyfield)
+//         .input("opening_amount", sql.Decimal(18, 2), item.opening_amount)
+//         .input("balance_type", sql.NVarChar, item.balance_type)
+//         .input("remarks", sql.NVarChar, item.remarks)
+//         .input("status", sql.NVarChar, item.status)
+//         .input("data_deleted", sql.Bit, item.data_deleted)
+//         .input("company_code", sql.NVarChar, item.company_code)
+//         .input("created_by", sql.NVarChar, item.created_by)
+//         .input("created_date", sql.DateTime, item.created_date)
+//         .input("modified_by", sql.NVarChar, item.modified_by)
+//         .input("modified_date", sql.DateTime, item.modified_date)
+//         .query(`EXEC sp_opening_balance @mode, @transaction_no, @financial_year, @entry_date, @party_type, @party_code, @keyfield, @opening_amount, @balance_type, @remarks, @status, @data_deleted, @company_code, @created_by, @created_date, @modified_by, @modified_date`);
+//     }
+//     res.status(200).json("opening_balance data inserted successfully");
+//   } catch (err) {
+//     console.error("Error in opening_balanceLoopInsert:", err);
+//     res.status(500).json({ message: err.message || "Internal Server Error" });
+//   }
+// };
+const opening_balanceLoopInsert = async (req, res) => {
+  const opening_balanceData = req.body.opening_balanceData;
+
+  if (!opening_balanceData || !opening_balanceData.length) {
+    return res
+      .status(400)
+      .json({ message: "Invalid or empty opening_balanceData array." });
+  }
+
+  try {
+    const pool = await sql.connect(dbConfig);
+
+    let generatedTransactionNo = "";
+
+    for (const item of opening_balanceData) {
+      const result = await pool
+        .request()
+        .input("mode", sql.NVarChar, "I")
+        .input("transaction_no", sql.NVarChar, "")
+        .input("financial_year", sql.NVarChar, item.financial_year)
+        .input("entry_date", sql.Date, item.entry_date)
+        .input("party_type", sql.NVarChar, item.party_type)
+        .input("party_code", sql.NVarChar, item.party_code)
+        .input("keyfield", sql.NVarChar, "")
+        .input(
+          "opening_amount",
+          sql.Decimal(18, 2),
+          item.opening_amount
+        )
+        .input("balance_type", sql.NVarChar, item.balance_type)
+        .input("remarks", sql.NVarChar, item.remarks)
+        .input("status", sql.NVarChar, item.status)
+        .input("data_deleted", sql.Bit, item.data_deleted)
+        .input("company_code", sql.NVarChar, item.company_code)
+        .input("created_by", sql.NVarChar, item.created_by)
+        .input("created_date", sql.DateTime, item.created_date)
+        .input("modified_by", sql.NVarChar, item.modified_by)
+        .input("modified_date", sql.DateTime, item.modified_date)
+        .query(`
+          EXEC sp_opening_balance
+          @mode,
+          @transaction_no,
+          @financial_year,
+          @entry_date,
+          @party_type,
+          @party_code,
+          @keyfield,
+          @opening_amount,
+          @balance_type,
+          @remarks,
+          @status,
+          @data_deleted,
+          @company_code,
+          @created_by,
+          @created_date,
+          @modified_by,
+          @modified_date
+        `);
+
+      if (
+        result.recordset &&
+        result.recordset.length > 0
+      ) {
+        generatedTransactionNo =
+          result.recordset[0].transaction_no;
+      }
+    }
+
+    res.status(200).json({
+      message: "opening_balance data inserted successfully",
+      transaction_no: generatedTransactionNo,
+    });
+  } catch (err) {
+    console.error("Error in opening_balanceLoopInsert:", err);
+
+    res.status(500).json({
+      message: err.message || "Internal Server Error",
+    });
+  }
+};
+
+// Auto-generated opening_balanceLoopUpdate API for sp_opening_balance
+const opening_balanceLoopUpdate = async (req, res) => {
+  const opening_balanceData = req.body.opening_balanceData;
+  if (!opening_balanceData || !opening_balanceData.length) {
+    return res.status(400).json("Invalid or empty opening_balanceData array.");
+  }
+
+  try {
+    const pool = await sql.connect(dbConfig);
+    for (const item of opening_balanceData) {
+      await pool.request()
+        .input("mode", sql.NVarChar, "U")
+        .input("transaction_no", sql.NVarChar, item.transaction_no)
+        .input("financial_year", sql.NVarChar, item.financial_year)
+        .input("entry_date", sql.Date, item.entry_date)
+        .input("party_type", sql.NVarChar, item.party_type)
+        .input("party_code", sql.NVarChar, item.party_code)
+        .input("keyfield", sql.NVarChar, item.keyfield)
+        .input("opening_amount", sql.Decimal(18, 2), item.opening_amount)
+        .input("balance_type", sql.NVarChar, item.balance_type)
+        .input("remarks", sql.NVarChar, item.remarks)
+        .input("status", sql.NVarChar, item.status)
+        .input("data_deleted", sql.Bit, item.data_deleted)
+        .input("company_code", sql.NVarChar, item.company_code)
+        .input("created_by", sql.NVarChar, item.created_by)
+        .input("created_date", sql.DateTime, item.created_date)
+        .input("modified_by", sql.NVarChar, item.modified_by)
+        .input("modified_date", sql.DateTime, item.modified_date)
+        .query(`EXEC sp_opening_balance @mode, @transaction_no, @financial_year, @entry_date, @party_type, @party_code, @keyfield, @opening_amount, @balance_type, @remarks, @status, @data_deleted, @company_code, @created_by, @created_date, @modified_by, @modified_date`);
+    }
+    res.status(200).json("opening_balance data updated successfully");
+  } catch (err) {
+    console.error("Error in opening_balanceLoopUpdate:", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+};
+
+// Auto-generated opening_balanceLoopDelete API for sp_opening_balance
+const opening_balanceLoopDelete = async (req, res) => {
+  const opening_balanceData = req.body.opening_balanceData;
+  if (!opening_balanceData || !opening_balanceData.length) {
+    return res.status(400).json("Invalid or empty opening_balanceData array.");
+  }
+
+  try {
+    const pool = await sql.connect(dbConfig);
+    for (const item of opening_balanceData) {
+      await pool.request()
+        .input("mode", sql.NVarChar, "D")
+        .input("transaction_no", sql.NVarChar, item.transaction_no)
+        .input("financial_year", sql.NVarChar, item.financial_year)
+        .input("entry_date", sql.Date, item.entry_date)
+        .input("party_type", sql.NVarChar, item.party_type)
+        .input("party_code", sql.NVarChar, item.party_code)
+        .input("keyfield", sql.NVarChar, item.keyfield)
+        .input("opening_amount", sql.Decimal(18, 2), item.opening_amount)
+        .input("balance_type", sql.NVarChar, item.balance_type)
+        .input("remarks", sql.NVarChar, item.remarks)
+        .input("status", sql.NVarChar, item.status)
+        .input("data_deleted", sql.Bit, item.data_deleted)
+        .input("company_code", sql.NVarChar, item.company_code)
+        .input("created_by", sql.NVarChar, item.created_by)
+        .input("created_date", sql.DateTime, item.created_date)
+        .input("modified_by", sql.NVarChar, item.modified_by)
+        .input("modified_date", sql.DateTime, item.modified_date)
+        .query(`EXEC sp_opening_balance @mode, @transaction_no, @financial_year, @entry_date, @party_type, @party_code, @keyfield, @opening_amount, @balance_type, @remarks, @status, @data_deleted, @company_code, @created_by, @created_date, @modified_by, @modified_date`);
+    }
+    res.status(200).json("opening_balance data deleted successfully");
+  } catch (err) {
+    console.error("Error in opening_balanceLoopDelete:", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+};
+//code Ended by sakthi on 05-22-26
+
+//code added by sakthi on 05-23-26
+const OpeningBalanceSC = async (req, res) => {
+  const { transaction_no, financial_year, entry_date, party_type, party_code, keyfield, opening_amount, balance_type, remarks, status, data_deleted, company_code, created_by, created_date, modified_by, modified_date } = req.body;
+
+  try {
+    const pool = await connection.connectToDatabase();
+
+    const result = await pool.request()
+      .input("mode", sql.NVarChar, "SC")
+      .input("transaction_no", sql.NVarChar, transaction_no || '')
+      .input("financial_year", sql.NVarChar, financial_year || '')
+      .input("entry_date", sql.Date, entry_date || null)
+      .input("party_type", sql.NVarChar, party_type || '')
+      .input("party_code", sql.NVarChar, party_code || '')
+      .input("keyfield", sql.NVarChar, keyfield || '')
+      .input("opening_amount", sql.Decimal(18, 2), opening_amount || 0)
+      .input("balance_type", sql.NVarChar, balance_type || '')
+      .input("remarks", sql.NVarChar, remarks || '')
+      .input("status", sql.NVarChar, status || '')
+      .input("data_deleted", sql.Bit, data_deleted ?? null)
+      .input("company_code", sql.NVarChar, company_code || '')
+      .input("created_by", sql.NVarChar, created_by || '')
+      .input("created_date", sql.DateTime, created_date || null)
+      .input("modified_by", sql.NVarChar, modified_by || '')
+      .input("modified_date", sql.DateTime, modified_date || null)
+      .query(`EXEC sp_opening_balance @mode,@transaction_no,@financial_year,@entry_date,@party_type,@party_code,@keyfield,@opening_amount,@balance_type,@remarks,@status,@data_deleted,@company_code,@created_by,@created_date,@modified_by,@modified_date`);
+
+    if (result.recordset.length > 0) {
+      res.status(200).json(result.recordset);
+    } else {
+      res.status(404).json("Data not found");
+    }
+
+  } catch (err) {
+    console.error("Error", err);
+    res.status(500).json({ message: err.message || 'Internal Server Error' });
+  }
+};
+//code Ended by sakthi on 05-23-26
+
+//code added by sakthi on 05-23-26
+const getExpenseType = async (req, res) => {
+  const { company_code } = req.body;
+  try {
+    const pool = await connection.connectToDatabase();
+    const result = await pool
+      .request()
+      .input("company_code", sql.NVarChar, company_code)
+      .query(
+        "EXEC sp_attribute_Info 'F',@company_code,'Expense Type','','', '','','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+      );
+
+    res.json(result.recordset);
+  } catch (err) {
+    console.error("Error", err);
+    res.status(500).json({ message: err.message || 'Internal Server Error' });
+  }
+};
+
+const getReferenceType = async (req, res) => {
+  const { company_code } = req.body;
+  try {
+    const pool = await connection.connectToDatabase();
+    const result = await pool
+      .request()
+      .input("company_code", sql.NVarChar, company_code)
+      .query(
+        "EXEC sp_attribute_Info 'F',@company_code,'Reference Type','','', '','','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+      );
+
+    res.json(result.recordset);
+  } catch (err) {
+    console.error("Error", err);
+    res.status(500).json({ message: err.message || 'Internal Server Error' });
+  }
+};
+
+const getExpensePaymentType = async (req, res) => {
+  const { company_code } = req.body;
+  try {
+    const pool = await connection.connectToDatabase();
+    const result = await pool
+      .request()
+      .input("company_code", sql.NVarChar, company_code)
+      .query(
+        "EXEC sp_attribute_Info 'F',@company_code,'ExpensePaymentType','','', '','','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+      );
+
+    res.json(result.recordset);
+  } catch (err) {
+    console.error("Error", err);
+    res.status(500).json({ message: err.message || 'Internal Server Error' });
+  }
+};
+
+
+// Auto-generated Node.js CRUD for sp_Expenses_Hdr
+
+const Expenses_HdrInsert = async (req, res) => {
+  const {
+  expense_no, expense_date, keyfield, data_deleted,
+  created_date,
+  created_by,
+  modified_by,
+  company_code
+} = req.body;
+
+  try {
+    const pool = await sql.connect(dbConfig);
+   const result =  await pool.request()
+      .input("mode", sql.NVarChar, "I")
+      .input("expense_no", sql.NVarChar, expense_no)
+      .input("expense_date", sql.Date, expense_date)
+      .input("keyfield", sql.NVarChar, keyfield)
+      .input("data_deleted", sql.NVarChar, data_deleted)
+      .input("company_code", sql.NVarChar, company_code)
+      .input("created_by", sql.NVarChar, created_by)
+      .input("created_date", sql.DateTime, created_date)
+      .input("modified_by", sql.NVarChar, modified_by)
+      .query(`EXEC sp_Expenses_Hdr @mode, @expense_no, @expense_date, @keyfield, @data_deleted, @company_code, @created_by, ''`);
+
+    if (result.recordset.length > 0) {
+      res.status(200).json(result.recordset);
+    } else {
+      res.status(404).json("Data Added Successfully");
+    }
+  } catch (err) {
+    console.error("Error", err);
+    res.status(500).json({ message: err.message || 'Internal Server Error' });
+  }
+};
+
+const Expenses_HdrUpdate = async (req, res) => {
+  const {
+  expense_no, expense_date, keyfield, data_deleted,
+  created_date,
+  modified_date,
+  created_by,
+  modified_by,
+  company_code
+} = req.body;
+
+  try {
+    const pool = await sql.connect(dbConfig);
+    await pool.request()
+      .input("mode", sql.NVarChar, "U")
+      .input("expense_no", sql.NVarChar, expense_no)
+      .input("expense_date", sql.Date, expense_date)
+      .input("keyfield", sql.NVarChar, keyfield)
+      .input("data_deleted", sql.NVarChar, data_deleted)
+      .input("company_code", sql.NVarChar, company_code)
+      .input("created_by", sql.NVarChar, created_by)
+      .input("created_date", sql.DateTime, created_date)
+      .input("modified_by", sql.NVarChar, modified_by)
+      .input("modified_date", sql.DateTime, modified_date)
+      .query(`EXEC sp_Expenses_Hdr @mode, @expense_no, @expense_date, @keyfield, @data_deleted, @company_code, @created_by, @created_date, @modified_by, @modified_date`);
+
+    res.status(200).json({ success: true, message: "Expenses_Hdr updated successfully" });
+  } catch (err) {
+    console.error("Error during Expenses_Hdr update:", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+};
+
+const Expenses_HdrDelete = async (req, res) => {
+  const {
+  expense_no, expense_date, keyfield, data_deleted,
+  created_date,
+  modified_date,
+  created_by,
+  modified_by,
+  company_code
+} = req.body;
+
+  try {
+    const pool = await sql.connect(dbConfig);
+    await pool.request()
+      .input("mode", sql.NVarChar, "D")
+      .input("expense_no", sql.NVarChar, expense_no)
+      .input("expense_date", sql.Date, expense_date)
+      .input("keyfield", sql.NVarChar, keyfield)
+      .input("data_deleted", sql.NVarChar, data_deleted)
+      .input("company_code", sql.NVarChar, company_code)
+      .input("created_by", sql.NVarChar, created_by)
+      .input("created_date", sql.DateTime, created_date)
+      .input("modified_by", sql.NVarChar, modified_by)
+      .input("modified_date", sql.DateTime, modified_date)
+      .query(`EXEC sp_Expenses_Hdr @mode, @expense_no, @expense_date, @keyfield, @data_deleted, @company_code, @created_by, @created_date, @modified_by, @modified_date`);
+
+    res.status(200).json({ success: true, message: "Expenses_Hdr deleted successfully" });
+  } catch (err) {
+    console.error("Error during Expenses_Hdr delete:", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+};
+
+
+// ---------- HEADER LOOP CRUD ----------
+// Auto-generated Expenses_HdrLoopInsert API for sp_Expenses_Hdr
+const Expenses_HdrLoopInsert = async (req, res) => {
+  const Expenses_HdrData = req.body.Expenses_HdrData;
+  if (!Expenses_HdrData || !Expenses_HdrData.length) {
+    return res.status(400).json("Invalid or empty Expenses_HdrData array.");
+  }
+
+  try {
+    const pool = await sql.connect(dbConfig);
+    for (const item of Expenses_HdrData) {
+      await pool.request()
+        .input("mode", sql.NVarChar, "I")
+        .input("expense_no", sql.NVarChar, item.expense_no)
+        .input("expense_date", sql.Date, item.expense_date)
+        .input("keyfield", sql.NVarChar, item.keyfield)
+        .input("data_deleted", sql.NVarChar, item.data_deleted)
+        .input("company_code", sql.NVarChar, item.company_code)
+        .input("created_by", sql.NVarChar, item.created_by)
+        .input("created_date", sql.DateTime, item.created_date)
+        .input("modified_by", sql.NVarChar, item.modified_by)
+        .input("modified_date", sql.DateTime, item.modified_date)
+        .query(`EXEC sp_Expenses_Hdr @mode, @expense_no, @expense_date, @keyfield, @data_deleted, @company_code, @created_by, @created_date, @modified_by, @modified_date`);
+    }
+    res.status(200).json("Expenses_Hdr data inserted successfully");
+  } catch (err) {
+    console.error("Error in Expenses_HdrLoopInsert:", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+};
+
+// Auto-generated Expenses_HdrLoopUpdate API for sp_Expenses_Hdr
+const Expenses_HdrLoopUpdate = async (req, res) => {
+  const Expenses_HdrData = req.body.Expenses_HdrData;
+  if (!Expenses_HdrData || !Expenses_HdrData.length) {
+    return res.status(400).json("Invalid or empty Expenses_HdrData array.");
+  }
+
+  try {
+    const pool = await sql.connect(dbConfig);
+    for (const item of Expenses_HdrData) {
+      await pool.request()
+        .input("mode", sql.NVarChar, "U")
+        .input("expense_no", sql.NVarChar, item.expense_no)
+        .input("expense_date", sql.Date, item.expense_date)
+        .input("keyfield", sql.NVarChar, item.keyfield)
+        .input("data_deleted", sql.NVarChar, item.data_deleted)
+        .input("company_code", sql.NVarChar, item.company_code)
+        .input("created_by", sql.NVarChar, item.created_by)
+        .input("created_date", sql.DateTime, item.created_date)
+        .input("modified_by", sql.NVarChar, item.modified_by)
+        .input("modified_date", sql.DateTime, item.modified_date)
+        .query(`EXEC sp_Expenses_Hdr @mode, @expense_no, @expense_date, @keyfield, @data_deleted, @company_code, @created_by, @created_date, @modified_by, @modified_date`);
+    }
+    res.status(200).json("Expenses_Hdr data updated successfully");
+  } catch (err) {
+    console.error("Error in Expenses_HdrLoopUpdate:", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+};
+
+// Auto-generated Expenses_HdrLoopDelete API for sp_Expenses_Hdr
+const Expenses_HdrLoopDelete = async (req, res) => {
+  const Expenses_HdrData = req.body.Expenses_HdrData;
+  if (!Expenses_HdrData || !Expenses_HdrData.length) {
+    return res.status(400).json("Invalid or empty Expenses_HdrData array.");
+  }
+
+  try {
+    const pool = await sql.connect(dbConfig);
+    for (const item of Expenses_HdrData) {
+      await pool.request()
+        .input("mode", sql.NVarChar, "D")
+        .input("expense_no", sql.NVarChar, item.expense_no)
+        .input("expense_date", sql.Date, item.expense_date)
+        .input("keyfield", sql.NVarChar, item.keyfield)
+        .input("data_deleted", sql.NVarChar, item.data_deleted)
+        .input("company_code", sql.NVarChar, item.company_code)
+        .input("created_by", sql.NVarChar, item.created_by)
+        .input("created_date", sql.DateTime, item.created_date)
+        .input("modified_by", sql.NVarChar, item.modified_by)
+        .input("modified_date", sql.DateTime, item.modified_date)
+        .query(`EXEC sp_Expenses_Hdr @mode, @expense_no, @expense_date, @keyfield, @data_deleted, @company_code, @created_by, @created_date, @modified_by, @modified_date`);
+    }
+    res.status(200).json("Expenses_Hdr data deleted successfully");
+  } catch (err) {
+    console.error("Error in Expenses_HdrLoopDelete:", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+};
+// Code ended by Dinesh Gokul 23-05-2026
+ 
+//code added by sakthi on 05-23-26
+const OpeningBalanceSC = async (req, res) => {
+  const { transaction_no, financial_year, entry_date, party_type, party_code, keyfield, opening_amount, balance_type, remarks, status, data_deleted, company_code, created_by, created_date, modified_by, modified_date } = req.body;
+
+  try {
+    const pool = await connection.connectToDatabase();
+
+    const result = await pool.request()
+      .input("mode", sql.NVarChar, "SC")
+      .input("transaction_no", sql.NVarChar, transaction_no || '')
+      .input("financial_year", sql.NVarChar, financial_year || '')
+      .input("entry_date", sql.Date, entry_date || null)
+      .input("party_type", sql.NVarChar, party_type || '')
+      .input("party_code", sql.NVarChar, party_code || '')
+      .input("keyfield", sql.NVarChar, keyfield || '')
+      .input("opening_amount", sql.Decimal(18, 2), opening_amount || 0)
+      .input("balance_type", sql.NVarChar, balance_type || '')
+      .input("remarks", sql.NVarChar, remarks || '')
+      .input("status", sql.NVarChar, status || '')
+      .input("data_deleted", sql.Bit, data_deleted ?? null)
+      .input("company_code", sql.NVarChar, company_code || '')
+      .input("created_by", sql.NVarChar, created_by || '')
+      .input("created_date", sql.DateTime, created_date || null)
+      .input("modified_by", sql.NVarChar, modified_by || '')
+      .input("modified_date", sql.DateTime, modified_date || null)
+      .query(`EXEC sp_opening_balance @mode,@transaction_no,@financial_year,@entry_date,@party_type,@party_code,@keyfield,@opening_amount,@balance_type,@remarks,@status,@data_deleted,@company_code,@created_by,@created_date,@modified_by,@modified_date`);
+
+    if (result.recordset.length > 0) {
+      res.status(200).json(result.recordset);
+    } else {
+      res.status(404).json("Data not found");
+    }
+
+  } catch (err) {
+    console.error("Error", err);
+    res.status(500).json({ message: err.message || 'Internal Server Error' });
+  }
+};
+//code Ended by sakthi on 05-23-26
 
 module.exports = {
   login,
@@ -37130,8 +37910,6 @@ module.exports = {
   Expired,
   SiteMasterInsert, 
   SiteMasterUpdate, 
-  SiteMasterDelete,
-  SiteMasterLoopInsert, 
   SiteMasterLoopUpdate, 
   SiteMasterLoopDelete,
   Pending_vendorInsert, 
@@ -37143,7 +37921,6 @@ module.exports = {
   ExpensesInsert, 
   ExpensesUpdate, 
   ExpensesDelete,
-  getbalance_type,
   ExpensesLoopInsert, 
   ExpensesLoopUpdate, 
   ExpensesLoopDelete,
@@ -37164,8 +37941,24 @@ module.exports = {
   SiteAndCustomerMappingDelete,
   SiteAndCustomerMappingLoopInsert, 
   SiteAndCustomerMappingLoopUpdate, 
-  SiteAndCustomerMappingLoopDelete
-
+  SiteAndCustomerMappingLoopDelete,
+  getbalance_type,
+  opening_balanceInsert, 
+  opening_balanceUpdate, 
+  opening_balanceDelete,
+  opening_balanceLoopInsert, 
+  opening_balanceLoopUpdate, 
+  opening_balanceLoopDelete,
+    getExpenseType,
+  getReferenceType,
+  getExpensePaymentType,
+  Expenses_HdrInsert, 
+  Expenses_HdrUpdate, 
+  Expenses_HdrDelete,
+  Expenses_HdrLoopInsert, 
+  Expenses_HdrLoopUpdate, 
+  Expenses_HdrLoopDelete,
+  OpeningBalanceSC
 
 
 };

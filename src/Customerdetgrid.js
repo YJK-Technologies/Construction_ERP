@@ -237,52 +237,52 @@ function CustomerDetGrid() {
     label: option.attributedetails_name,
   }));
 
-    const handleChangeBT = (selectedBT) => {
-      setSelectedBT(selectedBT);
-      setbalance_type(selectedBT ? selectedBT.value : "");
-    };
-  
-    const filteredOptionBT = balance_typeDrop.map((option) => ({
-      value: option.attributedetails_code,
-      label: `${option.attributedetails_code} - ${option.attributedetails_name}`,
-    }));
-  
-    useEffect(() => {
-      const company_code = sessionStorage.getItem("selectedCompanyCode");
-      fetch(`${config.apiBaseUrl}/getbalance_type`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ company_code }),
-      })
-        .then((data) => data.json())
-        .then((data) => {
-          setbalance_typeDrop(data);
-        })
-        .catch((error) => console.error("Error fetching data:", error));
-    }, []);
+  const handleChangeBT = (selectedBT) => {
+    setSelectedBT(selectedBT);
+    setbalance_type(selectedBT ? selectedBT.value : "");
+  };
 
-      useEffect(() => {
-        const company_code = sessionStorage.getItem("selectedCompanyCode");
-    
-        fetch(`${config.apiBaseUrl}/getbalance_type`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ company_code }),
-        })
-          .then((response) => response.json())
-          .then((data) => {
-            const balanceTypeOptions = data.map(
-              (option) =>
-                `${option.attributedetails_code} - ${option.attributedetails_name}`,
-            );
-            setbalance_typeAGDrop(balanceTypeOptions);
-          })
-          .catch((error) => console.error("Error fetching data:", error));
-      }, []);
+  const filteredOptionBT = balance_typeDrop.map((option) => ({
+    value: option.attributedetails_code,
+    label: `${option.attributedetails_code} - ${option.attributedetails_name}`,
+  }));
+
+  useEffect(() => {
+    const company_code = sessionStorage.getItem("selectedCompanyCode");
+    fetch(`${config.apiBaseUrl}/getbalance_type`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ company_code }),
+    })
+      .then((data) => data.json())
+      .then((data) => {
+        setbalance_typeDrop(data);
+      })
+      .catch((error) => console.error("Error fetching data:", error));
+  }, []);
+
+  useEffect(() => {
+    const company_code = sessionStorage.getItem("selectedCompanyCode");
+
+    fetch(`${config.apiBaseUrl}/getbalance_type`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ company_code }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        const balanceTypeOptions = data.map(
+          (option) =>
+            `${option.attributedetails_code} - ${option.attributedetails_name}`,
+        );
+        setbalance_typeAGDrop(balanceTypeOptions);
+      })
+      .catch((error) => console.error("Error fetching data:", error));
+  }, []);
 
   const reloadGridData = () => {
     try {
@@ -594,7 +594,7 @@ function CustomerDetGrid() {
         values: balance_typeAGDrop,
         maxLength: 250,
       },
-    },    {
+    }, {
       headerName: "Transport Code",
       field: "customer_transport_code",
       editable: true,
@@ -795,14 +795,30 @@ function CustomerDetGrid() {
           background-color: darkred;
       }
       @media print {
-          .report-button {
-              display: none;
-          }
-          body {
-              margin: 0;
-              padding: 0;
-          }
-      }
+    .report-button {
+        display: none;
+    }
+
+    body {
+        margin: 0;
+        padding: 0;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    th {
+        background-color: maroon !important;
+        color: white !important;
+    }
+
+    td {
+        background-color: #fdd9b5 !important;
+    }
+
+    tr:nth-child(even) td {
+        background-color: #fff0e1 !important;
+    }
+}
     `);
     reportWindow.document.write("</style></head><body>");
     reportWindow.document.write("<h1><u>Customer Information</u></h1>");
@@ -1037,52 +1053,52 @@ function CustomerDetGrid() {
               {["add", "all permission"].some((permission) =>
                 customerdetPermission.includes(permission),
               ) && (
-                <addbutton
-                  className=""
-                  onClick={handleNavigatesToForm}
-                  required
-                  title="Add Customer"
-                >
-                  {" "}
-                  <i class="fa-solid fa-user-plus"></i>{" "}
-                </addbutton>
-              )}
+                  <addbutton
+                    className=""
+                    onClick={handleNavigatesToForm}
+                    required
+                    title="Add Customer"
+                  >
+                    {" "}
+                    <i class="fa-solid fa-user-plus"></i>{" "}
+                  </addbutton>
+                )}
               {["delete", "all permission"].some((permission) =>
                 customerdetPermission.includes(permission),
               ) && (
-                <delbutton
-                  className="purbut"
-                  onClick={deleteSelectedRows}
-                  required
-                  title="Delete"
-                >
-                  <i class="fa-solid fa-user-minus"></i>
-                </delbutton>
-              )}
+                  <delbutton
+                    className="purbut"
+                    onClick={deleteSelectedRows}
+                    required
+                    title="Delete"
+                  >
+                    <i class="fa-solid fa-user-minus"></i>
+                  </delbutton>
+                )}
               {["update", "all permission"].some((permission) =>
                 customerdetPermission.includes(permission),
               ) && (
-                <savebutton
-                  className="purbut"
-                  onClick={saveEditedData}
-                  required
-                  title="Update"
-                >
-                  <i class="fa-solid fa-floppy-disk"></i>
-                </savebutton>
-              )}
+                  <savebutton
+                    className="purbut"
+                    onClick={saveEditedData}
+                    required
+                    title="Update"
+                  >
+                    <i class="fa-solid fa-floppy-disk"></i>
+                  </savebutton>
+                )}
               {["all permission", "view"].some((permission) =>
                 customerdetPermission.includes(permission),
               ) && (
-                <printbutton
-                  class="purbut"
-                  onClick={generateReport}
-                  required
-                  title="Generate Report"
-                >
-                  <i class="fa-solid fa-print"></i>
-                </printbutton>
-              )}
+                  <printbutton
+                    class="purbut"
+                    onClick={generateReport}
+                    required
+                    title="Generate Report"
+                  >
+                    <i class="fa-solid fa-print"></i>
+                  </printbutton>
+                )}
             </div>
 
             <div class="mobileview">
@@ -1108,37 +1124,37 @@ function CustomerDetGrid() {
                       {["add", "all permission"].some((permission) =>
                         customerdetPermission.includes(permission),
                       ) && (
-                        <icon class="icon" onClick={handleNavigatesToForm}>
-                          <i class="fa-solid fa-user-plus"></i>{" "}
-                        </icon>
-                      )}
+                          <icon class="icon" onClick={handleNavigatesToForm}>
+                            <i class="fa-solid fa-user-plus"></i>{" "}
+                          </icon>
+                        )}
                     </li>
                     <li class="iconbutton  d-flex justify-content-center text-danger">
                       {["delete", "all permission"].some((permission) =>
                         customerdetPermission.includes(permission),
                       ) && (
-                        <icon class="icon" onClick={deleteSelectedRows}>
-                          <i class="fa-solid fa-user-minus"></i>
-                        </icon>
-                      )}
+                          <icon class="icon" onClick={deleteSelectedRows}>
+                            <i class="fa-solid fa-user-minus"></i>
+                          </icon>
+                        )}
                     </li>
                     <li class="iconbutton  d-flex justify-content-center text-primary ">
                       {["update", "all permission"].some((permission) =>
                         customerdetPermission.includes(permission),
                       ) && (
-                        <icon class="icon" onClick={saveEditedData}>
-                          <i class="fa-solid fa-floppy-disk"></i>
-                        </icon>
-                      )}
+                          <icon class="icon" onClick={saveEditedData}>
+                            <i class="fa-solid fa-floppy-disk"></i>
+                          </icon>
+                        )}
                     </li>
                     <li class="iconbutton  d-flex justify-content-center ">
                       {["all permission", "view"].some((permission) =>
                         customerdetPermission.includes(permission),
                       ) && (
-                        <icon class="icon" onClick={generateReport}>
-                          <i class="fa-solid fa-print"></i>
-                        </icon>
-                      )}
+                          <icon class="icon" onClick={generateReport}>
+                            <i class="fa-solid fa-print"></i>
+                          </icon>
+                        )}
                     </li>
                   </ul>
                 </div>

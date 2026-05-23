@@ -64,7 +64,7 @@ import UserScreenInput from "./userscreeninput.js";
 import CustomerDetGrid from "./Customerdetgrid.js";
 import CustomerHdrInput from "./Customerhdrinput.js"; 
 import CustomerDetInput from "./customerdetinput.js";
-import OpeningbalanceGrid from "./OpeningbalanceGrid.js";
+// import OpeningbalanceGrid from "./OpeningbalanceGrid.js";
 import OpeningBalanceItem from "./OpeningBalanceItem.js";
 import OpeningbalanceInput from "./Openingbalanceinput.js";
 import AdjustmentGrid from "./Adjustmentgrid.js";
@@ -151,6 +151,11 @@ import WeekOff from "./WeekOff.js";
 import ClientInfo from "./ClientInfo.js";
 import ADDClientInfo from "./AddClientInfo.js";
 import Payment from "./Payment.js";
+import Openingbalance from "./Transaction/Openingbalance.js";
+import SiteMaster from "./SiteGrid.js";
+import AddSiteMaster from "./AddSiteMaster.js";
+import SiteWarehouse from "./siteWarehouseMapping.js";
+import Expenses from "./Expenses.js";
 
 function Main() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -261,7 +266,8 @@ function Main() {
     { path: "/Customer", component: <CustomerDetGrid /> },
     { path: "/AddCustomerHeader", component: <CustomerHdrInput /> },
     { path: "/AddCustomerDetails", component: <CustomerDetInput /> },
-    { path: "/OpeningBalance", component: <OpeningbalanceGrid /> },
+    // { path: "/OpeningBalance", component: <OpeningbalanceGrid /> },
+    { path: "/OpeningBalance", component: <Openingbalance /> },
     { path: "/OpeningItem", component: <OpeningBalanceItem /> },
     { path: "/AddOpeningBalance", component: <OpeningbalanceInput /> },
     { path: "/Adjustment", component: <AdjustmentGrid /> },
@@ -335,6 +341,10 @@ function Main() {
      { path: "/ClientInfo", component: <ClientInfo /> },
      { path: "/ADDClientInfo", component: <ADDClientInfo /> },
      { path: "/Payment", component: <Payment /> },
+     { path: "/AddSiteMaster", component: <AddSiteMaster /> },
+     { path: "/SiteMaster", component: <SiteMaster /> },
+     { path: "/SiteWarehouse", component: <SiteWarehouse /> },
+     { path: "/Expenses", component: <Expenses /> },
   ];
  
   return (
