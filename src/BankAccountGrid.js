@@ -534,14 +534,30 @@ function BankAccGrid() {
           background-color: darkred;
       }
       @media print {
-          .report-button {
-              display: none;
-          }
-          body {
-              margin: 0;
-              padding: 0;
-          }
-      }
+    .report-button {
+        display: none;
+    }
+
+    body {
+        margin: 0;
+        padding: 0;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    th {
+        background-color: maroon !important;
+        color: white !important;
+    }
+
+    td {
+        background-color: #fdd9b5 !important;
+    }
+
+    tr:nth-child(even) td {
+        background-color: #fff0e1 !important;
+    }
+}
     `);
     reportWindow.document.write("</style></head><body>");
     reportWindow.document.write("<h1><u>BankAccount  Information</u></h1>");

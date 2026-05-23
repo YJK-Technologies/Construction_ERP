@@ -226,14 +226,30 @@ function RoleInfoGrid() {
           background-color: darkred;
       }
       @media print {
-          .report-button {
-              display: none;
-          }
-          body {
-              margin: 0;
-              padding: 0;
-          }
-      }
+    .report-button {
+        display: none;
+    }
+
+    body {
+        margin: 0;
+        padding: 0;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    th {
+        background-color: maroon !important;
+        color: white !important;
+    }
+
+    td {
+        background-color: #fdd9b5 !important;
+    }
+
+    tr:nth-child(even) td {
+        background-color: #fff0e1 !important;
+    }
+}
     `);
     reportWindow.document.write("</style></head><body>");
     reportWindow.document.write("<h1><u>Validation Information</u></h1>");
@@ -433,7 +449,7 @@ function RoleInfoGrid() {
   return (
     <div className="container-fluid Topnav-screen">
       <div>
-      {loading && <LoadingScreen />}
+        {loading && <LoadingScreen />}
         <ToastContainer position="top-right" className="toast-design" theme="colored" />
         <div className="shadow-lg p-1 bg-body-tertiary rounded mb-2 mt-2">
           <div className=" d-flex justify-content-between  ">

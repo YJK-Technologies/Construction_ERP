@@ -425,6 +425,17 @@ function Grid() {
       filter: "agDateColumnFilter",
       editable: true,
       cellStyle: { textAlign: "center" },
+      valueFormatter: (params) => {
+        if (!params.value) return "";
+
+        const date = new Date(params.value);
+
+        const day = String(date.getDate()).padStart(2, "0");
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        const year = date.getFullYear();
+
+        return `${day}-${month}-${year}`;
+      }
     },
     {
       headerName: "Website URL",
@@ -591,14 +602,30 @@ function Grid() {
           background-color: darkred;
       }
       @media print {
-          .report-button {
-              display: none;
-          }
-          body {
-              margin: 0;
-              padding: 0;
-          }
-      }
+    .report-button {
+        display: none;
+    }
+
+    body {
+        margin: 0;
+        padding: 0;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    th {
+        background-color: maroon !important;
+        color: white !important;
+    }
+
+    td {
+        background-color: #fdd9b5 !important;
+    }
+
+    tr:nth-child(even) td {
+        background-color: #fff0e1 !important;
+    }
+}
     `);
     reportWindow.document.write("</style></head><body>");
     reportWindow.document.write("<h1><u>Company Information</u></h1>");
@@ -997,16 +1024,16 @@ function Grid() {
               <label class="exp-form-labels">
                 Status
               </label>
-               <div title="Please Select the Status">
-              <Select
-                id="status"
-                value={selectedStatus}
-                onChange={handleChangeStatus}
-                onKeyDown={handleKeyDownStatus}
-                options={filteredOptionStatus}
-                className="exp-input-field"
-                placeholder=""
-              />
+              <div title="Please Select the Status">
+                <Select
+                  id="status"
+                  value={selectedStatus}
+                  onChange={handleChangeStatus}
+                  onKeyDown={handleKeyDownStatus}
+                  options={filteredOptionStatus}
+                  className="exp-input-field"
+                  placeholder=""
+                />
               </div>
             </div>
           </div>
