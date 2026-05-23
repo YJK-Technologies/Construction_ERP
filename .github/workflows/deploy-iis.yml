@@ -12,16 +12,7 @@ jobs:
     steps:
 
       # -------------------------------------------------
-      # 1️⃣ CHECKOUT REPOSITORY
-      # -------------------------------------------------
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          clean: true
-          fetch-depth: 0
-
-      # -------------------------------------------------
-      # 2️⃣ ENABLE WINDOWS LONG PATHS
+      # 1️⃣ Enable Windows Long Paths
       # -------------------------------------------------
       - name: Enable Git Long Paths
         shell: powershell
@@ -29,7 +20,7 @@ jobs:
           git config --system core.longpaths true
 
       # -------------------------------------------------
-      # 3️⃣ CAPTURE JOB START TIME
+      # 2️⃣ Capture Job Start Time
       # -------------------------------------------------
       - name: Capture Job Start Time
         shell: powershell
@@ -40,7 +31,16 @@ jobs:
           Out-File -Append $log
 
       # -------------------------------------------------
-      # 4️⃣ SETUP NODE
+      # 3️⃣ Checkout Repository
+      # -------------------------------------------------
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          clean: true
+          fetch-depth: 0
+
+      # -------------------------------------------------
+      # 4️⃣ Setup Node.js
       # -------------------------------------------------
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -48,7 +48,7 @@ jobs:
           node-version: 20
 
       # -------------------------------------------------
-      # 5️⃣ BACKEND DEPLOY
+      # 5️⃣ Sync Backend to IIS
       # -------------------------------------------------
       - name: Sync backend to IIS
         shell: powershell
@@ -57,71 +57,100 @@ jobs:
           $dest = "C:\inetpub\wwwroot\Construction_ERP\server"
 
           if (!(Test-Path $src)) {
-            Write-Error "Backend folder not found."
+            Write-Error "Backend folder not found: $src"
             exit 1
           }
 
+          Write-Host "Syncing backend files..."
+
           robocopy $src $dest /MIR /XD node_modules .git
 
-          if ($LASTEXITCODE -gt 7) {
-            exit $LASTEXITCODE
+          $code = $LASTEXITCODE
+
+          Write-Host "Robocopy Exit Code: $code"
+
+          # SUCCESS CODES
+          if ($code -le 7) {
+            Write-Host "Backend sync successful."
+            exit 0
+          }
+          else {
+            Write-Error "Backend sync failed."
+            exit $code
           }
 
       # -------------------------------------------------
-      # 6️⃣ INSTALL BACKEND PACKAGES
+      # 6️⃣ Install Backend Dependencies
       # -------------------------------------------------
       - name: Install backend dependencies
         shell: powershell
         run: |
           cd C:\inetpub\wwwroot\Construction_ERP\server
 
+          Write-Host "Installing backend packages..."
+
           npm ci --legacy-peer-deps
 
       # -------------------------------------------------
-      # 7️⃣ RESTART BACKEND (NSSM)
+      # 7️⃣ Restart Backend Service (NSSM)
       # -------------------------------------------------
       - name: Restart backend service
         shell: powershell
         run: |
-          $service = "Construction_ERP"
+          $serviceName = "Construction_ERP"
 
-          if (Get-Service -Name $service -ErrorAction SilentlyContinue) {
+          $nssm = "C:\Windows\System32\nssm.exe"
 
-            Restart-Service $service -Force
+          $node = "C:\Program Files\nodejs\node.exe"
 
-            Write-Host "Service restarted."
+          $app = "C:\inetpub\wwwroot\Construction_ERP\server\https.js"
 
-          } else {
+          $appDir = "C:\inetpub\wwwroot\Construction_ERP\server"
 
-            $nssm = "C:\Windows\System32\nssm.exe"
+          if (Get-Service -Name $serviceName -ErrorAction SilentlyContinue) {
 
-            $node = "C:\Program Files\nodejs\node.exe"
+              Write-Host "Restarting existing service..."
 
-            $app = "C:\inetpub\wwwroot\Construction_ERP\server\https.js"
+              Restart-Service $serviceName -Force
 
-            $dir = "C:\inetpub\wwwroot\Construction_ERP\server"
+              Start-Sleep -Seconds 5
 
-            & $nssm install $service $node $app
+              Write-Host "Service restarted successfully."
 
-            & $nssm set $service AppDirectory $dir
+          }
+          else {
 
-            & $nssm set $service Start SERVICE_AUTO_START
+              Write-Host "Creating NSSM service..."
 
-            & $nssm start $service
+              & $nssm install $serviceName $node $app
+
+              & $nssm set $serviceName AppDirectory $appDir
+
+              & $nssm set $serviceName Start SERVICE_AUTO_START
+
+              & $nssm set $serviceName AppStdout "$appDir\nssm-out.log"
+
+              & $nssm set $serviceName AppStderr "$appDir\nssm-err.log"
+
+              & $nssm start $serviceName
+
+              Write-Host "Service created successfully."
           }
 
       # -------------------------------------------------
-      # 8️⃣ INSTALL FRONTEND PACKAGES
+      # 8️⃣ Install Frontend Dependencies
       # -------------------------------------------------
       - name: Install frontend dependencies
         shell: powershell
         run: |
           cd $env:GITHUB_WORKSPACE
 
+          Write-Host "Installing frontend packages..."
+
           npm ci --legacy-peer-deps
 
       # -------------------------------------------------
-      # 9️⃣ BUILD FRONTEND
+      # 9️⃣ Build Frontend
       # -------------------------------------------------
       - name: Build frontend
         shell: powershell
@@ -131,26 +160,44 @@ jobs:
           $env:CI = "false"
           $env:GENERATE_SOURCEMAP = "false"
 
+          Write-Host "Building frontend..."
+
           npm run build
 
       # -------------------------------------------------
-      # 🔟 DEPLOY FRONTEND
+      # 🔟 Deploy Frontend to IIS
       # -------------------------------------------------
       - name: Deploy frontend to IIS
         shell: powershell
         run: |
           $src = "$env:GITHUB_WORKSPACE\build"
-
           $dest = "C:\inetpub\wwwroot\Construction_ERP\build"
+
+          if (!(Test-Path $src)) {
+            Write-Error "Frontend build folder not found."
+            exit 1
+          }
+
+          Write-Host "Deploying frontend build..."
 
           robocopy $src $dest /MIR /XF web.config
 
-          if ($LASTEXITCODE -gt 7) {
-            exit $LASTEXITCODE
+          $code = $LASTEXITCODE
+
+          Write-Host "Robocopy Exit Code: $code"
+
+          # SUCCESS CODES
+          if ($code -le 7) {
+            Write-Host "Frontend deployment successful."
+            exit 0
+          }
+          else {
+            Write-Error "Frontend deployment failed."
+            exit $code
           }
 
       # -------------------------------------------------
-      # 1️⃣1️⃣ CAPTURE JOB END TIME
+      # 1️⃣1️⃣ Capture Job End Time
       # -------------------------------------------------
       - name: Capture Job End Time
         if: always()
