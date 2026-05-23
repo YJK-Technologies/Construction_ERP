@@ -15,7 +15,7 @@ import { showConfirmationToast } from "../ToastConfirmation";
 import PoCustomerPopup from "../SalesVendorPopup";
 import PoVendorPopup from "../PurchaseVendorPopup";
 import LoadingScreen from "../Loading";
-import ObPopup from '../OBPopup';
+import ObPopup from "../OBPopup";
 
 const config = require("../Apiconfig");
 
@@ -29,19 +29,20 @@ function Openingbalance() {
 
     return `${startYear}-04-01`;
   };
-const [rowData, setRowData] = useState([
-  {
-    serialNumber: 1,
-    TransactionNo: "",
-    entry_date: getFinancialYearDate(),
-    party_type: "",
-    party_code: "",
-    itemName: "",
-    balance_type: "",
-    opening_amount: "",
-    remarks: "",
-  },
-]);  const [gridApi, setGridApi] = useState(null);
+  const [rowData, setRowData] = useState([
+    {
+      serialNumber: 1,
+      TransactionNo: "",
+      entry_date: getFinancialYearDate(),
+      party_type: "",
+      party_code: "",
+      itemName: "",
+      balance_type: "",
+      opening_amount: "",
+      remarks: "",
+    },
+  ]);
+  const [gridApi, setGridApi] = useState(null);
   const [gridColumnApi, setGridColumnApi] = useState(null);
   const [transaction_date, settransaction_date] = useState("");
   const [transaction_no, settransaction_no] = useState("");
@@ -60,6 +61,9 @@ const [rowData, setRowData] = useState([
   const [partyDrop, setPartyDrop] = useState([]);
   const [selectedParty, setSelectedParty] = useState(null);
   const [balance_typeDrop, setbalance_typeDrop] = useState([]);
+  const [isExistingData, setIsExistingData] = useState(false);
+  const [showStatusColumn, setShowStatusColumn] = useState(false);
+  const [statusdrop, setStatusdrop] = useState([]);
 
   //code added by Harish purpose of set user permisssion
   const permissions = JSON.parse(sessionStorage.getItem("permissions")) || {};
@@ -76,25 +80,36 @@ const [rowData, setRowData] = useState([
     settransaction_date(financialYearStartDate);
   }, []);
 
-const handleClickOpen = (params) => {
-  const GlobalSerialNumber = params.data.serialNumber;
-  setGlobal(GlobalSerialNumber);
+  const handleClickOpen = (params) => {
+    const GlobalSerialNumber = params.data.serialNumber;
+    setGlobal(GlobalSerialNumber);
 
-  const selectedPartType = params.data.party_type;
+    const selectedPartType = params.data.party_type;
 
-  if (!selectedPartType) {
-    toast.warning("Please select Party Type");
-    return;
-  }
+    if (!selectedPartType) {
+      toast.warning("Please select Party Type");
+      return;
+    }
 
-  if (selectedPartType === "Customer") {
-    setOpen2(true);
-  } 
-  else if (selectedPartType === "Vendor") {
-    setOpen4(true);
-  } 
-  else {
-    toast.warning("Invalid Party Type Selected");
+    if (selectedPartType === "Customer") {
+      setOpen2(true);
+    } else if (selectedPartType === "Vendor") {
+      setOpen4(true);
+    } else {
+      toast.warning("Invalid Party Type Selected");
+    }
+  };
+
+  const getFinancialYear = () => {
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = today.getMonth() + 1; // 1-12
+
+  // FY starts April 1
+  if (month >= 4) {
+    return `${year}-${year + 1}`;
+  } else {
+    return `${year - 1}-${year}`;
   }
 };
 
@@ -134,35 +149,89 @@ const handleClickOpen = (params) => {
   //   setOpen4(false);
   // };
 
-  const handleDelete = (params) => {
-    const serialNumberToDelete = params.data.serialNumber;
-    const updatedRowData = rowData.filter(
-      (row) => row.serialNumber !== serialNumberToDelete,
-    );
-    setRowData(updatedRowData);
+  const handleUpdateRow = async (row) => {
+    try {
+    const payload = {
+      mode: "U",
+      transaction_no: row.TransactionNo || row.transaction_no,
+      financial_year: getFinancialYear(),
+      entry_date: row.entry_date,
+      party_type: row.party_type,
+      party_code: row.party_code,
+      keyfield: row.keyfield,
+      opening_amount: parseFloat(row.opening_amount),
+      balance_type: row.balance_type,
+      remarks: row.remarks,
+      status: row.status,
+      data_deleted: false,
 
-    if (updatedRowData.length === 0) {
-      const newRow = {
-        serialNumber: 1,
-        entry_date: getFinancialYearDate(),
-        itemCode: "",
-        itemName: "",
-        Hsn: "",
-        purchaseQty: "",
-        baseuom: "",
-        purchaseAmt: "",
-        TotalItemAmount: "",
-      };
-      setRowData([newRow]);
+      company_code: sessionStorage.getItem("selectedCompanyCode"), // 🔥 FIX
+      created_by: sessionStorage.getItem("selectedUserCode"),      // 🔥 FIX
+      created_date: new Date(),
+      modified_by: sessionStorage.getItem("selectedUserCode"),
+      modified_date: new Date(),
+    };
+
+    console.log("UPDATE PAYLOAD:", payload);
+
+    const response = await fetch(
+      `${config.apiBaseUrl}/opening_balanceLoopUpdate`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ opening_balanceData: [payload] }),
+      }
+    );
+
+    const data = await response.json();
+
+    if (response.ok) {
+      toast.success("Updated Successfully");
     } else {
-      const updatedRowDataWithNewSerials = updatedRowData.map((row, index) => ({
-        ...row,
-        serialNumber: index + 1,
-      }));
-      setRowData(updatedRowDataWithNewSerials);
+      toast.error(data.message || "Update Failed");
+    }
+    } catch (err) {
+      console.error(err);
+      toast.error("Error updating row");
     }
   };
 
+  const handleDeleteRow = async (row) => {
+    try {
+      console.log("Delete Row :", row);
+      // toast.warning(`Delete clicked for ${row.party_code}`);
+      // later API call here
+      const response = await fetch(
+        `${config.apiBaseUrl}/opening_balanceLoopDelete`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            opening_balanceData: [row],
+          }),
+        },
+      );
+
+      const data = await response.json();
+
+      if (response.ok) {
+        toast.success("Row Deleted Successfully");
+
+        const updatedRows = rowData.filter(
+          (item) => item.serialNumber !== row.serialNumber,
+        );
+
+        setRowData(updatedRows);
+      } else {
+        toast.error(data.message || "Delete Failed");
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Error while deleting row");
+    }
+  };
   const filteredOptionParty = Array.isArray(partyDrop)
     ? partyDrop.map((option) => ({
         value: option.descriptions,
@@ -223,152 +292,217 @@ const handleClickOpen = (params) => {
       .catch((error) => console.error("Error fetching data:", error));
   }, []);
 
-const columnDefs = useMemo(
-  () => [
-    {
-      headerName: "S.No",
-      field: "serialNumber",
-      maxWidth: 80,
-      sortable: false,
-      editable: false,
-    },
-    {
-      headerName: "",
-      field: "delete",
-      editable: false,
-      maxWidth: 25,
-      tooltipValueGetter: () => "Delete",
-      onCellClicked: handleDelete,
-      cellRenderer: function () {
-        return (
-          <FontAwesomeIcon
-            icon="fa-solid fa-trash"
-            style={{ cursor: "pointer", marginRight: "12px" }}
-          />
-        );
+  const filteredOptionStatus = statusdrop.map((option) => ({
+    value: option.attributedetails_name,
+    label: option.attributedetails_name,
+  }));
+
+  useEffect(() => {
+    const company_code = sessionStorage.getItem('selectedCompanyCode');
+
+    fetch(`${config.apiBaseUrl}/status`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
       },
-      cellStyle: {
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
+      body: JSON.stringify({ company_code })
+    })
+      .then((data) => data.json())
+      .then((val) => setStatusdrop(val))
+      .catch((error) => console.error('Error fetching data:', error));
+  }, []);
+
+  const columnDefs = useMemo(
+    () => [
+      {
+        headerName: "S.No",
+        field: "serialNumber",
+        maxWidth: 80,
+        sortable: false,
+        editable: false,
       },
-      sortable: false,
-    },
-    {
-      headerName: "Transaction No",
-      field: "TransactionNo",
-      sortable: false,
-      editable: false,
-    },
-    {
-      headerName: "Transaction Date",
-      field: "entry_date",
-      sortable: false,
-      editable: false,
-      valueFormatter: (params) => {
-        if (!params.value) return "";
-
-        const date = new Date(params.value);
-
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, "0");
-        const day = String(date.getDate()).padStart(2, "0");
-
-        return `${year}-${month}-${day}`;
+      {
+        headerName: "Transaction No",
+        field: "TransactionNo",
+        sortable: false,
+        editable: false,
+        hide: true,
       },
-    },
-    {
-      headerName: "Part Type",
-      field: "party_type",
-      editable: !showAsterisk,
-      filter: true,
-      sortable: false,
-      cellEditor: "agSelectCellEditor",
-      cellEditorParams: {
-        values: partTypeOptions,
-      },
-      singleClickEdit: true,
-    },
-    {
-      headerName: "Party Code",
-      field: "party_code",
-      editable: false,
-      filter: true,
-      sortable: false,
-      cellRenderer: (params) => {
-        const cellWidth = params.column.getActualWidth();
-        const showSearchIcon = cellWidth > 30;
-
-        return (
-          <div
-            className="position-relative d-flex align-items-center"
-            style={{ minHeight: "100%" }}
-          >
-            <div className="flex-grow-1">
-              {params.value}
-            </div>
-
-            {showSearchIcon && (
-              <span
-                className="icon searchIcon"
-                style={{
-                  position: "absolute",
-                  right: "-10px",
-                  top: "50%",
-                  transform: "translateY(-50%)",
-                }}
-                onClick={() => handleClickOpen(params)}
+      {
+        headerName: "Action",
+        field: "action",
+        hide: !isExistingData,
+        editable: false,
+        sortable: false,
+        filter: false,
+        minWidth: 140,
+        cellRenderer: (params) => {
+          return (
+            <div className="d-flex gap-2 mt-1">
+              <button
+                className="btn btn-sm btn-primary"
+                onClick={() => handleUpdateRow(params.data)}
               >
-                <i className="fa fa-search"></i>
-              </span>
-            )}
-          </div>
-        );
-      },
-    },
-    {
-      headerName: "Party Name",
-      field: "itemName",
-      editable: false,
-      sortable: false,
-      filter: true,
-    },
-    {
-      headerName: "Balance Type",
-      field: "balance_type",
-      editable: !showAsterisk,
-      filter: true,
-      sortable: false,
-      cellEditor: "agSelectCellEditor",
-      cellEditorParams: {
-        values: balanceTypeOptions,
-      },
-      singleClickEdit: true,
-      valueFormatter: (params) => {
-        const selected = filteredOptionBT.find(
-          (item) => item.value === params.value,
-        );
+                Update
+              </button>
 
-        return selected ? selected.label : params.value;
+              <button
+                className="btn btn-sm btn-danger"
+                onClick={() => handleDeleteRow(params.data)}
+              >
+                Delete
+              </button>
+            </div>
+          );
+        },
       },
-    },
-    {
-      headerName: "Opening Amount",
-      field: "opening_amount",
-      editable: !showAsterisk,
-      filter: true,
-      sortable: false,
-    },
-    {
-      headerName: "Remarks",
-      field: "remarks",
-      editable: !showAsterisk,
-      filter: true,
-      sortable: false,
-    },
-  ],
-  [partyDrop, showAsterisk]
-);
+      {
+        headerName: "Transaction Date",
+        field: "entry_date",
+        sortable: false,
+        hide: true,
+        editable: false,
+        valueFormatter: (params) => {
+          if (!params.value) return "";
+
+          const date = new Date(params.value);
+
+          const year = date.getFullYear();
+          const month = String(date.getMonth() + 1).padStart(2, "0");
+          const day = String(date.getDate()).padStart(2, "0");
+
+          return `${year}-${month}-${day}`;
+        },
+      },
+      {
+        headerName: "Party Type",
+        field: "party_type",
+        editable: !showAsterisk,
+        filter: true,
+        sortable: false,
+        cellEditor: "agSelectCellEditor",
+        cellEditorParams: {
+          values: partTypeOptions,
+        },
+        singleClickEdit: true,
+      },
+      {
+        headerName: "Party Code",
+        field: "party_code",
+        editable: true,
+        filter: true,
+        sortable: false,
+        cellRenderer: (params) => {
+          const cellWidth = params.column.getActualWidth();
+          const showSearchIcon = cellWidth > 30;
+
+          return (
+            <div
+              className="position-relative d-flex align-items-center"
+              style={{ minHeight: "100%" }}
+            >
+              <div className="flex-grow-1">{params.value}</div>
+
+              {showSearchIcon && (
+                <span
+                  className="icon searchIcon"
+                  style={{
+                    position: "absolute",
+                    right: "-10px",
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                  }}
+                  onClick={() => handleClickOpen(params)}
+                >
+                  <i className="fa fa-search"></i>
+                </span>
+              )}
+            </div>
+          );
+        },
+      },
+      {
+        headerName: "Party Name",
+        field: "itemName",
+        editable: false,
+        sortable: false,
+        filter: true,
+      },
+      {
+        headerName: "Balance Type",
+        field: "balance_type",
+        editable: !showAsterisk,
+        filter: true,
+        sortable: false,
+        cellEditor: "agSelectCellEditor",
+        cellEditorParams: {
+          values: balanceTypeOptions,
+        },
+        singleClickEdit: true,
+        valueFormatter: (params) => {
+          const selected = filteredOptionBT.find(
+            (item) => item.value === params.value,
+          );
+
+          return selected ? selected.label : params.value;
+        },
+      },
+      {
+        headerName: "Opening Amount",
+        field: "opening_amount",
+        editable: !showAsterisk,
+        filter: true,
+        sortable: false,
+      },
+      {
+        headerName: "Remarks",
+        field: "remarks",
+        editable: !showAsterisk,
+        filter: true,
+        sortable: false,
+      },
+      {
+        headerName: "Financial Year",
+        field: "financial_year",
+        editable: !showAsterisk,
+        filter: true,
+        hide: true,
+        sortable: false,
+      },
+      {
+        headerName: "Keyfield",
+        field: "keyfield",
+        editable: !showAsterisk,
+        filter: true,
+        hide: true,
+        sortable: false,
+      },
+      {
+        headerName: "Status",
+        field: "status",
+        hide: !showStatusColumn, // 👈 KEY FIX
+        editable: !showAsterisk,
+        filter: true,
+        sortable: false,
+
+        cellEditor: "agSelectCellEditor",
+        cellEditorParams: {
+          values: statusdrop.map((opt) => opt.attributedetails_name),
+        },
+
+        singleClickEdit: true,
+
+        valueFormatter: (params) => {
+          const selected = filteredOptionStatus.find(
+            (item) => item.value === params.value,
+          );
+
+          return selected ? selected.label : params.value;
+        },
+      },
+    ],
+    [partyDrop, showAsterisk, isExistingData, statusdrop, showStatusColumn],
+  );
 
   const handleItemCode = async (params) => {
     setLoading(true);
@@ -467,33 +601,33 @@ const columnDefs = useMemo(
     setGridColumnApi(params.columnApi);
   };
 
-const handleCellValueChanged = (params) => {
-  const { colDef, rowIndex, newValue } = params;
+  const handleCellValueChanged = (params) => {
+    const { colDef, rowIndex, newValue } = params;
 
-  const lastRowIndex = rowData.length - 1;
+    const lastRowIndex = rowData.length - 1;
 
-  if (colDef.field === "opening_amount") {
-    const amount = parseFloat(newValue);
+    if (colDef.field === "opening_amount") {
+      const amount = parseFloat(newValue);
 
-    if (amount > 0 && rowIndex === lastRowIndex) {
-      const serialNumber = rowData.length + 1;
+      if (amount > 0 && rowIndex === lastRowIndex) {
+        const serialNumber = rowData.length + 1;
 
-      const newRowData = {
-        serialNumber,
-        TransactionNo: "",
-        entry_date: getFinancialYearDate(),
-        party_type: "",
-        party_code: "",
-        itemName: "",
-        balance_type: "",
-        opening_amount: "",
-        remarks: "",
-      };
+        const newRowData = {
+          serialNumber,
+          TransactionNo: "",
+          entry_date: getFinancialYearDate(),
+          party_type: "",
+          party_code: "",
+          itemName: "",
+          balance_type: "",
+          opening_amount: "",
+          remarks: "",
+        };
 
-      setRowData((prevRowData) => [...prevRowData, newRowData]);
+        setRowData((prevRowData) => [...prevRowData, newRowData]);
+      }
     }
-  }
-};
+  };
 
   // const handleSaveButtonClick = async () => {
   //   if (!transaction_date) {
@@ -550,86 +684,84 @@ const handleCellValueChanged = (params) => {
   //   }
   // };
 
-const handleSave = async () => {
-  try {
-    setLoading(true);
+  const handleSave = async () => {
+    try {
+      setLoading(true);
 
-    const opening_balanceData = rowData
-      .filter(
-        (row) =>
-          row.party_code &&
-          row.party_type &&
-          row.opening_amount &&
-          row.balance_type
-      )
-      .map((row) => ({
-        transaction_no: "",
-        financial_year: "2026-2027",
-        entry_date: row.entry_date,
-        party_type: row.party_type,
-        party_code: row.party_code,
-        keyfield: "",
-        opening_amount: parseFloat(row.opening_amount),
-        balance_type: row.balance_type,
-        remarks: row.remarks || "",
-        status: "Active",
-        data_deleted: false,
-        company_code:
-          sessionStorage.getItem("selectedCompanyCode"),
-        created_by:
-          sessionStorage.getItem("selectedUserCode"),
-        created_date: new Date(),
-        modified_by: "",
-        modified_date: null,
-      }));
+      const opening_balanceData = rowData
+        .filter(
+          (row) =>
+            row.party_code &&
+            row.party_type &&
+            row.opening_amount &&
+            row.balance_type,
+        )
+        .map((row) => ({
+          transaction_no: "",
+          financial_year: getFinancialYear(),
+          entry_date: row.entry_date,
+          party_type: row.party_type,
+          party_code: row.party_code,
+          keyfield: "",
+          opening_amount: parseFloat(row.opening_amount),
+          balance_type: row.balance_type,
+          remarks: row.remarks || "",
+          status: "Active",
+          data_deleted: false,
+          company_code: sessionStorage.getItem("selectedCompanyCode"),
+          created_by: sessionStorage.getItem("selectedUserCode"),
+          created_date: new Date(),
+          modified_by: "",
+          modified_date: null,
+        }));
 
-    console.log("Payload :", opening_balanceData);
+      console.log("Payload :", opening_balanceData);
 
-    if (opening_balanceData.length === 0) {
-      toast.warning("Please enter grid data");
-      return;
-    }
-
-    const response = await fetch(
-      `${config.apiBaseUrl}/opening_balanceLoopInsert`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          opening_balanceData,
-        }),
+      if (opening_balanceData.length === 0) {
+        toast.warning("Please enter grid data");
+        return;
       }
-    );
 
-    const data = await response.json();
+      const response = await fetch(
+        `${config.apiBaseUrl}/opening_balanceLoopInsert`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            opening_balanceData,
+          }),
+        },
+      );
 
-    console.log("Response :", data);
+      const data = await response.json();
 
-    if (response.ok) {
-      toast.success("Data Inserted Successfully");
+      console.log("Response :", data);
 
-      // set generated transaction no
-      settransaction_no(data.transaction_no);
+      if (response.ok) {
+        toast.success("Data Inserted Successfully");
 
-      // update grid transaction no
-      const updatedRows = rowData.map((row) => ({
-        ...row,
-        TransactionNo: data.transaction_no,
-      }));
+        // set generated transaction no
+        settransaction_no(data.transaction_no);
 
-      setRowData(updatedRows);
-    } else {
-      toast.error(data.message || "Insert Failed");
+        // update grid transaction no
+        const updatedRows = rowData.map((row) => ({
+          ...row,
+          TransactionNo: data.transaction_no,
+        }));
+
+        setRowData(updatedRows);
+      } else {
+        toast.error(data.message || "Insert Failed");
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Error while saving");
+    } finally {
+      setLoading(false);
     }
-  } catch (error) {
-    console.error(error);
-    toast.error("Error while saving");
-  } finally {
-    setLoading(false);
-  }
-};
+  };
   const OpeningItemDetails = async (transaction_no) => {
     try {
       const validRows = rowData.filter(
@@ -878,31 +1010,47 @@ const handleSave = async () => {
     setOpen(true);
   };
 
-  const handleOI = async (data) => {
-    if (data && data.length > 0) {
-      setSaveButtonVisible(false);
-      setShowAsterisk(true);
-      const [{ transactionNo, transactionDate }] = data;
+  const handleOb = (selectedData) => {
+    const formattedData = selectedData.map((item, index) => ({
+      serialNumber: index + 1,
 
-      const No = document.getElementById("transactionNO");
-      if (No) {
-        No.value = transactionNo;
-        settransaction_no(transactionNo);
-      } else {
-        console.error("transactionNO element not found");
-      }
+      TransactionNo: item.transaction_no,
+      entry_date: item.entry_date,
+      party_type: item.party_type,
+      party_code: item.party_code,
+      opening_amount: item.opening_amount,
+      balance_type: item.balance_type,
+      remarks: item.remarks,
+      keyfield: item.keyfield,
+      status: item.status,
+    }));
 
-      const Date = document.getElementById("transactionDate");
-      if (Date) {
-        Date.value = transactionDate;
-        settransaction_date(formatDate(transactionDate));
-      } else {
-        console.error("transactionDate element not found");
-      }
+    setRowData(formattedData);
+  };
 
-      await OpeningBalanceDetail(transactionNo);
-    } else {
-      console.log("Data not fetched...!");
+  const handleOI = (selectedData) => {
+    setIsExistingData(true);
+
+    if (selectedData && selectedData.length > 0) {
+      const formattedData = selectedData.map((item, index) => ({
+        serialNumber: index + 1,
+
+        TransactionNo: item.transaction_no,
+        entry_date: item.entry_date,
+        party_type: item.party_type,
+        party_code: item.party_code,
+        itemName: item.party_code, // keep same behavior
+        balance_type: item.balance_type,
+        opening_amount: item.opening_amount,
+        financial_year: item.financial_year,
+        keyfield: item.keyfield,
+        remarks: item.remarks,
+        status: item.status,
+      }));
+
+      settransaction_no(selectedData[0].transaction_no);
+      setRowData(formattedData);
+      setShowStatusColumn(true);
     }
   };
 
@@ -924,17 +1072,20 @@ const handleSave = async () => {
 
       if (response.ok) {
         const searchData = await response.json();
-        const newRowData = [];
-        searchData.forEach((item) => {
-          const { Item_SNo, Item_code, Item_name, bill_qty } = item;
-          newRowData.push({
-            serialNumber: Item_SNo,
-            entry_date: formatDate(item.transaction_date),
-            itemCode: Item_code,
-            itemName: Item_name,
-            billQty: bill_qty,
-          });
-        });
+        const newRowData = searchData.map((item, index) => ({
+          serialNumber: index + 1,
+          TransactionNo: item.transaction_no,
+          entry_date: formatDate(item.entry_date),
+          party_type: item.party_type,
+          party_code: item.party_code,
+          itemName: item.party_code, // temporary
+          balance_type: item.balance_type,
+          opening_amount: item.opening_amount,
+          remarks: item.remarks,
+          keyfield: item.keyfield,
+          status: item.status,
+        }));
+
         setRowData(newRowData);
       } else if (response.status === 404) {
         console.log("Data not found");
@@ -947,6 +1098,7 @@ const handleSave = async () => {
   };
 
   const handleReload = () => {
+    setIsExistingData(false);
     window.location.reload();
   };
 
@@ -969,35 +1121,35 @@ const handleSave = async () => {
     // }
   };
 
-const handleCustomerSelect = (selectedData) => {
-  const updatedRowData = [...rowData];
+  const handleCustomerSelect = (selectedData) => {
+    const updatedRowData = [...rowData];
 
-  if (selectedData.length > 0) {
-    updatedRowData[global - 1] = {
-      ...updatedRowData[global - 1],
-      party_code: selectedData[0].CustomerCode,
-      itemName: selectedData[0].CustomerName,
-    };
-  }
+    if (selectedData.length > 0) {
+      updatedRowData[global - 1] = {
+        ...updatedRowData[global - 1],
+        party_code: selectedData[0].CustomerCode,
+        itemName: selectedData[0].CustomerName,
+      };
+    }
 
-  setRowData(updatedRowData);
-  setOpen2(false);
-};
+    setRowData(updatedRowData);
+    setOpen2(false);
+  };
 
-const handleVendorSelect = (selectedData) => {
-  const updatedRowData = [...rowData];
+  const handleVendorSelect = (selectedData) => {
+    const updatedRowData = [...rowData];
 
-  if (selectedData.length > 0) {
-    updatedRowData[global - 1] = {
-      ...updatedRowData[global - 1],
-      party_code: selectedData[0].VendorCode,
-      itemName: selectedData[0].VendorName,
-    };
-  }
+    if (selectedData.length > 0) {
+      updatedRowData[global - 1] = {
+        ...updatedRowData[global - 1],
+        party_code: selectedData[0].VendorCode,
+        itemName: selectedData[0].VendorName,
+      };
+    }
 
-  setRowData(updatedRowData);
-  setOpen4(false);
-};
+    setRowData(updatedRowData);
+    setOpen4(false);
+  };
   return (
     <div className="container-fluid Topnav-screen">
       {loading && <LoadingScreen />}
@@ -1166,11 +1318,6 @@ const handleVendorSelect = (selectedData) => {
             />
           </div>
           <div>
-            <OIPopup
-              open={open}
-              handleClose={handleClose}
-              handleOb={handleOI}
-            />
             <PurchaseItemPopup
               open={open1}
               handleClose={handleClose}
@@ -1186,7 +1333,11 @@ const handleVendorSelect = (selectedData) => {
               handleClose={handleClose}
               handleVendor={handleVendorSelect}
             />
-            <ObPopup open={open} handleClose={handleClose}/>
+            <ObPopup
+              open={open}
+              handleClose={handleClose}
+              handleOb={handleOI}
+            />
           </div>
         </div>
       </div>

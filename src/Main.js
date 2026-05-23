@@ -152,6 +152,9 @@ import ClientInfo from "./ClientInfo.js";
 import ADDClientInfo from "./AddClientInfo.js";
 import Payment from "./Payment.js";
 import Openingbalance from "./Transaction/Openingbalance.js";
+import SiteMaster from "./SiteGrid.js";
+import AddSiteMaster from "./AddSiteMaster.js";
+import SiteWarehouse from "./siteWarehouseMapping.js";
 import Expenses from "./Expenses.js";
 
 function Main() {
@@ -338,6 +341,9 @@ function Main() {
      { path: "/ClientInfo", component: <ClientInfo /> },
      { path: "/ADDClientInfo", component: <ADDClientInfo /> },
      { path: "/Payment", component: <Payment /> },
+     { path: "/AddSiteMaster", component: <AddSiteMaster /> },
+     { path: "/SiteMaster", component: <SiteMaster /> },
+     { path: "/SiteWarehouse", component: <SiteWarehouse /> },
      { path: "/Expenses", component: <Expenses /> },
   ];
  
