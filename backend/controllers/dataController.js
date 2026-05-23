@@ -35991,6 +35991,320 @@ const getbalance_type = async (req, res) => {
 };
 //code ended by sakthi on 05-21-26
 
+//code added by sakthi on 05-22-26
+// Auto-generated Node.js CRUD for sp_opening_balance
+
+const opening_balanceInsert = async (req, res) => {
+  const {
+  transaction_no, financial_year, entry_date, party_type, party_code, keyfield, opening_amount, balance_type, remarks, status, data_deleted,
+  created_date,
+  modified_date,
+  created_by,
+  modified_by,
+  company_code
+} = req.body;
+
+  try {
+    const pool = await sql.connect(dbConfig);
+    await pool.request()
+      .input("mode", sql.NVarChar, "I")
+      .input("transaction_no", sql.NVarChar, transaction_no)
+      .input("financial_year", sql.NVarChar, financial_year)
+      .input("entry_date", sql.Date, entry_date)
+      .input("party_type", sql.NVarChar, party_type)
+      .input("party_code", sql.NVarChar, party_code)
+      .input("keyfield", sql.NVarChar, keyfield)
+      .input("opening_amount", sql.Decimal(18, 2), opening_amount)
+      .input("balance_type", sql.NVarChar, balance_type)
+      .input("remarks", sql.NVarChar, remarks)
+      .input("status", sql.NVarChar, status)
+      .input("data_deleted", sql.Bit, data_deleted)
+      .input("company_code", sql.NVarChar, company_code)
+      .input("created_by", sql.NVarChar, created_by)
+      .input("created_date", sql.DateTime, created_date)
+      .input("modified_by", sql.NVarChar, modified_by)
+      .input("modified_date", sql.DateTime, modified_date)
+      .query(`EXEC sp_opening_balance @mode, @transaction_no, @financial_year, @entry_date, @party_type, @party_code, @keyfield, @opening_amount, @balance_type, @remarks, @status, @data_deleted, @company_code, @created_by, @created_date, @modified_by, @modified_date`);
+
+    res.status(200).json({ success: true, message: "opening_balance insertd successfully" });
+  } catch (err) {
+    console.error("Error during opening_balance insert:", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+};
+
+const opening_balanceUpdate = async (req, res) => {
+  const {
+  transaction_no, financial_year, entry_date, party_type, party_code, keyfield, opening_amount, balance_type, remarks, status, data_deleted,
+  created_date,
+  modified_date,
+  created_by,
+  modified_by,
+  company_code
+} = req.body;
+
+  try {
+    const pool = await sql.connect(dbConfig);
+    await pool.request()
+      .input("mode", sql.NVarChar, "U")
+      .input("transaction_no", sql.NVarChar, transaction_no)
+      .input("financial_year", sql.NVarChar, financial_year)
+      .input("entry_date", sql.Date, entry_date)
+      .input("party_type", sql.NVarChar, party_type)
+      .input("party_code", sql.NVarChar, party_code)
+      .input("keyfield", sql.NVarChar, keyfield)
+      .input("opening_amount", sql.Decimal(18, 2), opening_amount)
+      .input("balance_type", sql.NVarChar, balance_type)
+      .input("remarks", sql.NVarChar, remarks)
+      .input("status", sql.NVarChar, status)
+      .input("data_deleted", sql.Bit, data_deleted)
+      .input("company_code", sql.NVarChar, company_code)
+      .input("created_by", sql.NVarChar, created_by)
+      .input("created_date", sql.DateTime, created_date)
+      .input("modified_by", sql.NVarChar, modified_by)
+      .input("modified_date", sql.DateTime, modified_date)
+      .query(`EXEC sp_opening_balance @mode, @transaction_no, @financial_year, @entry_date, @party_type, @party_code, @keyfield, @opening_amount, @balance_type, @remarks, @status, @data_deleted, @company_code, @created_by, @created_date, @modified_by, @modified_date`);
+
+    res.status(200).json({ success: true, message: "opening_balance updated successfully" });
+  } catch (err) {
+    console.error("Error during opening_balance update:", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+};
+
+const opening_balanceDelete = async (req, res) => {
+  const {
+  transaction_no, financial_year, entry_date, party_type, party_code, keyfield, opening_amount, balance_type, remarks, status, data_deleted,
+  created_date,
+  modified_date,
+  created_by,
+  modified_by,
+  company_code
+} = req.body;
+
+  try {
+    const pool = await sql.connect(dbConfig);
+    await pool.request()
+      .input("mode", sql.NVarChar, "D")
+      .input("transaction_no", sql.NVarChar, transaction_no)
+      .input("financial_year", sql.NVarChar, financial_year)
+      .input("entry_date", sql.Date, entry_date)
+      .input("party_type", sql.NVarChar, party_type)
+      .input("party_code", sql.NVarChar, party_code)
+      .input("keyfield", sql.NVarChar, keyfield)
+      .input("opening_amount", sql.Decimal(18, 2), opening_amount)
+      .input("balance_type", sql.NVarChar, balance_type)
+      .input("remarks", sql.NVarChar, remarks)
+      .input("status", sql.NVarChar, status)
+      .input("data_deleted", sql.Bit, data_deleted)
+      .input("company_code", sql.NVarChar, company_code)
+      .input("created_by", sql.NVarChar, created_by)
+      .input("created_date", sql.DateTime, created_date)
+      .input("modified_by", sql.NVarChar, modified_by)
+      .input("modified_date", sql.DateTime, modified_date)
+      .query(`EXEC sp_opening_balance @mode, @transaction_no, @financial_year, @entry_date, @party_type, @party_code, @keyfield, @opening_amount, @balance_type, @remarks, @status, @data_deleted, @company_code, @created_by, @created_date, @modified_by, @modified_date`);
+
+    res.status(200).json({ success: true, message: "opening_balance deleted successfully" });
+  } catch (err) {
+    console.error("Error during opening_balance delete:", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+};
+//code Ended by sakthi on 05-22-26
+
+//code added by sakthi on 05-22-26
+// ---------- HEADER LOOP CRUD ----------
+// Auto-generated opening_balanceLoopInsert API for sp_opening_balance
+// const opening_balanceLoopInsert = async (req, res) => {
+//   const opening_balanceData = req.body.opening_balanceData;
+//   if (!opening_balanceData || !opening_balanceData.length) {
+//     return res.status(400).json("Invalid or empty opening_balanceData array.");
+//   }
+
+//   try {
+//     const pool = await sql.connect(dbConfig);
+//     for (const item of opening_balanceData) {
+//       await pool.request()
+//         .input("mode", sql.NVarChar, "I")
+//         .input("transaction_no", sql.NVarChar, item.transaction_no)
+//         .input("financial_year", sql.NVarChar, item.financial_year)
+//         .input("entry_date", sql.Date, item.entry_date)
+//         .input("party_type", sql.NVarChar, item.party_type)
+//         .input("party_code", sql.NVarChar, item.party_code)
+//         .input("keyfield", sql.NVarChar, item.keyfield)
+//         .input("opening_amount", sql.Decimal(18, 2), item.opening_amount)
+//         .input("balance_type", sql.NVarChar, item.balance_type)
+//         .input("remarks", sql.NVarChar, item.remarks)
+//         .input("status", sql.NVarChar, item.status)
+//         .input("data_deleted", sql.Bit, item.data_deleted)
+//         .input("company_code", sql.NVarChar, item.company_code)
+//         .input("created_by", sql.NVarChar, item.created_by)
+//         .input("created_date", sql.DateTime, item.created_date)
+//         .input("modified_by", sql.NVarChar, item.modified_by)
+//         .input("modified_date", sql.DateTime, item.modified_date)
+//         .query(`EXEC sp_opening_balance @mode, @transaction_no, @financial_year, @entry_date, @party_type, @party_code, @keyfield, @opening_amount, @balance_type, @remarks, @status, @data_deleted, @company_code, @created_by, @created_date, @modified_by, @modified_date`);
+//     }
+//     res.status(200).json("opening_balance data inserted successfully");
+//   } catch (err) {
+//     console.error("Error in opening_balanceLoopInsert:", err);
+//     res.status(500).json({ message: err.message || "Internal Server Error" });
+//   }
+// };
+const opening_balanceLoopInsert = async (req, res) => {
+  const opening_balanceData = req.body.opening_balanceData;
+
+  if (!opening_balanceData || !opening_balanceData.length) {
+    return res
+      .status(400)
+      .json({ message: "Invalid or empty opening_balanceData array." });
+  }
+
+  try {
+    const pool = await sql.connect(dbConfig);
+
+    let generatedTransactionNo = "";
+
+    for (const item of opening_balanceData) {
+      const result = await pool
+        .request()
+        .input("mode", sql.NVarChar, "I")
+        .input("transaction_no", sql.NVarChar, "")
+        .input("financial_year", sql.NVarChar, item.financial_year)
+        .input("entry_date", sql.Date, item.entry_date)
+        .input("party_type", sql.NVarChar, item.party_type)
+        .input("party_code", sql.NVarChar, item.party_code)
+        .input("keyfield", sql.NVarChar, "")
+        .input(
+          "opening_amount",
+          sql.Decimal(18, 2),
+          item.opening_amount
+        )
+        .input("balance_type", sql.NVarChar, item.balance_type)
+        .input("remarks", sql.NVarChar, item.remarks)
+        .input("status", sql.NVarChar, item.status)
+        .input("data_deleted", sql.Bit, item.data_deleted)
+        .input("company_code", sql.NVarChar, item.company_code)
+        .input("created_by", sql.NVarChar, item.created_by)
+        .input("created_date", sql.DateTime, item.created_date)
+        .input("modified_by", sql.NVarChar, item.modified_by)
+        .input("modified_date", sql.DateTime, item.modified_date)
+        .query(`
+          EXEC sp_opening_balance
+          @mode,
+          @transaction_no,
+          @financial_year,
+          @entry_date,
+          @party_type,
+          @party_code,
+          @keyfield,
+          @opening_amount,
+          @balance_type,
+          @remarks,
+          @status,
+          @data_deleted,
+          @company_code,
+          @created_by,
+          @created_date,
+          @modified_by,
+          @modified_date
+        `);
+
+      if (
+        result.recordset &&
+        result.recordset.length > 0
+      ) {
+        generatedTransactionNo =
+          result.recordset[0].transaction_no;
+      }
+    }
+
+    res.status(200).json({
+      message: "opening_balance data inserted successfully",
+      transaction_no: generatedTransactionNo,
+    });
+  } catch (err) {
+    console.error("Error in opening_balanceLoopInsert:", err);
+
+    res.status(500).json({
+      message: err.message || "Internal Server Error",
+    });
+  }
+};
+
+// Auto-generated opening_balanceLoopUpdate API for sp_opening_balance
+const opening_balanceLoopUpdate = async (req, res) => {
+  const opening_balanceData = req.body.opening_balanceData;
+  if (!opening_balanceData || !opening_balanceData.length) {
+    return res.status(400).json("Invalid or empty opening_balanceData array.");
+  }
+
+  try {
+    const pool = await sql.connect(dbConfig);
+    for (const item of opening_balanceData) {
+      await pool.request()
+        .input("mode", sql.NVarChar, "U")
+        .input("transaction_no", sql.NVarChar, item.transaction_no)
+        .input("financial_year", sql.NVarChar, item.financial_year)
+        .input("entry_date", sql.Date, item.entry_date)
+        .input("party_type", sql.NVarChar, item.party_type)
+        .input("party_code", sql.NVarChar, item.party_code)
+        .input("keyfield", sql.NVarChar, item.keyfield)
+        .input("opening_amount", sql.Decimal(18, 2), item.opening_amount)
+        .input("balance_type", sql.NVarChar, item.balance_type)
+        .input("remarks", sql.NVarChar, item.remarks)
+        .input("status", sql.NVarChar, item.status)
+        .input("data_deleted", sql.Bit, item.data_deleted)
+        .input("company_code", sql.NVarChar, item.company_code)
+        .input("created_by", sql.NVarChar, item.created_by)
+        .input("created_date", sql.DateTime, item.created_date)
+        .input("modified_by", sql.NVarChar, item.modified_by)
+        .input("modified_date", sql.DateTime, item.modified_date)
+        .query(`EXEC sp_opening_balance @mode, @transaction_no, @financial_year, @entry_date, @party_type, @party_code, @keyfield, @opening_amount, @balance_type, @remarks, @status, @data_deleted, @company_code, @created_by, @created_date, @modified_by, @modified_date`);
+    }
+    res.status(200).json("opening_balance data updated successfully");
+  } catch (err) {
+    console.error("Error in opening_balanceLoopUpdate:", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+};
+
+// Auto-generated opening_balanceLoopDelete API for sp_opening_balance
+const opening_balanceLoopDelete = async (req, res) => {
+  const opening_balanceData = req.body.opening_balanceData;
+  if (!opening_balanceData || !opening_balanceData.length) {
+    return res.status(400).json("Invalid or empty opening_balanceData array.");
+  }
+
+  try {
+    const pool = await sql.connect(dbConfig);
+    for (const item of opening_balanceData) {
+      await pool.request()
+        .input("mode", sql.NVarChar, "D")
+        .input("transaction_no", sql.NVarChar, item.transaction_no)
+        .input("financial_year", sql.NVarChar, item.financial_year)
+        .input("entry_date", sql.Date, item.entry_date)
+        .input("party_type", sql.NVarChar, item.party_type)
+        .input("party_code", sql.NVarChar, item.party_code)
+        .input("keyfield", sql.NVarChar, item.keyfield)
+        .input("opening_amount", sql.Decimal(18, 2), item.opening_amount)
+        .input("balance_type", sql.NVarChar, item.balance_type)
+        .input("remarks", sql.NVarChar, item.remarks)
+        .input("status", sql.NVarChar, item.status)
+        .input("data_deleted", sql.Bit, item.data_deleted)
+        .input("company_code", sql.NVarChar, item.company_code)
+        .input("created_by", sql.NVarChar, item.created_by)
+        .input("created_date", sql.DateTime, item.created_date)
+        .input("modified_by", sql.NVarChar, item.modified_by)
+        .input("modified_date", sql.DateTime, item.modified_date)
+        .query(`EXEC sp_opening_balance @mode, @transaction_no, @financial_year, @entry_date, @party_type, @party_code, @keyfield, @opening_amount, @balance_type, @remarks, @status, @data_deleted, @company_code, @created_by, @created_date, @modified_by, @modified_date`);
+    }
+    res.status(200).json("opening_balance data deleted successfully");
+  } catch (err) {
+    console.error("Error in opening_balanceLoopDelete:", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+};
+//code Ended by sakthi on 05-22-26
 
 module.exports = {
   login,
@@ -37143,7 +37457,6 @@ module.exports = {
   ExpensesInsert, 
   ExpensesUpdate, 
   ExpensesDelete,
-  getbalance_type,
   ExpensesLoopInsert, 
   ExpensesLoopUpdate, 
   ExpensesLoopDelete,
@@ -37164,8 +37477,14 @@ module.exports = {
   SiteAndCustomerMappingDelete,
   SiteAndCustomerMappingLoopInsert, 
   SiteAndCustomerMappingLoopUpdate, 
-  SiteAndCustomerMappingLoopDelete
-
+  SiteAndCustomerMappingLoopDelete,
+  getbalance_type,
+  opening_balanceInsert, 
+  opening_balanceUpdate, 
+  opening_balanceDelete,
+  opening_balanceLoopInsert, 
+  opening_balanceLoopUpdate, 
+  opening_balanceLoopDelete
 
 
 };
