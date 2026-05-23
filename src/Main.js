@@ -64,7 +64,7 @@ import UserScreenInput from "./userscreeninput.js";
 import CustomerDetGrid from "./Customerdetgrid.js";
 import CustomerHdrInput from "./Customerhdrinput.js"; 
 import CustomerDetInput from "./customerdetinput.js";
-import OpeningbalanceGrid from "./OpeningbalanceGrid.js";
+// import OpeningbalanceGrid from "./OpeningbalanceGrid.js";
 import OpeningBalanceItem from "./OpeningBalanceItem.js";
 import OpeningbalanceInput from "./Openingbalanceinput.js";
 import AdjustmentGrid from "./Adjustmentgrid.js";
@@ -151,6 +151,7 @@ import WeekOff from "./WeekOff.js";
 import ClientInfo from "./ClientInfo.js";
 import ADDClientInfo from "./AddClientInfo.js";
 import Payment from "./Payment.js";
+import Openingbalance from "./Transaction/Openingbalance.js";
 
 function Main() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -261,7 +262,8 @@ function Main() {
     { path: "/Customer", component: <CustomerDetGrid /> },
     { path: "/AddCustomerHeader", component: <CustomerHdrInput /> },
     { path: "/AddCustomerDetails", component: <CustomerDetInput /> },
-    { path: "/OpeningBalance", component: <OpeningbalanceGrid /> },
+    // { path: "/OpeningBalance", component: <OpeningbalanceGrid /> },
+    { path: "/OpeningBalance", component: <Openingbalance /> },
     { path: "/OpeningItem", component: <OpeningBalanceItem /> },
     { path: "/AddOpeningBalance", component: <OpeningbalanceInput /> },
     { path: "/Adjustment", component: <AdjustmentGrid /> },

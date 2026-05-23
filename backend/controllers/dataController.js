@@ -7045,7 +7045,7 @@ const customerSearchdata = async (req, res) => {
       .input("balance_type", sql.VarChar(50), balance_type)
       .input("default_customer", sql.NVarChar, default_customer)
       .query(`EXEC sp_customer_details_info_Ramya @mode,@customer_code,@company_code,@customer_name,@status,@panno,@customer_gst_no,@customer_addr_1,'','','',@customer_area,@customer_state,
-      @customer_country,'','','',@customer_mobile_no,'' ,'',0,@opening_balance,@balance_type,'','','','',@default_customer,'','','',NULL,NULL,NULL,NULL,NULL,null,null,null`);
+      @customer_country,'','','',@customer_mobile_no,'' ,'',0,@opening_balance,@balance_type,'','','','','','',@default_customer,'','','',NULL,NULL,NULL,NULL,NULL,null,null,null`);
 
     // Send response
     if (result.recordset.length > 0) {
@@ -7742,7 +7742,7 @@ const getCustomerSearchdata = async (req, res) => {
       .input("opening_balance", sql.Decimal(18, 2), opening_balance)
       .input("balance_type", sql.VarChar(50), balance_type)
       .query(`EXEC sp_customer_details_info_Ramya @mode,@customer_code,@company_code,@customer_name,@status,@panno,@customer_gst_no,@customer_addr_1,@customer_addr_2,@customer_addr_3,@customer_addr_4,
-          @customer_area,@customer_state,@customer_country,'','','',@customer_mobile_no,@customer_fax_no,'',0,@opening_balance,@balance_type,'','','','','','',NULL,NULL,NULL,null,null,null,null,null`);
+          @customer_area,@customer_state,@customer_country,'','','',@customer_mobile_no,@customer_fax_no,'',0,@opening_balance,@balance_type,'','','','','','','','','','',NULL,NULL,NULL,null,null,null,null,null`);
 
     // Send response
     if (result.recordset.length > 0) {
@@ -36115,24 +36115,70 @@ const opening_balanceDelete = async (req, res) => {
 //code added by sakthi on 05-22-26
 // ---------- HEADER LOOP CRUD ----------
 // Auto-generated opening_balanceLoopInsert API for sp_opening_balance
+// const opening_balanceLoopInsert = async (req, res) => {
+//   const opening_balanceData = req.body.opening_balanceData;
+//   if (!opening_balanceData || !opening_balanceData.length) {
+//     return res.status(400).json("Invalid or empty opening_balanceData array.");
+//   }
+
+//   try {
+//     const pool = await sql.connect(dbConfig);
+//     for (const item of opening_balanceData) {
+//       await pool.request()
+//         .input("mode", sql.NVarChar, "I")
+//         .input("transaction_no", sql.NVarChar, item.transaction_no)
+//         .input("financial_year", sql.NVarChar, item.financial_year)
+//         .input("entry_date", sql.Date, item.entry_date)
+//         .input("party_type", sql.NVarChar, item.party_type)
+//         .input("party_code", sql.NVarChar, item.party_code)
+//         .input("keyfield", sql.NVarChar, item.keyfield)
+//         .input("opening_amount", sql.Decimal(18, 2), item.opening_amount)
+//         .input("balance_type", sql.NVarChar, item.balance_type)
+//         .input("remarks", sql.NVarChar, item.remarks)
+//         .input("status", sql.NVarChar, item.status)
+//         .input("data_deleted", sql.Bit, item.data_deleted)
+//         .input("company_code", sql.NVarChar, item.company_code)
+//         .input("created_by", sql.NVarChar, item.created_by)
+//         .input("created_date", sql.DateTime, item.created_date)
+//         .input("modified_by", sql.NVarChar, item.modified_by)
+//         .input("modified_date", sql.DateTime, item.modified_date)
+//         .query(`EXEC sp_opening_balance @mode, @transaction_no, @financial_year, @entry_date, @party_type, @party_code, @keyfield, @opening_amount, @balance_type, @remarks, @status, @data_deleted, @company_code, @created_by, @created_date, @modified_by, @modified_date`);
+//     }
+//     res.status(200).json("opening_balance data inserted successfully");
+//   } catch (err) {
+//     console.error("Error in opening_balanceLoopInsert:", err);
+//     res.status(500).json({ message: err.message || "Internal Server Error" });
+//   }
+// };
 const opening_balanceLoopInsert = async (req, res) => {
   const opening_balanceData = req.body.opening_balanceData;
+
   if (!opening_balanceData || !opening_balanceData.length) {
-    return res.status(400).json("Invalid or empty opening_balanceData array.");
+    return res
+      .status(400)
+      .json({ message: "Invalid or empty opening_balanceData array." });
   }
 
   try {
     const pool = await sql.connect(dbConfig);
+
+    let generatedTransactionNo = "";
+
     for (const item of opening_balanceData) {
-      await pool.request()
+      const result = await pool
+        .request()
         .input("mode", sql.NVarChar, "I")
-        .input("transaction_no", sql.NVarChar, item.transaction_no)
+        .input("transaction_no", sql.NVarChar, "")
         .input("financial_year", sql.NVarChar, item.financial_year)
         .input("entry_date", sql.Date, item.entry_date)
         .input("party_type", sql.NVarChar, item.party_type)
         .input("party_code", sql.NVarChar, item.party_code)
-        .input("keyfield", sql.NVarChar, item.keyfield)
-        .input("opening_amount", sql.Decimal(18, 2), item.opening_amount)
+        .input("keyfield", sql.NVarChar, "")
+        .input(
+          "opening_amount",
+          sql.Decimal(18, 2),
+          item.opening_amount
+        )
         .input("balance_type", sql.NVarChar, item.balance_type)
         .input("remarks", sql.NVarChar, item.remarks)
         .input("status", sql.NVarChar, item.status)
@@ -36142,12 +36188,46 @@ const opening_balanceLoopInsert = async (req, res) => {
         .input("created_date", sql.DateTime, item.created_date)
         .input("modified_by", sql.NVarChar, item.modified_by)
         .input("modified_date", sql.DateTime, item.modified_date)
-        .query(`EXEC sp_opening_balance @mode, @transaction_no, @financial_year, @entry_date, @party_type, @party_code, @keyfield, @opening_amount, @balance_type, @remarks, @status, @data_deleted, @company_code, @created_by, @created_date, @modified_by, @modified_date`);
+        .query(`
+          EXEC sp_opening_balance
+          @mode,
+          @transaction_no,
+          @financial_year,
+          @entry_date,
+          @party_type,
+          @party_code,
+          @keyfield,
+          @opening_amount,
+          @balance_type,
+          @remarks,
+          @status,
+          @data_deleted,
+          @company_code,
+          @created_by,
+          @created_date,
+          @modified_by,
+          @modified_date
+        `);
+
+      if (
+        result.recordset &&
+        result.recordset.length > 0
+      ) {
+        generatedTransactionNo =
+          result.recordset[0].transaction_no;
+      }
     }
-    res.status(200).json("opening_balance data inserted successfully");
+
+    res.status(200).json({
+      message: "opening_balance data inserted successfully",
+      transaction_no: generatedTransactionNo,
+    });
   } catch (err) {
     console.error("Error in opening_balanceLoopInsert:", err);
-    res.status(500).json({ message: err.message || "Internal Server Error" });
+
+    res.status(500).json({
+      message: err.message || "Internal Server Error",
+    });
   }
 };
 
