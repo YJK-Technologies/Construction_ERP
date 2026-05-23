@@ -718,7 +718,7 @@ function Input({ }) {
                   <div class="exp-form-floating">
                     <div class="d-flex justify-content-start">
                       <div>
-                        <label For="city" className={`${error && !city ? 'text-danger' : ''}`}>City<span className="text-danger">*</span></label>
+                        <label For="city" className={`${error && !selectedCity ? 'text-danger' : ''}`}>City<span className="text-danger">*</span></label>
                       </div>
                     </div>
                     <div title="Select the City ">
@@ -739,7 +739,7 @@ function Input({ }) {
                   <div class="exp-form-floating">
                     <div class="d-flex justify-content-start">
                       <div>
-                        <label for="state" class="exp-form-labels" className={`${error && !state ? 'text-danger' : ''}`}>State<span className="text-danger">*</span></label>
+                        <label for="state" class="exp-form-labels" className={`${error && !selectedState ? 'text-danger' : ''}`}>State<span className="text-danger">*</span></label>
                       </div>
                     </div>
                     <div title="Select the State">
@@ -782,7 +782,7 @@ function Input({ }) {
                   <div class="exp-form-floating">
                     <div class="d-flex justify-content-start">
                       <div>
-                        <label for="state" class="exp-form-labels" className={`${error && !country ? 'text-danger' : ''}`}>Country<span className="text-danger">*</span></label>
+                        <label for="state" class="exp-form-labels" className={`${error && !selectedCountry ? 'text-danger' : ''}`}>Country<span className="text-danger">*</span></label>
                       </div>
                     </div>
                     <div title="Select the Country">
@@ -825,7 +825,7 @@ function Input({ }) {
                   <div class="exp-form-floating">
                     <div class="d-flex justify-content-start">
                       <div>
-                        <label for="state" class="exp-form-labels" className={`${error && !status ? 'text-danger' : ''}`}>Status<span className="text-danger">*</span></label>
+                        <label for="state" class="exp-form-labels" className={`${error && !selectedStatus ? 'text-danger' : ''}`}>Status<span className="text-danger">*</span></label>
                       </div>
                     </div>
                     <div title="Select the Status ">
@@ -939,7 +939,7 @@ function Input({ }) {
                 </div>
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
-                    <label for="locno" class="exp-form-labels" className={`${error && !location_no ? 'text-danger' : ''}`}>Location No<span className="text-danger">*</span></label>
+                    <label for="locno" class="exp-form-labels" className={`${error && !selectedLocation ? 'text-danger' : ''}`}>Location No<span className="text-danger">*</span></label>
                     <div title="Select the Location No ">
                     <Select
                       id="locno"

@@ -43,7 +43,7 @@ function UserRoleInput({ }) {
   useEffect(() => {
     if (mode === "update" && selectedRow && !isUpdated) {
       setuser_code(selectedRow.user_code || "");
-      setrole_id(selectedRow.order_no || "");
+      setrole_id(selectedRow.role_id || "");
       setKeyfield(selectedRow.keyfield || "");
       setSelectedUser({
         label: selectedRow.user_code,
@@ -247,7 +247,7 @@ function UserRoleInput({ }) {
                     <div class="exp-form-floating">
                       <div class="d-flex justify-content-start">
                         <div>
-                          <label for="rid" class="exp-form-labels" className={`${error && !user_code ? 'text-danger' : ''}`}>
+                          <label for="rid" class="exp-form-labels" className={`${error && !selectedUser ? 'text-danger' : ''}`}>
                             User Code<span className="text-danger">*</span>
                           </label>
                         </div>
@@ -272,7 +272,7 @@ function UserRoleInput({ }) {
                     <div class="exp-form-floating">
                       <div class="d-flex justify-content-start">
                         <div>
-                          <label for="rid" class="exp-form-labels" className={`${error && !role_id ? 'text-danger' : ''}`}>
+                          <label for="rid" class="exp-form-labels" className={`${error && !selectedRole ? 'text-danger' : ''}`}>
                             Role ID<span className="text-danger">*</span>
                           </label>
                         </div>
