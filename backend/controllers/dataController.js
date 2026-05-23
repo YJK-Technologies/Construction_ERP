@@ -36306,6 +36306,46 @@ const opening_balanceLoopDelete = async (req, res) => {
 };
 //code Ended by sakthi on 05-22-26
 
+//code added by sakthi on 05-23-26
+const OpeningBalanceSC = async (req, res) => {
+  const { transaction_no, financial_year, entry_date, party_type, party_code, keyfield, opening_amount, balance_type, remarks, status, data_deleted, company_code, created_by, created_date, modified_by, modified_date } = req.body;
+
+  try {
+    const pool = await connection.connectToDatabase();
+
+    const result = await pool.request()
+      .input("mode", sql.NVarChar, "SC")
+      .input("transaction_no", sql.NVarChar, transaction_no || '')
+      .input("financial_year", sql.NVarChar, financial_year || '')
+      .input("entry_date", sql.Date, entry_date || null)
+      .input("party_type", sql.NVarChar, party_type || '')
+      .input("party_code", sql.NVarChar, party_code || '')
+      .input("keyfield", sql.NVarChar, keyfield || '')
+      .input("opening_amount", sql.Decimal(18, 2), opening_amount || 0)
+      .input("balance_type", sql.NVarChar, balance_type || '')
+      .input("remarks", sql.NVarChar, remarks || '')
+      .input("status", sql.NVarChar, status || '')
+      .input("data_deleted", sql.Bit, data_deleted ?? null)
+      .input("company_code", sql.NVarChar, company_code || '')
+      .input("created_by", sql.NVarChar, created_by || '')
+      .input("created_date", sql.DateTime, created_date || null)
+      .input("modified_by", sql.NVarChar, modified_by || '')
+      .input("modified_date", sql.DateTime, modified_date || null)
+      .query(`EXEC sp_opening_balance @mode,@transaction_no,@financial_year,@entry_date,@party_type,@party_code,@keyfield,@opening_amount,@balance_type,@remarks,@status,@data_deleted,@company_code,@created_by,@created_date,@modified_by,@modified_date`);
+
+    if (result.recordset.length > 0) {
+      res.status(200).json(result.recordset);
+    } else {
+      res.status(404).json("Data not found");
+    }
+
+  } catch (err) {
+    console.error("Error", err);
+    res.status(500).json({ message: err.message || 'Internal Server Error' });
+  }
+};
+//code Ended by sakthi on 05-23-26
+
 module.exports = {
   login,
   forgetPassword,
@@ -37484,7 +37524,8 @@ module.exports = {
   opening_balanceDelete,
   opening_balanceLoopInsert, 
   opening_balanceLoopUpdate, 
-  opening_balanceLoopDelete
+  opening_balanceLoopDelete,
+  OpeningBalanceSC
 
 
 };
