@@ -1206,6 +1206,10 @@ router.post("/getSiteStatus", dataController.getSiteStatus)
 router.post("/getToleranceType", dataController.getToleranceType)
 router.post("/getWarehouseCodeDrop", dataController.getWarehouseCodeDrop)
 router.post("/searchCriteriaSiteMaster", dataController.searchCriteriaSiteMaster)
+router.post("/getSiteMaster", dataController.getSiteMaster)
+router.post("/SiteWarehouseMappingInsert", dataController.SiteWarehouseMappingInsert)
+router.post("/SiteWarehouseMappingLoopUpdate", dataController.SiteWarehouseMappingLoopUpdate)
+router.post("/SiteWarehouseMappingLoopDelete", dataController.SiteWarehouseMappingLoopDelete)
 
 
 module.exports = router;

@@ -44,6 +44,7 @@ const AddAddSiteMasterScreen = () => {
     const [warehouse, setWarehouse] = useState('');
     const [selectedWarehouse, setSelectedWarehouse] = useState('');
     const [error, setError] = useState(false);
+    const [keyfield, setKeyfield] = useState("");
 
     const clearInputFields = () => {
         setSiteId("");
@@ -66,7 +67,61 @@ const AddAddSiteMasterScreen = () => {
         setToleranceValues("");
         setWarehouse("");
         setSelectedWarehouse("");
+        setKeyfield("");
     };
+
+    const formatDate = (date) => {
+        if (!date) return "";
+        date = date.replace(/\//g, "-");
+        const d = new Date(date);
+        return !isNaN(d) ? d.toISOString().split("T")[0] : "";
+    };
+
+    useEffect(() => {
+        if (mode === "update" && selectedRow) {
+            setSiteId(selectedRow.site_id || "");
+            setSiteName(selectedRow.site_name || "");
+            setSiteLocation(selectedRow.site_location || "");
+            setSelectedCustomerCode({
+                label: selectedRow.client_code,
+                value: selectedRow.client_code,
+            });
+            setCustomerCode(selectedRow.client_code || "");
+            setSelectedProjectType({
+                label: selectedRow.project_type,
+                value: selectedRow.project_type,
+            });
+            setProjectType(selectedRow.project_type || "");
+            setStartDate(selectedRow.start_date || "");
+            setEndDate(selectedRow.end_date || "");
+            setSelectedSiteStatus({
+                label: selectedRow.site_status,
+                value: selectedRow.site_status,
+            });
+            setSiteStatus(selectedRow.site_status || "");
+            setSelectedStatus({
+                label: selectedRow.status,
+                value: selectedRow.status,
+            });
+            setStatus(selectedRow.status || "");
+            setTotalBudget(selectedRow.total_budget || "");
+            setSelectedToleranceType({
+                label: selectedRow.Tolerance_Type,
+                value: selectedRow.Tolerance_Type,
+            });
+            setToleranceType(selectedRow.Tolerance_Type || "");
+            setToleranceValues(selectedRow.Tolerance_values || "");
+            setSelectedWarehouse({
+                label: selectedRow.Warehouses,
+                value: selectedRow.Warehouses,
+            });
+            setWarehouse(selectedRow.Warehouses || "");
+            setKeyfield(selectedRow.keyfield || "");
+
+        } else if (mode === "create") {
+            clearInputFields();
+        }
+    }, [mode, selectedRow]);
 
     useEffect(() => {
         const company_code = sessionStorage.getItem("selectedCompanyCode");
@@ -242,7 +297,7 @@ const AddAddSiteMasterScreen = () => {
                     client_code: customerCode,
                     project_type: projectType,
                     start_date: startDate ? startDate : null,
-                    end_date: endDate ? startDate : null,
+                    end_date: endDate ? endDate : null,
                     site_status: siteStatus,
                     total_budget: totalBudget,
                     status: status,
@@ -294,13 +349,14 @@ const AddAddSiteMasterScreen = () => {
                     client_code: customerCode,
                     project_type: projectType,
                     start_date: startDate ? startDate : null,
-                    end_date: endDate ? startDate : null,
+                    end_date: endDate ? endDate : null,
                     site_status: siteStatus,
                     total_budget: totalBudget,
                     status: status,
                     Warehouses: warehouse,
                     Tolerance_Type: toleranceType,
                     Tolerance_values: toleranceValues,
+                    keyfield: keyfield,
                     modified_by: sessionStorage.getItem('selectedUserCode')
                 }),
             });
@@ -323,7 +379,7 @@ const AddAddSiteMasterScreen = () => {
     };
 
     const handleNavigate = () => {
-        navigate("/SiteMaster   "); 
+        navigate("/SiteMaster   ");
     };
 
     return (
@@ -512,7 +568,7 @@ const AddAddSiteMasterScreen = () => {
                             </div>
                         </div>
 
-                        <div className="col-md-3 form-group mb-2">
+                        {/* <div className="col-md-3 form-group mb-2">
                             <div className="exp-form-floating">
                                 <label className="exp-form-labels">
                                     Warehouse
@@ -525,7 +581,7 @@ const AddAddSiteMasterScreen = () => {
                                     onChange={handleChangeSiteWarehouse}
                                 />
                             </div>
-                        </div>
+                        </div> */}
 
                         <div className="col-md-3 form-group mb-2">
                             <div className="exp-form-floating">

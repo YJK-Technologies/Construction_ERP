@@ -153,6 +153,7 @@ import ADDClientInfo from "./AddClientInfo.js";
 import Payment from "./Payment.js";
 import SiteMaster from "./SiteGrid.js";
 import AddSiteMaster from "./AddSiteMaster.js";
+import SiteWarehouse from "./siteWarehouseMapping.js";
 
 function Main() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -339,6 +340,7 @@ function Main() {
      { path: "/Payment", component: <Payment /> },
      { path: "/AddSiteMaster", component: <AddSiteMaster /> },
      { path: "/SiteMaster", component: <SiteMaster /> },
+     { path: "/SiteWarehouse", component: <SiteWarehouse /> },
   ];
  
   return (
