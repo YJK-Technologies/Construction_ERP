@@ -1201,15 +1201,13 @@ router.post("/SiteAndCustomerMappingDelete", dataController.SiteAndCustomerMappi
 router.post("/SiteAndCustomerMappingLoopInsert", dataController.SiteAndCustomerMappingLoopInsert)
 router.post("/SiteAndCustomerMappingLoopUpdate", dataController.SiteAndCustomerMappingLoopUpdate)
 router.post("/SiteAndCustomerMappingLoopDelete", dataController.SiteAndCustomerMappingLoopDelete)
-router.post("/getProjectType", dataController.getProjectType)
-router.post("/getSiteStatus", dataController.getSiteStatus)
-router.post("/getToleranceType", dataController.getToleranceType)
-router.post("/getWarehouseCodeDrop", dataController.getWarehouseCodeDrop)
-router.post("/searchCriteriaSiteMaster", dataController.searchCriteriaSiteMaster)
-router.post("/getSiteMaster", dataController.getSiteMaster)
-router.post("/SiteWarehouseMappingInsert", dataController.SiteWarehouseMappingInsert)
-router.post("/SiteWarehouseMappingLoopUpdate", dataController.SiteWarehouseMappingLoopUpdate)
-router.post("/SiteWarehouseMappingLoopDelete", dataController.SiteWarehouseMappingLoopDelete)
+router.post("/opening_balanceInsert", dataController.opening_balanceInsert)
+router.post("/opening_balanceUpdate", dataController.opening_balanceUpdate)
+router.post("/opening_balanceDelete", dataController.opening_balanceDelete)
+router.post("/opening_balanceLoopInsert", dataController.opening_balanceLoopInsert)
+router.post("/opening_balanceLoopUpdate", dataController.opening_balanceLoopUpdate)
+router.post("/opening_balanceLoopDelete", dataController.opening_balanceLoopDelete)
+router.post("/OpeningBalanceSC", dataController.OpeningBalanceSC)
 
 
 module.exports = router;

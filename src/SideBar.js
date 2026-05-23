@@ -243,6 +243,7 @@ const Sidebar = () => {
     "Product",
     "Tax",
     "SiteMaster",
+    "SiteWarehouse",
     "Vendor",
     "Warehouse",
     "FinancialYearAccess",
@@ -1287,6 +1288,68 @@ const Sidebar = () => {
                 )}
               </div>
 
+              <div className=" ms-3">
+                {screenType.includes("OpeningBalance") && (
+                  <Link
+                    to="/OpeningBalance"
+                    className="nav-link"
+                    title="Opening Balance"
+                  >
+                    <div class="menu-item">
+                      <svg
+                        viewBox="0 0 128 128"
+                        width="18"
+                        height="18"
+                        fill="currentColor"
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="me-3"
+                      >
+                        <path d="m105.544 37.128-14.773-14.774v-10.754a1.75 1.75 0 0 0 -1.75-1.75h-65.328a1.75 1.75 0 0 0 -1.75 1.75v93a1.75 1.75 0 0 0 1.75 1.75h9.863v10.05a1.75 1.75 0 0 0 1.75 1.75h69a1.75 1.75 0 0 0 1.75-1.75v-78.035a1.75 1.75 0 0 0 -.512-1.237zm-14.773-9.828 9.311 9.311h-9.311zm-65.328 75.55v-89.5h61.828v7.977h-51.964a1.75 1.75 0 0 0 -1.75 1.75v79.773zm11.613 11.8v-89.821h50.215v13.536a1.75 1.75 0 0 0 1.75 1.75h13.535v74.532z" />
+                        <path d="m54.216 77.414h31.184a1.75 1.75 0 0 0 1.75-1.75v-31.183a1.75 1.75 0 0 0 -1.75-1.75h-31.184a1.75 1.75 0 0 0 -1.75 1.75v31.183a1.75 1.75 0 0 0 1.75 1.75zm17.839-31.183v5l-1.155-.92a1.749 1.749 0 0 0 -2.187 0l-1.153.923v-5zm-16.089 0h8.094v8.644a1.75 1.75 0 0 0 2.84 1.366l2.9-2.323 2.905 2.323a1.75 1.75 0 0 0 2.843-1.366v-8.644h8.094v27.683h-27.676z" />
+                        <path d="m91.932 84.25h-44.25a1.75 1.75 0 0 0 0 3.5h44.25a1.75 1.75 0 0 0 0-3.5z" />
+                        <path d="m91.932 93.586h-44.25a1.75 1.75 0 0 0 0 3.5h44.25a1.75 1.75 0 0 0 0-3.5z" />
+                        <path d="m91.932 102.923h-44.25a1.75 1.75 0 0 0 0 3.5h44.25a1.75 1.75 0 0 0 0-3.5z" />
+                      </svg>
+                      <span className={collapsed ? "hidden" : ""} class="ms-1">
+                        {" "}
+                        Opening Balance
+                      </span>
+                    </div>
+                  </Link>
+                )}
+              </div>
+
+                            <div className=" ms-3">
+                {screenType.includes("OpeningItem") && (
+                  <Link
+                    to="/OpeningItem"
+                    className="nav-link"
+                    title="Opening Item"
+                  >
+                    <div class="menu-item">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="18"
+                        height="18"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        className="icon me-3"
+                      >
+                        <path d="M3 6h5l2 3h11v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                        <path d="M3 6V4a2 2 0 0 1 2-2h5l2 3h7a2 2 0 0 1 2 2v1" />
+                      </svg>
+                      <span className={collapsed ? "hidden" : ""} class="ms-1">
+                        Opening Item
+                      </span>
+                    </div>
+                  </Link>
+                )}
+              </div>
+
               {hasAnyPermission([
                 "UnplannedIssued",
                 "UnplannedReceipt",
@@ -1825,30 +1888,7 @@ const Sidebar = () => {
                   </Link>
                 )}
               </div>
-              <div className=" ms-3">
-                {screenType.includes("Payment") && (
-                  <Link to="/Payment" className="nav-link" title="Payment">
-                    <div class="menu-item">
-                      <svg
-                        viewBox="0 0 1024 1024"
-                        width="18"
-                        height="18"
-                        fill="currentColor"
-                        class="me-3"
-                        version="1.1"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path d="M855.04 1006.592H181.76c-14.336 0-25.6-11.264-25.6-25.6V173.056c0-14.336 11.264-25.6 25.6-25.6h178.176c12.288-76.288 78.848-134.656 158.72-134.656s145.92 58.368 158.208 134.656H855.04c14.336 0 25.6 11.264 25.6 25.6v807.936c0 14.336-11.264 25.6-25.6 25.6z m-647.68-51.2H829.44V198.656h-176.128c-14.336 0-25.6-11.264-25.6-25.6 0-59.904-49.152-109.056-109.056-109.056-60.416 0-109.568 49.152-109.568 109.056 0 14.336-11.264 25.6-25.6 25.6H207.36v756.736z" />
-                        <path d="M518.656 139.264c18.432 0 33.792 15.36 33.792 33.792s-15.36 33.792-33.792 33.792-33.792-15.36-33.792-33.792 14.848-33.792 33.792-33.792zM471.04 617.472c-6.656 0-13.312-2.56-17.92-7.68L316.928 473.6c-10.24-10.24-10.24-26.112 0-36.352s26.112-10.24 36.352 0l117.76 118.272 212.992-213.504c10.24-10.24 26.112-10.24 36.352 0s10.24 26.112 0 36.352l-230.912 231.424c-5.12 5.12-11.776 7.68-18.432 7.68zM686.592 773.12H348.16c-14.336 0-25.6-11.264-25.6-25.6s11.264-25.6 25.6-25.6h338.432c14.336 0 25.6 11.264 25.6 25.6s-11.264 25.6-25.6 25.6z" />
-                      </svg>
-                      <span className={collapsed ? "hidden" : ""} class="ms-2">
-                        Payment
-                      </span>
-                    </div>
-                  </Link>
-                )}
-              </div>
-            </div>
+              
               <div className=" ms-3">
                 {screenType.includes("Quotation") && (
                   <Link to="/Quotation" className="nav-link" title="Quotation">
@@ -1876,6 +1916,30 @@ const Sidebar = () => {
                   </Link>
                 )}
               </div>
+              <div className=" ms-3">
+                {screenType.includes("Payment") && (
+                  <Link to="/Payment" className="nav-link" title="Payment">
+                    <div class="menu-item">
+                      <svg
+                        viewBox="0 0 1024 1024"
+                        width="18"
+                        height="18"
+                        fill="currentColor"
+                        class="me-3"
+                        version="1.1"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path d="M855.04 1006.592H181.76c-14.336 0-25.6-11.264-25.6-25.6V173.056c0-14.336 11.264-25.6 25.6-25.6h178.176c12.288-76.288 78.848-134.656 158.72-134.656s145.92 58.368 158.208 134.656H855.04c14.336 0 25.6 11.264 25.6 25.6v807.936c0 14.336-11.264 25.6-25.6 25.6z m-647.68-51.2H829.44V198.656h-176.128c-14.336 0-25.6-11.264-25.6-25.6 0-59.904-49.152-109.056-109.056-109.056-60.416 0-109.568 49.152-109.568 109.056 0 14.336-11.264 25.6-25.6 25.6H207.36v756.736z" />
+                        <path d="M518.656 139.264c18.432 0 33.792 15.36 33.792 33.792s-15.36 33.792-33.792 33.792-33.792-15.36-33.792-33.792 14.848-33.792 33.792-33.792zM471.04 617.472c-6.656 0-13.312-2.56-17.92-7.68L316.928 473.6c-10.24-10.24-10.24-26.112 0-36.352s26.112-10.24 36.352 0l117.76 118.272 212.992-213.504c10.24-10.24 26.112-10.24 36.352 0s10.24 26.112 0 36.352l-230.912 231.424c-5.12 5.12-11.776 7.68-18.432 7.68zM686.592 773.12H348.16c-14.336 0-25.6-11.264-25.6-25.6s11.264-25.6 25.6-25.6h338.432c14.336 0 25.6 11.264 25.6 25.6s-11.264 25.6-25.6 25.6z" />
+                      </svg>
+                      <span className={collapsed ? "hidden" : ""} class="ms-2">
+                        Payment
+                      </span>
+                    </div>
+                  </Link>
+                )}
+              </div>
+            </div>
           </>
         )}
 
