@@ -1209,6 +1209,15 @@ router.post("/opening_balanceDelete", dataController.opening_balanceDelete)
 router.post("/opening_balanceLoopInsert", dataController.opening_balanceLoopInsert)
 router.post("/opening_balanceLoopUpdate", dataController.opening_balanceLoopUpdate)
 router.post("/opening_balanceLoopDelete", dataController.opening_balanceLoopDelete)
+router.post("/getExpenseType", dataController.getExpenseType)
+router.post("/getReferenceType", dataController.getReferenceType)
+router.post("/getExpensePaymentType", dataController.getExpensePaymentType)
+router.post("/Expenses_HdrInsert", dataController.Expenses_HdrInsert)
+router.post("/Expenses_HdrUpdate", dataController.Expenses_HdrUpdate)
+router.post("/Expenses_HdrDelete", dataController.Expenses_HdrDelete)
+router.post("/Expenses_HdrLoopInsert", dataController.Expenses_HdrLoopInsert)
+router.post("/Expenses_HdrLoopUpdate", dataController.Expenses_HdrLoopUpdate)
+router.post("/Expenses_HdrLoopDelete", dataController.Expenses_HdrLoopDelete)
 
 
 module.exports = router;
