@@ -1217,6 +1217,16 @@ router.post("/Expenses_HdrDelete", dataController.Expenses_HdrDelete)
 router.post("/Expenses_HdrLoopInsert", dataController.Expenses_HdrLoopInsert)
 router.post("/Expenses_HdrLoopUpdate", dataController.Expenses_HdrLoopUpdate)
 router.post("/Expenses_HdrLoopDelete", dataController.Expenses_HdrLoopDelete)
+router.post("/getProjectType", dataController.getProjectType)
+router.post("/getSiteStatus", dataController.getSiteStatus)
+router.post("/getToleranceType", dataController.getToleranceType)
+router.post("/getWarehouseCodeDrop", dataController.getWarehouseCodeDrop)
+router.post("/searchCriteriaSiteMaster", dataController.searchCriteriaSiteMaster)
+router.post("/getSiteMaster", dataController.getSiteMaster)
+router.post("/SiteWarehouseMappingInsert", dataController.SiteWarehouseMappingInsert)
+router.post("/SiteWarehouseMappingLoopUpdate", dataController.SiteWarehouseMappingLoopUpdate)
+router.post("/SiteWarehouseMappingLoopDelete", dataController.SiteWarehouseMappingLoopDelete)
+router.post("/searchSiteWarehouseMapping", dataController.searchSiteWarehouseMapping)
 
 
 module.exports = router;
