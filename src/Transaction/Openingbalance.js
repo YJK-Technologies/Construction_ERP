@@ -389,7 +389,7 @@ function Openingbalance() {
       {
         headerName: "Party Code",
         field: "party_code",
-        editable: true,
+        editable: false,
         filter: true,
         sortable: false,
         cellRenderer: (params) => {
@@ -448,12 +448,17 @@ function Openingbalance() {
         },
       },
       {
-        headerName: "Opening Amount",
-        field: "opening_amount",
-        editable: !showAsterisk,
-        filter: true,
-        sortable: false,
-      },
+  headerName: "Opening Amount",
+  field: "opening_amount",
+  editable: !showAsterisk,
+  filter: true,
+  sortable: false,
+
+  valueParser: (params) => {
+    const value = parseFloat(params.newValue);
+    return isNaN(value) ? "" : value;
+  },
+},
       {
         headerName: "Remarks",
         field: "remarks",
@@ -601,88 +606,54 @@ function Openingbalance() {
     setGridColumnApi(params.columnApi);
   };
 
-  const handleCellValueChanged = (params) => {
-    const { colDef, rowIndex, newValue } = params;
 
-    const lastRowIndex = rowData.length - 1;
+// const handleCellValueChanged = (params) => {
+//   const { colDef, rowIndex, newValue } = params;
 
-    if (colDef.field === "opening_amount") {
-      const amount = parseFloat(newValue);
+//   // Prevent auto row add for existing fetched records
+//   if (isExistingData) return;
 
-      if (amount > 0 && rowIndex === lastRowIndex) {
-        const serialNumber = rowData.length + 1;
+//   const lastRowIndex = rowData.length - 1;
 
-        const newRowData = {
-          serialNumber,
-          TransactionNo: "",
-          entry_date: getFinancialYearDate(),
-          party_type: "",
-          party_code: "",
-          itemName: "",
-          balance_type: "",
-          opening_amount: "",
-          remarks: "",
-        };
+//   if (colDef.field === "opening_amount") {
+//     const amount = parseFloat(newValue);
 
-        setRowData((prevRowData) => [...prevRowData, newRowData]);
-      }
+//     // Prevent invalid numbers
+//     if (isNaN(amount)) return;
+
+//     // Add new row only for last row
+//     if (amount > 0 && rowIndex === lastRowIndex) {
+//       const serialNumber = rowData.length + 1;
+
+//       const newRowData = {
+//         serialNumber,
+//         TransactionNo: "",
+//         entry_date: getFinancialYearDate(),
+//         party_type: "",
+//         party_code: "",
+//         itemName: "",
+//         balance_type: "",
+//         opening_amount: "",
+//         remarks: "",
+//       };
+
+//       setRowData((prevRowData) => [...prevRowData, newRowData]);
+//     }
+//   }
+// };
+
+const handleCellValueChanged = (params) => {
+  const { colDef, newValue } = params;
+
+  if (colDef.field === "opening_amount") {
+    const amount = parseFloat(newValue);
+
+    // prevent invalid number issue
+    if (isNaN(amount)) {
+      params.node.setDataValue("opening_amount", "");
     }
-  };
-
-  // const handleSaveButtonClick = async () => {
-  //   if (!transaction_date) {
-  //     toast.warning("Missing require field");
-  //     setError(" ");
-  //     return;
-  //   }
-
-  //   const hasValidData = rowData.some(
-  //     (row) =>
-  //       row?.itemCode?.trim() !== "" ||
-  //       row?.itemName?.trim() !== "" ||
-  //       row?.purchaseQty?.trim() !== "",
-  //   );
-
-  //   if (!hasValidData) {
-  //     toast.warning("No valid data available to save");
-  //     return;
-  //   }
-  //   setLoading(true);
-
-  //   try {
-  //     const Header = {
-  //       company_code: sessionStorage.getItem("selectedCompanyCode"),
-  //       transaction_date,
-  //       created_by: sessionStorage.getItem("selectedUserCode"),
-  //     };
-
-  //     const response = await fetch(`${config.apiBaseUrl}/openingitemhdr`, {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify(Header),
-  //     });
-
-  //     if (response.ok) {
-  //       const searchData = await response.json();
-  //       console.log(searchData);
-  //       const [{ transaction_no }] = searchData;
-  //       settransaction_no(transaction_no);
-  //       await OpeningItemDetails(transaction_no);
-  //       toast.success("Data Inserted Successfully");
-  //     } else {
-  //       const errorResponse = await response.json();
-  //       toast.warning(errorResponse.message || "Failed to insert sales data");
-  //       console.error(errorResponse.details || errorResponse.message);
-  //     }
-  //   } catch (error) {
-  //     console.error("Error inserting data:", error);
-  //     toast.error("Error inserting data: " + error.message);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
+  }
+};
 
   const handleSave = async () => {
     try {
