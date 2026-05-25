@@ -7,27 +7,32 @@ import "./apps.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus, faMinus } from "@fortawesome/free-solid-svg-icons";
 import "bootstrap/dist/css/bootstrap.min.css";
-import OIPopup from "./OpeningItemHelp.js";
+import ExpensesPopup from "./ExpensesPopUp.js";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import PurchaseItemPopup from "./PurchaseItemPopup";
 import { showConfirmationToast } from './ToastConfirmation';
 import LoadingScreen from './Loading';
+import { CheckboxCellEditor, CheckboxCellRenderer } from "ag-grid-community";
+import swal from "sweetalert2";
+import Swal from "sweetalert2";
+import * as XLSX from 'xlsx';
 
 const config = require("./Apiconfig");
 
 function OpeningbalanceGrid() {
   const [rowData, setRowData] = useState(
-    [{ serialNumber: 1, 
-        expense_type: "", 
-        reference_type: "", 
-        reference_code: "",
-        payment_mode: "",
-        amount: "",
-        description: "",
-        is_approved: "",
+    [{
+      serialNumber: 1,
+      expense_type: "",
+      reference_type: "",
+      reference_code: "",
+      payment_mode: "",
+      amount: "",
+      description: "",
+      is_approved: "",
     },]
-);
+  );
   const [gridApi, setGridApi] = useState(null);
   const [gridColumnApi, setGridColumnApi] = useState(null);
   const [transaction_date, settransaction_date] = useState("");
@@ -54,83 +59,155 @@ function OpeningbalanceGrid() {
   const [ReferenceTypeDrop, setReferenceTypeDrop] = useState([]);
   const [PaymentTypeDrop, setPaymentTypeDrop] = useState([]);
   const [IsApprovedDrop, setIsApprovedDrop] = useState([]);
+  const [CustomerDrop, setCustomerDrop] = useState([]);
+  const [VendorDrop, setVendorDrop] = useState([]);
+  const [SiteDrop, setSiteDrop] = useState([]);
 
   // Use Effects
   useEffect(() => {
-      const company_code = sessionStorage.getItem("selectedCompanyCode");
-  
-      fetch(`${config.apiBaseUrl}/getExpenseType`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ company_code }),
+    const company_code = sessionStorage.getItem("selectedCompanyCode");
+
+    fetch(`${config.apiBaseUrl}/getExpenseType`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ company_code }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        // Extract city names from the fetched data
+        const countries = data.map((option) => option.attributedetails_name);
+        setExpenseTypeDrop(countries);
       })
-        .then((response) => response.json())
-        .then((data) => {
-          // Extract city names from the fetched data
-          const countries = data.map((option) => option.attributedetails_name);
-          setExpenseTypeDrop(countries);
-        })
-        .catch((error) => console.error("Error fetching data:", error));
-    }, []);
+      .catch((error) => console.error("Error fetching data:", error));
+  }, []);
 
   useEffect(() => {
-      const company_code = sessionStorage.getItem("selectedCompanyCode");
-  
-      fetch(`${config.apiBaseUrl}/getReferenceType`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ company_code }),
+    const company_code = sessionStorage.getItem("selectedCompanyCode");
+
+    fetch(`${config.apiBaseUrl}/getReferenceType`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ company_code }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        // Extract city names from the fetched data
+        const countries = data.map((option) => option.attributedetails_name);
+        setReferenceTypeDrop(countries);
       })
-        .then((response) => response.json())
-        .then((data) => {
-          // Extract city names from the fetched data
-          const countries = data.map((option) => option.attributedetails_name);
-          setReferenceTypeDrop(countries);
-        })
-        .catch((error) => console.error("Error fetching data:", error));
-    }, []);
+      .catch((error) => console.error("Error fetching data:", error));
+  }, []);
 
   useEffect(() => {
-      const company_code = sessionStorage.getItem("selectedCompanyCode");
-  
-      fetch(`${config.apiBaseUrl}/getExpensePaymentType`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ company_code }),
+    const company_code = sessionStorage.getItem("selectedCompanyCode");
+
+    fetch(`${config.apiBaseUrl}/getExpensePaymentType`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ company_code }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        // Extract city names from the fetched data
+        const countries = data.map((option) => option.attributedetails_name);
+        setPaymentTypeDrop(countries);
       })
-        .then((response) => response.json())
-        .then((data) => {
-          // Extract city names from the fetched data
-          const countries = data.map((option) => option.attributedetails_name);
-          setPaymentTypeDrop(countries);
-        })
-        .catch((error) => console.error("Error fetching data:", error));
-    }, []);
+      .catch((error) => console.error("Error fetching data:", error));
+  }, []);
 
   useEffect(() => {
-      const company_code = sessionStorage.getItem("selectedCompanyCode");
-  
-      fetch(`${config.apiBaseUrl}/getKids`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ company_code }),
+    const company_code = sessionStorage.getItem("selectedCompanyCode");
+
+    fetch(`${config.apiBaseUrl}/getKids`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ company_code }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        // Extract city names from the fetched data
+        const countries = data.map((option) => option.attributedetails_name);
+        setIsApprovedDrop(countries);
       })
-        .then((response) => response.json())
-        .then((data) => {
-          // Extract city names from the fetched data
-          const countries = data.map((option) => option.attributedetails_name);
-          setIsApprovedDrop(countries);
-        })
-        .catch((error) => console.error("Error fetching data:", error));
-    }, []);
+      .catch((error) => console.error("Error fetching data:", error));
+  }, []);
+
+  useEffect(() => {
+    const company_code = sessionStorage.getItem("selectedCompanyCode");
+
+    fetch(`${config.apiBaseUrl}/getCustomerCodeExpenses`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ company_code }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        // Merge dept_id and dept_name
+        const CustomerOptions = data.map((option) => ({
+          value: option.customer_code,
+          label: `${option.customer_code} - ${option.customer_name}`,
+        }));
+
+        setCustomerDrop(CustomerOptions);
+      })
+      .catch((error) => console.error("Error fetching data:", error));
+  }, []);
+
+  useEffect(() => {
+    const company_code = sessionStorage.getItem("selectedCompanyCode");
+
+    fetch(`${config.apiBaseUrl}/vendorCodeDropdownExpenses`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ company_code }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        // Merge dept_id and dept_name
+        const VendorOptions = data.map((option) => ({
+          value: option.vendor_code,
+          label: `${option.vendor_code} - ${option.vendor_name}`,
+        }));
+
+        setVendorDrop(VendorOptions);
+      })
+      .catch((error) => console.error("Error fetching data:", error));
+  }, []);
+
+  useEffect(() => {
+    const company_code = sessionStorage.getItem("selectedCompanyCode");
+
+    fetch(`${config.apiBaseUrl}/getSiteMasterExpenses`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ company_code }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        // Merge dept_id and dept_name
+        const SiteOptions = data.map((option) => ({
+          value: option.site_id,
+          label: `${option.site_id} - ${option.site_name}`,
+        }));
+
+        setSiteDrop(SiteOptions);
+      })
+      .catch((error) => console.error("Error fetching data:", error));
+  }, []);
 
   //code added by Harish purpose of set user permisssion
   const permissions = JSON.parse(sessionStorage.getItem("permissions")) || {};
@@ -138,15 +215,15 @@ function OpeningbalanceGrid() {
     .filter((permission) => permission.screen_type === "OpeningItem")
     .map((permission) => permission.permission_type.toLowerCase());
 
-    useEffect(() => {
-      const today = new Date();
-      const currentYear = today.getFullYear();
-      const currentMonth = today.getMonth(); 
-      const startYear = currentMonth >= 3 ? currentYear : currentYear - 1;
-      const financialYearStartDate = `${startYear}-04-01`; 
-      settransaction_date(financialYearStartDate);
-   
-    }, []);
+  useEffect(() => {
+    const today = new Date();
+    const currentYear = today.getFullYear();
+    const currentMonth = today.getMonth();
+    const startYear = currentMonth >= 3 ? currentYear : currentYear - 1;
+    const financialYearStartDate = `${startYear}-04-01`;
+    settransaction_date(financialYearStartDate);
+
+  }, []);
 
   const handleClickOpen = (params) => {
     const GlobalSerialNumber = params.data.serialNumber;
@@ -184,27 +261,33 @@ function OpeningbalanceGrid() {
     }
   };
 
+  const getReferenceOptions = (referenceType) => {
+
+    switch (referenceType) {
+
+      case "Customer":
+        return CustomerDrop;
+
+      case "Vendor":
+        return VendorDrop;
+
+      case "Site":
+        return SiteDrop;
+
+      default:
+        return [];
+    }
+  };
+
   const columnDefs = [
     {
       headerName: "S.No",
       field: "serialNumber",
+        headerCheckboxSelection: true,
+        checkboxSelection: true,
       maxWidth: 80,
       sortable: false,
       editable: false,
-    },
-    {
-      headerName: '',
-      field: 'delete',
-      editable: false,
-      maxWidth: 25,
-      tooltipValueGetter: (p) =>
-        "Delete",
-      onCellClicked: handleDelete,
-      cellRenderer: function (params) {
-        return <FontAwesomeIcon icon="fa-solid fa-trash" style={{ cursor: 'pointer', marginRight: "12px" }} />
-      },
-      cellStyle: { display: 'flex', justifyContent: 'center', alignItems: 'center' },
-      sortable: false
     },
     {
       headerName: "Expense Type",
@@ -222,8 +305,9 @@ function OpeningbalanceGrid() {
       field: "reference_type",
       editable: !showAsterisk,
       cellStyle: { textAlign: "left" },
-      // minWidth: 150,
+
       cellEditor: "agSelectCellEditor",
+
       cellEditorParams: {
         values: ReferenceTypeDrop,
       },
@@ -232,54 +316,60 @@ function OpeningbalanceGrid() {
       headerName: "Reference Code - Name",
       field: "reference_code",
       editable: true,
-    //   filter: true,
-    //   cellEditorParams: {
-    //     maxLength: 40,
-    //   },
-    //   sortable: false,
-    //   cellRenderer: (params) => {
-    //     const cellWidth = params.column.getActualWidth();
-    //     const isWideEnough = cellWidth > 30;
-    //     const showSearchIcon = isWideEnough;
+      cellStyle: { textAlign: "left" },
 
-    //     return (
-    //       <div className="position-relative d-flex align-items-center" style={{ minHeight: '100%' }}>
-    //         <div className="flex-grow-1">
-    //           {params.editing ? (
-    //             <input
-    //               type="text"
-    //               className="form-control"
-    //               value={params.value || ''}
-    //               onChange={(e) => params.setValue(e.target.value)}
-    //               style={{ width: '100%' }}
-    //             />
-    //           ) : (
-    //             params.value
-    //           )}
-    //         </div>
+      cellEditor: "agSelectCellEditor",
 
-    //         {showSearchIcon && (
-    //           <span
-    //             className="icon searchIcon"
-    //             style={{
-    //               position: 'absolute',
-    //               right: '-10px',
-    //               top: '50%',
-    //               transform: 'translateY(-50%)',
-    //             }}
-    //             onClick={() => handleClickOpen(params)}
-    //           >
-    //             <i className="fa fa-search"></i>
-    //           </span>
-    //         )}
-    //       </div>
-    //     );
-    //   },
-    filter: true,
-      sortable: false,
-      cellEditorParams: {
-        maxLength: 10,
+      cellEditorParams: (params) => {
+
+        const referenceType = params?.data?.reference_type;
+
+        const options = getReferenceOptions(referenceType);
+
+        return {
+          values: options.map(d => d.label)
+        };
       },
+
+      valueFormatter: (params) => {
+
+        if (!params.value) return "";
+
+        const referenceType = params?.data?.reference_type;
+
+        const options = getReferenceOptions(referenceType);
+
+        const item = options.find(
+          d => d.value === params.value
+        );
+
+        return item ? item.label : params.value;
+      },
+
+      valueSetter: (params) => {
+
+        const selectedLabel = params.newValue;
+
+        const referenceType = params?.data?.reference_type;
+
+        const options = getReferenceOptions(referenceType);
+
+        const item = options.find(
+          d => d.label === selectedLabel
+        );
+
+        if (item) {
+
+          params.data.reference_code = item.value;
+
+          // Optional
+          params.data.reference_name = item.label;
+
+          return true;
+        }
+
+        return false;
+      }
     },
     {
       headerName: "Payment Mode",
@@ -309,7 +399,7 @@ function OpeningbalanceGrid() {
       filter: true,
       sortable: false,
       cellEditorParams: {
-        maxLength: 10,
+        maxLength: 255,
       },
     },
     {
@@ -325,7 +415,7 @@ function OpeningbalanceGrid() {
     },
   ];
 
-  const handleItemCode = async (params) => {
+  const handleExpensesCode = async (params) => {
     setLoading(true);
     const company_code = sessionStorage.getItem("selectedCompanyCode");
     try {
@@ -380,7 +470,7 @@ function OpeningbalanceGrid() {
     }
   };
 
-  const handleItem = async (selectedData) => {
+  const handleExpenses = async (selectedData) => {
     console.log("Selected Data:", selectedData);
     let updatedRowDataCopy = [...rowData];
     let highestSerialNumber = updatedRowDataCopy.reduce(
@@ -425,6 +515,10 @@ function OpeningbalanceGrid() {
   };
 
   const handleCellValueChanged = (params) => {
+    if (params.colDef.field === "reference_type") {
+
+      params.node.setDataValue("reference_code", "");
+    }
     const { colDef, rowIndex, newValue } = params;
     const lastRowIndex = rowData.length - 1;
     if (colDef.field === 'billQty') {
@@ -445,7 +539,7 @@ function OpeningbalanceGrid() {
   };
 
   const handleSaveButtonClick = async () => {
-    if (!transaction_date) {
+    if (!expense_date) {
       toast.warning("Missing require field");
       setError(" ");
       return;
@@ -454,7 +548,7 @@ function OpeningbalanceGrid() {
     const hasValidData = rowData.some(
       (row) =>
         row?.expense_no?.trim() !== "" ||
-        row?.expense_date?.trim() !== "" 
+        row?.expense_date?.trim() !== ""
     );
 
     if (!hasValidData) {
@@ -483,7 +577,7 @@ function OpeningbalanceGrid() {
         console.log(searchData);
         const [{ expense_no }] = searchData;
         setexpense_no(expense_no);
-        await OpeningItemDetails(expense_no);
+        await ExpensesDetails(expense_no);
         toast.success("Data Inserted Successfully");
       } else {
         const errorResponse = await response.json();
@@ -498,32 +592,55 @@ function OpeningbalanceGrid() {
     }
   };
 
-  const OpeningItemDetails = async (expense_no) => {
+  const ExpensesDetails = async (expense_no) => {
     try {
-      const validRows = rowData.filter(row =>
-        row.expense_type > 0 && 
-        row.reference_type > 0 && 
-        row.reference_code > 0 && 
-        row.payment_mode > 0 && 
-        row.amount > 0 && 
-        row.description > 0 && 
-        row.is_approved > 0
+
+      const validRows = rowData.filter((row) =>
+        row.expense_type &&
+        row.reference_type &&
+        row.reference_code &&
+        row.payment_mode &&
+        Number(row.amount) > 0 &&
+        row.description?.trim() !== ""
       );
 
+      console.log("Valid Rows :", validRows);
+
+      if (validRows.length === 0) {
+        toast.warning("No valid detail rows available");
+        return;
+      }
+
       for (const row of validRows) {
+
         const Details = {
           company_code: sessionStorage.getItem("selectedCompanyCode"),
           created_by: sessionStorage.getItem("selectedUserCode"),
-          expense_date,
-          expense_no,
-          expense_type: row.expense_type,
-          reference_type: row.reference_type,
-          reference_code: row.reference_code,
-          payment_mode: row.payment_mode,
-          amount: row.amount,
-          description: row.description,
-          is_approved: row.is_approved,
+
+          expense_no: expense_no,
+          expense_date: expense_date,
+
+          expense_type: row.expense_type || "",
+          reference_type: row.reference_type || "",
+          reference_code: row.reference_code || "",
+          reference_name: row.reference_name || "",
+
+          payment_mode: row.payment_mode || "",
+
+          amount: Number(row.amount) || 0,
+
+          description: row.description || "",
+
+          is_approved: row.is_approved || 0,
+          is_closed: row.is_closed || "",
+
+          keyfield: row.keyfield || "",
+          data_deleted: row.data_deleted || "N",
+
+          Expens_Sno: row.Expens_Sno || 0,
         };
+
+        console.log("Sending Details :", Details);
 
         const response = await fetch(`${config.apiBaseUrl}/ExpensesInsert`, {
           method: "POST",
@@ -531,20 +648,21 @@ function OpeningbalanceGrid() {
             "Content-Type": "application/json",
           },
           body: JSON.stringify(Details),
-        }
-        );
+        });
+
+        const result = await response.json();
 
         if (response.ok) {
-          console.log("Data inserted successfully");
+          console.log("Detail inserted successfully :", result);
         } else {
-          const errorResponse = await response.json();
-          toast.warning(errorResponse.message || "Failed to insert sales data");
-          console.error(errorResponse.details || errorResponse.message);
+          console.error("Insert Failed :", result);
+          toast.error(result.message || "Failed to insert expense details");
         }
       }
+
     } catch (error) {
-      console.error("Error inserting data:", error);
-      toast.error('Error inserting data: ' + error.message);
+      console.error("ExpensesDetails Error :", error);
+      toast.error("Error inserting expense details : " + error.message);
     }
   };
 
@@ -589,18 +707,22 @@ function OpeningbalanceGrid() {
   };
 
   const OIHeaderDelete = async () => {
+     console.log(expense_date);
     try {
-      const response = await fetch(`${config.apiBaseUrl}/openingitemdelhdr`, {
+      const response = await fetch(`${config.apiBaseUrl}/Expenses_HdrDelete`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
           expense_no,
+          expense_date,
           company_code: sessionStorage.getItem("selectedCompanyCode")
-        }),
-      });
 
+        }),
+
+      });
+console.log("Detail dellete successfully :", expense_date);
       if (response.ok) {
         return true;
       } else {
@@ -616,7 +738,7 @@ function OpeningbalanceGrid() {
 
   const OIDetailDelete = async () => {
     try {
-      const response = await fetch(`${config.apiBaseUrl}/deleteOpeningItemDetail`, {
+      const response = await fetch(`${config.apiBaseUrl}/ExpensesDelete`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -669,14 +791,14 @@ function OpeningbalanceGrid() {
 
   const handleKeyPress = (e) => {
     if (e.key === "Enter") {
-      handleOpeningItem(expense_no);
+      handleExpensesEnter(expense_no);
     }
   };
 
-  const handleOpeningItem = async (code) => {
+  const handleExpensesEnter = async (code) => {
     setLoading(true);
     try {
-      const response = await fetch(`${config.apiBaseUrl}/getallOpeningItem`, {
+      const response = await fetch(`${config.apiBaseUrl}/getallExpensesEnter`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -689,21 +811,26 @@ function OpeningbalanceGrid() {
         const searchData = await response.json();
         if (searchData.Header && searchData.Header.length > 0) {
           const item = searchData.Header[0];
-          settransaction_date(formatDate(item.transaction_date));
-          settransaction_no(item.transaction_no);
+          setexpense_date(formatDate(item.expense_date));
+          setexpense_no(item.expense_no);
         } else {
           console.log("Header Data is empty or not found");
-          settransaction_date("");
-          settransaction_no("");
+          setexpense_date("");
+          setexpense_no("");
         }
 
         if (searchData.Details && searchData.Details.length > 0) {
-          const updatedRowData = searchData.Details.map((item) => {
+          const updatedRowData = searchData.Details.map((item, index) => {
             return {
-              serialNumber: item.Item_SNo,
-              itemCode: item.Item_code,
-              itemName: item.Item_name,
-              billQty: item.bill_qty
+              serialNumber: index + 1,
+              expense_type: item.expense_type,
+              reference_type: item.reference_type,
+              reference_code: item.reference_code,
+              reference_name: item.reference_name,
+              payment_mode: item.payment_mode,
+              amount: item.amount,
+              description: item.description,
+              is_approved: item.is_approved,
             };
           });
 
@@ -713,9 +840,13 @@ function OpeningbalanceGrid() {
           setRowData([
             {
               serialNumber: 1,
-              itemCode: "",
-              itemName: "",
-              billQty: "",
+              expense_type: "",
+              reference_type: "",
+              reference_code: "",
+              payment_mode: "",
+              amount: "",
+              description: "",
+              is_approved: "",
             },
           ]);
         }
@@ -724,14 +855,18 @@ function OpeningbalanceGrid() {
       } else if (response.status === 404) {
         toast.warning("Data not found");
 
-        settransaction_date("");
-        settransaction_no("");
+        setexpense_date("");
+        setexpense_no("");
         setRowData([
           {
             serialNumber: 1,
-            itemCode: "",
-            itemName: "",
-            billQty: "",
+            expense_type: "",
+            reference_type: "",
+            reference_code: "",
+            payment_mode: "",
+            amount: "",
+            description: "",
+            is_approved: "",
           },
         ]);
       } else {
@@ -762,25 +897,12 @@ function OpeningbalanceGrid() {
     if (data && data.length > 0) {
       setSaveButtonVisible(false);
       setShowAsterisk(true);
-      const [{ transactionNo, transactionDate }] = data;
+      const [{ expense_no, expense_date }] = data;
 
-      const No = document.getElementById("transactionNO");
-      if (No) {
-        No.value = transactionNo;
-        settransaction_no(transactionNo);
-      } else {
-        console.error("transactionNO element not found");
-      }
+      setexpense_no(expense_no);
+      setexpense_date(formatDate(expense_date));
 
-      const Date = document.getElementById("transactionDate");
-      if (Date) {
-        Date.value = transactionDate;
-        settransaction_date(formatDate(transactionDate));
-      } else {
-        console.error("transactionDate element not found");
-      }
-
-      await OpeningBalanceDetail(transactionNo);
+      await OpeningBalanceDetail(expense_no);
     } else {
       console.log("Data not fetched...!");
     }
@@ -789,7 +911,7 @@ function OpeningbalanceGrid() {
   const OpeningBalanceDetail = async (transactionNo) => {
     try {
       const response = await fetch(
-        `${config.apiBaseUrl}/getallOpeningItemDetail`,
+        `${config.apiBaseUrl}/getallExpensesDetail`,
         {
           method: "POST",
           headers: {
@@ -802,18 +924,27 @@ function OpeningbalanceGrid() {
       if (response.ok) {
         const searchData = await response.json();
         const newRowData = [];
-        searchData.forEach((item) => {
+        searchData.forEach((item, index) => {
           const {
-            Item_SNo,
-            Item_code,
-            Item_name,
-            bill_qty
+            expense_type,
+            reference_type,
+            reference_code,
+            reference_name,
+            payment_mode,
+            amount,
+            description,
+            is_approved
           } = item;
           newRowData.push({
-            serialNumber: Item_SNo,
-            itemCode: Item_code,
-            itemName: Item_name,
-            billQty: bill_qty
+            serialNumber: index + 1,
+            expense_type: expense_type,
+            reference_type: reference_type,
+            reference_code: reference_code,
+            reference_name: reference_name,
+            payment_mode: payment_mode,
+            amount: amount,
+            description: description,
+            is_approved: is_approved
           });
         });
         setRowData(newRowData);
@@ -829,6 +960,53 @@ function OpeningbalanceGrid() {
 
   const handleReload = () => {
     window.location.reload();
+  };
+
+  const handleExcelDownload = () => {
+  
+  
+      if (rowData.length === 0 || 
+        !expense_no || 
+        !expense_date 
+        ) {
+        Swal.fire({
+          icon: 'warning',
+          title: 'No Data Available',
+          text: 'There is no data to export.',
+        });
+        return;
+      }
+  
+      const headerData = [{
+        "company code": sessionStorage.getItem('selectedCompanyCode'),
+        "Expenses No": expense_no,
+        "Expenses Date": expense_date
+      }];
+  
+      const transformedData = transformRowData(rowData);
+      const rowDataSheet = XLSX.utils.json_to_sheet(transformedData);
+      const headerSheet = XLSX.utils.json_to_sheet(headerData);
+  
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, headerSheet, "Header Data");
+      XLSX.utils.book_append_sheet(workbook, rowDataSheet, "Expenses Details");
+  
+      XLSX.writeFile(workbook, "Expenses.xlsx");
+    };
+
+    const transformRowData = (data) => {
+    return data.map(row => ({
+      "S.No": row.serialNumber,
+      "Expense Type": row.expense_type,
+      "Reference Type": row.reference_type,
+      "Reference Code": row.reference_code,
+      "Reference Name": row.reference_name,
+      "Payment Mode": row.payment_mode,
+      "Amount": row.amount,
+      "Description": row.description,
+      "Is Approved": row.is_approved,
+     
+    }));
   };
 
   return (
@@ -856,6 +1034,9 @@ function OpeningbalanceGrid() {
                     <i class="fa-regular fa-floppy-disk"></i>
                   </savebutton>
                 )}
+                <printbutton className="purbut" title='excel' onClick={handleExcelDownload}>
+              <i class="fa-solid fa-file-excel"></i>
+            </printbutton>
               {["delete", "all permission"].some((permission) =>
                 openingItemPermission.includes(permission)
               ) && (
@@ -965,7 +1146,7 @@ function OpeningbalanceGrid() {
                   type="date"
                   value={expense_date}
                   onChange={(e) => setexpense_date(e.target.value)}
-                //   readOnly 
+                  //   readOnly 
                   title="Transaction date is fixed and based on the financial year."
                 />
               </div>
@@ -994,7 +1175,7 @@ function OpeningbalanceGrid() {
             />
           </div>
           <div>
-            <OIPopup
+            <ExpensesPopup
               open={open}
               handleClose={handleClose}
               handleOb={handleOI}
@@ -1002,7 +1183,7 @@ function OpeningbalanceGrid() {
             <PurchaseItemPopup
               open={open1}
               handleClose={handleClose}
-              handleItem={handleItem}
+              handleExpenses={handleExpenses}
             />
           </div>
         </div>
@@ -1012,7 +1193,7 @@ function OpeningbalanceGrid() {
           <div className="d-flex justify-content-start">
             <p className="col-md-6">
               Created_by: {additionalData.created_by}
-              </p>
+            </p>
             <p className="col-md-">
               Created_date: {additionalData.created_date}
             </p>
