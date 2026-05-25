@@ -11,6 +11,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { showConfirmationToast } from "./ToastConfirmation";
 import LoadingScreen from "./Loading";
 import { useNavigate } from "react-router-dom";
+import labels from "./Labels";
 
 const AddSiteMasterScreen = () => {
 
@@ -60,6 +61,11 @@ const AddSiteMasterScreen = () => {
     const [gridApi, setGridApi] = useState(null);
     const [selectedRows, setSelectedRows] = useState([]);
     const [editedData, setEditedData] = useState([]);
+
+    const [createdBy, setCreatedBy] = useState("");
+    const [modifiedBy, setModifiedBy] = useState("");
+    const [createdDate, setCreatedDate] = useState("");
+    const [modifiedDate, setModifiedDate] = useState("");
 
     useEffect(() => {
         const company_code = sessionStorage.getItem("selectedCompanyCode");
@@ -413,7 +419,7 @@ const AddSiteMasterScreen = () => {
         {
             headerName: "Warehouse",
             field: "Warehouses",
-            editable: true,
+            editable: false,
             cellEditor: "agSelectCellEditor",
             cellEditorParams: {
                 values: warehouseDropGrid,
@@ -471,7 +477,7 @@ const AddSiteMasterScreen = () => {
             } else if (response.status === 404) {
                 console.log("Data not found");
                 setRowData([]);
-                toast.info("Data not found");
+                toast.warning("Data not found");
             } else {
                 const errorResponse = await response.json();
                 toast.warning(errorResponse.message || "Failed to fetch data");
@@ -544,6 +550,7 @@ const AddSiteMasterScreen = () => {
                         },
                         body: JSON.stringify({ SiteMasterData: selectedRowsData })
                     });
+                    const result = await response.json();
 
                     if (response.ok) {
                         toast.success("Data Updated Successfully", {
@@ -551,12 +558,11 @@ const AddSiteMasterScreen = () => {
                         });
                         return;
                     } else {
-                        const errorResponse = await response.json();
-                        toast.warning(errorResponse.message || "Failed to Updating data");
+                        toast.warning(result.message || "Failed to update data");
                     }
-                } catch (error) {
-                    console.error("Error Updating data:", error);
-                    toast.error("Error Updating Data: " + error.message);
+                } catch (err) {
+                    console.error("Error Updating data:", err);
+                    toast.error("Error Updating Data: " + err.message);
                 } finally {
                     setLoading(false);
                 }
@@ -595,18 +601,18 @@ const AddSiteMasterScreen = () => {
                     );
 
                     const result = await response.json();
+
                     if (response.ok) {
                         toast.success("Data deleted successfully", {
                             onClose: () => handleSearch(),
                         });
                     } else {
-                        const errorResponse = await response.json();
-                        toast.warning(errorResponse.message || "Failed to deleting data");
+                        toast.warning(result.message || "Failed to delete data");
                     }
 
-                } catch (error) {
-                    console.error("Error Updating data:", error);
-                    toast.error("Error Updating Data: " + error.message);
+                } catch (err) {
+                    console.error("Error deleting data:", err);
+                    toast.error("Error deleting data: " + err.message);
                 } finally {
                     setLoading(false);
                 }
@@ -732,6 +738,52 @@ const AddSiteMasterScreen = () => {
         );
         reportWindow.document.write("</body></html>");
         reportWindow.document.close();
+    };
+
+    const formatDate = (dateString) => {
+        if (!dateString) return "";
+        const date = new Date(dateString);
+
+        return new Intl.DateTimeFormat("en-GB", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+        }).format(date);
+    };
+
+    const handleRowClick = (rowData) => {
+        setCreatedBy(rowData.created_by);
+        setModifiedBy(rowData.modified_by);
+        const formattedCreatedDate = formatDate(rowData.created_date);
+        const formattedModifiedDate = formatDate(rowData.modified_date);
+        setCreatedDate(formattedCreatedDate);
+        setModifiedDate(formattedModifiedDate);
+    };
+
+    const onRowSelected = (event) => {
+        if (event.node.isSelected()) {
+            handleRowClick(event.data);
+        }
+    };
+
+    // Total Budget
+    const handleTotalBudgetChange = (e) => {
+        const value = e.target.value;
+
+        // 14 digits + 2 decimals + positive only
+        if (/^\d{0,14}(\.\d{0,2})?$/.test(value)) {
+            setTotalBudget(value);
+        }
+    };
+
+    // Tolerance Value
+    const handleToleranceValueChange = (e) => {
+        const value = e.target.value;
+
+        // Numeric + positive only
+        if (/^\d{0,10}(\.\d{0,2})?$/.test(value)) {
+            setToleranceValues(value);
+        }
     };
 
     return (
@@ -871,7 +923,7 @@ const AddSiteMasterScreen = () => {
                             </label>
                             <input
                                 className="form-control"
-                                placeholder="Enter SiteID"
+                                title="Enter Site ID"
                                 className="exp-input-field form-control"
                                 value={siteId}
                                 onChange={(e) => setSiteId(e.target.value)}
@@ -886,7 +938,7 @@ const AddSiteMasterScreen = () => {
                             </label>
                             <input
                                 className="form-control"
-                                placeholder="Enter SiteName"
+                                title="Enter Site Name"
                                 className="exp-input-field form-control"
                                 value={siteName}
                                 onChange={(e) => setSiteName(e.target.value)}
@@ -901,7 +953,7 @@ const AddSiteMasterScreen = () => {
                             </label>
                             <input
                                 className="form-control"
-                                placeholder="Enter SiteLocation"
+                                title="Enter Site Location"
                                 className="exp-input-field form-control"
                                 value={siteLocation}
                                 onChange={(e) => setSiteLocation(e.target.value)}
@@ -910,14 +962,13 @@ const AddSiteMasterScreen = () => {
                     </div>
 
                     <div className="col-md-3 form-group">
-                        <div class="exp-form-floating">
+                        <div class="exp-form-floating" title="Select Customer Code">
                             <label class="exp-form-labels">
                                 Customer Code
                             </label>
                             <Select
                                 value={selectedCustomerCode}
                                 options={filteredOptionCustomer}
-                                placeholder="Select CustomerCode"
                                 className="exp-input-field"
                                 onChange={handleChangeCustomerCode}
                             />
@@ -925,14 +976,13 @@ const AddSiteMasterScreen = () => {
                     </div>
 
                     <div className="col-md-3 form-group">
-                        <div class="exp-form-floating">
+                        <div class="exp-form-floating" title="Select Project Type">
                             <label class="exp-form-labels">
                                 Project Type
                             </label>
                             <Select
                                 value={selectedProjectType}
                                 options={filteredOptionProjectType}
-                                placeholder="Select ProjectType"
                                 className="exp-input-field"
                                 onChange={handleChangeProjectType}
                             />
@@ -946,6 +996,7 @@ const AddSiteMasterScreen = () => {
                             </label>
                             <input
                                 type="date"
+                                title="Select Start Date"
                                 className="form-control"
                                 className="exp-input-field form-control"
                                 value={startDate}
@@ -961,6 +1012,7 @@ const AddSiteMasterScreen = () => {
                             </label>
                             <input
                                 type="date"
+                                title="Select End Date"
                                 className="form-control"
                                 className="exp-input-field form-control"
                                 value={endDate}
@@ -970,14 +1022,13 @@ const AddSiteMasterScreen = () => {
                     </div>
 
                     <div className="col-md-3 form-group">
-                        <div class="exp-form-floating">
+                        <div class="exp-form-floating" title="Select Site Status">
                             <label class="exp-form-labels">
                                 Site Status
                             </label>
                             <Select
                                 value={selectedSiteStatus}
                                 options={filteredOptionSiteStatus}
-                                placeholder="Select SiteStatus"
                                 className="exp-input-field"
                                 onChange={handleChangeSiteStatus}
                             />
@@ -985,16 +1036,15 @@ const AddSiteMasterScreen = () => {
                     </div>
 
                     <div className="col-md-3 form-group">
-                        <div class="exp-form-floating">
+                        <div class="exp-form-floating" title="Enter Total Budget">
                             <label class="exp-form-labels">
                                 Total Budget
                             </label>
                             <input
                                 className="form-control"
-                                placeholder="Enter TotalBudget"
                                 className="exp-input-field form-control"
                                 value={totalBudget}
-                                onChange={(e) => setTotalBudget(e.target.value)}
+                                onChange={handleTotalBudgetChange}
                             />
                         </div>
                     </div>
@@ -1015,14 +1065,13 @@ const AddSiteMasterScreen = () => {
                     </div> */}
 
                     <div className="col-md-3 form-group">
-                        <div class="exp-form-floating">
+                        <div class="exp-form-floating" title="Select Tolerance Type">
                             <label class="exp-form-labels">
                                 Tolerance Type
                             </label>
                             <Select
                                 value={selectedToleranceType}
                                 options={filteredOptionToleranceType}
-                                placeholder="Select ToleranceType"
                                 className="exp-input-field"
                                 onChange={handleChangeToleranceType}
                             />
@@ -1030,44 +1079,41 @@ const AddSiteMasterScreen = () => {
                     </div>
 
                     <div className="col-md-3 form-group">
-                        <div class="exp-form-floating">
+                        <div class="exp-form-floating" title="Enter Tolerance Values">
                             <label class="exp-form-labels">
                                 Tolerance Values
                             </label>
                             <input
                                 className="form-control"
-                                placeholder="Enter ToleranceValues"
                                 className="exp-input-field form-control"
                                 value={toleranceValues}
-                                onChange={(e) => setToleranceValues(e.target.value)}
+                                onChange={handleToleranceValueChange}
                             />
                         </div>
                     </div>
 
-                    {/* <div className="col-md-3 form-group">
-                        <div class="exp-form-floating">
+                    <div className="col-md-3 form-group">
+                        <div class="exp-form-floating" title="Select Warehouse">
                             <label class="exp-form-labels">
                                 Warehouse
                             </label>
                             <Select
                                 value={selectedWarehouse}
                                 options={filteredOptionWarehouse}
-                                placeholder="Select Warehouse"
                                 className="exp-input-field"
                                 onChange={handleChangeSiteWarehouse}
                             />
                         </div>
-                    </div> */}
+                    </div>
 
                     <div className="col-md-3 form-group mb-2">
-                        <div class="exp-form-floating">
+                        <div class="exp-form-floating" title="Select Status">
                             <label class="exp-form-labels">
                                 Status
                             </label>
                             <Select
                                 value={selectedStatus}
                                 options={filteredOptionStatus}
-                                placeholder="Select SiteStatus"
                                 className="exp-input-field"
                                 onChange={handleChangeStatus}
                             />
@@ -1103,7 +1149,7 @@ const AddSiteMasterScreen = () => {
 
                 </div>
 
-                <div className="ag-theme-alpine mb-2" style={{ height: 300, width: "100%" }}>
+                <div className="ag-theme-alpine mb-2" style={{ height: 450, width: "100%" }}>
                     <AgGridReact
                         columnDefs={columnDefs}
                         rowData={rowData}
@@ -1112,8 +1158,30 @@ const AddSiteMasterScreen = () => {
                         rowSelection="multiple"
                         onSelectionChanged={onSelectionChanged}
                         pagination={true}
+                        onRowSelected={onRowSelected}
                         paginationAutoPageSize={true}
                     />
+                </div>
+            </div>
+
+            <div className="shadow-lg p-2 bg-body-tertiary rounded mt-2 mb-2">
+                <div className="row ms-2">
+                    <div className="d-flex justify-content-start">
+                        <p className="col-md-6">
+                            {labels.createdBy}: {createdBy}
+                        </p>
+                        <p className="col-md-">
+                            {labels.createdDate}: {createdDate}
+                        </p>
+                    </div>
+                    <div className="d-flex justify-content-start">
+                        <p className="col-md-6">
+                            {labels.modifiedBy}: {modifiedBy}
+                        </p>
+                        <p className="col-md-6">
+                            {labels.modifiedDate}: {modifiedDate}
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>

@@ -11744,7 +11744,7 @@ const getItemCodeQuotation = async (req, res) => {
 const addPurchaseOrderdetail = async (req, res) => {
   const { company_code, Entry_date, transaction_no, vendor_code, vendor_name, vendor_addr_1, vendor_addr_2, vendor_addr_3, vendor_addr_4, ShipTo_customer_name, ShipTo_customer_addr_1, ShipTo_customer_addr_2, ShipTo_customer_addr_3, ShipTo_customer_addr_4,
     ItemSNo, item_code, item_name, bill_qty, bill_rate, item_amt, weight, total_weight, tax_amount, hsn, contact_person, contact_number, ship_to_contact_number, ship_to_contact_person, state, country, ship_to_state, ship_to_country,
-    ShipTo_customer_code, vendor_gst_no, ShipTo_vendor_gst_no, created_by, modified_by, tempstr1, tempstr2, tempstr3, tempstr4, datetime1, datetime2, datetime3, datetime4
+    ShipTo_customer_code, vendor_gst_no, ShipTo_vendor_gst_no, created_by, modified_by, warehouse_code, tempstr2, tempstr3, tempstr4, datetime1, datetime2, datetime3, datetime4
   } = req.body;
   let pool;
   try {
@@ -11789,7 +11789,7 @@ const addPurchaseOrderdetail = async (req, res) => {
       .input("ShipTo_vendor_gst_no", sql.NVarChar, ShipTo_vendor_gst_no)
       .input("created_by", sql.NVarChar, created_by)
       .input("modified_by", sql.NVarChar, modified_by)
-      .input("tempstr1", sql.NVarChar, tempstr1)
+      .input("warehouse_code", sql.NVarChar, warehouse_code)
       .input("tempstr2", sql.NVarChar, tempstr2)
       .input("tempstr3", sql.NVarChar, tempstr3)
       .input("tempstr4", sql.NVarChar, tempstr4)
@@ -11799,7 +11799,7 @@ const addPurchaseOrderdetail = async (req, res) => {
       .input("datetime4", sql.NVarChar, datetime4)
       .query(`EXEC sp_purchase_order_details @mode,@company_code,@Entry_date,@transaction_no,@vendor_code, @vendor_name,@vendor_addr_1,@vendor_addr_2,@vendor_addr_3,@vendor_addr_4,@ShipTo_customer_name,@ShipTo_customer_addr_1,@ShipTo_customer_addr_2,@ShipTo_customer_addr_3,@ShipTo_customer_addr_4,@ItemSNo,
             @item_code,@item_name, @bill_qty,@bill_rate,@item_amt,@weight,@total_weight,@tax_amount,@hsn,@contact_person,@contact_number,@ship_to_contact_number,@ship_to_contact_person,@state,@country,@ship_to_state,@ship_to_country,@ShipTo_customer_code,
-            @vendor_gst_no,@ShipTo_vendor_gst_no,@created_by, @modified_by, NULL, NULL, NULL, NULL, NULL, NULL, NULL,NULL`);
+            @vendor_gst_no,@ShipTo_vendor_gst_no,@created_by, @modified_by, @warehouse_code, NULL, NULL, NULL, NULL, NULL, NULL,NULL`);
     {
       res.status(200).json("data inserted successfully");
     }
@@ -11818,7 +11818,7 @@ const getAllPOdetData = async (req, res) => {
       .request()
       .input("mode", sql.NVarChar, "A") // Insert mode
       .input("company_code", sql.NVarChar, company_code)
-      .query(`EXEC sp_purchase_order_details 'A',@company_code,'','','','','','','','','','','', '','',0,'','',0,0,0,0,0,0,'','','','','','','','','','','','','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
+      .query(`EXEC sp_purchase_order_details 'A',@company_code,'','','','','','','','','','','', '','',0,'','',0,0,0,0,0,0,'','','','','','','','','','','','','','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
 
     res.json(result.recordset);
   } catch (err) {
@@ -11839,7 +11839,7 @@ const POdeletedetData = async (req, res) => {
         .input("mode", sql.NVarChar, "D")
         .input("company_code", sql.NVarChar, company_code)
         .input("transaction_no", sql.NVarChar, transaction_no)
-        .query(`EXEC sp_purchase_order_details 'D',@company_code,'',@transaction_no,'','','','','','','','','', '','',0,'','',0,0,0,0,0,0,'','','','','','','','','','','','','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
+        .query(`EXEC sp_purchase_order_details 'D',@company_code,'',@transaction_no,'','','','','','','','','', '','',0,'','',0,0,0,0,0,0,'','','','','','','','','','','','','','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
     } catch (err) {
       if (err.number === 547) {
         res.status(400).json("first delete the Purchase order details  ");
@@ -12386,7 +12386,7 @@ const getPOSearchData = async (req, res) => {
       .input("vendor_name", sql.NVarChar, vendor_name)
       .input("ShipTo_customer_name", sql.NVarChar, ShipTo_customer_name)
       .query(`EXEC sp_purchase_order_details @mode,@company_code,@Entry_date,@transaction_no,'',@vendor_name,'','','','',@ShipTo_customer_name,'',
-'', '','',0,'','',0,0,0,0,0,0,'','','','','','','','','','','','','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
+'', '','',0,'','',0,0,0,0,0,0,'','','','','','','','','','','','','','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
 
     // Send response
     if (result.recordset.length > 0) {
@@ -23146,7 +23146,7 @@ const getDeletedPoSearchData = async (req, res) => {
       .input("vendor_name", sql.NVarChar, vendor_name)
       .input("ShipTo_customer_name", sql.NVarChar, ShipTo_customer_name)
       .query(`EXEC sp_purchase_order_details @mode,@company_code,@Entry_date,@transaction_no,'',@vendor_name,'','','','',@ShipTo_customer_name,'',
-'', '','',0,'','',0,0,0,0,0,0,'','','','','','','','','','','','','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
+'', '','',0,'','',0,0,0,0,0,0,'','','','','','','','','','','','','','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
 
     if (result.recordset.length > 0) {
       res.status(200).json(result.recordset);
@@ -36087,14 +36087,14 @@ const SiteWarehouseMappingLoopUpdate = async (req, res) => {
     for (const item of SiteWarehouseMappingData) {
       await pool.request()
         .input("mode", sql.NVarChar, "U")
-        .input("company_code", sql.NVarChar, req.headers['company_code'])
+        .input("company_code", sql.NVarChar, item.company_code)
         .input("site_id", sql.NVarChar, item.site_id)
         .input("warehouse_code", sql.NVarChar, item.warehouse_code)
         .input("remarks", sql.NVarChar, item.remarks)
         .input("status", sql.NVarChar, item.status)
         .input("keyfield", sql.NVarChar, item.keyfield)
         .input("Is_Primary", sql.NVarChar, item.Is_Primary)
-        .input("modified_by", sql.NVarChar, req.headers['modified_by'])
+        .input("modified_by", sql.NVarChar, item.modified_by)
         .query(`EXEC sp_SiteWarehouseMapping @mode, @company_code, @site_id, @warehouse_code, '', @remarks, @status, @keyfield, @Is_Primary, '', '', @modified_by`);
     }
     res.status(200).json("SiteWarehouseMapping data updated successfully");
@@ -36116,7 +36116,7 @@ const SiteWarehouseMappingLoopDelete = async (req, res) => {
       await pool.request()
         .input("mode", sql.NVarChar, "D")
         .input("keyfield", sql.NVarChar, item.keyfield)
-        .input("company_code", sql.NVarChar, req.headers['company_code'])
+        .input("company_code", sql.NVarChar, item.company_code)
         .query(`EXEC sp_SiteWarehouseMapping @mode, @company_code, '', '', '', '', '', @keyfield, '', '', '', ''`);
     }
     res.status(200).json("SiteWarehouseMapping data deleted successfully");
@@ -36443,45 +36443,6 @@ const opening_balanceLoopDelete = async (req, res) => {
 };
 //code Ended by sakthi on 05-22-26
 
-//code added by sakthi on 05-23-26
-const OpeningBalanceSC = async (req, res) => {
-  const { transaction_no, financial_year, entry_date, party_type, party_code, keyfield, opening_amount, balance_type, remarks, status, data_deleted, company_code, created_by, created_date, modified_by, modified_date } = req.body;
-
-  try {
-    const pool = await connection.connectToDatabase();
-
-    const result = await pool.request()
-      .input("mode", sql.NVarChar, "SC")
-      .input("transaction_no", sql.NVarChar, transaction_no || '')
-      .input("financial_year", sql.NVarChar, financial_year || '')
-      .input("entry_date", sql.Date, entry_date || null)
-      .input("party_type", sql.NVarChar, party_type || '')
-      .input("party_code", sql.NVarChar, party_code || '')
-      .input("keyfield", sql.NVarChar, keyfield || '')
-      .input("opening_amount", sql.Decimal(18, 2), opening_amount || 0)
-      .input("balance_type", sql.NVarChar, balance_type || '')
-      .input("remarks", sql.NVarChar, remarks || '')
-      .input("status", sql.NVarChar, status || '')
-      .input("data_deleted", sql.Bit, data_deleted ?? null)
-      .input("company_code", sql.NVarChar, company_code || '')
-      .input("created_by", sql.NVarChar, created_by || '')
-      .input("created_date", sql.DateTime, created_date || null)
-      .input("modified_by", sql.NVarChar, modified_by || '')
-      .input("modified_date", sql.DateTime, modified_date || null)
-      .query(`EXEC sp_opening_balance @mode,@transaction_no,@financial_year,@entry_date,@party_type,@party_code,@keyfield,@opening_amount,@balance_type,@remarks,@status,@data_deleted,@company_code,@created_by,@created_date,@modified_by,@modified_date`);
-
-    if (result.recordset.length > 0) {
-      res.status(200).json(result.recordset);
-    } else {
-      res.status(404).json("Data not found");
-    }
-
-  } catch (err) {
-    console.error("Error", err);
-    res.status(500).json({ message: err.message || 'Internal Server Error' });
-  }
-};
-//code Ended by sakthi on 05-23-26
 
 //code added by sakthi on 05-23-26
 const getExpenseType = async (req, res) => {
@@ -36771,6 +36732,34 @@ const OpeningBalanceSC = async (req, res) => {
   }
 };
 //code Ended by sakthi on 05-23-26
+
+//Code added by pavun on 25-06-2026
+const searchSiteWarehouseMapping = async (req, res) => {
+  const { company_code, site_id, warehouse_code, remarks, status, Is_Primary } = req.body;
+
+  try {
+    const pool = await sql.connect(dbConfig);
+    const result = await pool.request()
+      .input("mode", sql.NVarChar, "SC")
+      .input("company_code", sql.NVarChar, company_code)
+      .input("site_id", sql.NVarChar, site_id)
+      .input("warehouse_code", sql.NVarChar, warehouse_code)
+      .input("remarks", sql.NVarChar, remarks)
+      .input("status", sql.NVarChar, status)
+      .input("Is_Primary", sql.NVarChar, Is_Primary)
+      .query(`EXEC sp_SiteWarehouseMapping @mode, @company_code, @site_id, @warehouse_code, '', @remarks, @status, '', @Is_Primary, '', '', ''`);
+
+    if (result.recordset.length > 0) {
+      res.status(200).json(result.recordset);
+    } else {
+      res.status(404).json("Data not found");
+    }
+  } catch (err) {
+    console.error("Error during SiteWarehouseMapping insert:", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+};
+//Code ended by pavun on 25-06-2026
 
 module.exports = {
   login,
@@ -37949,7 +37938,7 @@ module.exports = {
   opening_balanceLoopInsert, 
   opening_balanceLoopUpdate, 
   opening_balanceLoopDelete,
-    getExpenseType,
+  getExpenseType,
   getReferenceType,
   getExpensePaymentType,
   Expenses_HdrInsert, 
@@ -37958,7 +37947,17 @@ module.exports = {
   Expenses_HdrLoopInsert, 
   Expenses_HdrLoopUpdate, 
   Expenses_HdrLoopDelete,
-  OpeningBalanceSC
+  OpeningBalanceSC,
+  getProjectType,
+  getSiteStatus,
+  getToleranceType,
+  getWarehouseCodeDrop,
+  searchCriteriaSiteMaster,
+  getSiteMaster,
+  SiteWarehouseMappingInsert,
+  SiteWarehouseMappingLoopUpdate,
+  SiteWarehouseMappingLoopDelete,
+  searchSiteWarehouseMapping
 
 
 };

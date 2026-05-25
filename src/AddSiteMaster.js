@@ -382,6 +382,26 @@ const AddAddSiteMasterScreen = () => {
         navigate("/SiteMaster   ");
     };
 
+    // Total Budget
+    const handleTotalBudgetChange = (e) => {
+        const value = e.target.value;
+
+        // 14 digits + 2 decimals + positive only
+        if (/^\d{0,14}(\.\d{0,2})?$/.test(value)) {
+            setTotalBudget(value);
+        }
+    };
+
+    // Tolerance Value
+    const handleToleranceValueChange = (e) => {
+        const value = e.target.value;
+
+        // Numeric + positive only
+        if (/^\d{0,10}(\.\d{0,2})?$/.test(value)) {
+            setToleranceValues(value);
+        }
+    };
+
     return (
         <div className="container-fluid Topnav-screen">
             {loading && <LoadingScreen />}
@@ -410,7 +430,7 @@ const AddAddSiteMasterScreen = () => {
                                 </label>
                                 <input
                                     className="form-control"
-                                    placeholder="Enter SiteID"
+                                    title="Enter Site ID"
                                     className="exp-input-field form-control"
                                     value={siteId}
                                     onChange={(e) => setSiteId(e.target.value)}
@@ -425,7 +445,7 @@ const AddAddSiteMasterScreen = () => {
                                 </label>
                                 <input
                                     className="form-control"
-                                    placeholder="Enter SiteName"
+                                    title="Enter Site Name"
                                     className="exp-input-field form-control"
                                     value={siteName}
                                     onChange={(e) => setSiteName(e.target.value)}
@@ -440,7 +460,7 @@ const AddAddSiteMasterScreen = () => {
                                 </label>
                                 <input
                                     className="form-control"
-                                    placeholder="Enter SiteLocation"
+                                    title="Enter Site Location"
                                     className="exp-input-field form-control"
                                     value={siteLocation}
                                     onChange={(e) => setSiteLocation(e.target.value)}
@@ -449,14 +469,13 @@ const AddAddSiteMasterScreen = () => {
                         </div>
 
                         <div className="col-md-3 form-group mb-2">
-                            <div className="exp-form-floating">
+                            <div className="exp-form-floating" title="Select Customer Code">
                                 <label className="exp-form-labels">
                                     Customer Code
                                 </label>
                                 <Select
                                     value={selectedCustomerCode}
                                     options={filteredOptionCustomer}
-                                    placeholder="Select CustomerCode"
                                     className="exp-input-field"
                                     onChange={handleChangeCustomerCode}
                                 />
@@ -464,14 +483,13 @@ const AddAddSiteMasterScreen = () => {
                         </div>
 
                         <div className="col-md-3 form-group mb-2">
-                            <div className="exp-form-floating">
+                            <div className="exp-form-floating" title="Select Project Type">
                                 <label className="exp-form-labels">
                                     Project Type
                                 </label>
                                 <Select
                                     value={selectedProjectType}
                                     options={filteredOptionProjectType}
-                                    placeholder="Select ProjectType"
                                     className="exp-input-field"
                                     onChange={handleChangeProjectType}
                                 />
@@ -485,6 +503,7 @@ const AddAddSiteMasterScreen = () => {
                                 </label>
                                 <input
                                     type="date"
+                                    title="Select Start Date"
                                     className="form-control"
                                     className="exp-input-field form-control"
                                     value={startDate}
@@ -500,6 +519,7 @@ const AddAddSiteMasterScreen = () => {
                                 </label>
                                 <input
                                     type="date"
+                                    title="Select End Date"
                                     className="form-control"
                                     className="exp-input-field form-control"
                                     value={endDate}
@@ -509,14 +529,13 @@ const AddAddSiteMasterScreen = () => {
                         </div>
 
                         <div className="col-md-3 form-group mb-2">
-                            <div className="exp-form-floating">
+                            <div className="exp-form-floating" title="Select Site Status">
                                 <label className={`exp-form-labels ${error && !siteStatus ? 'text-danger' : ''}`}>
                                     Site Status<span className="text-danger">*</span>
                                 </label>
                                 <Select
                                     value={selectedSiteStatus}
                                     options={filteredOptionSiteStatus}
-                                    placeholder="Select SiteStatus"
                                     className="exp-input-field"
                                     onChange={handleChangeSiteStatus}
                                 />
@@ -530,23 +549,22 @@ const AddAddSiteMasterScreen = () => {
                                 </label>
                                 <input
                                     className="form-control"
-                                    placeholder="Enter TotalBudget"
+                                    title="Enter Total Budget"
                                     className="exp-input-field form-control"
                                     value={totalBudget}
-                                    onChange={(e) => setTotalBudget(e.target.value)}
+                                    onChange={handleTotalBudgetChange}
                                 />
                             </div>
                         </div>
 
                         <div className="col-md-3 form-group mb-2">
-                            <div className="exp-form-floating">
+                            <div className="exp-form-floating" title="Select Tolerance Type">
                                 <label className="exp-form-labels">
                                     Tolerance Type
                                 </label>
                                 <Select
                                     value={selectedToleranceType}
                                     options={filteredOptionToleranceType}
-                                    placeholder="Select ToleranceType"
                                     className="exp-input-field"
                                     onChange={handleChangeToleranceType}
                                 />
@@ -560,10 +578,10 @@ const AddAddSiteMasterScreen = () => {
                                 </label>
                                 <input
                                     className="form-control"
-                                    placeholder="Enter ToleranceValues"
+                                    title="Enter Tolerance Values"
                                     className="exp-input-field form-control"
                                     value={toleranceValues}
-                                    onChange={(e) => setToleranceValues(e.target.value)}
+                                    onChange={handleToleranceValueChange}
                                 />
                             </div>
                         </div>
@@ -584,14 +602,13 @@ const AddAddSiteMasterScreen = () => {
                         </div> */}
 
                         <div className="col-md-3 form-group mb-2">
-                            <div className="exp-form-floating">
+                            <div className="exp-form-floating" title="Select Status">
                                 <label className={`exp-form-labels ${error && !status ? 'text-danger' : ''}`}>
                                     Status<span className="text-danger">*</span>
                                 </label>
                                 <Select
                                     value={selectedStatus}
                                     options={filteredOptionStatus}
-                                    placeholder="Select SiteStatus"
                                     className="exp-input-field"
                                     onChange={handleChangeStatus}
                                 />
