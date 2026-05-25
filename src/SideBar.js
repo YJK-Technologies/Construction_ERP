@@ -1576,36 +1576,7 @@ const Sidebar = () => {
               </Link>
             )}
           </div>*/}
-              <div className=" ms-3">
-                {screenType.includes("OpeningItem") && (
-                  <Link
-                    to="/OpeningItem"
-                    className="nav-link"
-                    title="Opening Item"
-                  >
-                    <div class="menu-item">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="18"
-                        height="18"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        className="icon me-3"
-                      >
-                        <path d="M3 6h5l2 3h11v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-                        <path d="M3 6V4a2 2 0 0 1 2-2h5l2 3h7a2 2 0 0 1 2 2v1" />
-                      </svg>
-                      <span className={collapsed ? "hidden" : ""} class="ms-1">
-                        Opening Item
-                      </span>
-                    </div>
-                  </Link>
-                )}
-              </div>
+              
 
               {hasAnyPermission([
                 "Purchase",

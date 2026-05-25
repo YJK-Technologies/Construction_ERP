@@ -944,7 +944,7 @@ function UserGrid() {
                 </div>
               </div>
             </div>
-            <div className="col-md-3 form-group">
+            {/* <div className="col-md-3 form-group">
               <div class="exp-form-floating">
                 <label for="utype" class="exp-form-labels">
                   User Type
@@ -961,7 +961,7 @@ function UserGrid() {
                   />
                 </div>
               </div>
-            </div>
+            </div> */}
             <div className="col-md-3 form-group">
               <div class="exp-form-floating">
                 <label for="dob" class="exp-form-labels">
