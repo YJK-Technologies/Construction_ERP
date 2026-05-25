@@ -36570,11 +36570,7 @@ const Expenses_HdrUpdate = async (req, res) => {
 
 const Expenses_HdrDelete = async (req, res) => {
   const {
-  expense_no, expense_date, keyfield, data_deleted,
-  created_date,
-  modified_date,
-  created_by,
-  modified_by,
+  expense_no, expense_date, 
   company_code
 } = req.body;
 
@@ -36583,15 +36579,9 @@ const Expenses_HdrDelete = async (req, res) => {
     await pool.request()
       .input("mode", sql.NVarChar, "D")
       .input("expense_no", sql.NVarChar, expense_no)
-      .input("expense_date", sql.Date, expense_date)
-      .input("keyfield", sql.NVarChar, keyfield)
-      .input("data_deleted", sql.NVarChar, data_deleted)
       .input("company_code", sql.NVarChar, company_code)
-      .input("created_by", sql.NVarChar, created_by)
-      .input("created_date", sql.DateTime, created_date)
-      .input("modified_by", sql.NVarChar, modified_by)
-      .input("modified_date", sql.DateTime, modified_date)
-      .query(`EXEC sp_Expenses_Hdr @mode, @expense_no, @expense_date, @keyfield, @data_deleted, @company_code, @created_by, @created_date, @modified_by, @modified_date`);
+      .input("expense_date", sql.Date, expense_date)
+      .query(`EXEC sp_Expenses_Hdr @mode, @expense_no, @expense_date, '', '', @company_code, '', ''`);
 
     res.status(200).json({ success: true, message: "Expenses_Hdr deleted successfully" });
   } catch (err) {
@@ -36693,32 +36683,119 @@ const Expenses_HdrLoopDelete = async (req, res) => {
 };
 // Code ended by Dinesh Gokul 23-05-2026
  
-//code added by sakthi on 05-23-26
-const OpeningBalanceSC = async (req, res) => {
-  const { transaction_no, financial_year, entry_date, party_type, party_code, keyfield, opening_amount, balance_type, remarks, status, data_deleted, company_code, created_by, created_date, modified_by, modified_date } = req.body;
+// Code added by Dinesh Gokul 25-05-2026
+const getCustomerCodeExpenses = async (req, res) => {
+  const { company_code, customer_code } = req.body;
+
+  try {
+    // Connect to the database
+    const pool = await connection.connectToDatabase();
+
+    // Execute the query
+    const result = await pool
+      .request()
+      .input("mode", sql.NVarChar, "CCE")
+      .input("company_code", sql.NVarChar, company_code)
+      .input("customer_code", sql.NVarChar, customer_code)
+      .query(`EXEC sp_customer_details_info_Ramya @mode,@customer_code,@company_code,'','','','','','','','','','','','','','','','','',0,0,'',
+          '','','','','','','','','','',NULL,NULL,NULL,null,null,null,null,null`);
+
+    // Send response
+    if (result.recordset.length > 0) {
+      res.status(200).json(result.recordset);
+    } else {
+      res.status(404).json("Data not found");
+    }
+  } catch (err) {
+    console.error("Error", err);
+    res.status(500).json({ message: err.message || 'Internal Server Error' });
+  }
+};
+
+const vendorCodeDropdownExpenses = async (req, res) => {
+  const { company_code } = req.body;
+
+  try {
+    const pool = await connection.connectToDatabase();
+
+    const result = await pool
+      .request()
+      .input("mode", sql.NVarChar, "VCE")
+      .input("company_code", sql.NVarChar, company_code)
+      .query(`EXEC sp_vendor_details_info_hdr @mode,'',@company_code,'','','','','','','','','','' ,'','','','','','','',0,'','','','','','','','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
+
+    if (result.recordset && result.recordset.length > 0) {
+      res.status(200).json(result.recordset);
+    } else {
+      res.status(404).json("Data not found");
+    }
+  } catch (err) {
+    console.error("Error", err);
+    res.status(500).json({ message: err.message || 'Internal Server Error' });
+  }
+};
+
+const getSiteMasterExpenses = async (req, res) => {
+  const { company_code } = req.body;
+
+  try {
+    const pool = await sql.connect(dbConfig);
+    const result = await pool
+      .request()
+      .input("mode", sql.NVarChar, "SIE")
+      .input("company_code", sql.NVarChar, company_code)
+      .query(`EXEC sp_SiteMaster @mode, '', '', '', '', '', '', '', '', 0, '', '', '', '', 0, '', @company_code, '', ''`);
+
+    if (result.recordset.length > 0) {
+      res.status(200).json(result.recordset);
+    } else {
+      res.status(404).json("Data not found"); 
+    }
+  } catch (err) {
+    console.error("Error during SiteMaster update:", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+};
+
+const ExpensesSC = async (req, res) => {
+  const {
+  expense_no, expense_date, expense_type, reference_type, reference_code, reference_name, 
+  payment_mode, amount, description, is_approved, is_closed, keyfield, data_deleted,
+  created_by,
+  company_code,
+  Expens_Sno,
+  modified_by,
+  Start_Date,
+  End_Date
+} = req.body;
 
   try {
     const pool = await connection.connectToDatabase();
 
     const result = await pool.request()
       .input("mode", sql.NVarChar, "SC")
-      .input("transaction_no", sql.NVarChar, transaction_no || '')
-      .input("financial_year", sql.NVarChar, financial_year || '')
-      .input("entry_date", sql.Date, entry_date || null)
-      .input("party_type", sql.NVarChar, party_type || '')
-      .input("party_code", sql.NVarChar, party_code || '')
+      .input("expense_no", sql.NVarChar, expense_no || '')
+      .input("expense_date", sql.NVarChar, expense_date || '')
+      .input("expense_type", sql.NVarChar, expense_type || '')
+      .input("reference_type", sql.NVarChar, reference_type || '')
+      .input("reference_code", sql.NVarChar, reference_code || '')
+      .input("reference_name", sql.NVarChar, reference_name || '')
+      .input("payment_mode", sql.NVarChar, payment_mode || '')
+      .input("amount", sql.Decimal(14, 3), amount || 0)
+      .input("description", sql.NVarChar, description || '')
+      .input("is_approved", sql.NVarChar, is_approved || '')
+      .input("is_closed", sql.NVarChar, is_closed || '')
       .input("keyfield", sql.NVarChar, keyfield || '')
-      .input("opening_amount", sql.Decimal(18, 2), opening_amount || 0)
-      .input("balance_type", sql.NVarChar, balance_type || '')
-      .input("remarks", sql.NVarChar, remarks || '')
-      .input("status", sql.NVarChar, status || '')
-      .input("data_deleted", sql.Bit, data_deleted ?? null)
+      .input("data_deleted", sql.NVarChar, data_deleted || '')
+      .input("Expens_Sno", sql.Int, Expens_Sno || 0)
       .input("company_code", sql.NVarChar, company_code || '')
       .input("created_by", sql.NVarChar, created_by || '')
-      .input("created_date", sql.DateTime, created_date || null)
       .input("modified_by", sql.NVarChar, modified_by || '')
-      .input("modified_date", sql.DateTime, modified_date || null)
-      .query(`EXEC sp_opening_balance @mode,@transaction_no,@financial_year,@entry_date,@party_type,@party_code,@keyfield,@opening_amount,@balance_type,@remarks,@status,@data_deleted,@company_code,@created_by,@created_date,@modified_by,@modified_date`);
+      .input("Start_Date", sql.NVarChar, Start_Date || '')
+      .input("End_Date", sql.NVarChar, End_Date || '')
+      .query(`EXEC sp_Expenses_Details_Test @mode, @expense_no, @expense_date, @expense_type, @reference_type, @reference_code, 
+        @reference_name, @payment_mode, @amount, @description, @is_approved, @is_closed, @keyfield, 
+        @data_deleted, @Expens_Sno, @company_code, @created_by, @modified_by, @Start_Date, @End_Date`);
 
     if (result.recordset.length > 0) {
       res.status(200).json(result.recordset);
@@ -36731,7 +36808,58 @@ const OpeningBalanceSC = async (req, res) => {
     res.status(500).json({ message: err.message || 'Internal Server Error' });
   }
 };
-//code Ended by sakthi on 05-23-26
+
+const getallExpensesDetail = async (req, res) => {
+  const { transaction_no, company_code } = req.body;
+
+  try {
+    const pool = await connection.connectToDatabase();
+    const result = await pool
+      .request()
+      .input("mode", sql.NVarChar, "EGF")
+      .input("transaction_no", sql.NVarChar, transaction_no)
+      .input("company_code", sql.NVarChar, company_code)
+      .query(`EXEC sp_getdata @mode,@transaction_no,@company_code,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
+
+    if (result.recordset && Array.isArray(result.recordset) && result.recordset.length > 0) {
+      res.status(200).json(result.recordset);
+    } else {
+      res.status(404).json("Data not found");
+    }
+  } catch (err) {
+    console.error("Error", err);
+    res.status(500).json({ message: err.message || 'Internal Server Error' });
+  }
+};
+
+const getallExpensesEnter = async (req, res) => {
+  const { transaction_no, company_code } = req.body;
+
+  try {
+    const pool = await connection.connectToDatabase();
+
+    const result = await pool
+      .request()
+      .input("mode", sql.NVarChar, "EEK")
+      .input("transaction_no", sql.NVarChar, transaction_no)
+      .input("company_code", sql.NVarChar, company_code)
+      .query(`EXEC sp_getdata @mode,@transaction_no,@company_code,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
+
+    if (result.recordsets && result.recordsets.length > 0 && result.recordsets[0].length > 0) {
+      const data = {
+        Header: result.recordsets[0],
+        Details: result.recordsets[1] || []
+      };
+      res.status(200).json(data);
+    } else {
+      res.status(404).json("Data not found");
+    }
+  } catch (err) {
+    console.error("Error", err);
+    res.status(500).json({ message: err.message || 'Internal Server Error' });
+  }
+};
+// Code ended by Dinesh Gokul 25-05-2026
 
 //Code added by pavun on 25-06-2026
 const searchSiteWarehouseMapping = async (req, res) => {
@@ -36761,6 +36889,45 @@ const searchSiteWarehouseMapping = async (req, res) => {
 };
 //Code ended by pavun on 25-06-2026
 
+//code added by sakthi on 05-23-26
+const OpeningBalanceSC = async (req, res) => {
+  const { transaction_no, financial_year, entry_date, party_type, party_code, keyfield, opening_amount, balance_type, remarks, status, data_deleted, company_code, created_by, created_date, modified_by, modified_date } = req.body;
+
+  try {
+    const pool = await connection.connectToDatabase();
+
+    const result = await pool.request()
+      .input("mode", sql.NVarChar, "SC")
+      .input("transaction_no", sql.NVarChar, transaction_no || '')
+      .input("financial_year", sql.NVarChar, financial_year || '')
+      .input("entry_date", sql.Date, entry_date || null)
+      .input("party_type", sql.NVarChar, party_type || '')
+      .input("party_code", sql.NVarChar, party_code || '')
+      .input("keyfield", sql.NVarChar, keyfield || '')
+      .input("opening_amount", sql.Decimal(18, 2), opening_amount || 0)
+      .input("balance_type", sql.NVarChar, balance_type || '')
+      .input("remarks", sql.NVarChar, remarks || '')
+      .input("status", sql.NVarChar, status || '')
+      .input("data_deleted", sql.Bit, data_deleted ?? null)
+      .input("company_code", sql.NVarChar, company_code || '')
+      .input("created_by", sql.NVarChar, created_by || '')
+      .input("created_date", sql.DateTime, created_date || null)
+      .input("modified_by", sql.NVarChar, modified_by || '')
+      .input("modified_date", sql.DateTime, modified_date || null)
+      .query(`EXEC sp_opening_balance @mode,@transaction_no,@financial_year,@entry_date,@party_type,@party_code,@keyfield,@opening_amount,@balance_type,@remarks,@status,@data_deleted,@company_code,@created_by,@created_date,@modified_by,@modified_date`);
+
+    if (result.recordset.length > 0) {
+      res.status(200).json(result.recordset);
+    } else {
+      res.status(404).json("Data not found");
+    }
+
+  } catch (err) {
+    console.error("Error", err);
+    res.status(500).json({ message: err.message || 'Internal Server Error' });
+  }
+};
+//code Ended by sakthi on 05-23-26
 module.exports = {
   login,
   forgetPassword,
@@ -37948,7 +38115,12 @@ module.exports = {
   Expenses_HdrLoopUpdate, 
   Expenses_HdrLoopDelete,
   OpeningBalanceSC,
-  getProjectType,
+  getCustomerCodeExpenses,
+  vendorCodeDropdownExpenses,
+  getSiteMasterExpenses,
+  ExpensesSC,
+  getallExpensesDetail,
+  getallExpensesEnter, getProjectType,
   getSiteStatus,
   getToleranceType,
   getWarehouseCodeDrop,
