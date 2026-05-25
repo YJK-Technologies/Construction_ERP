@@ -1223,6 +1223,16 @@ router.post("/getSiteMasterExpenses", dataController.getSiteMasterExpenses)
 router.post("/ExpensesSC", dataController.ExpensesSC)
 router.post("/getallExpensesDetail", dataController.getallExpensesDetail)
 router.post("/getallExpensesEnter", dataController.getallExpensesEnter)
+router.post("/getProjectType", dataController.getProjectType)
+router.post("/getSiteStatus", dataController.getSiteStatus)
+router.post("/getToleranceType", dataController.getToleranceType)
+router.post("/getWarehouseCodeDrop", dataController.getWarehouseCodeDrop)
+router.post("/searchCriteriaSiteMaster", dataController.searchCriteriaSiteMaster)
+router.post("/getSiteMaster", dataController.getSiteMaster)
+router.post("/SiteWarehouseMappingInsert", dataController.SiteWarehouseMappingInsert)
+router.post("/SiteWarehouseMappingLoopUpdate", dataController.SiteWarehouseMappingLoopUpdate)
+router.post("/SiteWarehouseMappingLoopDelete", dataController.SiteWarehouseMappingLoopDelete)
+router.post("/searchSiteWarehouseMapping", dataController.searchSiteWarehouseMapping)
 
 
 module.exports = router;

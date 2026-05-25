@@ -209,8 +209,8 @@ const Sidebar = () => {
   const permissions = permissionsJSON ? JSON.parse(permissionsJSON) : [];
   const screenType = Array.isArray(permissions)
     ? permissions.map((permission) =>
-        permission.screen_type.replace(/\s+/g, "")
-      )
+      permission.screen_type.replace(/\s+/g, "")
+    )
     : [];
 
   const hasAnyPermission = (screens = []) =>
@@ -307,12 +307,12 @@ const Sidebar = () => {
 
         <div className=" mt-5">
           {screenType.includes("Dashboard") && (
-          <Link to="/Dashboard" class="nav-link" title="Dashboard">
-            <div class="menu-item">
-              <i class="bi bi-speedometer2 me-2 fs-5"></i>
-              <span className={collapsed ? "hidden" : ""}> Dashboard</span>
-            </div>
-          </Link>
+            <Link to="/Dashboard" class="nav-link" title="Dashboard">
+              <div class="menu-item">
+                <i class="bi bi-speedometer2 me-2 fs-5"></i>
+                <span className={collapsed ? "hidden" : ""}> Dashboard</span>
+              </div>
+            </Link>
           )}
         </div>
 
@@ -964,6 +964,7 @@ const Sidebar = () => {
                 {screenType.includes("SiteMaster") && (
                   <Link to="/SiteMaster" className="nav-link" title="Site Master">
                     <div class="menu-item">
+                      {/* Site / Building Icon */}
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         width="18"
@@ -972,8 +973,9 @@ const Sidebar = () => {
                         class="me-3"
                         viewBox="0 0 576 512"
                       >
-                        <path d="M64 64C28.7 64 0 92.7 0 128L0 384c0 35.3 28.7 64 64 64l448 0c35.3 0 64-28.7 64-64l0-256c0-35.3-28.7-64-64-64L64 64zM272 192l224 0c8.8 0 16 7.2 16 16s-7.2 16-16 16l-224 0c-8.8 0-16-7.2-16-16s7.2-16 16-16zM256 304c0-8.8 7.2-16 16-16l224 0c8.8 0 16 7.2 16 16s-7.2 16-16 16l-224 0c-8.8 0-16-7.2-16-16zM164 152l0 13.9c7.5 1.2 14.6 2.9 21.1 4.7c10.7 2.8 17 13.8 14.2 24.5s-13.8 17-24.5 14.2c-11-2.9-21.6-5-31.2-5.2c-7.9-.1-16 1.8-21.5 5c-4.8 2.8-6.2 5.6-6.2 9.3c0 1.8 .1 3.5 5.3 6.7c6.3 3.8 15.5 6.7 28.3 10.5l.7 .2c11.2 3.4 25.6 7.7 37.1 15c12.9 8.1 24.3 21.3 24.6 41.6c.3 20.9-10.5 36.1-24.8 45c-7.2 4.5-15.2 7.3-23.2 9l0 13.8c0 11-9 20-20 20s-20-9-20-20l0-14.6c-10.3-2.2-20-5.5-28.2-8.4c0 0 0 0 0 0s0 0 0 0c-2.1-.7-4.1-1.4-6.1-2.1c-10.5-3.5-16.1-14.8-12.6-25.3s14.8-16.1 25.3-12.6c2.5 .8 4.9 1.7 7.2 2.4c13.6 4.6 24 8.1 35.1 8.5c8.6 .3 16.5-1.6 21.4-4.7c4.1-2.5 6-5.5 5.9-10.5c0-2.9-.8-5-5.9-8.2c-6.3-4-15.4-6.9-28-10.7l-1.7-.5c-10.9-3.3-24.6-7.4-35.6-14c-12.7-7.7-24.6-20.5-24.7-40.7c-.1-21.1 11.8-35.7 25.8-43.9c6.9-4.1 14.5-6.8 22.2-8.5l0-14c0-11 9-20 20-20s20 9 20 20z" />
+                        <path d="M256 0c17.7 0 32 14.3 32 32V64H448c35.3 0 64 28.7 64 64V448c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V128C0 92.7 28.7 64 64 64H224V32c0-17.7 14.3-32 32-32zM96 160v64h64V160H96zm128 0v64h64V160H224zm128 0v64h64V160H352zM96 288v64h64V288H96zm128 0v64h64V288H224zm128 0v64h64V288H352z" />
                       </svg>
+
                       <span className={collapsed ? "hidden" : ""} class="ms-1">
                         Site Master
                       </span>
@@ -983,18 +985,24 @@ const Sidebar = () => {
               </div>
               <div className=" ms-3">
                 {screenType.includes("SiteWarehouse") && (
-                  <Link to="/SiteWarehouse" className="nav-link" title="Site Warehouse Mapping">
+                  <Link
+                    to="/SiteWarehouse"
+                    className="nav-link"
+                    title="Site Warehouse Mapping"
+                  >
                     <div class="menu-item">
+                      {/* Warehouse Icon */}
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         width="18"
                         height="18"
                         fill="currentColor"
                         class="me-3"
-                        viewBox="0 0 576 512"
+                        viewBox="0 0 640 512"
                       >
-                        <path d="M64 64C28.7 64 0 92.7 0 128L0 384c0 35.3 28.7 64 64 64l448 0c35.3 0 64-28.7 64-64l0-256c0-35.3-28.7-64-64-64L64 64zM272 192l224 0c8.8 0 16 7.2 16 16s-7.2 16-16 16l-224 0c-8.8 0-16-7.2-16-16s7.2-16 16-16zM256 304c0-8.8 7.2-16 16-16l224 0c8.8 0 16 7.2 16 16s-7.2 16-16 16l-224 0c-8.8 0-16-7.2-16-16zM164 152l0 13.9c7.5 1.2 14.6 2.9 21.1 4.7c10.7 2.8 17 13.8 14.2 24.5s-13.8 17-24.5 14.2c-11-2.9-21.6-5-31.2-5.2c-7.9-.1-16 1.8-21.5 5c-4.8 2.8-6.2 5.6-6.2 9.3c0 1.8 .1 3.5 5.3 6.7c6.3 3.8 15.5 6.7 28.3 10.5l.7 .2c11.2 3.4 25.6 7.7 37.1 15c12.9 8.1 24.3 21.3 24.6 41.6c.3 20.9-10.5 36.1-24.8 45c-7.2 4.5-15.2 7.3-23.2 9l0 13.8c0 11-9 20-20 20s-20-9-20-20l0-14.6c-10.3-2.2-20-5.5-28.2-8.4c0 0 0 0 0 0s0 0 0 0c-2.1-.7-4.1-1.4-6.1-2.1c-10.5-3.5-16.1-14.8-12.6-25.3s14.8-16.1 25.3-12.6c2.5 .8 4.9 1.7 7.2 2.4c13.6 4.6 24 8.1 35.1 8.5c8.6 .3 16.5-1.6 21.4-4.7c4.1-2.5 6-5.5 5.9-10.5c0-2.9-.8-5-5.9-8.2c-6.3-4-15.4-6.9-28-10.7l-1.7-.5c-10.9-3.3-24.6-7.4-35.6-14c-12.7-7.7-24.6-20.5-24.7-40.7c-.1-21.1 11.8-35.7 25.8-43.9c6.9-4.1 14.5-6.8 22.2-8.5l0-14c0-11 9-20 20-20s20 9 20 20z" />
+                        <path d="M504 352H136V240h368v112zm0 32v64H136V384h368zM320 0L0 160v32H640V160L320 0zm248 480H72c-13.3 0-24 10.7-24 24s10.7 24 24 24H568c13.3 0 24-10.7 24-24s-10.7-24-24-24z" />
                       </svg>
+
                       <span className={collapsed ? "hidden" : ""} class="ms-1">
                         Site Warehouse Mapping
                       </span>
@@ -1297,22 +1305,19 @@ const Sidebar = () => {
                     title="Opening Balance"
                   >
                     <div class="menu-item">
+                      {/* Wallet / Balance Icon */}
                       <svg
-                        viewBox="0 0 128 128"
+                        xmlns="http://www.w3.org/2000/svg"
                         width="18"
                         height="18"
                         fill="currentColor"
-                        xmlns="http://www.w3.org/2000/svg"
                         class="me-3"
+                        viewBox="0 0 576 512"
                       >
-                        <path d="m105.544 37.128-14.773-14.774v-10.754a1.75 1.75 0 0 0 -1.75-1.75h-65.328a1.75 1.75 0 0 0 -1.75 1.75v93a1.75 1.75 0 0 0 1.75 1.75h9.863v10.05a1.75 1.75 0 0 0 1.75 1.75h69a1.75 1.75 0 0 0 1.75-1.75v-78.035a1.75 1.75 0 0 0 -.512-1.237zm-14.773-9.828 9.311 9.311h-9.311zm-65.328 75.55v-89.5h61.828v7.977h-51.964a1.75 1.75 0 0 0 -1.75 1.75v79.773zm11.613 11.8v-89.821h50.215v13.536a1.75 1.75 0 0 0 1.75 1.75h13.535v74.532z" />
-                        <path d="m54.216 77.414h31.184a1.75 1.75 0 0 0 1.75-1.75v-31.183a1.75 1.75 0 0 0 -1.75-1.75h-31.184a1.75 1.75 0 0 0 -1.75 1.75v31.183a1.75 1.75 0 0 0 1.75 1.75zm17.839-31.183v5l-1.155-.92a1.749 1.749 0 0 0 -2.187 0l-1.153.923v-5zm-16.089 0h8.094v8.644a1.75 1.75 0 0 0 2.84 1.366l2.9-2.323 2.905 2.323a1.75 1.75 0 0 0 2.843-1.366v-8.644h8.094v27.683h-27.676z" />
-                        <path d="m91.932 84.25h-44.25a1.75 1.75 0 0 0 0 3.5h44.25a1.75 1.75 0 0 0 0-3.5z" />
-                        <path d="m91.932 93.586h-44.25a1.75 1.75 0 0 0 0 3.5h44.25a1.75 1.75 0 0 0 0-3.5z" />
-                        <path d="m91.932 102.923h-44.25a1.75 1.75 0 0 0 0 3.5h44.25a1.75 1.75 0 0 0 0-3.5z" />
+                        <path d="M64 64C28.7 64 0 92.7 0 128V384c0 35.3 28.7 64 64 64H512c35.3 0 64-28.7 64-64V160c0-35.3-28.7-64-64-64H480V80c0-26.5-21.5-48-48-48H64zm368 64H96V96H432v32zm80 96v64c0 17.7-14.3 32-32 32H416c-17.7 0-32-14.3-32-32V224c0-17.7 14.3-32 32-32h64c17.7 0 32 14.3 32 32zm-64 16a16 16 0 1 0 0 32 16 16 0 1 0 0-32z" />
                       </svg>
+
                       <span className={collapsed ? "hidden" : ""} class="ms-1">
-                        {" "}
                         Opening Balance
                       </span>
                     </div>
@@ -1320,7 +1325,7 @@ const Sidebar = () => {
                 )}
               </div>
 
-                            <div className=" ms-3">
+              <div className=" ms-3">
                 {screenType.includes("OpeningItem") && (
                   <Link
                     to="/OpeningItem"
@@ -1387,139 +1392,139 @@ const Sidebar = () => {
                 "UnplannedReceipt",
                 "UnplannedReturn",
               ]) && (
-                <>
-                  <div
-                    className="menu-item"
-                    onClick={toggleUnplannedCollapse}
-                    title="Inventory"
-                  >
-                    <span className={collapsed ? "hidden" : ""}>Inventory</span>
-                    <div class="inventory-arrow">
-                      {unplannedCollapsed ? (
-                        <BsChevronDown />
-                      ) : (
-                        <BsChevronRight />
-                      )}
+                  <>
+                    <div
+                      className="menu-item"
+                      onClick={toggleUnplannedCollapse}
+                      title="Inventory"
+                    >
+                      <span className={collapsed ? "hidden" : ""}>Inventory</span>
+                      <div class="inventory-arrow">
+                        {unplannedCollapsed ? (
+                          <BsChevronDown />
+                        ) : (
+                          <BsChevronRight />
+                        )}
+                      </div>
                     </div>
-                  </div>
-                  <div
-                    className={`collapse ${unplannedCollapsed ? "show" : ""}`}
-                  >
-                    <div className=" ms-3">
-                      {screenType.includes("UnplannedIssued") && (
-                        <Link
-                          to="/UnplannedIssued"
-                          className="nav-link"
-                          title="Inventory Issue"
-                        >
-                          <div class="menu-item">
-                            <svg
-                              class="svg-icon me-3"
-                              viewBox="0 0 1024 1024"
-                              version="1.1"
-                              width="18"
-                              height="18"
-                              fill="currentColor"
-                              xmlns="http://www.w3.org/2000/svg"
-                            >
-                              <path d="M322 297h380v60H322zM605.726 685.223l-42.427 42.426 91.924 91.924L697.65 862 832 727.649l-42.426-42.426-61.924 61.924V522.649h-60v224.498zM322 407h380v60H322zM322 517h240v60H322z" />
-                              <path d="M192 162v700h300v-60H252V222h520v305h60V162z" />
-                            </svg>
-                            <span
-                              className={collapsed ? "hidden" : ""}
-                              class="ms-1"
-                            >
-                              {" "}
-                              Inventory Issue{" "}
-                            </span>
-                          </div>
-                        </Link>
-                      )}
+                    <div
+                      className={`collapse ${unplannedCollapsed ? "show" : ""}`}
+                    >
+                      <div className=" ms-3">
+                        {screenType.includes("UnplannedIssued") && (
+                          <Link
+                            to="/UnplannedIssued"
+                            className="nav-link"
+                            title="Inventory Issue"
+                          >
+                            <div class="menu-item">
+                              <svg
+                                class="svg-icon me-3"
+                                viewBox="0 0 1024 1024"
+                                version="1.1"
+                                width="18"
+                                height="18"
+                                fill="currentColor"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <path d="M322 297h380v60H322zM605.726 685.223l-42.427 42.426 91.924 91.924L697.65 862 832 727.649l-42.426-42.426-61.924 61.924V522.649h-60v224.498zM322 407h380v60H322zM322 517h240v60H322z" />
+                                <path d="M192 162v700h300v-60H252V222h520v305h60V162z" />
+                              </svg>
+                              <span
+                                className={collapsed ? "hidden" : ""}
+                                class="ms-1"
+                              >
+                                {" "}
+                                Inventory Issue{" "}
+                              </span>
+                            </div>
+                          </Link>
+                        )}
+                      </div>
+                      <div className=" ms-3">
+                        {screenType.includes("UnplannedReceipt") && (
+                          <Link
+                            to="/UnplannedReceipt"
+                            className="nav-link"
+                            title="Inventory Receipt"
+                          >
+                            <div class="menu-item">
+                              <svg
+                                class="svg-icon me-3"
+                                viewBox="0 0 1024 1024"
+                                version="1.1"
+                                width="18"
+                                height="18"
+                                fill="currentColor"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <path d="M446.603636 873.053091a34.909091 34.909091 0 0 1 0 69.818182H189.556364c-85.387636 0-154.647273-69.003636-154.647273-154.181818V165.818182C34.909091 80.64 104.168727 11.636364 189.556364 11.636364H714.007273c85.387636 0 154.647273 69.003636 154.647272 154.181818v251.415273a34.909091 34.909091 0 1 1-69.818181 0V165.818182c0-46.545455-37.934545-84.363636-84.829091-84.363637H189.556364C142.661818 81.454545 104.727273 119.249455 104.727273 165.818182v622.871273c0 46.545455 37.934545 84.363636 84.829091 84.363636H446.603636z m-187.554909-598.155636a34.909091 34.909091 0 0 1 0-69.818182h383.162182a34.909091 34.909091 0 0 1 0 69.818182H259.025455z m0 190.836363a34.909091 34.909091 0 0 1 0-69.818182h383.162182a34.909091 34.909091 0 0 1 0 69.818182H259.025455z m0 190.766546a34.909091 34.909091 0 0 1 0-69.818182h143.685818a34.909091 34.909091 0 0 1 0 69.818182h-143.685818z m489.821091 351.115636c-141.730909 0-256.651636-114.501818-256.651636-255.790545s114.920727-255.790545 256.651636-255.790546c141.730909 0 256.651636 114.501818 256.651637 255.767273 0 141.312-114.920727 255.813818-256.651637 255.813818z m0-60.509091c108.357818 0 196.142545-87.458909 196.142546-195.281454s-87.784727-195.281455-196.142546-195.281455c-108.357818 0-196.142545 87.458909-196.142545 195.258182 0 107.845818 87.784727 195.304727 196.142545 195.304727z m-46.08-155.694545l133.608727-133.026909a30.254545 30.254545 0 0 1 42.705455 42.891636l-154.530909 153.832727a30.254545 30.254545 0 0 1-42.24 0.418909l-85.364364-81.524363a30.254545 30.254545 0 0 1 41.797818-43.752728l64 61.137455z" />
+                              </svg>
+                              <span
+                                className={collapsed ? "hidden" : ""}
+                                class="ms-1"
+                              >
+                                {" "}
+                                Inventory Receipt
+                              </span>
+                            </div>
+                          </Link>
+                        )}
+                      </div>
+                      <div className=" ms-3">
+                        {screenType.includes("UnplannedReturn") && (
+                          <Link
+                            to="/UnplannedReturn"
+                            className="nav-link"
+                            title="Inventory Return"
+                          >
+                            <div class="menu-item">
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 24 24"
+                                class="me-3"
+                                width="18"
+                                height="18"
+                                fill="currentColor"
+                              >
+                                <rect
+                                  x="4"
+                                  y="7"
+                                  width="16"
+                                  height="10"
+                                  stroke="white"
+                                  strokeWidth="2"
+                                  fill="none"
+                                />
+                                <path
+                                  d="M10 10 L6 14 L10 18"
+                                  stroke="white"
+                                  strokeWidth="2"
+                                  fill="none"
+                                />
+                                <line
+                                  x1="6"
+                                  y1="14"
+                                  x2="18"
+                                  y2="14"
+                                  stroke="white"
+                                  strokeWidth="2"
+                                />
+                              </svg>
+                              <span
+                                className={collapsed ? "hidden" : ""}
+                                class="ms-1"
+                              >
+                                {" "}
+                                Inventory Return{" "}
+                              </span>
+                            </div>
+                          </Link>
+                        )}
+                      </div>
                     </div>
-                    <div className=" ms-3">
-                      {screenType.includes("UnplannedReceipt") && (
-                        <Link
-                          to="/UnplannedReceipt"
-                          className="nav-link"
-                          title="Inventory Receipt"
-                        >
-                          <div class="menu-item">
-                            <svg
-                              class="svg-icon me-3"
-                              viewBox="0 0 1024 1024"
-                              version="1.1"
-                              width="18"
-                              height="18"
-                              fill="currentColor"
-                              xmlns="http://www.w3.org/2000/svg"
-                            >
-                              <path d="M446.603636 873.053091a34.909091 34.909091 0 0 1 0 69.818182H189.556364c-85.387636 0-154.647273-69.003636-154.647273-154.181818V165.818182C34.909091 80.64 104.168727 11.636364 189.556364 11.636364H714.007273c85.387636 0 154.647273 69.003636 154.647272 154.181818v251.415273a34.909091 34.909091 0 1 1-69.818181 0V165.818182c0-46.545455-37.934545-84.363636-84.829091-84.363637H189.556364C142.661818 81.454545 104.727273 119.249455 104.727273 165.818182v622.871273c0 46.545455 37.934545 84.363636 84.829091 84.363636H446.603636z m-187.554909-598.155636a34.909091 34.909091 0 0 1 0-69.818182h383.162182a34.909091 34.909091 0 0 1 0 69.818182H259.025455z m0 190.836363a34.909091 34.909091 0 0 1 0-69.818182h383.162182a34.909091 34.909091 0 0 1 0 69.818182H259.025455z m0 190.766546a34.909091 34.909091 0 0 1 0-69.818182h143.685818a34.909091 34.909091 0 0 1 0 69.818182h-143.685818z m489.821091 351.115636c-141.730909 0-256.651636-114.501818-256.651636-255.790545s114.920727-255.790545 256.651636-255.790546c141.730909 0 256.651636 114.501818 256.651637 255.767273 0 141.312-114.920727 255.813818-256.651637 255.813818z m0-60.509091c108.357818 0 196.142545-87.458909 196.142546-195.281454s-87.784727-195.281455-196.142546-195.281455c-108.357818 0-196.142545 87.458909-196.142545 195.258182 0 107.845818 87.784727 195.304727 196.142545 195.304727z m-46.08-155.694545l133.608727-133.026909a30.254545 30.254545 0 0 1 42.705455 42.891636l-154.530909 153.832727a30.254545 30.254545 0 0 1-42.24 0.418909l-85.364364-81.524363a30.254545 30.254545 0 0 1 41.797818-43.752728l64 61.137455z" />
-                            </svg>
-                            <span
-                              className={collapsed ? "hidden" : ""}
-                              class="ms-1"
-                            >
-                              {" "}
-                              Inventory Receipt
-                            </span>
-                          </div>
-                        </Link>
-                      )}
-                    </div>
-                    <div className=" ms-3">
-                      {screenType.includes("UnplannedReturn") && (
-                        <Link
-                          to="/UnplannedReturn"
-                          className="nav-link"
-                          title="Inventory Return"
-                        >
-                          <div class="menu-item">
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              viewBox="0 0 24 24"
-                              class="me-3"
-                              width="18"
-                              height="18"
-                              fill="currentColor"
-                            >
-                              <rect
-                                x="4"
-                                y="7"
-                                width="16"
-                                height="10"
-                                stroke="white"
-                                strokeWidth="2"
-                                fill="none"
-                              />
-                              <path
-                                d="M10 10 L6 14 L10 18"
-                                stroke="white"
-                                strokeWidth="2"
-                                fill="none"
-                              />
-                              <line
-                                x1="6"
-                                y1="14"
-                                x2="18"
-                                y2="14"
-                                stroke="white"
-                                strokeWidth="2"
-                              />
-                            </svg>
-                            <span
-                              className={collapsed ? "hidden" : ""}
-                              class="ms-1"
-                            >
-                              {" "}
-                              Inventory Return{" "}
-                            </span>
-                          </div>
-                        </Link>
-                      )}
-                    </div>
-                  </div>
-                </>
-              )}
+                  </>
+                )}
 
               <div className=" ms-3">
                 {screenType.includes("Journal") && (
@@ -1607,121 +1612,121 @@ const Sidebar = () => {
                 "PurchaseOrder",
                 "PurchaseReturn",
               ]) && (
-                <>
-                  <div
-                    className="menu-item"
-                    onClick={togglePurchaseCollapse}
-                    title="Purchase"
-                  >
-                    <span className={collapsed ? "hidden" : ""}>Purchase</span>
-                    <div class="purchase-arrow">
-                      {purchaseCollapsed ? (
-                        <BsChevronDown />
-                      ) : (
-                        <BsChevronRight />
-                      )}
+                  <>
+                    <div
+                      className="menu-item"
+                      onClick={togglePurchaseCollapse}
+                      title="Purchase"
+                    >
+                      <span className={collapsed ? "hidden" : ""}>Purchase</span>
+                      <div class="purchase-arrow">
+                        {purchaseCollapsed ? (
+                          <BsChevronDown />
+                        ) : (
+                          <BsChevronRight />
+                        )}
+                      </div>
                     </div>
-                  </div>
-                  <div
-                    className={`collapse ${purchaseCollapsed ? "show" : ""}`}
-                  >
-                    <div className=" ms-3">
-                      {screenType.includes("Purchase") && (
-                        <Link
-                          to="/Purchase"
-                          className="nav-link"
-                          title="Purchase Entry"
-                          onClick={() => handleLinkClick("Purchase")}
-                        >
-                          <div class="menu-item">
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              width="18"
-                              height="18"
-                              fill="currentColor"
-                              class="bi bi-cart-fill me-3"
-                              viewBox="0 0 16 16"
-                            >
-                              <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5M5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4m7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4m-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2m7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2" />
-                            </svg>
-                            <span
-                              className={collapsed ? "hidden" : ""}
-                              class="ms-1"
-                            >
-                              {" "}
-                              Purchase Entry{" "}
-                            </span>
-                          </div>
-                        </Link>
-                      )}
+                    <div
+                      className={`collapse ${purchaseCollapsed ? "show" : ""}`}
+                    >
+                      <div className=" ms-3">
+                        {screenType.includes("Purchase") && (
+                          <Link
+                            to="/Purchase"
+                            className="nav-link"
+                            title="Purchase Entry"
+                            onClick={() => handleLinkClick("Purchase")}
+                          >
+                            <div class="menu-item">
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="18"
+                                height="18"
+                                fill="currentColor"
+                                class="bi bi-cart-fill me-3"
+                                viewBox="0 0 16 16"
+                              >
+                                <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5M5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4m7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4m-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2m7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2" />
+                              </svg>
+                              <span
+                                className={collapsed ? "hidden" : ""}
+                                class="ms-1"
+                              >
+                                {" "}
+                                Purchase Entry{" "}
+                              </span>
+                            </div>
+                          </Link>
+                        )}
+                      </div>
+                      <div className=" ms-3">
+                        {screenType.includes("PurchaseOrder") && (
+                          <Link
+                            to="/PurchaseOrder"
+                            className="nav-link"
+                            title="Purchase Order"
+                          >
+                            <div class="menu-item">
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="18"
+                                height="18"
+                                fill="currentColor"
+                                class="me-3"
+                                viewBox="0 0 512 330.845"
+                              >
+                                <path d="M95.992 0c35.923 22.768 68.373 33.54 96.223 30.995 4.865 98.382-31.466 156.48-95.852 180.727C34.188 189.028-2.587 133.427.142 29.502 32.834 31.213 64.91 24.144 95.992 0zM76.731 103.923a73.156 73.156 0 016.88 6.658c6.723-10.822 13.89-20.757 21.461-29.895 21.401-25.849 11.702-20.867 41.389-20.867l-4.124 4.581c-12.676 14.086-16.952 21.417-27.343 36.429a425.653 425.653 0 00-27.95 46.499l-2.571 4.96-2.363-5.052c-4.359-9.359-9.581-17.95-15.808-25.625-6.228-7.676-11.667-12.684-20.112-18.479 3.87-12.702 22.288-6.201 30.541.791zm301.485 1.74l-35.138-.243V57.97a25.356 25.356 0 00-7.529-18.079 25.353 25.353 0 00-18.079-7.53H213.806c-.435 4.496-1.122 9.147-1.833 13.884H317.47c3.218 0 6.159 1.334 8.278 3.449 2.116 2.12 3.45 5.061 3.45 8.276v217.288H290.06a6.93 6.93 0 00-6.94 6.944 6.925 6.925 0 006.94 6.938h46.077a6.926 6.926 0 006.941-6.938v-7.885h28.044c3.177-72.232 106.9-82.195 117.451 0h22.782c5.868-70.433-28.909-97.805-81.803-103.996-3.805-16.53-11.062-31.874-19.26-47.037-9.747-18.025-12.016-17.297-32.076-17.621zM147.08 275.222a6.929 6.929 0 016.944 6.939 6.93 6.93 0 01-6.944 6.941H73.343c-7.022 0-13.413-3.06-18.082-7.882-4.623-4.821-7.527-11.411-7.527-18.392v-48.35a138.893 138.893 0 0013.881 7.815v40.535c0 3.334 1.375 6.51 3.609 8.824 2.119 2.197 4.98 3.606 8.077 3.606h73.779v-.036zm70.59-38.416c-25.963 0-47.019 21.059-47.019 47.019 0 25.961 21.056 47.02 47.019 47.02 25.961 0 47.017-21.059 47.017-47.02-.038-25.96-21.056-47.019-47.017-47.019zm0 28.942c-9.96 0-18.08 8.08-18.08 18.077 0 9.961 8.08 18.082 18.08 18.082 9.959 0 18.079-8.081 18.079-18.082-.042-9.997-8.12-18.077-18.079-18.077zm212.039-35.86c-25.959 0-47.016 21.059-47.016 47.018 0 25.96 21.057 47.021 47.016 47.021 25.963 0 47.02-21.061 47.02-47.021 0-25.959-21.057-47.018-47.02-47.018zm-18.077 47.018c0 9.961 8.076 18.079 18.077 18.079 10.001 0 18.079-8.077 18.079-18.079 0-9.999-8.078-18.076-18.079-18.076-9.978 0-18.077 8.095-18.077 18.076zm-30.038-151.174l-21.182-.392v45.06h44.866c-5.534-16.073-13.724-30.807-23.684-44.668zM96.049 14.47c30.429 19.287 59.636 30.128 83.227 27.971 4.118 83.335-28.373 134.27-82.908 154.808-52.671-19.224-85.542-68.035-83.23-156.073C43.7 42.778 71.71 33.379 96.049 14.47z" />
+                              </svg>
+                              <span
+                                className={collapsed ? "hidden" : ""}
+                                class="ms-1"
+                              >
+                                {" "}
+                                Purchase Order
+                              </span>
+                            </div>
+                          </Link>
+                        )}
+                      </div>
+                      <div className=" ms-3">
+                        {screenType.includes("PurchaseReturn") && (
+                          <Link
+                            to="/PurchaseReturn"
+                            className="nav-link"
+                            title="Purchase Return"
+                          >
+                            <div class="menu-item">
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="18"
+                                height="18"
+                                fill="currentColor"
+                                class="bi bi-cash-coin me-3"
+                                viewBox="0 0 16 16"
+                              >
+                                <path
+                                  fill-rule="evenodd"
+                                  d="M11 15a4 4 0 1 0 0-8 4 4 0 0 0 0 8m5-4a5 5 0 1 1-10 0 5 5 0 0 1 10 0"
+                                />
+                                <path d="M9.438 11.944c.047.596.518 1.06 1.363 1.116v.44h.375v-.443c.875-.061 1.386-.529 1.386-1.207 0-.618-.39-.936-1.09-1.1l-.296-.07v-1.2c.376.043.614.248.671.532h.658c-.047-.575-.54-1.024-1.329-1.073V8.5h-.375v.45c-.747.073-1.255.522-1.255 1.158 0 .562.378.92 1.007 1.066l.248.061v1.272c-.384-.058-.639-.27-.696-.563h-.668zm1.36-1.354c-.369-.085-.569-.26-.569-.522 0-.294.216-.514.572-.578v1.1zm.432.746c.449.104.655.272.655.569 0 .339-.257.571-.709.614v-1.195z" />
+                                <path d="M1 0a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h4.083q.088-.517.258-1H3a2 2 0 0 0-2-2V3a2 2 0 0 0 2-2h10a2 2 0 0 0 2 2v3.528c.38.34.717.728 1 1.154V1a1 1 0 0 0-1-1z" />
+                                <path d="M9.998 5.083 10 5a2 2 0 1 0-3.132 1.65 6 6 0 0 1 3.13-1.567" />
+                              </svg>
+                              <span
+                                className={collapsed ? "hidden" : ""}
+                                class="ms-1"
+                              >
+                                {" "}
+                                Purchase Return
+                              </span>
+                            </div>
+                          </Link>
+                        )}
+                      </div>
                     </div>
-                    <div className=" ms-3">
-                      {screenType.includes("PurchaseOrder") && (
-                        <Link
-                          to="/PurchaseOrder"
-                          className="nav-link"
-                          title="Purchase Order"
-                        >
-                          <div class="menu-item">
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              width="18"
-                              height="18"
-                              fill="currentColor"
-                              class="me-3"
-                              viewBox="0 0 512 330.845"
-                            >
-                              <path d="M95.992 0c35.923 22.768 68.373 33.54 96.223 30.995 4.865 98.382-31.466 156.48-95.852 180.727C34.188 189.028-2.587 133.427.142 29.502 32.834 31.213 64.91 24.144 95.992 0zM76.731 103.923a73.156 73.156 0 016.88 6.658c6.723-10.822 13.89-20.757 21.461-29.895 21.401-25.849 11.702-20.867 41.389-20.867l-4.124 4.581c-12.676 14.086-16.952 21.417-27.343 36.429a425.653 425.653 0 00-27.95 46.499l-2.571 4.96-2.363-5.052c-4.359-9.359-9.581-17.95-15.808-25.625-6.228-7.676-11.667-12.684-20.112-18.479 3.87-12.702 22.288-6.201 30.541.791zm301.485 1.74l-35.138-.243V57.97a25.356 25.356 0 00-7.529-18.079 25.353 25.353 0 00-18.079-7.53H213.806c-.435 4.496-1.122 9.147-1.833 13.884H317.47c3.218 0 6.159 1.334 8.278 3.449 2.116 2.12 3.45 5.061 3.45 8.276v217.288H290.06a6.93 6.93 0 00-6.94 6.944 6.925 6.925 0 006.94 6.938h46.077a6.926 6.926 0 006.941-6.938v-7.885h28.044c3.177-72.232 106.9-82.195 117.451 0h22.782c5.868-70.433-28.909-97.805-81.803-103.996-3.805-16.53-11.062-31.874-19.26-47.037-9.747-18.025-12.016-17.297-32.076-17.621zM147.08 275.222a6.929 6.929 0 016.944 6.939 6.93 6.93 0 01-6.944 6.941H73.343c-7.022 0-13.413-3.06-18.082-7.882-4.623-4.821-7.527-11.411-7.527-18.392v-48.35a138.893 138.893 0 0013.881 7.815v40.535c0 3.334 1.375 6.51 3.609 8.824 2.119 2.197 4.98 3.606 8.077 3.606h73.779v-.036zm70.59-38.416c-25.963 0-47.019 21.059-47.019 47.019 0 25.961 21.056 47.02 47.019 47.02 25.961 0 47.017-21.059 47.017-47.02-.038-25.96-21.056-47.019-47.017-47.019zm0 28.942c-9.96 0-18.08 8.08-18.08 18.077 0 9.961 8.08 18.082 18.08 18.082 9.959 0 18.079-8.081 18.079-18.082-.042-9.997-8.12-18.077-18.079-18.077zm212.039-35.86c-25.959 0-47.016 21.059-47.016 47.018 0 25.96 21.057 47.021 47.016 47.021 25.963 0 47.02-21.061 47.02-47.021 0-25.959-21.057-47.018-47.02-47.018zm-18.077 47.018c0 9.961 8.076 18.079 18.077 18.079 10.001 0 18.079-8.077 18.079-18.079 0-9.999-8.078-18.076-18.079-18.076-9.978 0-18.077 8.095-18.077 18.076zm-30.038-151.174l-21.182-.392v45.06h44.866c-5.534-16.073-13.724-30.807-23.684-44.668zM96.049 14.47c30.429 19.287 59.636 30.128 83.227 27.971 4.118 83.335-28.373 134.27-82.908 154.808-52.671-19.224-85.542-68.035-83.23-156.073C43.7 42.778 71.71 33.379 96.049 14.47z" />
-                            </svg>
-                            <span
-                              className={collapsed ? "hidden" : ""}
-                              class="ms-1"
-                            >
-                              {" "}
-                              Purchase Order
-                            </span>
-                          </div>
-                        </Link>
-                      )}
-                    </div>
-                    <div className=" ms-3">
-                      {screenType.includes("PurchaseReturn") && (
-                        <Link
-                          to="/PurchaseReturn"
-                          className="nav-link"
-                          title="Purchase Return"
-                        >
-                          <div class="menu-item">
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              width="18"
-                              height="18"
-                              fill="currentColor"
-                              class="bi bi-cash-coin me-3"
-                              viewBox="0 0 16 16"
-                            >
-                              <path
-                                fill-rule="evenodd"
-                                d="M11 15a4 4 0 1 0 0-8 4 4 0 0 0 0 8m5-4a5 5 0 1 1-10 0 5 5 0 0 1 10 0"
-                              />
-                              <path d="M9.438 11.944c.047.596.518 1.06 1.363 1.116v.44h.375v-.443c.875-.061 1.386-.529 1.386-1.207 0-.618-.39-.936-1.09-1.1l-.296-.07v-1.2c.376.043.614.248.671.532h.658c-.047-.575-.54-1.024-1.329-1.073V8.5h-.375v.45c-.747.073-1.255.522-1.255 1.158 0 .562.378.92 1.007 1.066l.248.061v1.272c-.384-.058-.639-.27-.696-.563h-.668zm1.36-1.354c-.369-.085-.569-.26-.569-.522 0-.294.216-.514.572-.578v1.1zm.432.746c.449.104.655.272.655.569 0 .339-.257.571-.709.614v-1.195z" />
-                              <path d="M1 0a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h4.083q.088-.517.258-1H3a2 2 0 0 0-2-2V3a2 2 0 0 0 2-2h10a2 2 0 0 0 2 2v3.528c.38.34.717.728 1 1.154V1a1 1 0 0 0-1-1z" />
-                              <path d="M9.998 5.083 10 5a2 2 0 1 0-3.132 1.65 6 6 0 0 1 3.13-1.567" />
-                            </svg>
-                            <span
-                              className={collapsed ? "hidden" : ""}
-                              class="ms-1"
-                            >
-                              {" "}
-                              Purchase Return
-                            </span>
-                          </div>
-                        </Link>
-                      )}
-                    </div>
-                  </div>
-                </>
-              )}
+                  </>
+                )}
 
               <div className=" ms-3">
                 {screenType.includes("PendingCustomer") && (
@@ -1920,7 +1925,7 @@ const Sidebar = () => {
                   </Link>
                 )}
               </div>
-              
+
               <div className=" ms-3">
                 {screenType.includes("Quotation") && (
                   <Link to="/Quotation" className="nav-link" title="Quotation">

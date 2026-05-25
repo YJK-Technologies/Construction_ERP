@@ -7,7 +7,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import LoadingScreen from './Loading';
 import { ToastContainer, toast } from 'react-toastify';
-
+import { showConfirmationToast } from './ToastConfirmation';
 
 const SiteWarehouseMappingScreen = () => {
 
@@ -41,6 +41,13 @@ const SiteWarehouseMappingScreen = () => {
     const [selectedIsPrimarySc, setSelectedIsPrimarySc] = useState("");
     const [isPrimarySc, setIsPrimarySc] = useState("");
     const [remarksSc, setRemarksSc] = useState("");
+
+    const [siteIdDropGrid, setSiteIdDropGrid] = useState([]);
+    const [warehouseCodeDropGrid, setWarehouseCodeDropGrid] = useState([]);
+    const [statusDropGrid, setStatusDropGrid] = useState([]);
+    const [isPrimaryDropGrid, setIsPrimaryDropGrid] = useState([]);
+
+    const [loading, setLoading] = useState(false);
 
     const addClearInputFields = () => {
         setSelectedSiteId("");
@@ -254,18 +261,83 @@ const SiteWarehouseMappingScreen = () => {
         setIsPrimarySc(selectedWarehouseCodeSc ? selectedWarehouseCodeSc.value : "");
     };
 
+    useEffect(() => {
+        const company_code = sessionStorage.getItem("selectedCompanyCode");
+
+        fetch(`${config.apiBaseUrl}/getSiteMaster`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ company_code }),
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                const siteId = data.map((option) => option.site_id);
+                setSiteIdDropGrid(siteId);
+            })
+            .catch((error) => console.error("Error fetching data:", error));
+    }, []);
+
+    useEffect(() => {
+        const company_code = sessionStorage.getItem("selectedCompanyCode");
+
+        fetch(`${config.apiBaseUrl}/getWarehouseCodeDrop`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ company_code }),
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                const warehouseCode = data.map((option) => option.warehouse_code);
+                setWarehouseCodeDropGrid(warehouseCode);
+            })
+            .catch((error) => console.error("Error fetching data:", error));
+    }, []);
+
+    useEffect(() => {
+        const company_code = sessionStorage.getItem("selectedCompanyCode");
+
+        fetch(`${config.apiBaseUrl}/status`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ company_code }),
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                const status = data.map((option) => option.attributedetails_name);
+                setStatusDropGrid(status);
+            })
+            .catch((error) => console.error("Error fetching data:", error));
+    }, []);
+
+    useEffect(() => {
+        const company_code = sessionStorage.getItem("selectedCompanyCode");
+
+        fetch(`${config.apiBaseUrl}/getboolean`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ company_code }),
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                const isPrimary = data.map((option) => option.attributedetails_name);
+                setIsPrimaryDropGrid(isPrimary);
+            })
+            .catch((error) => console.error("Error fetching data:", error));
+    }, []);
+
     const columnDefs = [
-        {
-            headerName: "S.No.",
-            valueGetter: "node.rowIndex + 1",
-            width: 90,
-            pinned: "left"
-        },
         {
             headerName: "Actions",
             field: "actions",
             width: 140,
-            pinned: "left",
             cellRenderer: (params) => {
 
                 const cellWidth =
@@ -291,6 +363,7 @@ const SiteWarehouseMappingScreen = () => {
 
                                 <span
                                     className="icon mx-2"
+                                    onClick={() => saveEditedData(params.data, params.node.data)}
                                     style={{ cursor: "pointer" }}
                                 >
                                     <i className="fa-regular fa-floppy-disk"></i>
@@ -298,6 +371,7 @@ const SiteWarehouseMappingScreen = () => {
 
                                 <span
                                     className="icon mx-2"
+                                    onClick={() => deleteSelectedRows(params.data)}
                                     style={{ cursor: "pointer" }}
                                 >
                                     <i className="fa-solid fa-trash"></i>
@@ -310,11 +384,44 @@ const SiteWarehouseMappingScreen = () => {
                 );
             }
         },
-        { headerName: "SiteID", field: "SiteID", flex: 1 },
-        { headerName: "WarehouseCode", field: "WarehouseCode", flex: 1 },
-        { headerName: "Status", field: "Status", flex: 1 },
-        { headerName: "IsPrimary", field: "IsPrimary", flex: 1 },
-        { headerName: "Remarks", field: "Remarks", flex: 1 }
+        {
+            headerName: "Site ID",
+            field: "site_id",
+            cellEditor: "agSelectCellEditor",
+            cellEditorParams: {
+                values: siteIdDropGrid,
+            },
+        },
+        {
+            headerName: "Warehouse Code",
+            field: "warehouse_code",
+            cellEditor: "agSelectCellEditor",
+            cellEditorParams: {
+                values: warehouseCodeDropGrid,
+            },
+        },
+        {
+            headerName: "Status",
+            field: "status",
+            cellEditor: "agSelectCellEditor",
+            editable: true,
+            cellEditorParams: {
+                values: statusDropGrid,
+            },
+        },
+        {
+            headerName: "Is Primary",
+            field: "Is_Primary",
+            cellEditor: "agSelectCellEditor",
+            editable: true,
+            cellEditorParams: {
+                values: isPrimaryDropGrid,
+            },
+        },
+        {
+            headerName: "Remarks",
+            field: "remarks",
+        }
     ];
 
     const handleSave = async () => {
@@ -323,6 +430,9 @@ const SiteWarehouseMappingScreen = () => {
             toast.warning("Error: Missing required fields");
             return;
         }
+
+        setError(false);
+        setLoading(true);
 
         try {
 
@@ -356,13 +466,179 @@ const SiteWarehouseMappingScreen = () => {
         } catch (error) {
             console.error("Error inserting data:", error);
             toast.error('Error inserting data: ' + error.message);
+        } finally {
+            setLoading(false);
         }
     };
 
+    const handleSearch = async () => {
+        setLoading(true);
+
+        try {
+            const response = await fetch(`${config.apiBaseUrl}/searchSiteWarehouseMapping`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    company_code: sessionStorage.getItem('selectedCompanyCode'),
+                    site_id: siteIdSc,
+                    warehouse_code: warehouseCodeSc,
+                    status: statusSc,
+                    Is_Primary: isPrimarySc,
+                    remarks: remarksSc,
+                }),
+            });
+
+            if (response.ok) {
+                const searchData = await response.json();
+                setRowData(searchData);
+            } else if (response.status === 404) {
+                console.log("Data not found");
+                setRowData([]);
+                toast.warning("Data not found");
+            } else {
+                const errorResponse = await response.json();
+                toast.warning(errorResponse.message || "Failed to fetch data");
+            }
+        } catch (error) {
+            console.error("Error fetching search data:", error);
+            toast.error("Error fetching search data:", error);
+        }
+        finally {
+            setLoading(false);
+        }
+    };
+
+    const saveEditedData = async (rowData) => {
+        showConfirmationToast(
+            "Are you sure you want to update the data in the selected rows?",
+            async () => {
+                try {
+                    setLoading(true);
+                    const company_code = sessionStorage.getItem('selectedCompanyCode');
+                    const modified_by = sessionStorage.getItem('selectedUserCode');
+
+                    const siteWarehouseMapping = {
+                        SiteWarehouseMappingData: Array.isArray(rowData)
+                            ? rowData.map((row) => ({
+                                ...row,
+                                company_code,
+                                modified_by,
+                            }))
+                            : [
+                                {
+                                    ...rowData,
+                                    company_code,
+                                    modified_by,
+                                },
+                            ],
+                    };
+
+                    const response = await fetch(`${config.apiBaseUrl}/SiteWarehouseMappingLoopUpdate `, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify(siteWarehouseMapping)
+                    });
+
+                    const result = await response.json();
+
+                    if (response.ok) {
+                        toast.success("Data updated successfully", {
+                            onClose: () => handleSearch(), // Runs handleSearch when toast closes
+                        });
+                    } else {
+                        toast.warning(result.message || "Failed to update data");
+                    }
+                } catch (error) {
+                    console.error("Error deleting rows:", error);
+                    toast.error('Error Deleting Data: ' + error.message);
+                } finally {
+                    setLoading(false);
+                }
+            },
+            () => {
+                toast.info("Data updated cancelled.");
+            }
+        );
+    };
+
+    const deleteSelectedRows = async (rowData) => {
+
+        const company_code = sessionStorage.getItem('selectedCompanyCode');
+        const modified_by = sessionStorage.getItem('selectedUserCode');
+
+        const SiteWarehouseMappingDelete = {
+            SiteWarehouseMappingData: Array.isArray(rowData)
+                ? rowData.map((row) => ({
+                    ...row,
+                    company_code,
+                    modified_by,
+                }))
+                : [
+                    {
+                        ...rowData,
+                        company_code,
+                        modified_by,
+                    },
+                ],
+        };
+
+        showConfirmationToast(
+            "Are you sure you want to delete the data in the selected rows?",
+            async () => {
+                try {
+                    setLoading(true);
+                    const response = await fetch(`${config.apiBaseUrl}/SiteWarehouseMappingLoopDelete`, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "company_code": company_code,
+                        },
+                        body: JSON.stringify(SiteWarehouseMappingDelete),
+                    });
+
+                    const result = await response.json();
+
+                    if (response.ok) {
+                        toast.success("Data deleted successfully", {
+                            onClose: () => handleSearch(), // Runs handleSearch when toast closes
+                        });
+                    } else {
+                        toast.warning(result.message || "Failed to delete data");
+                    }
+                } catch (error) {
+                    console.error("Error deleting rows:", error);
+                    toast.error("Error deleting data: " + error.message);
+                } finally {
+                    setLoading(false);
+                }
+            },
+            () => {
+                toast.info("Data delete cancelled.");
+            }
+        );
+    };
+
+    const searchClearInputFields = () => {
+        setSelectedSiteIdSc("");
+        setSiteIdSc("");
+        setSelectedWarehouseCodeSc("");
+        setWarehouseCodeSc("");
+        setSelectedStatusSc("");
+        setStatusSc("");
+        setSelectedIsPrimarySc("");
+        setIsPrimarySc("");
+        setRemarksSc("");
+        setRowData([]);
+    };
 
     return (
         <div className="container-fluid Topnav-screen">
-
+            {loading && <LoadingScreen />}
+            <ToastContainer position="top-right" className="toast-design" theme="colored" />
             <div className="shadow-lg p-0 bg-white rounded">
                 <div className="purbut mb-0 d-flex justify-content-between" >
                     <h1 align="left" class="purbut">Site Warehouse Mapping</h1>
@@ -370,8 +646,8 @@ const SiteWarehouseMappingScreen = () => {
                         <div class=" d-flex justify-content-end  me-3">
                             <div >
                             </div>
-                            <div className="me-1 ">
-                                <savebutton required title="save" onClick= {handleSave}>
+                            <div className="me-1">
+                                <savebutton required title="Save" onClick={handleSave}>
                                     <i class="fa-regular fa-floppy-disk"></i>
                                 </savebutton>
                             </div>
@@ -379,7 +655,7 @@ const SiteWarehouseMappingScreen = () => {
                             </div>
                             <div className="col-md-1">
                                 <div className="ms-1">
-                                    <reloadbutton className="purbut" title="Reload" style={{ cursor: "pointer" }}>
+                                    <reloadbutton className="purbut" onClick={addClearInputFields} title="Reload" style={{ cursor: "pointer" }}>
                                         <i className="fa-solid fa-arrow-rotate-right"></i>
                                     </reloadbutton>
                                 </div>
@@ -390,91 +666,84 @@ const SiteWarehouseMappingScreen = () => {
             </div>
 
             {/* ADD FORM */}
-            <div class="mt-2">
-                <div className="shadow-lg p-3 bg-white rounded mb-2">
+            <div className="shadow-lg p-1 bg-white rounded mt-2 mb-2">
 
-                    <div className="row g-3">
+                <div className="row ms-4 mb-3 mt-3 me-4">
 
-                        <div className="col-md-3 form-group mb-2">
-                            <div class="exp-form-floating">
-                                <label className="exp-form-labels">
-                                    Site ID<span className="text-danger">*</span>
-                                </label>
+                    <div className="col-md-3 form-group mb-2" title="Select Site ID">
+                        <div class="exp-form-floating">
+                            <label className={`exp-form-labels ${error && !siteId ? 'text-danger' : ''}`}>
+                                Site ID<span className="text-danger">*</span>
+                            </label>
 
-                                <Select
-                                    value={selectedSiteId}
-                                    options={filteredOptionSiteId}
-                                    placeholder="Select Site ID"
-                                    className="exp-input-field"
-                                    onChange={handleChangeSiteId}
-                                />
-                            </div>
+                            <Select
+                                value={selectedSiteId}
+                                options={filteredOptionSiteId}
+                                className="exp-input-field"
+                                onChange={handleChangeSiteId}
+                            />
                         </div>
-
-                        <div className="col-md-3 form-group mb-2">
-                            <div class="exp-form-floating">
-                                <label className={`exp-form-labels ${error && !warehouseCode ? 'text-danger' : ''}`}>
-                                    Warehouse Code<span className="text-danger">*</span>
-                                </label>
-
-                                <Select
-                                    value={selectedWarehouseCode}
-                                    options={filteredOptionWarehouseCode}
-                                    placeholder="Select Warehouse Code"
-                                    className="exp-input-field"
-                                    onChange={handleChangeWarehouseCode}
-                                />
-                            </div>
-                        </div>
-
-                        <div className="col-md-3 form-group mb-2">
-                            <div class="exp-form-floating">
-                                <label className={`exp-form-labels ${error && !status ? 'text-danger' : ''}`}>
-                                    Status<span className="text-danger">*</span>
-                                </label>
-
-                                <Select
-                                    value={selectedStatus}
-                                    options={filteredOptionStatus}
-                                    placeholder="Select Status"
-                                    className="exp-input-field"
-                                    onChange={handleChangeStatus}
-                                />
-                            </div>
-                        </div>
-
-                        <div className="col-md-3 form-group mb-2">
-                            <div class="exp-form-floating">
-                                <label className={`exp-form-labels ${error && !isPrimary ? 'text-danger' : ''}`}>
-                                    Is Primary<span className="text-danger">*</span>
-                                </label>
-
-                                <Select
-                                    value={selectedIsPrimary}
-                                    options={filteredOptionPrimary}
-                                    placeholder="Select Is Primary"
-                                    className="exp-input-field"
-                                    onChange={handleChangePrimary}
-                                />
-                            </div>
-                        </div>
-
-                        <div className="col-md-6 form-group mb-2">
-                            <div class="exp-form-floating">
-                                <label className="exp-form-labels">
-                                    Remarks
-                                </label>
-
-                                <textarea
-                                    placeholder="Enter Remarks"
-                                    className="exp-input-field form-control"
-                                    value={remarks}
-                                    onChange={(e) => setRemarks(e.target.value)}
-                                />
-                            </div>
-                        </div>
-
                     </div>
+
+                    <div className="col-md-3 form-group mb-2">
+                        <div class="exp-form-floating" title="Select Warehouse Code">
+                            <label className={`exp-form-labels ${error && !warehouseCode ? 'text-danger' : ''}`}>
+                                Warehouse Code<span className="text-danger">*</span>
+                            </label>
+
+                            <Select
+                                value={selectedWarehouseCode}
+                                options={filteredOptionWarehouseCode}
+                                className="exp-input-field"
+                                onChange={handleChangeWarehouseCode}
+                            />
+                        </div>
+                    </div>
+
+                    <div className="col-md-3 form-group mb-2">
+                        <div class="exp-form-floating" title="Select Status">
+                            <label className={`exp-form-labels ${error && !status ? 'text-danger' : ''}`}>
+                                Status<span className="text-danger">*</span>
+                            </label>
+
+                            <Select
+                                value={selectedStatus}
+                                options={filteredOptionStatus}
+                                className="exp-input-field"
+                                onChange={handleChangeStatus}
+                            />
+                        </div>
+                    </div>
+
+                    <div className="col-md-3 form-group mb-2" title="Select Is Primary">
+                        <div class="exp-form-floating">
+                            <label className={`exp-form-labels ${error && !isPrimary ? 'text-danger' : ''}`}>
+                                Is Primary<span className="text-danger">*</span>
+                            </label>
+
+                            <Select
+                                value={selectedIsPrimary}
+                                options={filteredOptionPrimary}
+                                className="exp-input-field"
+                                onChange={handleChangePrimary}
+                            />
+                        </div>
+                    </div>
+
+                    <div className="col-md-6 form-group mb-2" title="Enter Remarks">
+                        <div class="exp-form-floating">
+                            <label className="exp-form-labels">
+                                Remarks
+                            </label>
+
+                            <textarea
+                                className="exp-input-field form-control"
+                                value={remarks}
+                                onChange={(e) => setRemarks(e.target.value)}
+                            />
+                        </div>
+                    </div>
+
                 </div>
             </div>
 
@@ -484,104 +753,107 @@ const SiteWarehouseMappingScreen = () => {
                     <h6 className="">Search Criteria:</h6>
                 </div>
 
-                <div class="row ms-2 me-2">
+                <div className="row ms-4 mb-3 me-4">
 
-                    <div className="col-md-3">
-                        <label className="exp-form-labels">
-                            Site ID
-                        </label>
+                    <div className="col-md-3 form-group mb-2" title="Select Site ID">
+                        <div class="exp-form-floating">
+                            <label className="exp-form-labels">
+                                Site ID
+                            </label>
 
-                        <Select
-                            value={selectedSiteIdSc}
-                            options={filteredOptionSiteIdSc}
-                            placeholder="Select Site ID"
-                            className="exp-input-field"
-                            onChange={handleChangeSiteIdSc}
-                        />
+                            <Select
+                                value={selectedSiteIdSc}
+                                options={filteredOptionSiteIdSc}
+                                className="exp-input-field"
+                                onChange={handleChangeSiteIdSc}
+                            />
+                        </div>
                     </div>
 
-                    <div className="col-md-3">
-                        <label className="exp-form-labels">
-                            Warehouse Code
-                        </label>
+                    <div className="col-md-3 form-group mb-2" title="Select Warehouse Code">
+                        <div class="exp-form-floating">
+                            <label className="exp-form-labels">
+                                Warehouse Code
+                            </label>
 
-                        <Select
-                            value={selectedWarehouseCodeSc}
-                            options={filteredOptionWarehouseCodeSc}
-                            placeholder="Select Warehouse Code"
-                            className="exp-input-field"
-                            onChange={handleChangeWarehouseCodeSc}
-                        />
+                            <Select
+                                value={selectedWarehouseCodeSc}
+                                options={filteredOptionWarehouseCodeSc}
+                                className="exp-input-field"
+                                onChange={handleChangeWarehouseCodeSc}
+                            />
+                        </div>
                     </div>
 
-                    <div className="col-md-3">
-                        <label className="exp-form-labels">
-                            Status
-                        </label>
+                    <div className="col-md-3 form-group mb-2" title="Select Status">
+                        <div class="exp-form-floating">
+                            <label className="exp-form-labels">
+                                Status
+                            </label>
 
-                        <Select
-                            value={selectedStatusSc}
-                            options={filteredOptionStatusSc}
-                            placeholder="Select Status"
-                            className="exp-input-field"
-                            onChange={handleChangeStatusSc}
-                        />
+                            <Select
+                                value={selectedStatusSc}
+                                options={filteredOptionStatusSc}
+                                className="exp-input-field"
+                                onChange={handleChangeStatusSc}
+                            />
+                        </div>
                     </div>
 
-                    <div className="col-md-3">
-                        <label className="exp-form-labels">
-                            Is Primary
-                        </label>
+                    <div className="col-md-3 form-group mb-2" title="Select Is Primary">
+                        <div class="exp-form-floating">
+                            <label className="exp-form-labels">
+                                Is Primary
+                            </label>
 
-                        <Select
-                            value={selectedIsPrimarySc}
-                            options={filteredOptionPrimarySc}
-                            placeholder="Select Is Primary"
-                            className="exp-input-field"
-                            onChange={handleChangePrimarySc}
-                        />
+                            <Select
+                                value={selectedIsPrimarySc}
+                                options={filteredOptionPrimarySc}
+                                className="exp-input-field"
+                                onChange={handleChangePrimarySc}
+                            />
+                        </div>
                     </div>
 
-                    <div className="col-md-3">
-                        <label className="exp-form-labels">
-                            Remarks
-                        </label>
+                    <div className="col-md-3 form-group mb-2" title="Enter Remarks">
+                        <div class="exp-form-floating">
+                            <label className="exp-form-labels">
+                                Remarks
+                            </label>
 
-                        <input
-                            className="form-control"
-                            placeholder="Enter Remarks"
-                            value={remarksSc}
-                            onChange={(e) => setRemarksSc(e.target.value)}
-                        />
+                            <input
+                                className="exp-input-field form-control"
+                                value={remarksSc}
+                                onChange={(e) => setRemarksSc(e.target.value)}
+                            />
+                        </div>
                     </div>
 
-                    <div className="col-md-3 d-flex align-items-end gap-2">
-                        <button
-                            type="button"
-                            className="btn btn-outline-primary"
-                        >
-                            <i className="bi bi-search"></i>
-                        </button>
-
-                        <button
-                            type="button"
-                            className="btn btn-outline-secondary"
-                        >
-                            <i className="bi bi-arrow-clockwise"></i>
-                        </button>
-
-                        <button
-                            type="button"
-                            className="btn btn-outline-success"
-                        >
-                            <i className="bi bi-file-earmark-excel"></i>
-                        </button>
+                    <div className="col-md-2 form-group mb-2 mt-4">
+                        <div class="exp-form-floating">
+                            <div class=" d-flex  justify-content-center">
+                                <div class=''>
+                                    <icon className="popups-btn fs-6 p-3"
+                                        onClick={handleSearch}
+                                        required title="Search">
+                                        <i className="fas fa-search"></i>
+                                    </icon>
+                                </div>
+                                <div>
+                                    <icon className="popups-btn fs-6 p-3"
+                                        onClick={searchClearInputFields}
+                                        required title="Reload">
+                                        <i className="fa-solid fa-arrow-rotate-right" />
+                                    </icon>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <div
                         className="ag-theme-alpine mt-2 mb-2"
                         style={{
-                            height: 300,
+                            height: 450,
                             width: "100%"
                         }}
                     >
