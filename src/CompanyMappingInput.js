@@ -25,7 +25,7 @@ function UserComMap_input({ }) {
   const [companynodrop, setcompanynodrop] = useState([]);
   const [locationnodrop, setlocationnodrop] = useState([]);
   const [statusdrop, setStatusdrop] = useState([]);
-  const [error, setError] = useState("");
+  const [error, setError] = useState(false);
   const navigate = useNavigate();
   const usercode = useRef(null);
   const companycode = useRef(null);
@@ -50,11 +50,13 @@ function UserComMap_input({ }) {
     setSelectedUser("");
     setuser_code("");
     setSelectedCompany("");
+    setcompany_no("");
     setSelectedLocation("");
+    setlocation_no("");
     setSelectedStatus("");
+    setstatus("");
     setorder_no("");
   };
-
 
   useEffect(() => {
     if (mode === "update" && selectedRow && !isUpdated) {
@@ -161,10 +163,11 @@ function UserComMap_input({ }) {
 
   const handleInsert = async () => {
     if (!user_code || !company_no || !location_no || !status) {
-      setError(" ");
+      setError(true);
       toast.warning("Error: Missing required fields");
       return;
     }
+    setError(false);
     setLoading(true);
 
     try {
@@ -186,16 +189,13 @@ function UserComMap_input({ }) {
         }
       );
       if (response.ok) {
-              toast.success("Data inserted Successfully", {
-                onClose: () => clearInputFields()
-              });
-            } else if (response.status === 400) {
+        toast.success("Data inserted Successfully", {
+          onClose: () => clearInputFields()
+        });
+      } else {
         const errorResponse = await response.json();
         console.error(errorResponse.message);
         toast.warning(errorResponse.message);
-      } else {
-        console.error("Failed to insert data");
-        toast.error('Failed to insert data');
       }
     } catch (error) {
       console.error("Error inserting data:", error);
@@ -243,10 +243,11 @@ function UserComMap_input({ }) {
 
   const handleUpdate = async () => {
     if (!user_code || !company_no || !location_no || !status) {
-      setError(" ");
+      setError(true);
       toast.warning("Error: Missing required fields");
       return;
     }
+    setError(false);
     setLoading(true);
 
     try {
@@ -257,24 +258,19 @@ function UserComMap_input({ }) {
         },
         body: JSON.stringify({
           company_code: sessionStorage.getItem("selectedCompanyCode"),
-           user_code,
-            company_no,
-            location_no,
-            status,
-            order_no,
+          user_code,
+          company_no,
+          location_no,
+          status,
+          order_no,
           modified_by,
           keyfiels
         }),
       });
-      // if (response.status === 200) {
-      //   console.log("Data Updated successfully");
-      //   setIsUpdated(true);
-      //   clearInputFields();
-      //   toast.success("Data Updated successfully!")
-       if (response.ok) {
-              toast.success("Data updated successfully", {
-                onClose: () => clearInputFields()
-              });
+      if (response.ok) {
+        toast.success("Data updated successfully", {
+          onClose: () => clearInputFields()
+        });
       } else {
         const errorResponse = await response.json();
         console.error(errorResponse.message);
@@ -319,18 +315,18 @@ function UserComMap_input({ }) {
                           </div>
                         </div>
                         <div title="Select the User Code">
-                        <Select
-                          id="usercode"
-                          value={selectedUser}
-                          onChange={handleChangeUser}
-                          options={filteredOptionUser}
-                          className="exp-input-field"
-                          placeholder=""
-                          ref={usercode}
-                          onKeyDown={(e) =>
-                            handleKeyDown(e, companycode, usercode)
-                          }
-                        />
+                          <Select
+                            id="usercode"
+                            value={selectedUser}
+                            onChange={handleChangeUser}
+                            options={filteredOptionUser}
+                            className="exp-input-field"
+                            placeholder=""
+                            ref={usercode}
+                            onKeyDown={(e) =>
+                              handleKeyDown(e, companycode, usercode)
+                            }
+                          />
                         </div>
                       </div>
                     </div>
@@ -344,19 +340,19 @@ function UserComMap_input({ }) {
                           </div>
                         </div>
                         <div title="Select the Company Code ">
-                        <Select
-                          id="comno"
-                          value={selectedCompany}
-                          onChange={handleChangeCompany}
-                          options={filteredOptionCompany}
-                          className="exp-input-field"
-                          placeholder=""
-                          ref={companycode}
-                          onKeyDown={(e) =>
-                            handleKeyDown(e, locno, companycode)
-                          }
-                        />
-                       </div>
+                          <Select
+                            id="comno"
+                            value={selectedCompany}
+                            onChange={handleChangeCompany}
+                            options={filteredOptionCompany}
+                            className="exp-input-field"
+                            placeholder=""
+                            ref={companycode}
+                            onKeyDown={(e) =>
+                              handleKeyDown(e, locno, companycode)
+                            }
+                          />
+                        </div>
                       </div>
                     </div>
                     <div className="col-md-3 form-group">
@@ -369,17 +365,17 @@ function UserComMap_input({ }) {
                           </div>
                         </div>
                         <div title="Select the Location No">
-                        <Select
-                          id="locno"
-                          value={selectedLocation}
-                          onChange={handleChangeLocation}
-                          options={filteredOptionLocation}
-                          className="exp-input-field"
-                          placeholder=""
-                          ref={locno}
-                          onKeyDown={(e) => handleKeyDown(e, Status, locno)}
-                        />
-                       </div>
+                          <Select
+                            id="locno"
+                            value={selectedLocation}
+                            onChange={handleChangeLocation}
+                            options={filteredOptionLocation}
+                            className="exp-input-field"
+                            placeholder=""
+                            ref={locno}
+                            onKeyDown={(e) => handleKeyDown(e, Status, locno)}
+                          />
+                        </div>
                       </div>
                     </div>
                     <div className="col-md-3 form-group">
@@ -392,17 +388,17 @@ function UserComMap_input({ }) {
                           </div>
                         </div>
                         <div title="Select the Status">
-                        <Select
-                          id="status"
-                          value={selectedStatus}
-                          onChange={handleChangeStatus}
-                          options={filteredOptionStatus}
-                          className="exp-input-field"
-                          placeholder=""
-                          ref={Status}
-                          onKeyDown={(e) => handleKeyDown(e, Orderno, Status)}
-                        />
-                       </div>
+                          <Select
+                            id="status"
+                            value={selectedStatus}
+                            onChange={handleChangeStatus}
+                            options={filteredOptionStatus}
+                            className="exp-input-field"
+                            placeholder=""
+                            ref={Status}
+                            onKeyDown={(e) => handleKeyDown(e, Orderno, Status)}
+                          />
+                        </div>
                       </div>
                     </div>
                     <div className="col-md-3 form-group">

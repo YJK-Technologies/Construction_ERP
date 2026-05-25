@@ -15,7 +15,7 @@ function Role_input({ }) {
   const [role_name, setRole_name] = useState("");
   const [description, setDescription] = useState("");
   const [selectedRows, setSelectedRows] = useState([]);
-  const [error, setError] = useState("");
+  const [error, setError] = useState(false);
   const navigate = useNavigate();
   const roleid = useRef(null);
   const rolename = useRef(null);
@@ -23,7 +23,7 @@ function Role_input({ }) {
   const keyfield = useRef(null);
   const [hasValueChanged, setHasValueChanged] = useState(false);
   const [loading, setLoading] = useState(false);
-  
+
 
   const created_by = sessionStorage.getItem('selectedUserCode')
 
@@ -56,10 +56,11 @@ function Role_input({ }) {
       !role_id ||
       !role_name
     ) {
-      setError(" ");
+      setError(true);
       toast.warning("Error: Missing required fields");
       return;
     }
+    setError(false);
     setLoading(true);
 
     try {
@@ -77,17 +78,14 @@ function Role_input({ }) {
           created_by: sessionStorage.getItem('selectedUserCode')
         }),
       });
-       if (response.ok) {
-                        toast.success("Data inserted Successfully", {
-                          onClose: () => clearInputFields()
-                        });
-      } else if (response.status === 400) {
+      if (response.ok) {
+        toast.success("Data inserted Successfully", {
+          onClose: () => clearInputFields()
+        });
+      } else {
         const errorResponse = await response.json();
         console.error(errorResponse.message);
         toast.warning(errorResponse.message);
-      } else {
-        console.error("Failed to insert data");
-        toast.error('Failed to insert data');
       }
     } catch (error) {
       console.error("Error inserting data:", error);
@@ -130,10 +128,11 @@ function Role_input({ }) {
       !role_id ||
       !role_name
     ) {
-      setError(" ");
+      setError(true);
       toast.warning("Error: Missing required fields");
       return;
     }
+    setError(false);
     setLoading(true);
 
     try {
@@ -152,17 +151,14 @@ function Role_input({ }) {
           Keyfield
         }),
       });
-    if (response.ok) {
-    toast.success("Data updated successfully", {
-     onClose: () => clearInputFields()
-     });
-      } else if (response.status === 400) {
+      if (response.ok) {
+        toast.success("Data updated successfully", {
+          onClose: () => clearInputFields()
+        });
+      } else {
         const errorResponse = await response.json();
         console.error(errorResponse.message);
         toast.warning(errorResponse.message);
-      } else {
-        console.error("Failed to insert data");
-        toast.error("Failed to Update data");
       }
     } catch (error) {
       console.error("Error Update data:", error);

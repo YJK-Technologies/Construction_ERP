@@ -20,7 +20,7 @@ function UserScreenInput({ }) {
   const [selecteduser, setselecteduser] = useState('');
   const [selectedRows, setSelectedRows] = useState([]);
   const [selectedRole, setSelectedRole] = useState('');
-  const [error, setError] = useState("");
+  const [error, setError] = useState(false);
   const navigate = useNavigate();
   const permissiontype = useRef(null);
   const screentype = useRef(null);
@@ -41,7 +41,10 @@ function UserScreenInput({ }) {
   const clearInputFields = () => {
     setselectedpermissions("");
     setSelectedRole("");
-    setselectedscreens("")
+    setselectedscreens("");
+    setscreen_type("");
+    setpermission_type("");
+    setrole_id("");
   };
 
   useEffect(() => {
@@ -155,10 +158,11 @@ function UserScreenInput({ }) {
       !screen_type,
       !permission_type
     ) {
-      setError(" ");
+      setError(true);
       toast.warning("Error: Missing required fields");
       return;
     }
+    setError(false);
     setLoading(true);
 
     try {
@@ -173,24 +177,18 @@ function UserScreenInput({ }) {
           screen_type,
           permission_type,
           created_by: sessionStorage.getItem('selectedUserCode')
-
         }),
       });
-      if (response.status === 200) {
+      if (response.ok) {
         console.log("Data inserted successfully");
-        setTimeout(() => {
-          toast.success("Data inserted successfully!", {
-            onClose: () => window.location.reload(), // Reloads the page after the toast closes
+          toast.success("Data updated successfully!", {
+            onClose: () => clearInputFields(),
           });
-        }, 1000);
-      } else if (response.status === 400) {
+      } else {
         const errorResponse = await response.json();
         console.error(errorResponse.message);
         toast.warning(errorResponse.message);
-      } else {
-        console.error("Failed to insert data");
-        toast.error('Failed to insert data');
-      }
+      } 
     } catch (error) {
       console.error("Error inserting data:", error);
       toast.error('Error inserting data: ' + error.message);
@@ -205,10 +203,11 @@ function UserScreenInput({ }) {
       !screen_type,
       !permission_type
     ) {
-      setError(" ");
-       toast.warning("Error: Missing required fields");
+      setError(true);
+      toast.warning("Error: Missing required fields");
       return;
     }
+    setError(false);
     setLoading(true);
 
     try {
@@ -226,13 +225,11 @@ function UserScreenInput({ }) {
           keyfield
         }),
       });
-      if (response.status === 200) {
+      if (response.ok) {
         console.log("Data updated successfully");
-        setTimeout(() => {
           toast.success("Data updated successfully!", {
             onClose: () => clearInputFields(),
           });
-        }, 1000);
       } else {
         const errorResponse = await response.json();
         console.error(errorResponse.message);
