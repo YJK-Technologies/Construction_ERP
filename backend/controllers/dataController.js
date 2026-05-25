@@ -36087,14 +36087,14 @@ const SiteWarehouseMappingLoopUpdate = async (req, res) => {
     for (const item of SiteWarehouseMappingData) {
       await pool.request()
         .input("mode", sql.NVarChar, "U")
-        .input("company_code", sql.NVarChar, req.headers['company_code'])
+        .input("company_code", sql.NVarChar, item.company_code)
         .input("site_id", sql.NVarChar, item.site_id)
         .input("warehouse_code", sql.NVarChar, item.warehouse_code)
         .input("remarks", sql.NVarChar, item.remarks)
         .input("status", sql.NVarChar, item.status)
         .input("keyfield", sql.NVarChar, item.keyfield)
         .input("Is_Primary", sql.NVarChar, item.Is_Primary)
-        .input("modified_by", sql.NVarChar, req.headers['modified_by'])
+        .input("modified_by", sql.NVarChar, item.modified_by)
         .query(`EXEC sp_SiteWarehouseMapping @mode, @company_code, @site_id, @warehouse_code, '', @remarks, @status, @keyfield, @Is_Primary, '', '', @modified_by`);
     }
     res.status(200).json("SiteWarehouseMapping data updated successfully");
@@ -36116,7 +36116,7 @@ const SiteWarehouseMappingLoopDelete = async (req, res) => {
       await pool.request()
         .input("mode", sql.NVarChar, "D")
         .input("keyfield", sql.NVarChar, item.keyfield)
-        .input("company_code", sql.NVarChar, req.headers['company_code'])
+        .input("company_code", sql.NVarChar, item.company_code)
         .query(`EXEC sp_SiteWarehouseMapping @mode, @company_code, '', '', '', '', '', @keyfield, '', '', '', ''`);
     }
     res.status(200).json("SiteWarehouseMapping data deleted successfully");
@@ -36443,44 +36443,6 @@ const opening_balanceLoopDelete = async (req, res) => {
 };
 //code Ended by sakthi on 05-22-26
 
-//code added by sakthi on 05-23-26
-const OpeningBalanceSC = async (req, res) => {
-  const { transaction_no, financial_year, entry_date, party_type, party_code, keyfield, opening_amount, balance_type, remarks, status, data_deleted, company_code, created_by, created_date, modified_by, modified_date } = req.body;
-
-  try {
-    const pool = await connection.connectToDatabase();
-
-    const result = await pool.request()
-      .input("mode", sql.NVarChar, "SC")
-      .input("transaction_no", sql.NVarChar, transaction_no || '')
-      .input("financial_year", sql.NVarChar, financial_year || '')
-      .input("entry_date", sql.Date, entry_date || null)
-      .input("party_type", sql.NVarChar, party_type || '')
-      .input("party_code", sql.NVarChar, party_code || '')
-      .input("keyfield", sql.NVarChar, keyfield || '')
-      .input("opening_amount", sql.Decimal(18, 2), opening_amount || 0)
-      .input("balance_type", sql.NVarChar, balance_type || '')
-      .input("remarks", sql.NVarChar, remarks || '')
-      .input("status", sql.NVarChar, status || '')
-      .input("data_deleted", sql.Bit, data_deleted ?? null)
-      .input("company_code", sql.NVarChar, company_code || '')
-      .input("created_by", sql.NVarChar, created_by || '')
-      .input("created_date", sql.DateTime, created_date || null)
-      .input("modified_by", sql.NVarChar, modified_by || '')
-      .input("modified_date", sql.DateTime, modified_date || null)
-      .query(`EXEC sp_opening_balance @mode,@transaction_no,@financial_year,@entry_date,@party_type,@party_code,@keyfield,@opening_amount,@balance_type,@remarks,@status,@data_deleted,@company_code,@created_by,@created_date,@modified_by,@modified_date`);
-
-    if (result.recordset.length > 0) {
-      res.status(200).json(result.recordset);
-    } else {
-      res.status(404).json("Data not found");
-    }
-
-  } catch (err) {
-    console.error("Error", err);
-    res.status(500).json({ message: err.message || 'Internal Server Error' });
-  }
-};
 //code Ended by sakthi on 05-23-26
 
 //code added by sakthi on 05-23-26
@@ -36771,6 +36733,34 @@ const OpeningBalanceSC = async (req, res) => {
   }
 };
 //code Ended by sakthi on 05-23-26
+
+//Code added by pavun on 25-06-2026
+const searchSiteWarehouseMapping = async (req, res) => {
+  const { company_code, site_id, warehouse_code, remarks, status, Is_Primary } = req.body;
+
+  try {
+    const pool = await sql.connect(dbConfig);
+    const result = await pool.request()
+      .input("mode", sql.NVarChar, "SC")
+      .input("company_code", sql.NVarChar, company_code)
+      .input("site_id", sql.NVarChar, site_id)
+      .input("warehouse_code", sql.NVarChar, warehouse_code)
+      .input("remarks", sql.NVarChar, remarks)
+      .input("status", sql.NVarChar, status)
+      .input("Is_Primary", sql.NVarChar, Is_Primary)
+      .query(`EXEC sp_SiteWarehouseMapping @mode, @company_code, @site_id, @warehouse_code, '', @remarks, @status, '', @Is_Primary, '', '', ''`);
+
+    if (result.recordset.length > 0) {
+      res.status(200).json(result.recordset);
+    } else {
+      res.status(404).json("Data not found");
+    }
+  } catch (err) {
+    console.error("Error during SiteWarehouseMapping insert:", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+};
+//Code ended by pavun on 25-06-2026
 
 module.exports = {
   login,
@@ -37949,7 +37939,7 @@ module.exports = {
   opening_balanceLoopInsert, 
   opening_balanceLoopUpdate, 
   opening_balanceLoopDelete,
-    getExpenseType,
+  getExpenseType,
   getReferenceType,
   getExpensePaymentType,
   Expenses_HdrInsert, 
@@ -37958,7 +37948,17 @@ module.exports = {
   Expenses_HdrLoopInsert, 
   Expenses_HdrLoopUpdate, 
   Expenses_HdrLoopDelete,
-  OpeningBalanceSC
+  OpeningBalanceSC,
+  getProjectType,
+  getSiteStatus,
+  getToleranceType,
+  getWarehouseCodeDrop,
+  searchCriteriaSiteMaster,
+  getSiteMaster,
+  SiteWarehouseMappingInsert,
+  SiteWarehouseMappingLoopUpdate,
+  SiteWarehouseMappingLoopDelete,
+  searchSiteWarehouseMapping
 
 
 };
