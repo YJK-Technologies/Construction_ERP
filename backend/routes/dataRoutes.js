@@ -1233,6 +1233,15 @@ router.post("/SiteWarehouseMappingInsert", dataController.SiteWarehouseMappingIn
 router.post("/SiteWarehouseMappingLoopUpdate", dataController.SiteWarehouseMappingLoopUpdate)
 router.post("/SiteWarehouseMappingLoopDelete", dataController.SiteWarehouseMappingLoopDelete)
 router.post("/searchSiteWarehouseMapping", dataController.searchSiteWarehouseMapping)
+router.post("/PendingVendor", dataController.PendingVendor)
+router.post("/Vendor_PaymentInsert", dataController.Vendor_PaymentInsert)
+router.post("/Vendor_PaymentUpdate", dataController.Vendor_PaymentUpdate)
+router.post("/Vendor_PaymentDelete", dataController.Vendor_PaymentDelete)
+router.post("/Vendor_PaymentLoopInsert", dataController.Vendor_PaymentLoopInsert)
+router.post("/Vendor_PaymentLoopUpdate", dataController.Vendor_PaymentLoopUpdate)
+router.post("/Vendor_PaymentLoopDelete", dataController.Vendor_PaymentLoopDelete)
+router.post("/updateVendorPayment", dataController.updateVendorPayment)
+router.post("/getPendingVendorPayment", dataController.getPendingVendorPayment)
 
 
 module.exports = router;
