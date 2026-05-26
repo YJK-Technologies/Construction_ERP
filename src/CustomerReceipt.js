@@ -99,37 +99,37 @@ function AssetsReturn({ }) {
     }));
 
     const handleChangeCustomer = (selectedCustomer) => {
-    setSelectedCustomer(selectedCustomer);
+        setSelectedCustomer(selectedCustomer);
 
-    const selectedValue = selectedCustomer ? selectedCustomer.value : '';
-    setCustomer(selectedValue);
+        const selectedValue = selectedCustomer ? selectedCustomer.value : '';
+        setCustomer(selectedValue);
 
-    // FOR ADVANCE TYPE
-    if (type?.toLowerCase() === "advance") {
+        // FOR ADVANCE TYPE
+        if (type?.toLowerCase() === "advance") {
 
-        const customerData = customerDrop.find(
-            (item) => item.customer_code === selectedValue
-        );
+            const customerData = customerDrop.find(
+                (item) => item.customer_code === selectedValue
+            );
 
-        setRowData([
-    {
-        serialNumber: 1,
-        transactionNo: "Advance",
-        transactionDate: transactionDate,
-        code: customerData?.customer_code || "",
-        name: customerData?.customer_name || "",
-        HeaderDescription: "-",
-        totalAmount: 0,
-        paidAmount: 0,
-        balanceAmount: 0,
-        receivedAmount: "",
-        TypeofPay: "",
-        Remarks: "",
-        keyfield: ""
-    }
-]);
-    }
-};
+            setRowData([
+                {
+                    serialNumber: 1,
+                    transactionNo: "Advance",
+                    transactionDate: transactionDate,
+                    code: customerData?.customer_code || "",
+                    name: customerData?.customer_name || "",
+                    HeaderDescription: "-",
+                    totalAmount: 0,
+                    paidAmount: 0,
+                    balanceAmount: 0,
+                    receivedAmount: "",
+                    TypeofPay: "",
+                    Remarks: "",
+                    keyfield: ""
+                }
+            ]);
+        }
+    };
 
     useEffect(() => {
         const companyCode = sessionStorage.getItem('selectedCompanyCode');
@@ -303,34 +303,34 @@ function AssetsReturn({ }) {
 
     useEffect(() => {
 
-    // NORMAL TYPES
-    if (type && type.toLowerCase() !== "advance") {
-        fetchQuotationData();
-    }
+        // NORMAL TYPES
+        if (type && type.toLowerCase() !== "advance") {
+            fetchQuotationData();
+        }
 
-    // ADVANCE TYPE
-    else if (type?.toLowerCase() === "advance" && rowData.length === 0) {
+        // ADVANCE TYPE
+        else if (type?.toLowerCase() === "advance" && rowData.length === 0) {
 
-        setRowData([
-            {
-                serialNumber: 1,
-                transactionNo: "",
-                transactionDate: "",
-                code: "",
-                name: "",
-                HeaderDescription: "",
-                totalAmount: "",
-                paidAmount: "",
-                balanceAmount: "",
-                receivedAmount: "",
-                TypeofPay: "",
-                Remarks: "",
-                keyfield: ""
-            }
-        ]);
-    }
+            setRowData([
+                {
+                    serialNumber: 1,
+                    transactionNo: "",
+                    transactionDate: "",
+                    code: "",
+                    name: "",
+                    HeaderDescription: "",
+                    totalAmount: "",
+                    paidAmount: "",
+                    balanceAmount: "",
+                    receivedAmount: "",
+                    TypeofPay: "",
+                    Remarks: "",
+                    keyfield: ""
+                }
+            ]);
+        }
 
-}, [customer, transactionDate, type]);
+    }, [customer, transactionDate, type]);
 
     const fetchQuotationData = async () => {
         try {
@@ -352,11 +352,17 @@ function AssetsReturn({ }) {
             if (response.ok) {
                 const searchData = await response.json();
                 const newRows = searchData.map((matchedItem) => ({
+                    bill_no: matchedItem.bill_no,
+                    bill_date: formatDate(matchedItem.bill_date),
+
                     transactionNo: matchedItem.bill_no,
                     transactionDate: formatDate(matchedItem.bill_date),
                     totalAmount: matchedItem.bill_amt,
                     balanceAmount: matchedItem.bal_amt,
                     paidAmount: matchedItem.paid_amt,
+                    customer_name: matchedItem.customer_name,
+                    customer_code: matchedItem.customer_code,
+
                     name: matchedItem.customer_name,
                     code: matchedItem.customer_code,
                     Remarks: matchedItem.Remarks,
@@ -382,38 +388,152 @@ function AssetsReturn({ }) {
     };
 
     const updateSelectedRows = async () => {
-        const allRowsData = [];
-        gridApi.forEachNode(node => allRowsData.push(node.data));
 
-        const filteredRows = allRowsData.filter(row => row.receivedAmount > 0);
+        const allRowsData = [];
+
+        gridApi.forEachNode((node) => allRowsData.push(node.data));
+
+        const filteredRows = allRowsData.filter((row) => {
+
+            if (row.TransactionType === "Advance") {
+                return Number(row.paid_amt) > 0;
+            }
+
+            return Number(row.receivedAmount) > 0;
+        });
 
         if (filteredRows.length === 0) {
-            toast.warning("No valid rows found with Received Amount greater than zero to update");
+
+            toast.warning(
+                "No valid rows found with amount greater than zero"
+            );
+
             return;
         }
 
         try {
-            const company_code = sessionStorage.getItem('selectedCompanyCode');
-            const response = await fetch(`${config.apiBaseUrl}/updateCustomerReceipt`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "company_code": company_code
-                },
-                body: JSON.stringify({ editedData: filteredRows })
+
+            // ============================================
+            // SPLIT ADVANCE & NORMAL ROWS
+            // ============================================
+
+            const advanceRows = filteredRows.filter(
+                (row) => row.transactionNo === "Advance"
+            );
+
+            const normalRows = filteredRows.filter(
+                (row) => row.transactionNo !== "Advance"
+            );
+
+            // ============================================
+            // ADVANCE INSERT
+            // ============================================
+
+            if (advanceRows.length > 0) {
+
+                const AdvanceInsertData = advanceRows.map((row) => ({
+
+                    customer_code: row.code,
+
+                    customer_name: row.name,
+
+                    bill_no: "Advance",
+
+                    bill_date: row.transactionDate,
+
+                    bill_amt: 0,
+
+                    paid_amt: Number(row.receivedAmount || 0),
+
+                    bal_amt: 0,
+
+                    pending: "Completed",
+
+                    keyfield:
+                        `${row.transactionDate}/${row.code}/ADVANCE`,
+
+                    Remarks: row.Remarks || "",
+
+                    TypeofPay: row.TypeofPay || "",
+
+                    Data_deleted: "No",
+
+                    created_by:
+                        sessionStorage.getItem("selectedUserCode")
+                }));
+
+                const advanceResponse = await fetch(
+                    `${config.apiBaseUrl}/Customer_ReceiptLoopInsert`,
+                    {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({
+                            Vendor_PaymentData: AdvanceInsertData,
+                        }),
+                    }
+                );
+
+                if (!advanceResponse.ok) {
+
+                    const errorData = await advanceResponse.json();
+
+                    toast.error(
+                        errorData.message || "Advance Insert Failed"
+                    );
+
+                    return;
+                }
+            }
+
+            // ============================================
+            // NORMAL UPDATE
+            // ============================================
+
+            if (normalRows.length > 0) {
+
+                const company_code =
+                    sessionStorage.getItem("selectedCompanyCode");
+
+                const response = await fetch(
+                    `${config.apiBaseUrl}/updateCustomerReceipt`,
+                    {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            company_code: company_code,
+                        },
+                        body: JSON.stringify({
+                            editedData: normalRows,
+                            advanceRows
+                        }),
+                    }
+                );
+
+                if (!response.ok) {
+
+                    const errorResponse = await response.json();
+
+                    toast.warning(
+                        errorResponse.message || "Update Failed"
+                    );
+
+                    return;
+                }
+            }
+
+            toast.success("Data processed successfully", {
+                onClose: () => fetchQuotationData(),
             });
 
-            if (response.ok) {
-                toast.success("Data updated successfully", {
-                    onClose: () => fetchQuotationData(),
-                });
-            } else {
-                const errorResponse = await response.json();
-                toast.warning(errorResponse.message || "Failed to insert sales data");
-            }
         } catch (error) {
-            console.error("Error deleting rows:", error);
-            toast.error('Error Deleting Data: ' + error.message);
+
+            console.error(error);
+
+            toast.error(
+                "Error : " + error.message
+            );
         }
     };
 
@@ -468,32 +588,32 @@ function AssetsReturn({ }) {
                             <div className="exp-form-floating">
                                 <label class="exp-form-labels">Transaction Date</label>
                                 <input
-    name="transactionDate"
-    id="billDate"
-    className="exp-input-field form-control"
-    type="date"
-    placeholder=""
-    required
-    value={transactionDate}
-    onChange={(e) => {
+                                    name="transactionDate"
+                                    id="billDate"
+                                    className="exp-input-field form-control"
+                                    type="date"
+                                    placeholder=""
+                                    required
+                                    value={transactionDate}
+                                    onChange={(e) => {
 
-        const selectedDate = e.target.value;
+                                        const selectedDate = e.target.value;
 
-        setTransactionDate(selectedDate);
+                                        setTransactionDate(selectedDate);
 
-        // FOR ADVANCE TYPE
-        if (type?.toLowerCase() === "advance") {
+                                        // FOR ADVANCE TYPE
+                                        if (type?.toLowerCase() === "advance") {
 
-            setRowData((prevRows) =>
-                prevRows.map((row) => ({
-                    ...row,
-                    transactionDate: selectedDate
-                }))
-            );
-        }
-    }}
-    autoComplete="off"
-/>
+                                            setRowData((prevRows) =>
+                                                prevRows.map((row) => ({
+                                                    ...row,
+                                                    transactionDate: selectedDate
+                                                }))
+                                            );
+                                        }
+                                    }}
+                                    autoComplete="off"
+                                />
                             </div>
                         </div>
                         <div className="col-md-2  form-group">
