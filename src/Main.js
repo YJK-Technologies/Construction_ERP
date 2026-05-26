@@ -157,6 +157,7 @@ import AddSiteMaster from "./AddSiteMaster.js";
 import SiteWarehouse from "./siteWarehouseMapping.js";
 import Expenses from "./Expenses.js";
 import CustomerReceipt from "./CustomerReceipt.js";
+import VendorPayment from "./Transaction/VendorPayment.js";
 
 function Main() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -347,6 +348,7 @@ function Main() {
      { path: "/SiteWarehouse", component: <SiteWarehouse /> },
      { path: "/Expenses", component: <Expenses /> },
      { path: "/CustomerReceipt", component: <CustomerReceipt /> },
+     { path: "/VendorPayment", component: <VendorPayment /> },
   ];
  
   return (
