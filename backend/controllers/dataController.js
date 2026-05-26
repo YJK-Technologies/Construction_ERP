@@ -36928,6 +36928,538 @@ const OpeningBalanceSC = async (req, res) => {
   }
 };
 //code Ended by sakthi on 05-23-26
+
+//code added by Dinesh Gokul on 26-05-26
+
+const getCustomerReceipt = async (req, res) => {
+  const { company_code, customer_code, bill_date, type } = req.body;
+
+  try {
+    const pool = await connection.connectToDatabase();
+    const result = await pool
+      .request()
+      .input("mode", sql.NVarChar, "PC")
+      .input("company_code", sql.NVarChar, company_code)
+      .input("customer_code", sql.NVarChar, customer_code)
+      .input("bill_date", sql.NVarChar, bill_date)
+      .input("type", sql.NVarChar, type)
+      .query(`EXEC sp_customerReceipt @mode,@company_code,@customer_code,'','',@bill_date,0,0,0,'','','',@type,'','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
+
+    if (result.recordset.length > 0) {
+      res.status(200).json(result.recordset);
+    } else {
+      res.status(404).json("Data Not Found");
+    }
+  }
+  catch (err) {
+    console.error("Error", err);
+    res.status(500).json({ message: err.message || 'Internal Server Error' });
+  }
+};
+
+const updateCustomerReceipt = async (req, res) => {
+  const editedData = req.body.editedData;
+
+  if (!editedData || !editedData.length) {
+    res.status(400).json("Invalid or empty editedData array.");
+    return;
+  }
+
+  try {
+    const pool = await connection.connectToDatabase(dbConfig);
+    for (const updatedRow of editedData) {
+      await pool
+        .request()
+        .input("mode", sql.NVarChar, "U")
+        .input("company_code", sql.NVarChar, req.headers['company_code'])
+        .input("keyfield", sql.NVarChar, updatedRow.keyfield)
+        .input("TypeofPay", sql.NVarChar, updatedRow.TypeofPay)
+        .input("Remarks", sql.NVarChar, updatedRow.Remarks)
+        .input("customer_code", sql.NVarChar, updatedRow.customer_code)
+        .input("customer_name", sql.NVarChar, updatedRow.customer_name)
+        .input("bill_no", sql.NVarChar, updatedRow.bill_no)
+        .input("bill_date", sql.Date, updatedRow.bill_date)
+        .input("bill_amt", sql.Int, updatedRow.bill_amt)
+        .input("bal_amt", sql.Int, updatedRow.bal_amt)
+        .input("pending", sql.NVarChar, updatedRow.pending)
+        .input("modified_by", sql.NVarChar, updatedRow.modified_by)
+        .input("Data_deleted", sql.NVarChar, updatedRow.Data_deleted)
+        .input("paid_amt", sql.Decimal(14, 2), updatedRow.receivedAmount)
+        .query(`EXEC sp_customerReceipt @mode,@company_code,@customer_code,@customer_name,@bill_no,@bill_date,@bill_amt,@paid_amt,
+        @bal_amt,@pending,@Data_deleted,@keyfield,'','',@modified_by,@Remarks,@TypeofPay,'','','','','',''`);
+    }
+    res.status(200).json("data updated successfully");
+  } catch (err) {
+    console.error("Error inserting data:", err);
+    res.status(500).json({
+      message: err.message || "Internal Server Error"
+    });
+  }
+};
+
+const CustRecTransDrop = async (req, res) => {
+  const { company_code } = req.body;
+  try {
+    const pool = await connection.connectToDatabase();
+    const result = await pool
+      .request()
+      .input("company_code", sql.NVarChar, company_code)
+      .query(
+        "EXEC sp_attribute_Info 'F',@company_code,'CustRecTransType','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+      );
+
+    res.json(result.recordset);
+  } catch (err) {
+    console.error("Error", err);
+    res.status(500).json({ message: err.message || 'Internal Server Error' });
+  }
+};
+
+const CustomerReceiptLoopInsert = async (req, res) => {
+
+    const Vendor_PaymentData = req.body.Vendor_PaymentData;
+
+    if (!Vendor_PaymentData || !Vendor_PaymentData.length) {
+
+        return res
+            .status(400)
+            .json("Invalid or empty Vendor_PaymentData array.");
+    }
+
+    try {
+
+        const pool = await sql.connect(dbConfig);
+
+        for (const item of Vendor_PaymentData) {
+
+            await pool.request()
+
+                .input("mode", sql.NVarChar, "I")
+
+                .input("company_code", sql.NVarChar,
+                    req.headers['company_code'])
+
+                .input("keyfield", sql.NVarChar,
+                    item.keyfield)
+
+                .input("TypeofPay", sql.NVarChar,
+                    item.TypeofPay)
+
+                .input("Remarks", sql.NVarChar,
+                    item.Remarks)
+
+                .input("customer_code", sql.NVarChar,
+                    item.customer_code)
+
+                .input("customer_name", sql.NVarChar,
+                    item.customer_name)
+
+                .input("bill_no", sql.NVarChar,
+                    item.bill_no)
+
+                .input("bill_date", sql.Date,
+                    item.bill_date)
+
+                .input("bill_amt", sql.Int,
+                    item.bill_amt)
+
+                .input("paid_amt", sql.Decimal(14, 2),
+                    item.paid_amt)
+
+                .input("bal_amt", sql.Int,
+                    item.bal_amt)
+
+                .input("pending", sql.NVarChar,
+                    item.pending)
+
+                .input("created_by", sql.NVarChar,
+                    item.created_by)
+
+                .query(`
+                    EXEC sp_customerReceipt
+                    @mode,
+                    @company_code,
+                    @customer_code,
+                    @customer_name,
+                    @bill_no,
+                    @bill_date,
+                    @bill_amt,
+                    @paid_amt,
+                    @bal_amt,
+                    @pending,
+                    '',
+                    @keyfield,
+                    '',
+                    '',
+                    '',
+                    @Remarks,
+                    @TypeofPay,
+                    '',
+                    '',
+                    @created_by,
+                    '',
+                    '',
+                    ''
+                `);
+        }
+
+        res
+            .status(200)
+            .json("Advance inserted successfully");
+
+    } catch (err) {
+
+        console.error(err);
+
+        res.status(500).json({
+            message: err.message || "Internal Server Error"
+        });
+    }
+};
+//code added by Dinesh Gokul on 26-05-26
+
+
+//code added by sakthi on 05-26-26
+const PendingVendor = async (req, res) => {
+  const { company_code } = req.body;
+  try {
+    const pool = await connection.connectToDatabase();
+    const result = await pool
+      .request()
+      .input("company_code", sql.NVarChar, company_code)
+      .query(
+        "EXEC sp_attribute_Info 'F',@company_code,'PendingVendor','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+      );
+
+    res.json(result.recordset);
+  } catch (err) {
+    console.error("Error", err);
+    res.status(500).json({ message: err.message || 'Internal Server Error' });
+  }
+};
+//code Ended by sakthi on 05-26-26
+
+// Auto-generated Node.js CRUD for sp_Vendor_Payment
+
+const Vendor_PaymentInsert = async (req, res) => {
+  const {
+  vendor_code, TransactionNo, TransactionDate, TransactionType, Site_ID, PONo, PO_date, PO_amt, paid_amt, bal_amt, pending, keyfield, Remarks, TypeofPay, Data_deleted,
+  created_date,
+  modified_date,
+  created_by,
+  modified_by,
+  company_code
+} = req.body;
+
+  try {
+    const pool = await sql.connect(dbConfig);
+    await pool.request()
+      .input("mode", sql.NVarChar, "I")
+      .input("vendor_code", sql.NVarChar, vendor_code)
+      .input("TransactionNo", sql.NVarChar, TransactionNo)
+      .input("TransactionDate", sql.Date, TransactionDate)
+      .input("TransactionType", sql.NVarChar, TransactionType)
+      .input("Site_ID", sql.NVarChar, Site_ID)
+      .input("PONo", sql.NVarChar, PONo)
+      .input("PO_date", sql.Date, PO_date)
+      .input("PO_amt", sql.Decimal(14, 2), PO_amt)
+      .input("paid_amt", sql.Decimal(14, 2), paid_amt)
+      .input("bal_amt", sql.Decimal(14, 2), bal_amt)
+      .input("pending", sql.NVarChar, pending)
+      .input("keyfield", sql.NVarChar, keyfield)
+      .input("Remarks", sql.NVarChar, Remarks)
+      .input("TypeofPay", sql.NVarChar, TypeofPay)
+      .input("Data_deleted", sql.NVarChar, Data_deleted)
+      .input("company_code", sql.NVarChar, company_code)
+      .input("created_by", sql.NVarChar, created_by)
+      .input("created_date", sql.DateTime, created_date)
+      .input("modified_by", sql.NVarChar, modified_by)
+      .input("modified_date", sql.DateTime, modified_date)
+      .query(`EXEC sp_Vendor_Payment @mode, @vendor_code, @TransactionNo, @TransactionDate, @TransactionType, @Site_ID, @PONo, @PO_date, @PO_amt, @paid_amt, @bal_amt, @pending, @keyfield, @Remarks, @TypeofPay, @Data_deleted, @company_code, @created_by, @created_date, @modified_by, @modified_date`);
+
+    res.status(200).json({ success: true, message: "Vendor_Payment insertd successfully" });
+  } catch (err) {
+    console.error("Error during Vendor_Payment insert:", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+};
+
+const Vendor_PaymentUpdate = async (req, res) => {
+  const {
+  vendor_code, TransactionNo, TransactionDate, TransactionType, Site_ID, PONo, PO_date, PO_amt, paid_amt, bal_amt, pending, keyfield, Remarks, TypeofPay, Data_deleted,
+  created_date,
+  modified_date,
+  created_by,
+  modified_by,
+  company_code
+} = req.body;
+
+  try {
+    const pool = await sql.connect(dbConfig);
+    await pool.request()
+      .input("mode", sql.NVarChar, "U")
+      .input("vendor_code", sql.NVarChar, vendor_code)
+      .input("TransactionNo", sql.NVarChar, TransactionNo)
+      .input("TransactionDate", sql.Date, TransactionDate)
+      .input("TransactionType", sql.NVarChar, TransactionType)
+      .input("Site_ID", sql.NVarChar, Site_ID)
+      .input("PONo", sql.NVarChar, PONo)
+      .input("PO_date", sql.Date, PO_date)
+      .input("PO_amt", sql.Decimal(14, 2), PO_amt)
+      .input("paid_amt", sql.Decimal(14, 2), paid_amt)
+      .input("bal_amt", sql.Decimal(14, 2), bal_amt)
+      .input("pending", sql.NVarChar, pending)
+      .input("keyfield", sql.NVarChar, keyfield)
+      .input("Remarks", sql.NVarChar, Remarks)
+      .input("TypeofPay", sql.NVarChar, TypeofPay)
+      .input("Data_deleted", sql.NVarChar, Data_deleted)
+      .input("company_code", sql.NVarChar, company_code)
+      .input("created_by", sql.NVarChar, created_by)
+      .input("created_date", sql.DateTime, created_date)
+      .input("modified_by", sql.NVarChar, modified_by)
+      .input("modified_date", sql.DateTime, modified_date)
+      .query(`EXEC sp_Vendor_Payment @mode, @vendor_code, @TransactionNo, @TransactionDate, @TransactionType, @Site_ID, @PONo, @PO_date, @PO_amt, @paid_amt, @bal_amt, @pending, @keyfield, @Remarks, @TypeofPay, @Data_deleted, @company_code, @created_by, @created_date, @modified_by, @modified_date`);
+
+    res.status(200).json({ success: true, message: "Vendor_Payment updated successfully" });
+  } catch (err) {
+    console.error("Error during Vendor_Payment update:", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+};
+
+const Vendor_PaymentDelete = async (req, res) => {
+  const {
+  vendor_code, TransactionNo, TransactionDate, TransactionType, Site_ID, PONo, PO_date, PO_amt, paid_amt, bal_amt, pending, keyfield, Remarks, TypeofPay, Data_deleted,
+  created_date,
+  modified_date,
+  created_by,
+  modified_by,
+  company_code
+} = req.body;
+
+  try {
+    const pool = await sql.connect(dbConfig);
+    await pool.request()
+      .input("mode", sql.NVarChar, "D")
+      .input("vendor_code", sql.NVarChar, vendor_code)
+      .input("TransactionNo", sql.NVarChar, TransactionNo)
+      .input("TransactionDate", sql.Date, TransactionDate)
+      .input("TransactionType", sql.NVarChar, TransactionType)
+      .input("Site_ID", sql.NVarChar, Site_ID)
+      .input("PONo", sql.NVarChar, PONo)
+      .input("PO_date", sql.Date, PO_date)
+      .input("PO_amt", sql.Decimal(14, 2), PO_amt)
+      .input("paid_amt", sql.Decimal(14, 2), paid_amt)
+      .input("bal_amt", sql.Decimal(14, 2), bal_amt)
+      .input("pending", sql.NVarChar, pending)
+      .input("keyfield", sql.NVarChar, keyfield)
+      .input("Remarks", sql.NVarChar, Remarks)
+      .input("TypeofPay", sql.NVarChar, TypeofPay)
+      .input("Data_deleted", sql.NVarChar, Data_deleted)
+      .input("company_code", sql.NVarChar, company_code)
+      .input("created_by", sql.NVarChar, created_by)
+      .input("created_date", sql.DateTime, created_date)
+      .input("modified_by", sql.NVarChar, modified_by)
+      .input("modified_date", sql.DateTime, modified_date)
+      .query(`EXEC sp_Vendor_Payment @mode, @vendor_code, @TransactionNo, @TransactionDate, @TransactionType, @Site_ID, @PONo, @PO_date, @PO_amt, @paid_amt, @bal_amt, @pending, @keyfield, @Remarks, @TypeofPay, @Data_deleted, @company_code, @created_by, @created_date, @modified_by, @modified_date`);
+
+    res.status(200).json({ success: true, message: "Vendor_Payment deleted successfully" });
+  } catch (err) {
+    console.error("Error during Vendor_Payment delete:", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+};
+
+
+// ---------- HEADER LOOP CRUD ----------
+// Auto-generated Vendor_PaymentLoopInsert API for sp_Vendor_Payment
+const Vendor_PaymentLoopInsert = async (req, res) => {
+  const Vendor_PaymentData = req.body.Vendor_PaymentData;
+  if (!Vendor_PaymentData || !Vendor_PaymentData.length) {
+    return res.status(400).json("Invalid or empty Vendor_PaymentData array.");
+  }
+
+  try {
+    const pool = await sql.connect(dbConfig);
+    for (const item of Vendor_PaymentData) {
+      await pool.request()
+        .input("mode", sql.NVarChar, "I")
+        .input("vendor_code", sql.NVarChar, item.vendor_code)
+        .input("TransactionNo", sql.NVarChar, item.TransactionNo)
+        .input("TransactionDate", sql.Date, item.TransactionDate)
+        .input("TransactionType", sql.NVarChar, item.TransactionType)
+        .input("Site_ID", sql.NVarChar, item.Site_ID)
+        .input("PONo", sql.NVarChar, item.PONo)
+        .input("PO_date", sql.Date, item.PO_date)
+        .input("PO_amt", sql.Decimal(14, 2), item.PO_amt)
+        .input("paid_amt", sql.Decimal(14, 2), item.paid_amt)
+        .input("bal_amt", sql.Decimal(14, 2), item.bal_amt)
+        .input("pending", sql.NVarChar, item.pending)
+        .input("keyfield", sql.NVarChar, item.keyfield)
+        .input("Remarks", sql.NVarChar, item.Remarks)
+        .input("TypeofPay", sql.NVarChar, item.TypeofPay)
+        .input("Data_deleted", sql.NVarChar, item.Data_deleted)
+        .input("company_code", sql.NVarChar, item.company_code)
+        .input("created_by", sql.NVarChar, item.created_by)
+        .input("created_date", sql.DateTime, item.created_date)
+        .input("modified_by", sql.NVarChar, item.modified_by)
+        .input("modified_date", sql.DateTime, item.modified_date)
+        .query(`EXEC sp_Vendor_Payment @mode, @vendor_code, @TransactionNo, @TransactionDate, @TransactionType, @Site_ID, @PONo, @PO_date, @PO_amt, @paid_amt, @bal_amt, @pending, @keyfield, @Remarks, @TypeofPay, @Data_deleted, @company_code, @created_by, @created_date, @modified_by, @modified_date`);
+    }
+    res.status(200).json("Vendor_Payment data inserted successfully");
+  } catch (err) {
+    console.error("Error in Vendor_PaymentLoopInsert:", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+};
+
+// Auto-generated Vendor_PaymentLoopUpdate API for sp_Vendor_Payment
+const Vendor_PaymentLoopUpdate = async (req, res) => {
+  const Vendor_PaymentData = req.body.Vendor_PaymentData;
+  if (!Vendor_PaymentData || !Vendor_PaymentData.length) {
+    return res.status(400).json("Invalid or empty Vendor_PaymentData array.");
+  }
+
+  try {
+    const pool = await sql.connect(dbConfig);
+    for (const item of Vendor_PaymentData) {
+      await pool.request()
+        .input("mode", sql.NVarChar, "U")
+        .input("vendor_code", sql.NVarChar, item.vendor_code)
+        .input("TransactionNo", sql.NVarChar, item.TransactionNo)
+        .input("TransactionDate", sql.Date, item.TransactionDate)
+        .input("TransactionType", sql.NVarChar, item.TransactionType)
+        .input("Site_ID", sql.NVarChar, item.Site_ID)
+        .input("PONo", sql.NVarChar, item.PONo)
+        .input("PO_date", sql.Date, item.PO_date)
+        .input("PO_amt", sql.Decimal(14, 2), item.PO_amt)
+        .input("paid_amt", sql.Decimal(14, 2), item.paid_amt)
+        .input("bal_amt", sql.Decimal(14, 2), item.bal_amt)
+        .input("pending", sql.NVarChar, item.pending)
+        .input("keyfield", sql.NVarChar, item.keyfield)
+        .input("Remarks", sql.NVarChar, item.Remarks)
+        .input("TypeofPay", sql.NVarChar, item.TypeofPay)
+        .input("Data_deleted", sql.NVarChar, item.Data_deleted)
+        .input("company_code", sql.NVarChar, item.company_code)
+        .input("created_by", sql.NVarChar, item.created_by)
+        .input("created_date", sql.DateTime, item.created_date)
+        .input("modified_by", sql.NVarChar, item.modified_by)
+        .input("modified_date", sql.DateTime, item.modified_date)
+        .query(`EXEC sp_Vendor_Payment @mode, @vendor_code, @TransactionNo, @TransactionDate, @TransactionType, @Site_ID, @PONo, @PO_date, @PO_amt, @paid_amt, @bal_amt, @pending, @keyfield, @Remarks, @TypeofPay, @Data_deleted, @company_code, @created_by, @created_date, @modified_by, @modified_date`);
+    }
+    res.status(200).json("Vendor_Payment data updated successfully");
+  } catch (err) {
+    console.error("Error in Vendor_PaymentLoopUpdate:", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+};
+
+// Auto-generated Vendor_PaymentLoopDelete API for sp_Vendor_Payment
+const Vendor_PaymentLoopDelete = async (req, res) => {
+  const Vendor_PaymentData = req.body.Vendor_PaymentData;
+  if (!Vendor_PaymentData || !Vendor_PaymentData.length) {
+    return res.status(400).json("Invalid or empty Vendor_PaymentData array.");
+  }
+
+  try {
+    const pool = await sql.connect(dbConfig);
+    for (const item of Vendor_PaymentData) {
+      await pool.request()
+        .input("mode", sql.NVarChar, "D")
+        .input("vendor_code", sql.NVarChar, item.vendor_code)
+        .input("TransactionNo", sql.NVarChar, item.TransactionNo)
+        .input("TransactionDate", sql.Date, item.TransactionDate)
+        .input("TransactionType", sql.NVarChar, item.TransactionType)
+        .input("Site_ID", sql.NVarChar, item.Site_ID)
+        .input("PONo", sql.NVarChar, item.PONo)
+        .input("PO_date", sql.Date, item.PO_date)
+        .input("PO_amt", sql.Decimal(14, 2), item.PO_amt)
+        .input("paid_amt", sql.Decimal(14, 2), item.paid_amt)
+        .input("bal_amt", sql.Decimal(14, 2), item.bal_amt)
+        .input("pending", sql.NVarChar, item.pending)
+        .input("keyfield", sql.NVarChar, item.keyfield)
+        .input("Remarks", sql.NVarChar, item.Remarks)
+        .input("TypeofPay", sql.NVarChar, item.TypeofPay)
+        .input("Data_deleted", sql.NVarChar, item.Data_deleted)
+        .input("company_code", sql.NVarChar, item.company_code)
+        .input("created_by", sql.NVarChar, item.created_by)
+        .input("created_date", sql.DateTime, item.created_date)
+        .input("modified_by", sql.NVarChar, item.modified_by)
+        .input("modified_date", sql.DateTime, item.modified_date)
+        .query(`EXEC sp_Vendor_Payment @mode, @vendor_code, @TransactionNo, @TransactionDate, @TransactionType, @Site_ID, @PONo, @PO_date, @PO_amt, @paid_amt, @bal_amt, @pending, @keyfield, @Remarks, @TypeofPay, @Data_deleted, @company_code, @created_by, @created_date, @modified_by, @modified_date`);
+    }
+    res.status(200).json("Vendor_Payment data deleted successfully");
+  } catch (err) {
+    console.error("Error in Vendor_PaymentLoopDelete:", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+};
+
+//code anded by sakthi on 05-26-26
+const updateVendorPayment = async (req, res) => {
+  const editedData = req.body.editedData;
+
+  if (!editedData || !editedData.length) {
+    res.status(400).json("Invalid or empty editedData array.");
+    return;
+  }
+
+  try {
+    const pool = await connection.connectToDatabase(dbConfig);
+    for (const updatedRow of editedData) {
+      await pool
+        .request()
+        .input("mode", sql.NVarChar, "U")
+        .input("vendor_code", sql.NVarChar, updatedRow.vendor_code)
+        .input("PO_date", sql.NVarChar, updatedRow.PO_date)
+        .input("PONo", sql.NVarChar, updatedRow.PONo)
+        .input("paid_amt", sql.Decimal(14, 2), updatedRow.receivedAmount)
+        .input("company_code", sql.NVarChar, req.headers['company_code'])
+        .input("keyfield", sql.NVarChar, updatedRow.keyfield)
+        .query(`EXEC sp_Vendor_Payment @mode, @vendor_code, '', '', '', '', '', @PO_date, 0, @paid_amt, 0, '', @keyfield, '', '',  '', @company_code, '', NULL, '', NULL`);
+    }
+    res.status(200).json("Vendor payment updated successfully");
+  }
+  catch (err) {
+    console.error("Error updating vendor payment:", err);
+    res.status(500).json({
+      message: err.message || "Internal Server Error"
+    });
+  }
+};
+//code ended by sakthi on 05-26-26
+
+//code added by sakthi on 05-26-26
+const getPendingVendorPayment = async (req, res) => {
+  const { company_code, vendor_code, PO_date, TransactionType} = req.body;
+
+  try {
+    const pool = await connection.connectToDatabase();
+    const result = await pool
+      .request()
+      .input("mode", sql.NVarChar, "PC")
+      .input("vendor_code", sql.NVarChar, vendor_code)
+      .input("PO_date", sql.NVarChar, PO_date)
+      .input("TransactionType", sql.NVarChar, TransactionType)
+      .input("company_code", sql.NVarChar, company_code)
+      .query(`EXEC sp_Vendor_Payment @mode, @vendor_code, '', '', @TransactionType, '', '', @PO_date, 0, 0, 0, '', '', '', '',  '', @company_code, '', NULL, '', NULL`);
+
+    if (result.recordset.length > 0) {
+      res.status(200).json(result.recordset);
+    }
+    else {
+      res.status(404).json("Data Not Found");
+    }
+  }
+  catch (err) {
+    console.error("Error:", err);
+    res.status(500).json({
+      message: err.message || "Internal Server Error"
+    });
+  }
+};
+//code ended by sakthi on 05-26-26
+
 module.exports = {
   login,
   forgetPassword,
@@ -38129,7 +38661,20 @@ module.exports = {
   SiteWarehouseMappingInsert,
   SiteWarehouseMappingLoopUpdate,
   SiteWarehouseMappingLoopDelete,
-  searchSiteWarehouseMapping
+  searchSiteWarehouseMapping,
+  getCustomerReceipt,
+  updateCustomerReceipt,
+  CustRecTransDrop,
+  CustomerReceiptLoopInsert,
+  PendingVendor,
+  Vendor_PaymentInsert, 
+  Vendor_PaymentUpdate, 
+  Vendor_PaymentDelete,
+  Vendor_PaymentLoopInsert, 
+  Vendor_PaymentLoopUpdate, 
+  Vendor_PaymentLoopDelete,
+  updateVendorPayment,
+  getPendingVendorPayment
 
 
 };
