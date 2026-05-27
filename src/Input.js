@@ -31,7 +31,7 @@ function Input({ }) {
   const [annualreportURL, setAnnualReportURL] = useState("");
   const [company_gst_no, setcompany_gst_no] = useState("");
 
-  const [error, setError] = useState("");
+  const [error, setError] = useState(false);
   const [drop, setDrop] = useState([]);
   const [condrop, setCondrop] = useState([]);
   const [statedrop, setStatedrop] = useState([]);
@@ -86,11 +86,16 @@ function Input({ }) {
     setAddress1("");
     setAddress2("");
     setAddress3("");
-    setSelectedCity(null);
-    setselectedState(null);
-    setselectedCountry(null);
-    setselectedStatus(null);
-    setselectedLocation(null);
+    setSelectedCity("");
+    setCity("")
+    setselectedState("");
+    setState("");
+    setselectedCountry("");
+    setCountry("");
+    setselectedStatus("");
+    setStatus("");
+    setselectedLocation("");
+    setlocation_no("");
     setPincode("");
     setEmail_id("");
     setFoundedDate("");
@@ -98,8 +103,10 @@ function Input({ }) {
     setContact_no("");
     setAnnualReportURL("");
     setSelectedImage("");
+    setCompanyImage("");
     setcompany_gst_no("")
     setselectedSignatureImage("");
+    setSignatureImage("");
     if (logo.current) {
       logo.current.value = null;
     }
@@ -379,7 +386,7 @@ function Input({ }) {
       !contact_no ||
       !location_no
     ) {
-      setError(" ");
+      setError(true);
       toast.warning("Error: Missing required fields");
       return;
     }
@@ -388,6 +395,7 @@ function Input({ }) {
       toast.warning("Please enter a valid email address");
       return;
     }
+    setError(false);
     setLoading(true);
 
     try {
@@ -425,12 +433,9 @@ function Input({ }) {
         body: formData,
       });
       if (response.status === 200) {
-        console.log("Data inserted successfully");
-        setTimeout(() => {
-          toast.success("Data inserted successfully!", {
-            onClose: () => window.location.reload(),
-          });
-        }, 1000);
+        toast.success("Data inserted successfully", {
+          onClose: () => clearInputFields()
+        });
       } else {
         const errorResponse = await response.json();
         console.error(errorResponse.message);
@@ -492,7 +497,7 @@ function Input({ }) {
       !location_no ||
       !companyImage
     ) {
-      setError(" ");
+      setError(true);
       toast.warning("Error: Missing required fields");
       return;
     }
@@ -501,6 +506,8 @@ function Input({ }) {
       toast.warning("Please enter a valid email address");
       return;
     }
+
+    setError(false);
     setLoading(true);
 
     try {
@@ -538,11 +545,10 @@ function Input({ }) {
         body: formData,
       });
 
-      if (response.status === 200) {
-        console.log("Data Updated successfully");
-        setIsUpdated(true);
-        clearInputFields();
-        toast.success("Data Updated successfully!")
+      if (response.ok) {
+        toast.success("Data updated successfully", {
+          onClose: () => clearInputFields()
+        });
       } else {
         const errorResponse = await response.json();
         console.error(errorResponse.message);
@@ -718,43 +724,43 @@ function Input({ }) {
                   <div class="exp-form-floating">
                     <div class="d-flex justify-content-start">
                       <div>
-                        <label For="city" className={`${error && !city ? 'text-danger' : ''}`}>City<span className="text-danger">*</span></label>
+                        <label For="city" className={`${error && !selectedCity ? 'text-danger' : ''}`}>City<span className="text-danger">*</span></label>
                       </div>
                     </div>
                     <div title="Select the City ">
-                    <Select
-                      id="city"
-                      value={selectedCity}
-                      onChange={handleChangeCity}
-                      options={filteredOptionCity}
-                      className="exp-input-field"
-                      placeholder=""
-                      ref={City}
-                      onKeyDown={(e) => handleKeyDown(e, State, City)}
-                    />
-                    {/* {error && !city && <div className="text-danger">City should not be blank</div>} */}
-                  </div></div>
+                      <Select
+                        id="city"
+                        value={selectedCity}
+                        onChange={handleChangeCity}
+                        options={filteredOptionCity}
+                        className="exp-input-field"
+                        placeholder=""
+                        ref={City}
+                        onKeyDown={(e) => handleKeyDown(e, State, City)}
+                      />
+                      {/* {error && !city && <div className="text-danger">City should not be blank</div>} */}
+                    </div></div>
                 </div>
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
                     <div class="d-flex justify-content-start">
                       <div>
-                        <label for="state" class="exp-form-labels" className={`${error && !state ? 'text-danger' : ''}`}>State<span className="text-danger">*</span></label>
+                        <label for="state" class="exp-form-labels" className={`${error && !selectedState ? 'text-danger' : ''}`}>State<span className="text-danger">*</span></label>
                       </div>
                     </div>
                     <div title="Select the State">
-                    <Select
-                      id="state"
-                      value={selectedState}
-                      onChange={handleChangeState}
-                      options={filteredOptionState}
-                      className="exp-input-field"
-                      placeholder=""
-                      ref={State}
-                      onKeyDown={(e) => handleKeyDown(e, Pincode, State)}
-                    />
-                    {/* {error && !state && <div className="text-danger">State should not be blank</div>} */}
-                  </div></div>
+                      <Select
+                        id="state"
+                        value={selectedState}
+                        onChange={handleChangeState}
+                        options={filteredOptionState}
+                        className="exp-input-field"
+                        placeholder=""
+                        ref={State}
+                        onKeyDown={(e) => handleKeyDown(e, Pincode, State)}
+                      />
+                      {/* {error && !state && <div className="text-danger">State should not be blank</div>} */}
+                    </div></div>
                 </div>
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
@@ -782,22 +788,22 @@ function Input({ }) {
                   <div class="exp-form-floating">
                     <div class="d-flex justify-content-start">
                       <div>
-                        <label for="state" class="exp-form-labels" className={`${error && !country ? 'text-danger' : ''}`}>Country<span className="text-danger">*</span></label>
+                        <label for="state" class="exp-form-labels" className={`${error && !selectedCountry ? 'text-danger' : ''}`}>Country<span className="text-danger">*</span></label>
                       </div>
                     </div>
                     <div title="Select the Country">
-                    <Select
-                      id="country"
-                      value={selectedCountry}
-                      onChange={handleChangeCountry}
-                      options={filteredOptionCountry}
-                      className="exp-input-field"
-                      placeholder=""
-                      ref={Country}
-                      onKeyDown={(e) => handleKeyDown(e, Email, Country)}
-                    />
-                    {/* {error && !country && <div className="text-danger">Country should not be blank</div>} */}
-                  </div></div>
+                      <Select
+                        id="country"
+                        value={selectedCountry}
+                        onChange={handleChangeCountry}
+                        options={filteredOptionCountry}
+                        className="exp-input-field"
+                        placeholder=""
+                        ref={Country}
+                        onKeyDown={(e) => handleKeyDown(e, Email, Country)}
+                      />
+                      {/* {error && !country && <div className="text-danger">Country should not be blank</div>} */}
+                    </div></div>
                 </div>
                 <div className="col-md-3 form-group mb-2">
                   <div className="exp-form-floating">
@@ -825,22 +831,22 @@ function Input({ }) {
                   <div class="exp-form-floating">
                     <div class="d-flex justify-content-start">
                       <div>
-                        <label for="state" class="exp-form-labels" className={`${error && !status ? 'text-danger' : ''}`}>Status<span className="text-danger">*</span></label>
+                        <label for="state" class="exp-form-labels" className={`${error && !selectedStatus ? 'text-danger' : ''}`}>Status<span className="text-danger">*</span></label>
                       </div>
                     </div>
                     <div title="Select the Status ">
-                    <Select
-                      id="status"
-                      value={selectedStatus}
-                      onChange={handleChangeStatus}
-                      options={filteredOptionStatus}
-                      className="exp-input-field"
-                      placeholder=""
-                      ref={Status}
-                      onKeyDown={(e) => handleKeyDown(e, found, Status)}
-                    />
-                    {/* {error && !status && <div className="text-danger">Status should not be blank</div>} */}
-                  </div>
+                      <Select
+                        id="status"
+                        value={selectedStatus}
+                        onChange={handleChangeStatus}
+                        options={filteredOptionStatus}
+                        className="exp-input-field"
+                        placeholder=""
+                        ref={Status}
+                        onKeyDown={(e) => handleKeyDown(e, found, Status)}
+                      />
+                      {/* {error && !status && <div className="text-danger">Status should not be blank</div>} */}
+                    </div>
                   </div>
                 </div>
                 <div className="col-md-3 form-group mb-2">
@@ -939,20 +945,20 @@ function Input({ }) {
                 </div>
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
-                    <label for="locno" class="exp-form-labels" className={`${error && !location_no ? 'text-danger' : ''}`}>Location No<span className="text-danger">*</span></label>
+                    <label for="locno" class="exp-form-labels" className={`${error && !selectedLocation ? 'text-danger' : ''}`}>Location No<span className="text-danger">*</span></label>
                     <div title="Select the Location No ">
-                    <Select
-                      id="locno"
-                      value={selectedLocation}
-                      onChange={handleChangeLocation}
-                      options={filteredOptionLocation}
-                      className="exp-input-field"
-                      placeholder=""
-                      ref={locatioN}
-                      onKeyDown={(e) => handleKeyDown(e, logo, locatioN)}
-                    />
-                    {/* {error && !location_no && <div className="text-danger">Location No should not be blank</div>} */}
-                  </div>
+                      <Select
+                        id="locno"
+                        value={selectedLocation}
+                        onChange={handleChangeLocation}
+                        options={filteredOptionLocation}
+                        className="exp-input-field"
+                        placeholder=""
+                        ref={locatioN}
+                        onKeyDown={(e) => handleKeyDown(e, logo, locatioN)}
+                      />
+                      {/* {error && !location_no && <div className="text-danger">Location No should not be blank</div>} */}
+                    </div>
                   </div>
                 </div>
                 <div className="col-md-3 form-group mb-2">

@@ -31,7 +31,7 @@ function UserInput({ }) {
   const [roleDrop, setRoleDrop] = useState([]);
   const [Genderdrop, setGenderdrop] = useState([]);
   const [Loginoroutdrop, setLoginoroutdrop] = useState([]);
-  const [error, setError] = useState("");
+  const [error, setError] = useState(false);
   const [user_images, setuser_image] = useState("");
   const [selectedImage, setSelectedImage] = useState(null);
   const navigate = useNavigate();
@@ -65,13 +65,19 @@ function UserInput({ }) {
     setUser_name("");
     setFirst_name("");
     setLast_name("");
+    setUser_password("");
     setSelectedStatus("");
+    setUser_status("");
     setSelectedRole("");
+    setRole("");
     setSelectedLog("");
+    setLog_in_out("");
     setSelectedGender("");
+    setGender("");
     setEmail_id("");
     setDob("");
     setSelectedImage("");
+    setuser_image("");
     if (ImagE.current) {
       ImagE.current.value = null;
     }
@@ -93,10 +99,10 @@ function UserInput({ }) {
       setFirst_name(selectedRow.first_name || "");
       setLast_name(selectedRow.last_name || "");
       setUser_password(selectedRow.user_password || "");
-       setRole(selectedRow.role_id || "");
-        setLog_in_out(selectedRow.log_in_out || "");
-        setUser_status(selectedRow.user_status || "");
-        setGender(selectedRow.gender || "");
+      setRole(selectedRow.role_id || "");
+      setLog_in_out(selectedRow.log_in_out || "");
+      setUser_status(selectedRow.user_status || "");
+      setGender(selectedRow.gender || "");
       setSelectedStatus({
         label: selectedRow.user_status,
         value: selectedRow.user_status,
@@ -299,7 +305,7 @@ function UserInput({ }) {
       !email_id ||
       !dob
     ) {
-      setError(" ");
+      setError(true);
       toast.warning("Error: Missing required fields");
       return;
     }
@@ -308,6 +314,7 @@ function UserInput({ }) {
       toast.warning("Invalid email format.");
       return;
     }
+    setError(false);
     setLoading(true);
 
     try {
@@ -336,16 +343,13 @@ function UserInput({ }) {
       });
 
       if (response.ok) {
-      toast.success("Data inserted Successfully", {
-       onClose: () => clearInputFields()
-       });
-      } else if (response.status === 400) {
+        toast.success("Data inserted Successfully", {
+          onClose: () => clearInputFields()
+        });
+      } else {
         const errorResponse = await response.json();
         console.error(errorResponse.message);
         toast.warning(errorResponse.message);
-      } else {
-        console.error("Failed to insert data");
-        toast.error('Failed to insert data');
       }
     } catch (error) {
       console.error("Error inserting data:", error);
@@ -382,7 +386,7 @@ function UserInput({ }) {
   //   }
   // };
 
-    const handleKeyDown = (e, nextRef, currentRef) => {
+  const handleKeyDown = (e, nextRef, currentRef) => {
     if (e.key === 'Enter') {
       e.preventDefault();
 
@@ -415,7 +419,7 @@ function UserInput({ }) {
       !selectedStatus ||
       !dob
     ) {
-      setError(" ");
+      setError(true);
       toast.warning("Please fill all required fields.");
       return;
     }
@@ -424,6 +428,7 @@ function UserInput({ }) {
       toast.warning("Invalid email format.");
       return;
     }
+    setError(false);
     setLoading(true);
 
     try {
@@ -451,17 +456,14 @@ function UserInput({ }) {
         body: formData,
       });
 
-       if (response.ok) {
-                    toast.success("Data updated successfully", {
-                      onClose: () => clearInputFields()
-                    });
-      } else if (response.status === 400) {
+      if (response.ok) {
+        toast.success("Data updated successfully", {
+          onClose: () => clearInputFields()
+        });
+      } else {
         const errorResponse = await response.json();
         console.error(errorResponse.message);
         toast.warning(errorResponse.message);
-      } else {
-        console.error("Failed to Update data");
-        toast.error("Failed to Update data");
       }
     } catch (error) {
       console.error("Error Update data:", error);
@@ -577,7 +579,7 @@ function UserInput({ }) {
                         <div>
                           <label for="state" class="exp-form-labels" className={`${error && !last_name ? 'text-danger' : ''}`}>
                             Last Name<span className="text-danger">*</span>
-                            </label>
+                          </label>
                         </div>
                       </div>
                       <input
@@ -629,65 +631,65 @@ function UserInput({ }) {
                         </div>
                       </div>
                       <div title="Select the Status">
-                      <Select
-                        id="status"
-                        value={selectedStatus}
-                        onChange={handleChangeStatus}
-                        options={filteredOptionStatus}
-                        className="exp-input-field"
-                        placeholder=""
-                        maxLength={50}
-                        ref={Status}
-                        onKeyDown={(e) => handleKeyDown(e, loginlogout, Status)}
-                      />
-                      {/* {error && !user_status && <div className="text-danger">Status should not be blank</div>} */}
-                    </div>
+                        <Select
+                          id="status"
+                          value={selectedStatus}
+                          onChange={handleChangeStatus}
+                          options={filteredOptionStatus}
+                          className="exp-input-field"
+                          placeholder=""
+                          maxLength={50}
+                          ref={Status}
+                          onKeyDown={(e) => handleKeyDown(e, loginlogout, Status)}
+                        />
+                        {/* {error && !user_status && <div className="text-danger">Status should not be blank</div>} */}
+                      </div>
                     </div>
                   </div>
                   <div className="col-md-3 form-group  mb-2">
                     <div class="exp-form-floating">
                       <label for="loginout" class="exp-form-labels">Log In/Out</label>
                       <div title="Select the Log In/Out">
-                      <Select
-                        id="loginout"
-                        value={selectedLog}
-                        onChange={handleChangeLog}
-                        options={filteredOptionLog}
-                        className="exp-input-field"
-                        placeholder=""
-                        maxLength={3}
-                        ref={loginlogout}
-                        onKeyDown={(e) => handleKeyDown(e, usertype, loginlogout)}
-                      />
-                    </div>
+                        <Select
+                          id="loginout"
+                          value={selectedLog}
+                          onChange={handleChangeLog}
+                          options={filteredOptionLog}
+                          className="exp-input-field"
+                          placeholder=""
+                          maxLength={3}
+                          ref={loginlogout}
+                          onKeyDown={(e) => handleKeyDown(e, usertype, loginlogout)}
+                        />
+                      </div>
                     </div>
                   </div>
                   {mode !== 'update' && (
-                  <div className="col-md-3 form-group  mb-2 ">
-                    <div class="exp-form-floating">
-                      <div class="d-flex justify-content-start">
-                        <div>
-                          <label for="state" class="exp-form-labels" className={`${error && !user_status ? 'text-danger' : ''}`}>
-                            Role ID<span className="text-danger">*</span>
-                          </label>
+                    <div className="col-md-3 form-group  mb-2 ">
+                      <div class="exp-form-floating">
+                        <div class="d-flex justify-content-start">
+                          <div>
+                            <label for="state" class="exp-form-labels" className={`${error && !user_status ? 'text-danger' : ''}`}>
+                              Role ID<span className="text-danger">*</span>
+                            </label>
+                          </div>
+                        </div>
+                        <div title="Select the Role ID ">
+                          <Select
+                            id="usertype"
+                            value={selectedRole}
+                            onChange={handleChangeRole}
+                            options={filteredOptionRole}
+                            className="exp-input-field"
+                            placeholder=""
+                            maxLength={50}
+                            ref={usertype}
+                            onKeyDown={(e) => handleKeyDown(e, email, usertype)}
+                          />
+                          {/* {error && !user_status && <div className="text-danger">User Type should not be blank</div>} */}
                         </div>
                       </div>
-                      <div title="Select the Role ID ">
-                      <Select
-                        id="usertype"
-                        value={selectedRole}
-                        onChange={handleChangeRole}
-                        options={filteredOptionRole}
-                        className="exp-input-field"
-                        placeholder=""
-                        maxLength={50}
-                        ref={usertype}
-                        onKeyDown={(e) => handleKeyDown(e, email, usertype)}
-                      />
-                      {/* {error && !user_status && <div className="text-danger">User Type should not be blank</div>} */}
                     </div>
-                    </div>
-                  </div>
                   )}
                   <div className="col-md-3 form-group  mb-2">
                     <div class="exp-form-floating">
@@ -742,18 +744,18 @@ function UserInput({ }) {
                         Gender
                       </label>
                       <div title="Select the Gender">
-                      <Select
-                        id="gender"
-                        value={selectedGender}
-                        onChange={handleChangeGender}
-                        options={filteredOptionGender}
-                        className="exp-input-field"
-                        placeholder=""
-                        maxLength={50}
-                        ref={Gender}
-                        onKeyDown={(e) => handleKeyDown(e, ImagE, Gender)}
-                      />
-                    </div>
+                        <Select
+                          id="gender"
+                          value={selectedGender}
+                          onChange={handleChangeGender}
+                          options={filteredOptionGender}
+                          className="exp-input-field"
+                          placeholder=""
+                          maxLength={50}
+                          ref={Gender}
+                          onKeyDown={(e) => handleKeyDown(e, ImagE, Gender)}
+                        />
+                      </div>
                     </div>
                   </div>
                   <div className="col-md-3 form-group mb-2 ">

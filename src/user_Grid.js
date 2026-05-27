@@ -517,14 +517,30 @@ function UserGrid() {
                     background-color: darkred;
                 }
                 @media print {
-                    .report-button {
-                        display: none;
-                    }
-                    body {
-                        margin: 0;
-                        padding: 0;
-                    }
-                }
+    .report-button {
+        display: none;
+    }
+
+    body {
+        margin: 0;
+        padding: 0;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    th {
+        background-color: maroon !important;
+        color: white !important;
+    }
+
+    td {
+        background-color: #fdd9b5 !important;
+    }
+
+    tr:nth-child(even) td {
+        background-color: #fff0e1 !important;
+    }
+}
               `);
     reportWindow.document.write("</style></head><body>");
     reportWindow.document.write("<h1><u>User Information</u></h1>");
@@ -915,37 +931,37 @@ function UserGrid() {
                 <label for="usts" class="exp-form-labels">
                   User Status
                 </label>
-               <div title="Select the User Status">
-                <Select
-                  id="status"
-                  value={selectedStatus}
-                  onChange={handleChangeStatus}
-                  onKeyDown={handleKeyDownStatus}
-                  options={filteredOptionStatus}
-                  className="exp-input-field"
-                  placeholder=""
-                />
-              </div>
+                <div title="Select the User Status">
+                  <Select
+                    id="status"
+                    value={selectedStatus}
+                    onChange={handleChangeStatus}
+                    onKeyDown={handleKeyDownStatus}
+                    options={filteredOptionStatus}
+                    className="exp-input-field"
+                    placeholder=""
+                  />
+                </div>
               </div>
             </div>
-            <div className="col-md-3 form-group">
+            {/* <div className="col-md-3 form-group">
               <div class="exp-form-floating">
                 <label for="utype" class="exp-form-labels">
                   User Type
                 </label>
-                <div title="Select the User Type">         
-                   <Select
-                  id="usertype"
-                  value={selectedUser}
-                  onChange={handleChangeUser}
-                  onKeyDown={handleKeyDownStatus}
-                  options={filteredOptionUser}
-                  className="exp-input-field"
-                  placeholder=""
-                />
+                <div title="Select the User Type">
+                  <Select
+                    id="usertype"
+                    value={selectedUser}
+                    onChange={handleChangeUser}
+                    onKeyDown={handleKeyDownStatus}
+                    options={filteredOptionUser}
+                    className="exp-input-field"
+                    placeholder=""
+                  />
+                </div>
               </div>
-              </div>
-            </div>
+            </div> */}
             <div className="col-md-3 form-group">
               <div class="exp-form-floating">
                 <label for="dob" class="exp-form-labels">
@@ -970,16 +986,16 @@ function UserGrid() {
                   Gender
                 </label>
                 <div title="Select the Gender">
-                <Select
-                  id="gender"
-                  value={selectedGender}
-                  onChange={handleChangeGender}
-                  onKeyDown={handleKeyDownStatus}
-                  options={filteredOptionGender}
-                  className="exp-input-field"
-                  placeholder=""
-                />
-              </div>
+                  <Select
+                    id="gender"
+                    value={selectedGender}
+                    onChange={handleChangeGender}
+                    onKeyDown={handleKeyDownStatus}
+                    options={filteredOptionGender}
+                    className="exp-input-field"
+                    placeholder=""
+                  />
+                </div>
               </div>
             </div>
             <div className="col-md-3 form-group mt-4">

@@ -283,14 +283,30 @@ function UserScreenMapGrid() {
              background-color: darkred;
          }
          @media print {
-             .report-button {
-                 display: none;
-             }
-             body {
-                 margin: 0;
-                 padding: 0;
-             }
-         }
+    .report-button {
+        display: none;
+    }
+
+    body {
+        margin: 0;
+        padding: 0;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    th {
+        background-color: maroon !important;
+        color: white !important;
+    }
+
+    td {
+        background-color: #fdd9b5 !important;
+    }
+
+    tr:nth-child(even) td {
+        background-color: #fff0e1 !important;
+    }
+}
        `);
     reportWindow.document.write("</style></head><body>");
     reportWindow.document.write("<h1><u> Role Rights Information </u></h1>");
@@ -511,22 +527,22 @@ function UserScreenMapGrid() {
             </div>
             <div className="d-flex justify-content-end purbut me-3">
               {['add', 'all permission'].some(permission => UserScreenPermission.includes(permission)) && (
-                <addbutton className="purbut popups-btn fs-7 ms-0 me-3 " onClick={handleNavigatesToForm} required title="Add User Rights">
+                <addbutton className="purbut fs-7 ms-0 me-3 " onClick={handleNavigatesToForm} required title="Add User Rights">
                   <i class="fa-solid fa-user-plus"></i>
                 </addbutton>
               )}
               {['delete', 'all permission'].some(permission => UserScreenPermission.includes(permission)) && (
-                <delbutton className="purbut popups-btn fs-7 ms-0 me-3" onClick={deleteSelectedRows} required title="Delete">
+                <delbutton className="purbut fs-7 ms-0 me-3" onClick={deleteSelectedRows} required title="Delete">
                   <i class="fa-solid fa-user-minus"></i>
                 </delbutton>
               )}
               {['update', 'all permission'].some(permission => UserScreenPermission.includes(permission)) && (
-                <savebutton className="purbut popups-btn fs-7  ms-0 me-3" onClick={saveEditedData} required title="Update">
+                <savebutton className="purbut fs-7  ms-0 me-3" onClick={saveEditedData} required title="Update">
                   <i class="fa-solid fa-floppy-disk"></i>
                 </savebutton>
               )}
               {['all permission', 'view'].some(permission => UserScreenPermission.includes(permission)) && (
-                <printbutton class="purbut popups-btn fs-7 ms-0 me-3" onClick={generateReport} required title="Generate Report">
+                <printbutton class="purbut fs-7 ms-0 me-3" onClick={generateReport} required title="Generate Report">
                   <i class="fa-solid fa-print"></i>
                 </printbutton>
               )}

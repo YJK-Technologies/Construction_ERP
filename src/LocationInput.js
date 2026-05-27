@@ -34,7 +34,7 @@ function LocInfoInput({ }) {
   const [drop, setdrop] = useState([]);
   const [condrop, setcondrop] = useState([]);
   const [statedrop, setstatedrop] = useState([]);
-  const [error, setError] = useState("");
+  const [error, setError] = useState(false);
   const navigate = useNavigate();
   const locationno = useRef(null);
   const locationname = useRef(null);
@@ -64,10 +64,14 @@ function LocInfoInput({ }) {
     setaddress1("");
     setaddress2("");
     setaddress3("");
-    setSelectedCity(null);
-    setselectedState(null);
-    setselectedCountry(null);
-    setselectedStatus(null);
+    setSelectedCity("");
+    setcity("");
+    setselectedState("");
+    setstate("");
+    setselectedCountry("");
+    setcountry("");
+    setselectedStatus("");
+    setstatus("");
     setpincode("");
     setemail_id("");
     setcontact_no("");
@@ -86,7 +90,7 @@ function LocInfoInput({ }) {
       setcountry(selectedRow.country || "");
       setstatus(selectedRow.status || "");;
 
- 
+
       setSelectedCity({
         label: selectedRow.city,
         value: selectedRow.city,
@@ -229,7 +233,7 @@ function LocInfoInput({ }) {
       !status ||
       !contact_no
     ) {
-      setError(" ");
+      setError(true);
       toast.warning("Error: Missing required fields");
       return;
     }
@@ -239,6 +243,7 @@ function LocInfoInput({ }) {
       toast.warning("Please enter a valid email address");
       return;
     }
+    setError(false);
     setLoading(true);
 
     try {
@@ -264,10 +269,10 @@ function LocInfoInput({ }) {
           created_by: sessionStorage.getItem("selectedUserCode"),
         }),
       });
-           if (response.ok) {
-                   toast.success("Data inserted Successfully", {
-                     onClose: () => clearInputFields()
-                   });
+      if (response.ok) {
+        toast.success("Data inserted Successfully", {
+          onClose: () => clearInputFields()
+        });
       } else if (response.status === 400) {
         const errorResponse = await response.json();
         console.error(errorResponse.message);
@@ -298,7 +303,7 @@ function LocInfoInput({ }) {
       !selectedStatus ||
       !contact_no
     ) {
-      setError(" ");
+      setError(true);
       toast.warning("Error: Missing required fields");
       return;
     }
@@ -307,6 +312,7 @@ function LocInfoInput({ }) {
       toast.warning("Please enter a valid email address");
       return;
     }
+    setError(false);
     setLoading(true);
 
     try {
@@ -334,9 +340,9 @@ function LocInfoInput({ }) {
         }),
       });
       if (response.ok) {
-                   toast.success("Data updated successfully", {
-                     onClose: () => clearInputFields()
-                   });
+        toast.success("Data updated successfully", {
+          onClose: () => clearInputFields()
+        });
       } else if (response.status === 400) {
         const errorResponse = await response.json();
         console.error(errorResponse.message);
@@ -441,11 +447,6 @@ function LocInfoInput({ }) {
                         maxLength={18}
                         readOnly={mode === "update"}
                       />
-                      {/* {error && !location_no && (
-                        <div className="text-danger">
-                          Location No should not be blank
-                        </div>
-                      )} */}
                     </div>
                   </div>
                   <div className="col-md-3 form-group mb-2">
@@ -472,21 +473,13 @@ function LocInfoInput({ }) {
                         maxLength={250}
                         ref={locationname}
                       />
-                      {/* {error && !location_name && (
-                        <div className="text-danger">
-                          Location Name should not be blank
-                        </div>
-                      )} */}
                     </div>
                   </div>
                   <div className="col-md-3 form-group  mb-2">
                     <div class="exp-form-floating">
-                      {/* <label for="srtname" class="exp-form-labels">
-                        Short Name
-                      </label> */}
-                       <label for="state" class="exp-form-labels" className={`${error && !short_name ? 'text-danger' : ''}`}>
-                           Short Name<span className="text-danger">*</span>
-                          </label>
+                      <label for="state" class="exp-form-labels" className={`${error && !short_name ? 'text-danger' : ''}`}>
+                        Short Name<span className="text-danger">*</span>
+                      </label>
                       <input
                         id="srtname"
                         class="exp-input-field form-control"
@@ -525,12 +518,7 @@ function LocInfoInput({ }) {
                         ref={address}
                         onChange={(e) => setaddress1(e.target.value)}
                         maxLength={250}
-                      />{" "}
-                      {/* {error && !address1 && (
-                        <div className="text-danger">
-                          Address should not be blank
-                        </div>
-                      )} */}
+                      />
                     </div>
                   </div>
                   <div className="col-md-3 form-group mb-2">
@@ -557,11 +545,6 @@ function LocInfoInput({ }) {
                         onChange={(e) => setaddress2(e.target.value)}
                         maxLength={250}
                       />
-                      {/* {error && !address2 && (
-                        <div className="text-danger">
-                          Address should not be blank
-                        </div>
-                      )} */}
                     </div>
                   </div>
                   <div className="col-md-3 form-group mb-2">
@@ -594,30 +577,25 @@ function LocInfoInput({ }) {
                         </div>
                       </div>
                       <div title="Select the City">
-                      <Select
-                        id="city"
-                        value={selectedCity}
-                        onChange={handleChangeCity}
-                        options={filteredOptionCity}
-                        className="exp-input-field"
-                        placeholder=""
-                        maxLength={100}
-                        ref={City}
-                        onKeyDown={(e) =>
-                          handleKeyDown(
-                            e,
-                            State,
-                            City,
-                            hasValueChanged,
-                            setHasValueChanged
-                          )
-                        }
-                      />
-                      {/* {error && !city && (
-                        <div className="text-danger">
-                          City should not be blank
-                        </div>
-                      )} */}
+                        <Select
+                          id="city"
+                          value={selectedCity}
+                          onChange={handleChangeCity}
+                          options={filteredOptionCity}
+                          className="exp-input-field"
+                          placeholder=""
+                          maxLength={100}
+                          ref={City}
+                          onKeyDown={(e) =>
+                            handleKeyDown(
+                              e,
+                              State,
+                              City,
+                              hasValueChanged,
+                              setHasValueChanged
+                            )
+                          }
+                        />
                       </div>
                     </div>
                   </div>
@@ -631,31 +609,26 @@ function LocInfoInput({ }) {
                         </div>
                       </div>
                       <div title="Select the State">
-                      <Select
-                        id="state"
-                        value={selectedState}
-                        onChange={handleChangeState}
-                        options={filteredOptionState}
-                        className="exp-input-field"
-                        placeholder=""
-                        maxLength={100}
-                        ref={State}
-                        onKeyDown={(e) =>
-                          handleKeyDown(
-                            e,
-                            Pincode,
-                            State,
-                            hasValueChanged,
-                            setHasValueChanged
-                          )
-                        }
-                      />
-                      {/* {error && !state && (
-                        <div className="text-danger">
-                          State should not be blank
-                        </div>
-                      )} */}
-                    </div>
+                        <Select
+                          id="state"
+                          value={selectedState}
+                          onChange={handleChangeState}
+                          options={filteredOptionState}
+                          className="exp-input-field"
+                          placeholder=""
+                          maxLength={100}
+                          ref={State}
+                          onKeyDown={(e) =>
+                            handleKeyDown(
+                              e,
+                              Pincode,
+                              State,
+                              hasValueChanged,
+                              setHasValueChanged
+                            )
+                          }
+                        />
+                      </div>
                     </div>
                   </div>
                   <div className="col-md-3 form-group  mb-2">
@@ -684,11 +657,6 @@ function LocInfoInput({ }) {
                         }
                         maxLength={100}
                       />
-                      {/* {error && !pincode && (
-                        <div className="text-danger">
-                          Pin Code should not be blank
-                        </div>
-                      )} */}
                     </div>
                   </div>
                   <div className="col-md-3 form-group  mb-2">
@@ -701,17 +669,17 @@ function LocInfoInput({ }) {
                         </div>
                       </div>
                       <div title="Select the Country ">
-                      <Select
-                        id="country"
-                        value={selectedCountry}
-                        onChange={handleChangeCountry}
-                        options={filteredOptionCountry}
-                        className="exp-input-field"
-                        placeholder=""
-                        maxLength={100}
-                        ref={Country}
-                        onKeyDown={(e) => handleKeyDown(e, email, Status)}
-                      />
+                        <Select
+                          id="country"
+                          value={selectedCountry}
+                          onChange={handleChangeCountry}
+                          options={filteredOptionCountry}
+                          className="exp-input-field"
+                          placeholder=""
+                          maxLength={100}
+                          ref={Country}
+                          onKeyDown={(e) => handleKeyDown(e, email, Status)}
+                        />
                       </div>
                     </div>
                   </div>
@@ -736,12 +704,7 @@ function LocInfoInput({ }) {
                         maxLength={150}
                         ref={email}
                         onKeyDown={(e) => handleKeyDown(e, Status, email)}
-                      />{" "}
-                      {/* {error && !validateEmail(email_id) && (
-                        <div className="text-danger">
-                          Please Enter Valid Email Id
-                        </div>
-                      )} */}
+                      />
                     </div>
                   </div>
                   <div className="col-md-3 form-group  mb-2">
@@ -753,23 +716,18 @@ function LocInfoInput({ }) {
                           </label>
                         </div>
                       </div>
-                                      <div title="Select the Status ">
-                      <Select
-                        id="status"
-                        value={selectedStatus}
-                        onChange={handleChangeStatus}
-                        options={filteredOptionStatus}
-                        className="exp-input-field"
-                        placeholder=""
-                        ref={Status}
-                        onKeyDown={(e) => handleKeyDown(e, Contactno, Status)}
-                      />
-                      {/* {error && !status && (
-                        <div className="text-danger">
-                          Status should not be blank
-                        </div>
-                      )} */}
-                    </div>
+                      <div title="Select the Status ">
+                        <Select
+                          id="status"
+                          value={selectedStatus}
+                          onChange={handleChangeStatus}
+                          options={filteredOptionStatus}
+                          className="exp-input-field"
+                          placeholder=""
+                          ref={Status}
+                          onKeyDown={(e) => handleKeyDown(e, Contactno, Status)}
+                        />
+                      </div>
                     </div>
                   </div>
                   <div className="col-md-3 form-group  mb-2">
@@ -806,11 +764,6 @@ function LocInfoInput({ }) {
                           }
                         }}
                       />
-                      {/* {error && !contact_no && (
-                        <div className="text-danger">
-                          Contact No should not be blank
-                        </div>
-                      )} */}
                     </div>
                   </div>
                   {/* <div className="col-md-3 form-group  mb-2">

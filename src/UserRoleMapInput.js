@@ -15,7 +15,7 @@ function UserRoleInput({ }) {
   const [role_id, setrole_id] = useState("");
   const [usercodedrop, setusercodedrop] = useState([]);
   const [roleiddrop, setroleiddrop] = useState([]);
-  const [error, setError] = useState("");
+  const [error, setError] = useState(false);
   const [selectedUser, setSelectedUser] = useState('');
   const [selectedRole, setSelectedRole] = useState('');
   const navigate = useNavigate();
@@ -36,14 +36,15 @@ function UserRoleInput({ }) {
 
   const clearInputFields = () => {
     setSelectedUser("");
+    setuser_code("");
     setSelectedRole("");
-    
+    setrole_id("");
   };
 
   useEffect(() => {
     if (mode === "update" && selectedRow && !isUpdated) {
       setuser_code(selectedRow.user_code || "");
-      setrole_id(selectedRow.order_no || "");
+      setrole_id(selectedRow.role_id || "");
       setKeyfield(selectedRow.keyfield || "");
       setSelectedUser({
         label: selectedRow.user_code,
@@ -105,10 +106,11 @@ function UserRoleInput({ }) {
       !user_code ||
       !role_id
     ) {
-      setError(" ");
+      setError(true);
       toast.warning("Error: Missing required fields");
       return;
     }
+    setError(false);
     setLoading(true);
 
     try {
@@ -125,17 +127,14 @@ function UserRoleInput({ }) {
         }),
       });
 
-       if (response.ok) {
-                   toast.success("Data inserted Successfully", {
-                     onClose: () => clearInputFields()
-                   });
-      } else if (response.status === 400) {
+      if (response.ok) {
+        toast.success("Data inserted Successfully", {
+          onClose: () => clearInputFields()
+        });
+      } else {
         const errorResponse = await response.json();
         console.error(errorResponse.message);
         toast.warning(errorResponse.message);
-      } else {
-        console.error("Failed to insert data");
-        toast.error('Failed to insert data');
       }
     } catch (error) {
       console.error("Error inserting data:", error);
@@ -174,12 +173,13 @@ function UserRoleInput({ }) {
   };
 
   const handleUpdate = async () => {
-    if ( !user_code ||
+    if (!user_code ||
       !role_id) {
-      setError(" ");
+      setError(true);
       toast.warning("Error: Missing required fields");
       return;
     }
+    setError(false);
     setLoading(true);
 
     try {
@@ -190,23 +190,20 @@ function UserRoleInput({ }) {
         },
         body: JSON.stringify({
           company_code: sessionStorage.getItem("selectedCompanyCode"),
-         user_code,
+          user_code,
           role_id,
           modified_by,
           keyfield
         }),
       });
-       if (response.ok) {
-                    toast.success("Data updated successfully", {
-                      onClose: () => clearInputFields()
-                    });
-      } else if (response.status === 400) {
+      if (response.ok) {
+        toast.success("Data updated successfully", {
+          onClose: () => clearInputFields()
+        });
+      } else {
         const errorResponse = await response.json();
         console.error(errorResponse.message);
         toast.warning(errorResponse.message);
-      } else {
-        console.error("Failed to insert data");
-        toast.error("Failed to Update data");
       }
     } catch (error) {
       console.error("Error Update data:", error);
@@ -247,59 +244,59 @@ function UserRoleInput({ }) {
                     <div class="exp-form-floating">
                       <div class="d-flex justify-content-start">
                         <div>
-                          <label for="rid" class="exp-form-labels" className={`${error && !user_code ? 'text-danger' : ''}`}>
+                          <label for="rid" class="exp-form-labels" className={`${error && !selectedUser ? 'text-danger' : ''}`}>
                             User Code<span className="text-danger">*</span>
                           </label>
                         </div>
                       </div>
                       <div title="Select the User Code ">
-                      <Select
-                        id="usercode"
-                        value={selectedUser}
-                        onChange={handleChangeUser}
-                        options={filteredOptionUser}
-                        className="exp-input-field"
-                        placeholder=""
-                        maxLength={18}
-                        ref={usercode}
-                        onKeyDown={(e) => handleKeyDown(e, roleid, usercode)}
-                      />
-                      {/* {error && !user_code && <div className="text-danger">User Code should not be blank</div>} */}
-                    </div>
+                        <Select
+                          id="usercode"
+                          value={selectedUser}
+                          onChange={handleChangeUser}
+                          options={filteredOptionUser}
+                          className="exp-input-field"
+                          placeholder=""
+                          maxLength={18}
+                          ref={usercode}
+                          onKeyDown={(e) => handleKeyDown(e, roleid, usercode)}
+                        />
+                        {/* {error && !user_code && <div className="text-danger">User Code should not be blank</div>} */}
+                      </div>
                     </div>
                   </div>
                   <div className="col-md-3 form-group">
                     <div class="exp-form-floating">
                       <div class="d-flex justify-content-start">
                         <div>
-                          <label for="rid" class="exp-form-labels" className={`${error && !role_id ? 'text-danger' : ''}`}>
+                          <label for="rid" class="exp-form-labels" className={`${error && !selectedRole ? 'text-danger' : ''}`}>
                             Role ID<span className="text-danger">*</span>
                           </label>
                         </div>
                       </div>
                       <div title="Select the Role ID ">
-                      <Select
-                        id="roleid"
-                        value={selectedRole}
-                        onChange={handleChangeRole}
-                        options={filteredOptionRole}
-                        className="exp-input-field"
-                        placeholder=""
-                        maxLength={18}
-                        ref={roleid}
-                        // onKeyDown={(e) => handleKeyDown(e, roleid)}
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter') {
-                            if (mode === "create") {
-                              handleInsert();
-                            } else {
-                              handleUpdate();
+                        <Select
+                          id="roleid"
+                          value={selectedRole}
+                          onChange={handleChangeRole}
+                          options={filteredOptionRole}
+                          className="exp-input-field"
+                          placeholder=""
+                          maxLength={18}
+                          ref={roleid}
+                          // onKeyDown={(e) => handleKeyDown(e, roleid)}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                              if (mode === "create") {
+                                handleInsert();
+                              } else {
+                                handleUpdate();
+                              }
                             }
-                          }
-                        }}
-                      />
-                      {/* {error && !role_id && <div className="text-danger">Role Id should not be blank</div>} */}
-                    </div>
+                          }}
+                        />
+                        {/* {error && !role_id && <div className="text-danger">Role Id should not be blank</div>} */}
+                      </div>
                     </div>
                   </div>
                   {/* <div className="col-md-3 form-group  mb-2">
