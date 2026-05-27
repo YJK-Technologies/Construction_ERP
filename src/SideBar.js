@@ -271,6 +271,7 @@ const Sidebar = () => {
     "Stocktransfer",
     "TaxInvoice",
     "Payment",
+    "CustomerReceipt",
 
     // Inventory
     "UnplannedIssued",
@@ -1357,43 +1358,13 @@ const Sidebar = () => {
               </div>
 
               <div className=" ms-3">
-                {screenType.includes("VendorPayment") && (
-                  <Link
-                    to="/VendorPayment"
-                    className="nav-link"
-                    title="Vendor Payment"
-                  >
-                    <div class="menu-item">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="18"
-                        height="18"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        className="icon me-3"
-                      >
-                        <path d="M3 6h5l2 3h11v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-                        <path d="M3 6V4a2 2 0 0 1 2-2h5l2 3h7a2 2 0 0 1 2 2v1" />
-                      </svg>
-                      <span className={collapsed ? "hidden" : ""} class="ms-1">
-                        Vendor Payment
-                      </span>
-                    </div>
-                  </Link>
-                )}
-              </div>
-              <div className=" ms-3">
                 {screenType.includes("Expenses") && (
                   <Link
                     to="/Expenses"
                     className="nav-link"
                     title="Expenses"
                   >
-                    <div class="menu-item">
+                    <div className="menu-item">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         width="18"
@@ -1401,15 +1372,16 @@ const Sidebar = () => {
                         viewBox="0 0 24 24"
                         fill="none"
                         stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
                         className="icon me-3"
                       >
-                        <path d="M3 6h5l2 3h11v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-                        <path d="M3 6V4a2 2 0 0 1 2-2h5l2 3h7a2 2 0 0 1 2 2v1" />
+                        <path d="M3 7a2 2 0 0 1 2-2h14a1 1 0 0 1 1 1v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z" />
+                        <path d="M16 12h4" />
+                        <path d="M16 12a1 1 0 1 0 0 .01" />
                       </svg>
-                      <span className={collapsed ? "hidden" : ""} class="ms-1">
+                      <span className={`${collapsed ? "hidden" : ""} ms-1`}>
                         Expenses
                       </span>
                     </div>
@@ -1606,7 +1578,7 @@ const Sidebar = () => {
               </Link>
             )}
           </div>*/}
-              
+
 
               {hasAnyPermission([
                 "Purchase",
@@ -1793,6 +1765,39 @@ const Sidebar = () => {
                 )}
               </div>
 
+              <div className=" ms-3">
+                {screenType.includes("VendorPayment") && (
+                  <Link
+                    to="/VendorPayment"
+                    className="nav-link"
+                    title="Vendor Payment"
+                  >
+                    <div className="menu-item">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="18"
+                        height="18"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="icon me-3"
+                      >
+                        <rect x="2" y="5" width="20" height="14" rx="2" ry="2"></rect>
+                        <line x1="2" y1="10" x2="22" y2="10"></line>
+                        <path d="M16 15h2"></path>
+                        <path d="M12 15h2"></path>
+                      </svg>
+                      <span className={`${collapsed ? "hidden" : ""} ms-1`}>
+                        Vendor Payment
+                      </span>
+                    </div>
+                  </Link>
+                )}
+              </div>
+
               {hasAnyPermission(["Sales", "SalesReturn"]) && (
                 <>
                   <div
@@ -1954,6 +1959,7 @@ const Sidebar = () => {
                   </Link>
                 )}
               </div>
+
               <div className=" ms-3">
                 {screenType.includes("Payment") && (
                   <Link to="/Payment" className="nav-link" title="Payment">
@@ -1977,6 +1983,36 @@ const Sidebar = () => {
                   </Link>
                 )}
               </div>
+
+              <div className=" ms-3">
+                {screenType.includes("CustomerReceipt") && (
+                  <Link to="/CustomerReceipt" className="nav-link" title="CustomerReceipt">
+                    <div className="menu-item">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="18"
+                        height="18"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="icon me-3"
+                      >
+                        <path d="M6 2l2 2 2-2 2 2 2-2 2 2 2-2v18l-2-2-2 2-2-2-2 2-2-2-2 2V2z" />
+                        <path d="M8 7h8" />
+                        <path d="M8 11h8" />
+                        <path d="M8 15h5" />
+                      </svg>
+                      <span className={`${collapsed ? "hidden" : ""} ms-2`}>
+                        Customer Receipt
+                      </span>
+                    </div>
+                  </Link>
+                )}
+              </div>
+
             </div>
           </>
         )}
