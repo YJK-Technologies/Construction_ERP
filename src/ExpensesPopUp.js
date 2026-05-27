@@ -145,7 +145,7 @@ export default function OIPopup({ open, handleClose, handleOb }) {
                 body: JSON.stringify({
                     company_code: sessionStorage.getItem('selectedCompanyCode'),
                     expense_no, expense_date, expense_type, reference_type, reference_code, reference_name,
-                    payment_mode, amount, description, Start_Date, End_Date
+                    payment_mode, amount, description, is_approved, Start_Date, End_Date
                 }) // Send company_no and company_name as search criteria
             });
             if (response.ok) {
@@ -215,7 +215,8 @@ export default function OIPopup({ open, handleClose, handleOb }) {
             body: JSON.stringify({ company_code }),
         })
             .then((response) => response.json())
-            .then((data) => {setPaymentTypeDrop(data);
+            .then((data) => {
+                setPaymentTypeDrop(data);
             })
             .catch((error) => console.error("Error fetching data:", error));
     }, []);
@@ -231,7 +232,7 @@ export default function OIPopup({ open, handleClose, handleOb }) {
             body: JSON.stringify({ company_code }),
         })
             .then((response) => response.json())
-            .then((data) =>  setIsApprovedDrop(data))
+            .then((data) => setIsApprovedDrop(data))
             .catch((error) => console.error("Error fetching data:", error));
     }, []);
 
@@ -256,32 +257,32 @@ export default function OIPopup({ open, handleClose, handleOb }) {
     };
 
     const filteredOptionis_approved = Array.isArray(IsApprovedDrop)
-    ? IsApprovedDrop.map((option) => ({
-      value: option.attributedetails_code,
-      label: option.attributedetails_code,
-    }))
-    : [];
+        ? IsApprovedDrop.map((option) => ({
+            value: option.attributedetails_code,
+            label: option.attributedetails_code,
+        }))
+        : [];
 
     const filteredOptionexpense_type = Array.isArray(ExpenseTypeDrop)
-    ? ExpenseTypeDrop.map((option) => ({
-      value: option.attributedetails_code,
-      label: option.attributedetails_code,
-    }))
-    : [];
+        ? ExpenseTypeDrop.map((option) => ({
+            value: option.attributedetails_code,
+            label: option.attributedetails_code,
+        }))
+        : [];
 
     const filteredOptionreference_type = Array.isArray(ReferenceTypeDrop)
-    ? ReferenceTypeDrop.map((option) => ({
-      value: option.attributedetails_code,
-      label: option.attributedetails_code,
-    }))
-    : [];
+        ? ReferenceTypeDrop.map((option) => ({
+            value: option.attributedetails_code,
+            label: option.attributedetails_code,
+        }))
+        : [];
 
     const filteredOptionpayment_mode = Array.isArray(PaymentTypeDrop)
-    ? PaymentTypeDrop.map((option) => ({
-      value: option.attributedetails_code,
-      label: option.attributedetails_code,
-    }))
-    : [];
+        ? PaymentTypeDrop.map((option) => ({
+            value: option.attributedetails_code,
+            label: option.attributedetails_code,
+        }))
+        : [];
 
 
     const handleReload = () => {
@@ -290,10 +291,21 @@ export default function OIPopup({ open, handleClose, handleOb }) {
     };
 
     const clearInputs = () => {
-        settransaction_no("");
-        settransaction_date("");
-        setItem_code("");
-        setItem_name("");
+        setexpense_no("");
+        setexpense_date("");
+        setreference_type("");
+        setreference_code("");
+        setreference_name("");
+        setpayment_mode("");
+        setamount("");
+        setdescription("");
+        setis_approved("");
+        setStart_Date("");
+        setEnd_Date("");
+        setSelectedis_approved("");
+        setSelectedexpense_type("");
+        setSelectedreference_type("");
+        setSelectedpayment_mode("");
     };
     const [selectedRows, setSelectedRows] = useState([]);
 
@@ -356,7 +368,7 @@ export default function OIPopup({ open, handleClose, handleOb }) {
                                                             className="exp-input-field form-control"
                                                             placeholder="Expenses No"
                                                             value={expense_no}
-                                                            title='Please enter the transaction no'
+                                                            title='Please enter the Expenses No'
                                                             onChange={(e) => setexpense_no(e.target.value)}
                                                             onKeyDown={(e) => e.key === 'Enter' && handleSearchExpenses()}
                                                             autoComplete="off"
@@ -371,7 +383,7 @@ export default function OIPopup({ open, handleClose, handleOb }) {
                                                                 value={Start_Date}
                                                                 onChange={(e) => setStart_Date(e.target.value)}
                                                                 //   readOnly 
-                                                                title="Expenses From Date"
+                                                                title="Please select the Expenses From Date"
                                                             />
                                                         </div>
                                                     </div>
@@ -384,37 +396,41 @@ export default function OIPopup({ open, handleClose, handleOb }) {
                                                                 value={End_Date}
                                                                 onChange={(e) => setEnd_Date(e.target.value)}
                                                                 //   readOnly 
-                                                                title="Expenses To Date"
+                                                                title="Please select the Expenses To Date"
                                                             />
                                                         </div>
                                                     </div>
                                                     <div className="col-md-3 mb-2">
                                                         <div class="exp-form-floating">
-                                                        <Select
-                                                            type="text"
-                                                            id="ShortName"
-                                                            className="exp-input-field"
-                                                            placeholder="Expense Type"
-                                                            title='Please enter the item code'
-                                                            value={Selectedexpense_type}
-                                                            options={filteredOptionexpense_type}
-                                                            onChange={handleChangeexpense_type}
-                                                        />
+                                                            <div title="Please select the Expense Type">
+                                                                <Select
+                                                                    type="text"
+                                                                    id="ShortName"
+                                                                    className="exp-input-field"
+                                                                    placeholder="Expense Type"
+                                                                    isClearable
+                                                                    value={Selectedexpense_type}
+                                                                    options={filteredOptionexpense_type}
+                                                                    onChange={handleChangeexpense_type}
+                                                                />
+                                                            </div>
                                                         </div>
                                                     </div>
                                                     <div className="col-md-3 mb-2">
                                                         <div class="exp-form-floating">
-                                                        <Select
-                                                            type="text"
-                                                            id="OurBrand"
-                                                            className="exp-input-field"
-                                                            placeholder="Reference Type"
-                                                            title='Please enter the item name'
-                                                            value={Selectedreference_type}
-                                                            onChange={handleChangereference_type}
-                                                            options={filteredOptionreference_type}
-                                                        />
-                                                    </div>
+                                                            <div title="Please select the Reference Type">
+                                                                <Select
+                                                                    type="text"
+                                                                    id="OurBrand"
+                                                                    className="exp-input-field"
+                                                                    placeholder="Reference Type"
+                                                                    isClearable
+                                                                    value={Selectedreference_type}
+                                                                    onChange={handleChangereference_type}
+                                                                    options={filteredOptionreference_type}
+                                                                />
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                     <div className="col-md-3 mb-2">
                                                         <input
@@ -422,7 +438,7 @@ export default function OIPopup({ open, handleClose, handleOb }) {
                                                             id="OurBrand"
                                                             className="exp-input-field form-control"
                                                             placeholder="Reference Code"
-                                                            title='Please enter the item name'
+                                                            title='Please enter the Reference Code'
                                                             value={reference_code}
                                                             onChange={(e) => setreference_code(e.target.value)}
                                                             onKeyDown={(e) => e.key === 'Enter' && handleSearchExpenses()}
@@ -435,7 +451,7 @@ export default function OIPopup({ open, handleClose, handleOb }) {
                                                             id="OurBrand"
                                                             className="exp-input-field form-control"
                                                             placeholder="Reference Code"
-                                                            title='Please enter the item name'
+                                                            title='Please enter the Reference Code'
                                                             value={reference_name}
                                                             onChange={(e) => setreference_name(e.target.value)}
                                                             onKeyDown={(e) => e.key === 'Enter' && handleSearchExpenses()}
@@ -444,17 +460,19 @@ export default function OIPopup({ open, handleClose, handleOb }) {
                                                     </div>
                                                     <div className="col-md-3 mb-2">
                                                         <div class="exp-form-floating">
-                                                        <Select
-                                                            type="text"
-                                                            id="OurBrand"
-                                                            className="exp-input-field"
-                                                            placeholder="Payment Mode"
-                                                            title='Please enter the item name'
-                                                            value={Selectedpayment_mode}
-                                                            onChange={handleChangepayment_mode}
-                                                            options={filteredOptionpayment_mode}
-                                                        />
-                                                    </div>
+                                                            <div title="Please select the Payment Mode">
+                                                                <Select
+                                                                    type="text"
+                                                                    id="OurBrand"
+                                                                    className="exp-input-field"
+                                                                    placeholder="Payment Mode"
+                                                                    isClearable
+                                                                    value={Selectedpayment_mode}
+                                                                    onChange={handleChangepayment_mode}
+                                                                    options={filteredOptionpayment_mode}
+                                                                />
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                     <div className="col-md-3 mb-2">
                                                         <input
@@ -462,7 +480,7 @@ export default function OIPopup({ open, handleClose, handleOb }) {
                                                             id="OurBrand"
                                                             className="exp-input-field form-control"
                                                             placeholder="Amount"
-                                                            title='Please enter the item name'
+                                                            title='Please enter the Amount'
                                                             value={amount}
                                                             onChange={(e) => setamount(e.target.value)}
                                                             onKeyDown={(e) => e.key === 'Enter' && handleSearchExpenses()}
@@ -475,7 +493,7 @@ export default function OIPopup({ open, handleClose, handleOb }) {
                                                             id="OurBrand"
                                                             className="exp-input-field form-control"
                                                             placeholder="Description"
-                                                            title='Please enter the item name'
+                                                            title='Please enter the Description'
                                                             value={description}
                                                             onChange={(e) => setdescription(e.target.value)}
                                                             onKeyDown={(e) => e.key === 'Enter' && handleSearchExpenses()}
@@ -484,10 +502,11 @@ export default function OIPopup({ open, handleClose, handleOb }) {
                                                     </div>
                                                     <div className="col-md-3 mb-2">
                                                         <div class="exp-form-floating">
-                                                            <div title="select a customer code">
+                                                            <div title="Please select the Is Approved">
                                                                 <Select
                                                                     id="status"
                                                                     value={Selectedis_approved}
+                                                                    isClearable
                                                                     onChange={handleChangeis_approved}
                                                                     options={filteredOptionis_approved}
                                                                     className="exp-input-field"
@@ -533,7 +552,7 @@ export default function OIPopup({ open, handleClose, handleOb }) {
                                             <div class="col-md-12 text-center">
                                                 <div className="mb-0 d-flex justify-content-between">
                                                     <div className="mb-0 d-flex justify-content-start me-4">
-                                                        <h1 className="h1">OI Help</h1>
+                                                        <h1 className="h1">Expenses Help</h1>
                                                     </div>
                                                     <div className="mb-0 d-flex justify-content-end" >
                                                         <button onClick={handleClose} className="closebtn2" required title="Close">
@@ -548,52 +567,159 @@ export default function OIPopup({ open, handleClose, handleOb }) {
                                             </div>
                                             <div className="modal-body">
                                                 <div className="row ms-3 me-3">
-                                                    <div className="col-sm mb-2">
+                                                                                                        <div className="col-md-3 mb-2">
                                                         <input
                                                             type="text"
                                                             id="ItemCode"
                                                             className="exp-input-field form-control"
-                                                            placeholder="Transaction No"
-                                                            value={transaction_no}
-                                                            onChange={(e) => settransaction_no(e.target.value)}
+                                                            placeholder="Expenses No"
+                                                            value={expense_no}
+                                                            title='Please enter the Expenses No'
+                                                            onChange={(e) => setexpense_no(e.target.value)}
                                                             onKeyDown={(e) => e.key === 'Enter' && handleSearchExpenses()}
                                                             autoComplete="off"
                                                         />
                                                     </div>
-                                                    <div className="col-sm mb-2">
-                                                        <input
-                                                            type="text"
-                                                            id="Variant"
-                                                            className="exp-input-field form-control"
-                                                            placeholder="Transaction Date"
-                                                            value={transaction_date}
-                                                            onChange={(e) => settransaction_date(e.target.value)}
-                                                            onKeyDown={(e) => e.key === 'Enter' && handleSearchExpenses()}
-                                                            autoComplete="off"
-                                                        />
+                                                    <div className="col-md-3 mb-2">
+                                                        <div class="exp-form-floating">
+                                                            <input
+                                                                id="transactionDate"
+                                                                className="exp-input-field form-control"
+                                                                type="date"
+                                                                value={Start_Date}
+                                                                onChange={(e) => setStart_Date(e.target.value)}
+                                                                //   readOnly 
+                                                                title="Please select the Expenses From Date"
+                                                            />
+                                                        </div>
                                                     </div>
-                                                    <div className="col-sm mb-2">
-                                                        <input
-                                                            type="text"
-                                                            id="ShortName"
-                                                            className="Item Code"
-                                                            value={Item_code}
-                                                            onChange={(e) => setItem_code(e.target.value)}
-                                                            onKeyDown={(e) => e.key === 'Enter' && handleSearchExpenses()}
-                                                            autoComplete="off"
-                                                        />
+                                                    <div className="col-md-3 mb-2">
+                                                        <div class="exp-form-floating">
+                                                            <input
+                                                                id="transactionDate"
+                                                                className="exp-input-field form-control"
+                                                                type="date"
+                                                                value={End_Date}
+                                                                onChange={(e) => setEnd_Date(e.target.value)}
+                                                                //   readOnly 
+                                                                title="Please select the Expenses To Date"
+                                                            />
+                                                        </div>
                                                     </div>
-                                                    <div className="col-sm mb-2">
+                                                    <div className="col-md-3 mb-2">
+                                                        <div class="exp-form-floating">
+                                                            <div title="Please select the Expense Type">
+                                                                <Select
+                                                                    type="text"
+                                                                    id="ShortName"
+                                                                    className="exp-input-field"
+                                                                    placeholder="Expense Type"
+                                                                    isClearable
+                                                                    value={Selectedexpense_type}
+                                                                    options={filteredOptionexpense_type}
+                                                                    onChange={handleChangeexpense_type}
+                                                                />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div className="col-md-3 mb-2">
+                                                        <div class="exp-form-floating">
+                                                            <div title="Please select the Reference Type">
+                                                                <Select
+                                                                    type="text"
+                                                                    id="OurBrand"
+                                                                    className="exp-input-field"
+                                                                    placeholder="Reference Type"
+                                                                    isClearable
+                                                                    value={Selectedreference_type}
+                                                                    onChange={handleChangereference_type}
+                                                                    options={filteredOptionreference_type}
+                                                                />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div className="col-md-3 mb-2">
                                                         <input
                                                             type="text"
                                                             id="OurBrand"
                                                             className="exp-input-field form-control"
-                                                            placeholder="Item Name"
-                                                            value={Item_name}
-                                                            onChange={(e) => setItem_name(e.target.value)}
+                                                            placeholder="Reference Code"
+                                                            title='Please enter the Reference Code'
+                                                            value={reference_code}
+                                                            onChange={(e) => setreference_code(e.target.value)}
                                                             onKeyDown={(e) => e.key === 'Enter' && handleSearchExpenses()}
                                                             autoComplete="off"
                                                         />
+                                                    </div>
+                                                    <div className="col-md-3 mb-2">
+                                                        <input
+                                                            type="text"
+                                                            id="OurBrand"
+                                                            className="exp-input-field form-control"
+                                                            placeholder="Reference Code"
+                                                            title='Please enter the Reference Code'
+                                                            value={reference_name}
+                                                            onChange={(e) => setreference_name(e.target.value)}
+                                                            onKeyDown={(e) => e.key === 'Enter' && handleSearchExpenses()}
+                                                            autoComplete="off"
+                                                        />
+                                                    </div>
+                                                    <div className="col-md-3 mb-2">
+                                                        <div class="exp-form-floating">
+                                                            <div title="Please select the Payment Mode">
+                                                                <Select
+                                                                    type="text"
+                                                                    id="OurBrand"
+                                                                    className="exp-input-field"
+                                                                    placeholder="Payment Mode"
+                                                                    isClearable
+                                                                    value={Selectedpayment_mode}
+                                                                    onChange={handleChangepayment_mode}
+                                                                    options={filteredOptionpayment_mode}
+                                                                />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div className="col-md-3 mb-2">
+                                                        <input
+                                                            type="text"
+                                                            id="OurBrand"
+                                                            className="exp-input-field form-control"
+                                                            placeholder="Amount"
+                                                            title='Please enter the Amount'
+                                                            value={amount}
+                                                            onChange={(e) => setamount(e.target.value)}
+                                                            onKeyDown={(e) => e.key === 'Enter' && handleSearchExpenses()}
+                                                            autoComplete="off"
+                                                        />
+                                                    </div>
+                                                    <div className="col-md-3 mb-2">
+                                                        <input
+                                                            type="text"
+                                                            id="OurBrand"
+                                                            className="exp-input-field form-control"
+                                                            placeholder="Description"
+                                                            title='Please enter the Description'
+                                                            value={description}
+                                                            onChange={(e) => setdescription(e.target.value)}
+                                                            onKeyDown={(e) => e.key === 'Enter' && handleSearchExpenses()}
+                                                            autoComplete="off"
+                                                        />
+                                                    </div>
+                                                    <div className="col-md-3 mb-2">
+                                                        <div class="exp-form-floating">
+                                                            <div title="Please select the Is Approved">
+                                                                <Select
+                                                                    id="status"
+                                                                    value={Selectedis_approved}
+                                                                    isClearable
+                                                                    onChange={handleChangeis_approved}
+                                                                    options={filteredOptionis_approved}
+                                                                    className="exp-input-field"
+                                                                    placeholder="Is Approved"
+                                                                />
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                     <div className="mb-2 mt-2 d-flex justify-content-end">
                                                         <button className="" onClick={handleSearchExpenses}>

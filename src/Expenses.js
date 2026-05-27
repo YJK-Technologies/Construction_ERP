@@ -1056,7 +1056,7 @@ console.log("Detail dellete successfully :", expense_date);
               <div class="d-flex justify-content-between">
                 <div className="d-flex justify-content-start">
                   <h1 align="left" className="h1">
-                    Opening Item
+                    Expenses
                   </h1>
                 </div>
                 <div class="dropdown mt-2 me-4">
@@ -1117,7 +1117,7 @@ console.log("Detail dellete successfully :", expense_date);
                     type="text"
                     placeholder=""
                     required
-                    title="Please fill the transaction no here"
+                    title="Please fill the Expenses No here"
                     value={expense_no}
                     onKeyPress={handleKeyPress}
                     autoComplete="off"
@@ -1147,7 +1147,7 @@ console.log("Detail dellete successfully :", expense_date);
                   value={expense_date}
                   onChange={(e) => setexpense_date(e.target.value)}
                   //   readOnly 
-                  title="Transaction date is fixed and based on the financial year."
+                  title="Please select the Expenses Date"
                 />
               </div>
             </div>
@@ -1159,7 +1159,7 @@ console.log("Detail dellete successfully :", expense_date);
             <icon type="button" class="popups-btn" title='Add row' onClick={handleAddRow}>
               <FontAwesomeIcon icon={faPlus} />
             </icon>
-            <icon type="button" class="popups-btn" title='Less row' onClick={handleRemoveRow}>
+            <icon type="button" class="popups-btn" title='Remove row' onClick={handleRemoveRow}>
               <FontAwesomeIcon icon={faMinus} />
             </icon>
           </div>
