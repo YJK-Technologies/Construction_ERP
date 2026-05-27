@@ -37016,97 +37016,34 @@ const CustRecTransDrop = async (req, res) => {
 };
 
 const CustomerReceiptLoopInsert = async (req, res) => {
-
     const Vendor_PaymentData = req.body.Vendor_PaymentData;
-
     if (!Vendor_PaymentData || !Vendor_PaymentData.length) {
-
         return res
             .status(400)
             .json("Invalid or empty Vendor_PaymentData array.");
     }
-
     try {
-
         const pool = await sql.connect(dbConfig);
-
         for (const item of Vendor_PaymentData) {
-
             await pool.request()
-
                 .input("mode", sql.NVarChar, "I")
-
-                .input("company_code", sql.NVarChar,
-                    req.headers['company_code'])
-
-                .input("keyfield", sql.NVarChar,
-                    item.keyfield)
-
-                .input("TypeofPay", sql.NVarChar,
-                    item.TypeofPay)
-
-                .input("Remarks", sql.NVarChar,
-                    item.Remarks)
-
-                .input("customer_code", sql.NVarChar,
-                    item.customer_code)
-
-                .input("customer_name", sql.NVarChar,
-                    item.customer_name)
-
-                .input("bill_no", sql.NVarChar,
-                    item.bill_no)
-
-                .input("bill_date", sql.Date,
-                    item.bill_date)
-
-                .input("bill_amt", sql.Int,
-                    item.bill_amt)
-
-                .input("paid_amt", sql.Decimal(14, 2),
-                    item.paid_amt)
-
-                .input("bal_amt", sql.Int,
-                    item.bal_amt)
-
-                .input("pending", sql.NVarChar,
-                    item.pending)
-
-                .input("created_by", sql.NVarChar,
-                    item.created_by)
-
-                .query(`
-                    EXEC sp_customerReceipt
-                    @mode,
-                    @company_code,
-                    @customer_code,
-                    @customer_name,
-                    @bill_no,
-                    @bill_date,
-                    @bill_amt,
-                    @paid_amt,
-                    @bal_amt,
-                    @pending,
-                    '',
-                    @keyfield,
-                    '',
-                    '',
-                    '',
-                    @Remarks,
-                    @TypeofPay,
-                    '',
-                    '',
-                    @created_by,
-                    '',
-                    '',
-                    ''
-                `);
-        }
-
+                .input("company_code", sql.NVarChar,req.headers['company_code'])
+                .input("keyfield", sql.NVarChar,item.keyfield)
+                .input("TypeofPay", sql.NVarChar,item.TypeofPay)
+                .input("Remarks", sql.NVarChar,item.Remarks)
+                .input("customer_code", sql.NVarChar,item.customer_code)
+                .input("customer_name", sql.NVarChar,item.customer_name)
+                .input("bill_no", sql.NVarChar,item.bill_no)
+                .input("bill_date", sql.Date, new Date(item.bill_date))
+                .input("bill_amt", sql.Int,item.bill_amt)
+                .input("paid_amt", sql.Decimal(14, 2),item.paid_amt)
+                .input("bal_amt", sql.Int,item.bal_amt)
+                .input("pending", sql.NVarChar,item.pending)
+                .input("created_by", sql.NVarChar,item.created_by)
+                .query(`EXEC sp_customerReceipt @mode, @company_code, @customer_code, @customer_name, @bill_no, @bill_date, @bill_amt, @paid_amt, @bal_amt, @pending, '', @keyfield, '', @created_by, '', @Remarks, @TypeofPay, '', '', Null, Null, Null, Null`);}
         res
             .status(200)
             .json("Advance inserted successfully");
-
     } catch (err) {
 
         console.error(err);
