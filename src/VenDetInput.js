@@ -12,7 +12,7 @@ import { ToastContainer, toast } from "react-toastify";
 import LoadingScreen from "./Loading";
 const config = require("./Apiconfig");
 
-function VenDetInput({}) {
+function VenDetInput({ }) {
   const [open2, setOpen2] = React.useState(false);
   const navigate = useNavigate();
   const [vendor_code, setvendor_code] = useState("");
@@ -60,13 +60,16 @@ function VenDetInput({}) {
   const [selectedBT, setSelectedBT] = useState("");
   const [selectedSales, setSelectedSales] = useState("");
   const [selectedBroker, setSelectedBroker] = useState("");
-  const [error, setError] = useState("");
+  const [error, setError] = useState(false);
   const [officedrop, setOfficedrop] = useState([]);
   const [selectedOffice, setselectedOffice] = useState("");
   const [office_type, setOfficeType] = useState("");
   const [contact_person, setContact_person] = useState("");
   const [keyfield, setkeyfield] = useState("");
   const created_by = sessionStorage.getItem("selectedUserCode");
+
+  const [status, setStatus] = useState("");
+  const [vendorType, setVendorType] = useState("");
 
   //Enter Key Reference Code
   const code = useRef(null);
@@ -102,13 +105,17 @@ function VenDetInput({}) {
   console.log(selectedRow);
 
   const clearInputFields = () => {
+    setSelectedCode("");
     setvendor_code("");
     setvendor_addr_1("");
     setvendor_addr_2("");
     setvendor_addr_3("");
     setvendor_addr_4("");
+    setSelectedCity("");
     setvendor_area_code("");
+    setselectedState("");
     setvendor_state_code("");
+    setselectedCountry("");
     setvendor_country_code("");
     setvendor_imex_no("");
     setvendor_office_no("");
@@ -118,21 +125,20 @@ function VenDetInput({}) {
     setvendor_email_id("");
     setvendor_credit_limit("0");
     setopening_balance("0");
+    setSelectedTransport("");
     setvendor_transport_code("");
+    setSelectedBT("");
     setbalance_type("");
+    setSelectedSales("");
     setvendor_salesman_code("");
+    setSelectedBroker("");
     setvendor_broker_code("");
     setvendor_weekday_code("");
+    setselectedOffice("");
     setOfficeType("");
     setContact_person("");
-    setvendor_area_code("");
-    setvendor_state_code("");
-    setvendor_country_code("");
-    setvendor_code("");
-    setvendor_transport_code("");
-    setvendor_salesman_code("");
-    setvendor_broker_code("");
-    setOfficeType("");
+    setStatus("");
+    setVendorType("");
   };
 
   useEffect(() => {
@@ -167,7 +173,9 @@ function VenDetInput({}) {
       setvendor_transport_code(selectedRow.vendor_transport_code || "");
       setvendor_salesman_code(selectedRow.vendor_salesman_code || "");
       setvendor_broker_code(selectedRow.vendor_broker_code || "");
-      setOfficeType(selectedRow.office_type || "");
+      setbalance_type(selectedRow.balance_type || "");
+      setStatus(selectedRow.status || "");
+      setVendorType(selectedRow.vendor_type || "");
 
       setSelectedCity({
         label: selectedRow.vendor_area_code,
@@ -210,32 +218,25 @@ function VenDetInput({}) {
     }
   }, [mode, selectedRow, isUpdated]);
 
-  useEffect(() => {
+  const fetchVendor = () => {
     const company_code = sessionStorage.getItem("selectedCompanyCode");
-    const fetchVendor = async () => {
-      try {
-        const response = await fetch(`${config.apiBaseUrl}/vendorcode`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ company_code }),
-        });
 
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
+    fetch(`${config.apiBaseUrl}/vendorcode`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ company_code }),
+    })
+      .then((data) => data.json())
+      .then((val) => setvendorcodedrop(val))
+      .catch((error) =>
+        console.error("Error fetching Vendors:", error)
+      );
+  };
 
-        const val = await response.json();
-        setvendorcodedrop(val);
-      } catch (error) {
-        console.error("Error fetching Vendors:", error);
-      }
-    };
-
-    if (company_code) {
-      fetchVendor();
-    }
+  useEffect(() => {
+    fetchVendor();
   }, []);
 
   useEffect(() => {
@@ -420,11 +421,11 @@ function VenDetInput({}) {
   };
 
   const handleNavigateToForm = () => {
-    navigate("/AddVendorHeader", { selectedRows }); // Pass selectedRows as props to the Input component
+    navigate("/AddVendorHeader", { selectedRows });
   };
 
   const handleNavigate = () => {
-    navigate("/Vendor", { selectedRows }); // Pass selectedRows as props to the Input component
+    navigate("/Vendor", { selectedRows });
   };
 
   const handleInsert = async () => {
@@ -438,8 +439,8 @@ function VenDetInput({}) {
       !vendor_country_code ||
       !vendor_state_code
     ) {
-      setError(" ");
-      toast.warning("Error: Missing required fields");
+      setError(true);
+      toast.warning("Missing required fields");
       return;
     }
 
@@ -447,6 +448,7 @@ function VenDetInput({}) {
       setError("Please enter a valid email address");
       return;
     }
+    setError(false);
     setLoading(true);
 
     try {
@@ -502,8 +504,8 @@ function VenDetInput({}) {
 
   const handleUpdate = async () => {
     if (!vendor_code) {
-      setError(" ");
-      toast.warning("Error: Missing required fields");
+      setError(true);
+      toast.warning("Missing required fields");
       return;
     }
 
@@ -512,6 +514,8 @@ function VenDetInput({}) {
       return;
     }
 
+    setError(false);
+    setLoading(true);
     try {
       const response = await fetch(`${config.apiBaseUrl}/VendorUpdate`, {
         method: "POST",
@@ -544,6 +548,8 @@ function VenDetInput({}) {
           keyfield,
           opening_balance,
           balance_type,
+          status: status,
+          vendor_type: vendorType,
           modified_by: sessionStorage.getItem("selectedUserCode"),
         }),
       });
@@ -563,6 +569,8 @@ function VenDetInput({}) {
     } catch (error) {
       console.error("Error inserting data:", error);
       toast.error("Error inserting data: " + error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -579,26 +587,22 @@ function VenDetInput({}) {
     setHasValueChanged,
   ) => {
     if (e.key === "Enter") {
-      // Check if the value has changed and handle the search logic
       if (hasValueChanged) {
-        await handleKeyDownStatus(e); // Trigger the search function
-        setHasValueChanged(false); // Reset the flag after the search
+        await handleKeyDownStatus(e);
+        setHasValueChanged(false);
       }
 
-      // Move to the next field if the current field has a valid value
       if (value) {
         nextFieldRef.current.focus();
       } else {
-        e.preventDefault(); // Prevent moving to the next field if the value is empty
+        e.preventDefault();
       }
     }
   };
 
   const handleKeyDownStatus = async (e) => {
     if (e.key === "Enter" && hasValueChanged) {
-      // Only trigger search if the value has changed
-      // Trigger the search function
-      setHasValueChanged(false); // Reset the flag after search
+      setHasValueChanged(false);
     }
   };
 
@@ -608,6 +612,7 @@ function VenDetInput({}) {
   };
   const handleClose = () => {
     setOpen2(false);
+    fetchVendor();
   };
 
   return (
@@ -616,21 +621,15 @@ function VenDetInput({}) {
         <div class="">
           {loading && <LoadingScreen />}
 
-          <ToastContainer
-            position="top-right"
-            className="toast-design" // Adjust this value as needed
-            theme="colored"
-          />
+          <ToastContainer position="top-right" className="toast-design" theme="colored" />
           <div className="shadow-lg p-0 bg-body-tertiary rounded">
             <div className=" mb-0 d-flex justify-content-between">
               <h1 align="left" class="purbut">
-                {" "}
                 {mode === "update"
                   ? "Update Vendor Details "
                   : " Add Vendor Details"}
               </h1>
               <h1 align="left" class="mobileview fs-3">
-                {" "}
                 {mode === "update"
                   ? "Update Vendor Details "
                   : " Add Vendor Details"}
@@ -650,17 +649,9 @@ function VenDetInput({}) {
               <div class="row">
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
-                    <div class="d-flex justify-content-start">
-                      <div>
-                        <label for="rid" class="exp-form-labels">
-                          Code
-                        </label>
-                      </div>
-                      <div>
-                        {" "}
-                        <span className="text-danger">*</span>
-                      </div>
-                    </div>
+                    <label for="rid" className={`exp-form-labels ${error && !vendor_code ? 'text-danger' : ''}`}>
+                      Code<span className="text-danger">*</span>
+                    </label>
 
                     <div className="input-group" title="Select the Code">
                       <Select
@@ -682,29 +673,15 @@ function VenDetInput({}) {
                       >
                         <i class="fa-solid fa-plus"></i>
                       </button>
-
-                      {error && !vendor_code && (
-                        <div className="text-danger">
-                          Code should not be blank
-                        </div>
-                      )}
                     </div>
-                  </div>{" "}
+                  </div>
                 </div>
 
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
-                    <div class="d-flex justify-content-start">
-                      <div>
-                        <label for="rid" class="exp-form-labels">
-                          Address1
-                        </label>
-                      </div>
-                      <div>
-                        {" "}
-                        <span className="text-danger">*</span>
-                      </div>
-                    </div>
+                    <label for="rid" className={`exp-form-labels ${error && !vendor_addr_1 ? 'text-danger' : ''}`}>
+                      Address1<span className="text-danger">*</span>
+                    </label>
                     <input
                       id="venad1"
                       class="exp-input-field form-control"
@@ -718,26 +695,13 @@ function VenDetInput({}) {
                       ref={Address1}
                       onKeyDown={(e) => handleKeyDown(e, Address2, Address1)}
                     />
-                    {error && !vendor_addr_1 && (
-                      <div className="text-danger">
-                        Address should not be blank
-                      </div>
-                    )}
                   </div>
                 </div>
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
-                    <div class="d-flex justify-content-start">
-                      <div>
-                        <label for="rid" class="exp-form-labels">
-                          Address2
-                        </label>
-                      </div>
-                      <div>
-                        {" "}
-                        <span className="text-danger">*</span>
-                      </div>
-                    </div>
+                    <label for="rid" className={`exp-form-labels ${error && !vendor_addr_2 ? 'text-danger' : ''}`}>
+                      Address2<span className="text-danger">*</span>
+                    </label>
                     <input
                       id="venad2"
                       class="exp-input-field form-control"
@@ -750,12 +714,7 @@ function VenDetInput({}) {
                       maxLength={250}
                       ref={Address2}
                       onKeyDown={(e) => handleKeyDown(e, Address3, Address2)}
-                    />{" "}
-                    {error && !vendor_addr_2 && (
-                      <div className="text-danger">
-                        Address should not be blank
-                      </div>
-                    )}
+                    />
                   </div>
                 </div>
 
@@ -763,7 +722,7 @@ function VenDetInput({}) {
                   <div class="exp-form-floating">
                     <label for="venad3" class="exp-form-labels">
                       Address3
-                    </label>{" "}
+                    </label>
                     <input
                       id="venad3"
                       class="exp-input-field form-control"
@@ -803,17 +762,9 @@ function VenDetInput({}) {
 
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
-                    <div class="d-flex justify-content-start">
-                      <div>
-                        <label for="rid" class="exp-form-labels">
-                          City
-                        </label>
-                      </div>
-                      <div>
-                        {" "}
-                        <span className="text-danger">*</span>
-                      </div>
-                    </div>
+                    <label for="rid" className={`exp-form-labels ${error && !vendor_area_code ? 'text-danger' : ''}`}>
+                      City<span className="text-danger">*</span>
+                    </label>
                     <div title="Select the City">
                       <Select
                         id="city"
@@ -825,28 +776,15 @@ function VenDetInput({}) {
                         ref={City}
                         onKeyDown={(e) => handleKeyDown(e, State, City)}
                       />
-                      {error && !vendor_area_code && (
-                        <div className="text-danger">
-                          City should not be blank
-                        </div>
-                      )}
                     </div>
-                  </div>{" "}
+                  </div>
                 </div>
 
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
-                    <div class="d-flex justify-content-start">
-                      <div>
-                        <label for="rid" class="exp-form-labels">
-                          State
-                        </label>
-                      </div>
-                      <div>
-                        {" "}
-                        <span className="text-danger">*</span>
-                      </div>
-                    </div>
+                    <label for="rid" className={`exp-form-labels ${error && !vendor_state_code ? 'text-danger' : ''}`}>
+                      State<span className="text-danger">*</span>
+                    </label>
                     <div title="Select the State">
                       <Select
                         id="state"
@@ -858,28 +796,15 @@ function VenDetInput({}) {
                         ref={State}
                         onKeyDown={(e) => handleKeyDown(e, Country, State)}
                       />
-                      {error && !vendor_state_code && (
-                        <div className="text-danger">
-                          State should not be blank
-                        </div>
-                      )}
                     </div>
                   </div>{" "}
                 </div>
 
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
-                    <div class="d-flex justify-content-start">
-                      <div>
-                        <label for="rid" class="exp-form-labels">
-                          Country
-                        </label>
-                      </div>
-                      <div>
-                        {" "}
-                        <span className="text-danger">*</span>
-                      </div>
-                    </div>
+                    <label for="rid" className={`exp-form-labels ${error && !vendor_country_code ? 'text-danger' : ''}`}>
+                      Country<span className="text-danger">*</span>
+                    </label>
                     <div title="Select the Country">
                       <Select
                         id="country"
@@ -891,13 +816,8 @@ function VenDetInput({}) {
                         ref={Country}
                         onKeyDown={(e) => handleKeyDown(e, Imex, Country)}
                       />
-                      {error && !vendor_country_code && (
-                        <div className="text-danger">
-                          Country should not be blank
-                        </div>
-                      )}
                     </div>
-                  </div>{" "}
+                  </div>
                 </div>
 
                 <div className="col-md-3 form-group mb-2">
@@ -950,7 +870,7 @@ function VenDetInput({}) {
                   <div class="exp-form-floating">
                     <label for="venresi" class="exp-form-labels">
                       Residential No
-                    </label>{" "}
+                    </label>
                     <input
                       id="venresi"
                       class="exp-input-field form-control"
@@ -968,17 +888,9 @@ function VenDetInput({}) {
                 </div>
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
-                    <div class="d-flex justify-content-start">
-                      <div>
-                        <label for="rid" class="exp-form-labels">
-                          Mobile No
-                        </label>
-                      </div>
-                      <div>
-                        {" "}
-                        <span className="text-danger">*</span>
-                      </div>
-                    </div>
+                    <label for="rid" className={`exp-form-labels ${error && !vendor_mobile_no ? 'text-danger' : ''}`}>
+                      Mobile No<span className="text-danger">*</span>
+                    </label>
                     <input
                       id="mobno"
                       class="exp-input-field form-control"
@@ -991,23 +903,14 @@ function VenDetInput({}) {
                       maxLength={20}
                       ref={Mobile}
                       onKeyDown={(e) => handleKeyDown(e, FaxNo, Mobile)}
-                    />{" "}
-                    {error && !vendor_mobile_no && (
-                      <div className="text-danger">
-                        Mobile Number should not be blank
-                      </div>
-                    )}
+                    />
                   </div>
                 </div>
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
-                    <div class="d-flex justify-content-start">
-                      <div>
-                        <label for="rid" class="exp-form-labels">
-                          Fax No
-                        </label>
-                      </div>
-                    </div>{" "}
+                    <label for="rid" class="exp-form-labels">
+                      Fax No
+                    </label>
                     <input
                       id="venfax"
                       class="exp-input-field form-control"
@@ -1025,17 +928,9 @@ function VenDetInput({}) {
                 </div>
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
-                    <div class="d-flex justify-content-start">
-                      <div>
-                        <label for="rid" class="exp-form-labels">
-                          Email ID
-                        </label>
-                      </div>
-                      <div>
-                        {" "}
-                        <span className="text-danger">*</span>
-                      </div>
-                    </div>
+                    <label for="rid" className={`exp-form-labels ${error && !vendor_email_id ? 'text-danger' : ''}`}>
+                      Email ID<span className="text-danger">*</span>
+                    </label>
                     <input
                       id="emailid"
                       class="exp-input-field form-control"
@@ -1048,27 +943,14 @@ function VenDetInput({}) {
                       maxLength={250}
                       ref={Email}
                       onKeyDown={(e) => handleKeyDown(e, Credit, Email)}
-                    />{" "}
-                    {error && !validateEmail(vendor_email_id) && (
-                      <div className="text-danger">
-                        Please Enter Valid Email Id
-                      </div>
-                    )}
+                    />
                   </div>
                 </div>
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
-                    <div class="d-flex justify-content-start">
-                      <div>
-                        <label for="rid" class="exp-form-labels">
-                          Credit Limit
-                        </label>
-                      </div>
-                      <div>
-                        {" "}
-                        <span className="text-danger">*</span>
-                      </div>
-                    </div>
+                    <label for="rid" className={`exp-form-labels ${error && !vendor_credit_limit ? 'text-danger' : ''}`}>
+                      Credit Limit<span className="text-danger">*</span>
+                    </label>
                     <input
                       id="vencre"
                       class="exp-input-field form-control"
@@ -1083,28 +965,15 @@ function VenDetInput({}) {
                       onKeyDown={(e) =>
                         handleKeyDown(e, openingbalance, Credit)
                       }
-                    />{" "}
-                    {error && !vendor_credit_limit && (
-                      <div className="text-danger">
-                        Credit Limit should not be blank
-                      </div>
-                    )}
+                    />
                   </div>
                 </div>
 
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
-                    <div class="d-flex justify-content-start">
-                      <div>
-                        <label for="rid" class="exp-form-labels">
-                          Opening Balance
-                        </label>
-                      </div>
-                      <div>
-                        {" "}
-                        <span className="text-danger">*</span>
-                      </div>
-                    </div>
+                    <label for="rid" className={`exp-form-labels ${error && !opening_balance ? 'text-danger' : ''}`}>
+                      Opening Balance<span className="text-danger">*</span>
+                    </label>
                     <input
                       id="vencre"
                       class="exp-input-field form-control"
@@ -1120,11 +989,6 @@ function VenDetInput({}) {
                         handleKeyDown(e, TRansport, openingbalance)
                       }
                     />
-                    {error && !opening_balance && (
-                      <div className="text-danger">
-                        Opening Balance should not be blank
-                      </div>
-                    )}
                   </div>
                 </div>
 
@@ -1150,17 +1014,9 @@ function VenDetInput({}) {
 
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
-                    <div class="d-flex justify-content-start">
-                      <div>
-                        <label for="ventrans" class="exp-form-labels">
-                          Balance Type
-                        </label>
-                      </div>
-                      <div>
-                        {" "}
-                        <span className="text-danger">*</span>
-                      </div>
-                    </div>
+                    <label for="ventrans" className={`exp-form-labels ${error && !balance_type ? 'text-danger' : ''}`}>
+                      Balance Type<span className="text-danger">*</span>
+                    </label>
                     <div title="Select the Balance Type">
                       <Select
                         id="ventrans"
@@ -1172,11 +1028,6 @@ function VenDetInput({}) {
                         ref={BalanceType}
                         onKeyDown={(e) => handleKeyDown(e, Sales, BalanceType)}
                       />
-                      {error && !balance_type && (
-                        <div className="text-danger">
-                          Balance Type should not be blank
-                        </div>
-                      )}
                     </div>
                   </div>
                 </div>
@@ -1284,47 +1135,6 @@ function VenDetInput({}) {
                     />
                   </div>
                 </div>
-                {/* <div className="col-md-3 form-group  mb-2">
-        {mode === "create" ? (
-                <div class="exp-form-floating">
-                  <div class="d-flex justify-content-start">
-                    <div>
-                      <label for="state" class="exp-form-labels">
-                        Created By
-                      </label>
-                    </div>
-                  </div>
-                  <input
-                    id="emailid"
-                    class="exp-input-field form-control"
-                    type="text"
-                    placeholder=""
-                    required
-                    title="Please enter the email ID"
-                    value={created_by}
-                  />
-                </div>
-                ) : (
-            <div class="exp-form-floating">
-                  <div class="d-flex justify-content-start">
-                    <div>
-                      <label for="state" class="exp-form-labels">
-                        Modified By
-                      </label>
-                    </div>
-                  </div>
-                  <input
-                    id="emailid"
-                    class="exp-input-field form-control"
-                    type="text"
-                    placeholder=""
-                    required
-                    title="Please enter the email ID"
-                    value={modified_by}
-                  />
-                </div>
-                )}
-          </div> */}
                 <div class="col-md-3 form-group ">
                   {mode === "create" ? (
                     <button

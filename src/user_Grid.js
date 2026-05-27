@@ -381,17 +381,17 @@ function UserGrid() {
         maxLength: 150,
       },
     },
-    {
-      headerName: "User Type",
-      field: "user_type",
-      editable: true,
-      cellStyle: { textAlign: "left" },
-      cellEditor: "agSelectCellEditor",
-      cellEditorParams: {
-        maxLength: 50,
-        values: usergriddrop,
-      },
-    },
+    // {
+    //   headerName: "User Type",
+    //   field: "user_type",
+    //   editable: true,
+    //   cellStyle: { textAlign: "left" },
+    //   cellEditor: "agSelectCellEditor",
+    //   cellEditorParams: {
+    //     maxLength: 50,
+    //     values: usergriddrop,
+    //   },
+    // },
     {
       headerName: "Email",
       field: "email_id",

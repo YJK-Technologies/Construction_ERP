@@ -1246,6 +1246,8 @@ router.post("/Vendor_PaymentLoopUpdate", dataController.Vendor_PaymentLoopUpdate
 router.post("/Vendor_PaymentLoopDelete", dataController.Vendor_PaymentLoopDelete)
 router.post("/updateVendorPayment", dataController.updateVendorPayment)
 router.post("/getPendingVendorPayment", dataController.getPendingVendorPayment)
+router.post("/getVendorType", dataController.getVendorType)
+router.post("/getCostingMethods", dataController.getCostingMethods)
 
 
 module.exports = router;
