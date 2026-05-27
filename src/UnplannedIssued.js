@@ -548,8 +548,25 @@ const UnplannedIssued = () => {
       sortable: false
     },
     {
+      headerName: 'Rate',
+      field: 'Rate',
+      editable: !showExcelButton,
+      filter: true,
+      sortable: false
+    },
+    {
       headerName: 'Qty',
       field: 'quantityIssued',
+      editable: !showExcelButton,
+      filter: true,
+      sortable: false,
+      cellEditorParams: {
+        maxLength: 10,
+      },
+    },
+    {
+      headerName: 'Total',
+      field: 'Total',
       editable: !showExcelButton,
       filter: true,
       sortable: false,
@@ -594,6 +611,7 @@ const UnplannedIssued = () => {
         existingItemWithSameCode.taxType = item.taxType;
         existingItemWithSameCode.taxDetails = item.taxDetails;
         existingItemWithSameCode.taxPer = item.taxPer;
+        existingItemWithSameCode.Rate = item.rate;
         existingItemWithSameCode.warehouse = selectedWarehouse ? selectedWarehouse.value : '';
         existingItemWithSameCode.department = selecteddept ? selecteddept.value : '';
         return true;
@@ -610,6 +628,7 @@ const UnplannedIssued = () => {
           taxType: item.taxType,
           taxDetails: item.taxDetails,
           taxPer: item.taxPer,
+          Rate: item.rate,
           warehouse: selectedWarehouse ? selectedWarehouse.value : '',
           department: selecteddept ? selecteddept.value : '',
         };
@@ -757,7 +776,9 @@ const UnplannedIssued = () => {
           IssuedBy: row.issuedBy,
           ApprovalStatus: row.approvalStatus,
           ActionTaken: row.actionTaken,
-          Notes: row.notes
+          Notes: row.notes,
+          rate: row.Rate,
+          total: row.Total,
         };
 
         const response = await fetch(`${config.apiBaseUrl}/addInventoryIssuancedetails`, {
@@ -929,7 +950,9 @@ const UnplannedIssued = () => {
               approvalStatus: item.ApprovalStatus,
               actionTaken: item.ActionTaken,
               notes: item.Notes,
-              serialno: item.Serial_No
+              serialno: item.Serial_No,
+              Rate: item.rate,
+              Total: item.total,
             };
           });
 
@@ -1091,7 +1114,7 @@ const UnplannedIssued = () => {
         const searchData = await response.json();
         const newRowData = [];
         searchData.forEach(item => {
-          const { Warehouse, Department, ItemSNo, ItemCode, ItemName, QuantityIssued, ReasonForIssuance, IssuedBy, ApprovalStatus, ActionTaken, Serial_No, Notes } = item;
+          const { Warehouse, Department, ItemSNo, ItemCode, ItemName, rate, total, QuantityIssued, ReasonForIssuance, IssuedBy, ApprovalStatus, ActionTaken, Serial_No, Notes } = item;
           newRowData.push({
             serialNumber: ItemSNo,
             itemCode: ItemCode,
@@ -1104,7 +1127,9 @@ const UnplannedIssued = () => {
             approvalStatus: ApprovalStatus,
             actionTaken: ActionTaken,
             notes: Notes,
-            serialno: Serial_No
+            serialno: Serial_No,
+            Rate: rate,
+            Total: total
           });
         });
         setRowData(newRowData)
@@ -1125,7 +1150,10 @@ const UnplannedIssued = () => {
       "Item Name": row.itemName.toString(),
       "Warehouse": row.warehouse.toString(),
       "Department": row.department.toString(),
+      "Serial No": row.serialno.toString(),
+      "Rate": row.Rate.toString(),
       "Quantity Issued": row.quantityIssued.toString(),
+      "Total": row.Total.toString(),
       "Reason For Issuance": row.reasonForIssuance.toString(),
       "Issued By": row.issuedBy.toString(),
     }));

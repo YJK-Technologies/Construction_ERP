@@ -79,9 +79,7 @@ function ItemInput({ open, handleClose, itemCode, itemImage }) {
   };
 
   return (
-    <div>
-            <ToastContainer position="top-right" className="toast-design" theme="colored"/>
-      
+    <div>      
       {open && (
         <fieldset>
           <div className="modal mt-5" tabIndex="-1" role="dialog" style={{ display: 'block', backgroundColor: 'rgba(0,0,0,0.5)' }} >
