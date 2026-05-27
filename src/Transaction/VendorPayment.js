@@ -7,7 +7,7 @@ import "react-toastify/dist/ReactToastify.css";
 import Select from "react-select";
 const config = require("../Apiconfig");
 
-function VendorPayment({}) {
+function VendorPayment({ }) {
   const [rowData, setRowData] = useState([]);
   const [customerDrop, setCustomerDrop] = useState([]);
   const [typeDrop, setTypeDrop] = useState([]);
@@ -25,7 +25,7 @@ function VendorPayment({}) {
 
   const permissions = JSON.parse(sessionStorage.getItem("permissions")) || {};
   const purchasePermission = permissions
-    .filter((permission) => permission.screen_type === "PendingVendor")
+    .filter((permission) => permission.screen_type === "VendorPayment")
     .map((permission) => permission.permission_type.toLowerCase());
 
   useEffect(() => {
@@ -109,9 +109,9 @@ function VendorPayment({}) {
 
   const filteredOptionType = Array.isArray(typeDrop)
     ? typeDrop.map((option) => ({
-        value: option.attributedetails_name,
-        label: option.attributedetails_name,
-      }))
+      value: option.attributedetails_name,
+      label: option.attributedetails_name,
+    }))
     : [];
 
   const filteredOptionPaymentType = paymenttypedrop.map((option) => ({
@@ -349,12 +349,6 @@ function VendorPayment({}) {
       cellEditorParams: {
         values: paymenttypedrop,
       },
-    },
-
-    {
-      headerName: "company_code",
-      field: "company_code",
-      hide: true,
     },
     {
       headerName: "Keyfield",
@@ -613,83 +607,178 @@ function VendorPayment({}) {
   //     }
   //   };
 
+  // const updateSelectedRows = async () => {
+  //   const allRowsData = [];
+
+  //   gridApi.forEachNode((node) => allRowsData.push(node.data));
+
+  //   const filteredRows = allRowsData.filter((row) => {
+  //     if (row.TransactionType === "Advance") {
+  //       return Number(row.receivedAmount) > 0;
+  //     }
+
+  //     return Number(row.receivedAmount) > 0;
+  //   });
+
+  //   if (filteredRows.length === 0) {
+  //     toast.warning("No valid rows found with amount greater than zero");
+
+  //     return;
+  //   }
+
+  //   try {
+  //     const advanceRows = filteredRows.filter(
+  //       (row) => row.TransactionType === "Advance",
+  //     );
+
+  //     const normalRows = filteredRows.filter(
+  //       (row) => row.TransactionType !== "Advance",
+  //     );
+
+  //     if (advanceRows.length > 0) {
+  //       const AdvanceInsertData = advanceRows.map((row) => ({
+  //         vendor_code: row.vendor_code,
+  //         TransactionNo: "Advance",
+  //         TransactionDate: row.TransactionDate,
+  //         TransactionType: "Advance",
+  //         Site_ID: "",
+  //         PONo: "Advance",
+  //         PO_date: row.TransactionDate,
+  //         PO_amt: 0,
+  //         paid_amt: Number(row.receivedAmount || 0),
+  //         bal_amt: 0,
+  //         pending: "Completed",
+  //         keyfield: `${row.TransactionDate}/${row.vendor_code}/ADVANCE`,
+  //         Remarks: row.Remarks || "",
+  //         TypeofPay: row.TypeofPay || "",
+  //         company_code: sessionStorage.getItem("selectedCompanyCode"),
+  //         created_by: sessionStorage.getItem("selectedUserCode"),
+  //       }));
+
+  //       const advanceResponse = await fetch(`${config.apiBaseUrl}/Vendor_PaymentLoopInsert`,
+  //         {
+  //           method: "POST",
+  //           headers: {
+  //             "Content-Type": "application/json",
+  //           },
+  //           body: JSON.stringify({
+  //             Vendor_PaymentData: AdvanceInsertData,
+  //           }),
+  //         },
+  //       );
+
+  //       if (!advanceResponse.ok) {
+  //         const errorData = await advanceResponse.json();
+
+  //         toast.error(errorData.message || "Advance Insert Failed");
+
+  //         return;
+  //       }
+  //     }
+
+  //     // ====================================================
+  //     // NORMAL UPDATE
+  //     // ====================================================
+
+  //     if (normalRows.length > 0) {
+  //       const company_code = sessionStorage.getItem("selectedCompanyCode");
+
+  //       const response = await fetch(`${config.apiBaseUrl}/updateVendorPayment`,
+  //         {
+  //           method: "POST",
+  //           headers: {
+  //             "Content-Type": "application/json",
+  //             company_code: company_code,
+  //           },
+  //           body: JSON.stringify({
+  //             editedData: normalRows,
+  //             advanceRows,
+  //           }),
+  //         },
+  //       );
+
+  //       if (!response.ok) {
+  //         const errorResponse = await response.json();
+
+  //         toast.warning(errorResponse.message || "Update Failed");
+
+  //         return;
+  //       }
+  //     }
+
+  //     toast.success("Data processed successfully", {
+  //       onClose: () => fetchQuotationData(),
+  //     });
+  //   } catch (error) {
+  //     console.error(error);
+
+  //     toast.error("Error : " + error.message);
+  //   }
+  // };
+
   const updateSelectedRows = async () => {
     const allRowsData = [];
 
     gridApi.forEachNode((node) => allRowsData.push(node.data));
 
-    const filteredRows = allRowsData.filter((row) => {
-      if (row.TransactionType === "Advance") {
-        return Number(row.receivedAmount) > 0;
-      }
-
-      return Number(row.receivedAmount) > 0;
-    });
+    const filteredRows = allRowsData.filter(
+      (row) => Number(row.receivedAmount) > 0
+    );
 
     if (filteredRows.length === 0) {
       toast.warning("No valid rows found with amount greater than zero");
-
       return;
     }
 
     try {
-      // SPLIT ADVANCE & NORMAL ROWS
-      const advanceRows = filteredRows.filter(
-        (row) => row.TransactionType === "Advance",
-      );
+      const company_code = sessionStorage.getItem("selectedCompanyCode");
+      const created_by = sessionStorage.getItem("selectedUserCode");
+      const Location = sessionStorage.getItem("selectedLocationCode");
 
-      const normalRows = filteredRows.filter(
-        (row) => row.TransactionType !== "Advance",
-      );
+      // ====================================================
+      // ADVANCE ROWS
+      // ====================================================
+
+      const advanceRows = filteredRows
+        .filter((row) => row.TransactionType === "Advance")
+        .map((row) => ({
+          vendor_code: row.vendor_code,
+          TransactionNo: "Advance",
+          TransactionDate: row.TransactionDate,
+          TransactionType: "Advance",
+          Site_ID: "",
+          PONo: "Advance",
+          PO_date: row.TransactionDate,
+          PO_amt: 0,
+          paid_amt: Number(row.receivedAmount || 0),
+          bal_amt: 0,
+          pending: "Completed",
+          keyfield: `${row.TransactionDate}/${row.vendor_code}/ADVANCE`,
+          Remarks: row.Remarks || "",
+          TypeofPay: row.TypeofPay || "",
+          company_code,
+          created_by,
+          Location
+        }));
+
+      // ====================================================
+      // NORMAL ROWS
+      // ====================================================
+
+      const normalRows = filteredRows
+        .filter((row) => row.TransactionType !== "Advance")
+        .map((row) => ({
+          ...row,
+          company_code,
+          created_by,
+          Location
+        }));
 
       // ====================================================
       // ADVANCE INSERT
       // ====================================================
 
       if (advanceRows.length > 0) {
-        const AdvanceInsertData = advanceRows.map((row) => ({
-          vendor_code: row.vendor_code,
-
-          TransactionNo: "Advance",
-
-          TransactionDate: row.TransactionDate,
-
-          TransactionType: "Advance",
-
-          Site_ID: "",
-
-          PONo: "Advance",
-
-          PO_date: row.TransactionDate,
-
-          PO_amt: 0,
-
-          // paid_amt: Number(row.paid_amt || 0),
-          paid_amt: Number(row.receivedAmount || 0),
-          
-          bal_amt: 0,
-
-          pending: "Completed",
-
-          keyfield: `${row.TransactionDate}/${row.vendor_code}/ADVANCE`,
-
-          Remarks: row.Remarks || "",
-
-          TypeofPay: row.TypeofPay || "",
-
-          Data_deleted: "No",
-
-          company_code: sessionStorage.getItem("selectedCompanyCode"),
-
-          created_by: sessionStorage.getItem("selectedUserCode"),
-
-          created_date: new Date(),
-
-          modified_by: "",
-
-          modified_date: null,
-        }));
-
         const advanceResponse = await fetch(
           `${config.apiBaseUrl}/Vendor_PaymentLoopInsert`,
           {
@@ -698,16 +787,15 @@ function VendorPayment({}) {
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
-              Vendor_PaymentData: AdvanceInsertData,
+              Vendor_PaymentData: advanceRows,
             }),
-          },
+          }
         );
 
         if (!advanceResponse.ok) {
           const errorData = await advanceResponse.json();
 
           toast.error(errorData.message || "Advance Insert Failed");
-
           return;
         }
       }
@@ -717,28 +805,23 @@ function VendorPayment({}) {
       // ====================================================
 
       if (normalRows.length > 0) {
-        const company_code = sessionStorage.getItem("selectedCompanyCode");
-
         const response = await fetch(
           `${config.apiBaseUrl}/updateVendorPayment`,
           {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
-              company_code: company_code,
             },
             body: JSON.stringify({
               editedData: normalRows,
-              advanceRows,
             }),
-          },
+          }
         );
 
         if (!response.ok) {
           const errorResponse = await response.json();
 
           toast.warning(errorResponse.message || "Update Failed");
-
           return;
         }
       }
@@ -775,14 +858,14 @@ function VendorPayment({}) {
             {["add", "all permission"].some((permission) =>
               purchasePermission.includes(permission),
             ) && (
-              <savebutton
-                className="purbut"
-                title="save"
-                onClick={updateSelectedRows}
-              >
-                <i class="fa-regular fa-floppy-disk"></i>
-              </savebutton>
-            )}
+                <savebutton
+                  className="purbut"
+                  title="save"
+                  onClick={updateSelectedRows}
+                >
+                  <i class="fa-regular fa-floppy-disk"></i>
+                </savebutton>
+              )}
           </div>
           <div className="mobileview">
             <div class=" d-flex justify-content-between ">
@@ -804,10 +887,10 @@ function VendorPayment({}) {
                       {["update", "all permission"].some((permission) =>
                         purchasePermission.includes(permission),
                       ) && (
-                        <icon class="icon">
-                          <i class="fa-regular fa-floppy-disk"></i>
-                        </icon>
-                      )}
+                          <icon class="icon">
+                            <i class="fa-regular fa-floppy-disk"></i>
+                          </icon>
+                        )}
                     </li>
                   </ul>
                 </div>

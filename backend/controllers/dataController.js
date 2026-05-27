@@ -36921,7 +36921,8 @@ const Vendor_PaymentInsert = async (req, res) => {
       .input("created_date", sql.DateTime, created_date)
       .input("modified_by", sql.NVarChar, modified_by)
       .input("modified_date", sql.DateTime, modified_date)
-      .query(`EXEC sp_Vendor_Payment @mode, @vendor_code, @TransactionNo, @TransactionDate, @TransactionType, @Site_ID, @PONo, @PO_date, @PO_amt, @paid_amt, @bal_amt, @pending, @keyfield, @Remarks, @TypeofPay, @Data_deleted, @company_code, @created_by, @created_date, @modified_by, @modified_date`);
+      .query(`EXEC sp_Vendor_Payment @mode, @vendor_code, @TransactionNo, @TransactionDate, @TransactionType, @Site_ID, @PONo, @PO_date, @PO_amt, @paid_amt, @bal_amt, 
+        @pending, @keyfield, @Remarks, @TypeofPay, @Data_deleted, @company_code, @created_by, @created_date, @modified_by, @modified_date, ''`);
 
     res.status(200).json({ success: true, message: "Vendor_Payment insertd successfully" });
   } catch (err) {
@@ -36964,7 +36965,8 @@ const Vendor_PaymentUpdate = async (req, res) => {
       .input("created_date", sql.DateTime, created_date)
       .input("modified_by", sql.NVarChar, modified_by)
       .input("modified_date", sql.DateTime, modified_date)
-      .query(`EXEC sp_Vendor_Payment @mode, @vendor_code, @TransactionNo, @TransactionDate, @TransactionType, @Site_ID, @PONo, @PO_date, @PO_amt, @paid_amt, @bal_amt, @pending, @keyfield, @Remarks, @TypeofPay, @Data_deleted, @company_code, @created_by, @created_date, @modified_by, @modified_date`);
+      .query(`EXEC sp_Vendor_Payment @mode, @vendor_code, @TransactionNo, @TransactionDate, @TransactionType, @Site_ID, @PONo, @PO_date, @PO_amt, @paid_amt, @bal_amt, @pending,
+         @keyfield, @Remarks, @TypeofPay, @Data_deleted, @company_code, @created_by, @created_date, @modified_by, @modified_date,''`);
 
     res.status(200).json({ success: true, message: "Vendor_Payment updated successfully" });
   } catch (err) {
@@ -37007,7 +37009,8 @@ const Vendor_PaymentDelete = async (req, res) => {
       .input("created_date", sql.DateTime, created_date)
       .input("modified_by", sql.NVarChar, modified_by)
       .input("modified_date", sql.DateTime, modified_date)
-      .query(`EXEC sp_Vendor_Payment @mode, @vendor_code, @TransactionNo, @TransactionDate, @TransactionType, @Site_ID, @PONo, @PO_date, @PO_amt, @paid_amt, @bal_amt, @pending, @keyfield, @Remarks, @TypeofPay, @Data_deleted, @company_code, @created_by, @created_date, @modified_by, @modified_date`);
+      .query(`EXEC sp_Vendor_Payment @mode, @vendor_code, @TransactionNo, @TransactionDate, @TransactionType, @Site_ID, @PONo, @PO_date, @PO_amt, @paid_amt, @bal_amt, @pending,
+         @keyfield, @Remarks, @TypeofPay, @Data_deleted, @company_code, @created_by, @created_date, @modified_by, @modified_date,''`);
 
     res.status(200).json({ success: true, message: "Vendor_Payment deleted successfully" });
   } catch (err) {
@@ -37050,7 +37053,9 @@ const Vendor_PaymentLoopInsert = async (req, res) => {
         .input("created_date", sql.DateTime, item.created_date)
         .input("modified_by", sql.NVarChar, item.modified_by)
         .input("modified_date", sql.DateTime, item.modified_date)
-        .query(`EXEC sp_Vendor_Payment @mode, @vendor_code, @TransactionNo, @TransactionDate, @TransactionType, @Site_ID, @PONo, @PO_date, @PO_amt, @paid_amt, @bal_amt, @pending, @keyfield, @Remarks, @TypeofPay, @Data_deleted, @company_code, @created_by, @created_date, @modified_by, @modified_date`);
+        .input("Location", sql.NVarChar, item.Location)
+        .query(`EXEC sp_Vendor_Payment @mode, @vendor_code, @TransactionNo, @TransactionDate, @TransactionType, @Site_ID, @PONo, @PO_date, @PO_amt, @paid_amt, @bal_amt, @pending,
+           @keyfield, @Remarks, @TypeofPay, @Data_deleted, @company_code, @created_by, @created_date, @modified_by, @modified_date, @Location`);
     }
     res.status(200).json("Vendor_Payment data inserted successfully");
   } catch (err) {
@@ -37091,7 +37096,8 @@ const Vendor_PaymentLoopUpdate = async (req, res) => {
         .input("created_date", sql.DateTime, item.created_date)
         .input("modified_by", sql.NVarChar, item.modified_by)
         .input("modified_date", sql.DateTime, item.modified_date)
-        .query(`EXEC sp_Vendor_Payment @mode, @vendor_code, @TransactionNo, @TransactionDate, @TransactionType, @Site_ID, @PONo, @PO_date, @PO_amt, @paid_amt, @bal_amt, @pending, @keyfield, @Remarks, @TypeofPay, @Data_deleted, @company_code, @created_by, @created_date, @modified_by, @modified_date`);
+        .query(`EXEC sp_Vendor_Payment @mode, @vendor_code, @TransactionNo, @TransactionDate, @TransactionType, @Site_ID, @PONo, @PO_date, @PO_amt, @paid_amt, @bal_amt, @pending,
+           @keyfield, @Remarks, @TypeofPay, @Data_deleted, @company_code, @created_by, @created_date, @modified_by, @modified_date,''`);
     }
     res.status(200).json("Vendor_Payment data updated successfully");
   } catch (err) {
@@ -37132,7 +37138,8 @@ const Vendor_PaymentLoopDelete = async (req, res) => {
         .input("created_date", sql.DateTime, item.created_date)
         .input("modified_by", sql.NVarChar, item.modified_by)
         .input("modified_date", sql.DateTime, item.modified_date)
-        .query(`EXEC sp_Vendor_Payment @mode, @vendor_code, @TransactionNo, @TransactionDate, @TransactionType, @Site_ID, @PONo, @PO_date, @PO_amt, @paid_amt, @bal_amt, @pending, @keyfield, @Remarks, @TypeofPay, @Data_deleted, @company_code, @created_by, @created_date, @modified_by, @modified_date`);
+        .query(`EXEC sp_Vendor_Payment @mode, @vendor_code, @TransactionNo, @TransactionDate, @TransactionType, @Site_ID, @PONo, @PO_date, @PO_amt, @paid_amt, @bal_amt, @pending,
+           @keyfield, @Remarks, @TypeofPay, @Data_deleted, @company_code, @created_by, @created_date, @modified_by, @modified_date, ''`);
     }
     res.status(200).json("Vendor_Payment data deleted successfully");
   } catch (err) {
@@ -37164,7 +37171,8 @@ const updateVendorPayment = async (req, res) => {
         .input("keyfield", sql.NVarChar, updatedRow.keyfield)
         .input("TypeofPay", sql.NVarChar, updatedRow.TypeofPay)
         .input("Remarks", sql.NVarChar, updatedRow.Remarks)
-        .query(`EXEC sp_Vendor_Payment @mode, @vendor_code, '', '', '', '', '', @PO_date, 0, @paid_amt, 0, '', @keyfield, @Remarks, @TypeofPay,  '', @company_code, '', NULL, '', NULL`);
+        .query(`EXEC sp_Vendor_Payment @mode, @vendor_code, '', '', '', '', '', @PO_date, 0, @paid_amt, 0, '', @keyfield, @Remarks, @TypeofPay,  '', @company_code, '', NULL,
+        '',NULL, ''`);
     }
     res.status(200).json("Vendor payment updated successfully");
   }
@@ -37190,7 +37198,7 @@ const getPendingVendorPayment = async (req, res) => {
       .input("PO_date", sql.NVarChar, PO_date)
       .input("TransactionType", sql.NVarChar, TransactionType)
       .input("company_code", sql.NVarChar, company_code)
-      .query(`EXEC sp_Vendor_Payment @mode, @vendor_code, '', '', @TransactionType, '', '', @PO_date, 0, 0, 0, '', '', '', '',  '', @company_code, '', NULL, '', NULL`);
+      .query(`EXEC sp_Vendor_Payment @mode, @vendor_code, '', '', @TransactionType, '', '', @PO_date, 0, 0, 0, '', '', '', '',  '', @company_code, '', NULL, '', NULL,''`);
 
     if (result.recordset.length > 0) {
       res.status(200).json(result.recordset);
