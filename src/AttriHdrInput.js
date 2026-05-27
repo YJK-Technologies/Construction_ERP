@@ -18,7 +18,7 @@ function AttriHdrInput({ open, handleClose }) {
 
   const [statusdrop, setStatusdrop] = useState([]);
   const [selectedRows, setSelectedRows] = useState([]);
-  const [error, setError] = useState("");
+  const [error, setError] = useState(false);
   const [selectedStatus, setSelectedStatus] = useState("");
   const code = useRef(null);
   const Name = useRef(null);
@@ -26,7 +26,12 @@ function AttriHdrInput({ open, handleClose }) {
   const navigate = useNavigate();
   const [hasValueChanged, setHasValueChanged] = useState(false);
 
-  console.log(selectedRows);
+  const clearInputFields = () => {
+    setAttributeheader_Code("");
+    setAttributeheader_Name("");
+    setStatus("");
+    setSelectedStatus("");
+  };
 
   useEffect(() => {
     const company_code = sessionStorage.getItem("selectedCompanyCode");
@@ -55,9 +60,11 @@ function AttriHdrInput({ open, handleClose }) {
 
   const handleInsert = async () => {
     if (!attributeheader_code || !attributeheader_name || !status) {
-      setError(" ");
+      setError(true);
+      toast.warning("Missing Required Fields");
       return;
     }
+    setError(false);
     setLoading(true);
 
     try {
@@ -75,17 +82,14 @@ function AttriHdrInput({ open, handleClose }) {
           created_by: sessionStorage.getItem("selectedUserCode"),
         }),
       });
-      if (response.status === 200) {
-        console.log("Data inserted successfully");
-        setTimeout(() => {
-          toast.success("Data inserted successfully!", {
-            onClose: () => window.location.reload(),
-          });
-        }, 1000);
+      const result = await response.json();
+      if (response.ok) {
+        toast.success("Data inserted successfully!", {
+          onClose: () => clearInputFields(),
+        });
       } else {
-        const errorResponse = await response.json();
-        console.error(errorResponse.message);
-        toast.warning(errorResponse.message);
+        console.error(result.message);
+        toast.warning(result.message || "Failed to delete data");
       }
     } catch (error) {
       console.error("Error inserting data:", error);
@@ -96,7 +100,7 @@ function AttriHdrInput({ open, handleClose }) {
   };
 
   const handleNavigate = () => {
-    navigate("/AddAttributeDetail"); // Pass selectedRows as props to the Input component
+    navigate("/AddAttributeDetail"); 
   };
 
   const handleKeyDown = async (
@@ -186,7 +190,7 @@ function AttriHdrInput({ open, handleClose }) {
                     <div class="row p-4">
                       <div className="col-md-3 form-group mb-2">
                         <div class="exp-form-floating">
-                          <label for="rid" class="exp-form-labels">
+                          <label for="rid" className={`exp-form-labels ${error && !attributeheader_code ? 'text-danger' : ''}`}>
                             Code<span className="text-danger">*</span>
                           </label>
                           <input
@@ -204,17 +208,12 @@ function AttriHdrInput({ open, handleClose }) {
                             ref={code}
                             onKeyDown={(e) => handleKeyDown(e, Name, code)}
                           />
-                          {error && !attributeheader_code && (
-                            <div className="text-danger">
-                              Attribute Code should not be blank
-                            </div>
-                          )}
                         </div>
                       </div>
 
                       <div className="col-md-3 form-group">
                         <div class="exp-form-floating">
-                          <label for="rid" class="exp-form-labels">
+                          <label for="rid" className={`exp-form-labels ${error && !attributeheader_name ? 'text-danger' : ''}`}>
                             Name<span className="text-danger">*</span>
                           </label>
                           <input
@@ -232,16 +231,11 @@ function AttriHdrInput({ open, handleClose }) {
                             ref={Name}
                             onKeyDown={(e) => handleKeyDown(e, Status, Name)}
                           />
-                          {error && !attributeheader_name && (
-                            <div className="text-danger">
-                              Attribute Name should not be blank
-                            </div>
-                          )}
                         </div>
                       </div>
                       <div className="col-md-3 form-group">
                         <div class="exp-form-floating">
-                          <label for="rid" class="exp-form-labels">
+                          <label for="rid" className={`exp-form-labels ${error && !status ? 'text-danger' : ''}`}>
                             Status<span className="text-danger">*</span>
                           </label>
                           <div title="Select the Status">
@@ -261,11 +255,6 @@ function AttriHdrInput({ open, handleClose }) {
                                 }
                               }}
                             />
-                            {error && !status && (
-                              <div className="text-danger">
-                                Status should not be blank
-                              </div>
-                            )}
                           </div>
                         </div>
                       </div>
@@ -324,7 +313,7 @@ function AttriHdrInput({ open, handleClose }) {
                     <div class="row p-4">
                       <div className="col-md-3 form-group mb-2">
                         <div class="exp-form-floating">
-                          <label for="rid" class="exp-form-labels">
+                          <label for="rid" className={`exp-form-labels ${error && !attributeheader_code ? 'text-danger' : ''}`}>
                             Code<span className="text-danger">*</span>
                           </label>
                           <input
@@ -340,17 +329,12 @@ function AttriHdrInput({ open, handleClose }) {
                             }
                             maxLength={100}
                           />
-                          {error && !attributeheader_code && (
-                            <div className="text-danger">
-                              Attribute Code should not be blank
-                            </div>
-                          )}
                         </div>
                       </div>
 
                       <div className="col-md-3 form-group">
                         <div class="exp-form-floating">
-                          <label for="rid" class="exp-form-labels">
+                          <label for="rid" className={`exp-form-labels ${error && !attributeheader_name ? 'text-danger' : ''}`}>
                             Name<span className="text-danger">*</span>
                           </label>
                           <input
@@ -366,16 +350,11 @@ function AttriHdrInput({ open, handleClose }) {
                               setAttributeheader_Name(e.target.value)
                             }
                           />
-                          {error && !attributeheader_name && (
-                            <div className="text-danger">
-                              Attribute Name should not be blank
-                            </div>
-                          )}
                         </div>
                       </div>
                       <div className="col-md-3 form-group">
                         <div class="exp-form-floating">
-                          <label for="rid" class="exp-form-labels">
+                          <label for="rid" className={`exp-form-labels ${error && !status ? 'text-danger' : ''}`}>
                             Status<span className="text-danger">*</span>
                           </label>
                           <Select
@@ -388,11 +367,6 @@ function AttriHdrInput({ open, handleClose }) {
                             required
                             data-tip="Please select a payment type"
                           />
-                          {error && !status && (
-                            <div className="text-danger">
-                              Status should not be blank
-                            </div>
-                          )}
                         </div>
                       </div>
                       <div class="col-md-3 form-group d-flex justify-content-end ">

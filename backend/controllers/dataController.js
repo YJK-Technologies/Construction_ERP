@@ -748,7 +748,7 @@ const getVendorcodename = async (req, res) => {
       .request()
       .input("vendor_name", sql.NVarChar, vendor_name)
       .query(
-        "EXEC sp_vendor_info_hdr 'AK','','',@vendor_name,'','','',null,null,null,null,null,null,null,null,null,null,null "
+        "EXEC sp_vendor_info_hdr_test 'AK','','',@vendor_name,'','','',null,null,null,null,null,null,null,null,null,null,null "
       );
 
     res.json(result.recordset);
@@ -797,7 +797,7 @@ const getvendorcode = async (req, res) => {
       .request()
       .input("mode", sql.NVarChar, "F")
       .input("company_code", sql.NVarChar, company_code)
-      .query(`EXEC sp_vendor_info_hdr @mode,@company_code,'','','','','',null,null,null,null,null,null,null,null,null,null,NULL`);
+      .query(`EXEC sp_vendor_info_hdr_test @mode,@company_code,'','','','','',null,null,null,null,null,null,null,null,null,null,NULL`);
     // Send response
     if (result.recordset.length > 0) {
       res.status(200).json(result.recordset); // 200 OK if data is found
@@ -2755,7 +2755,7 @@ const updtaxdetaildata = async (req, res) => {
 const getAllItemBrandData = async (req, res) => {
   try {
     await connection.connectToDatabase();
-    const result = await sql.query(`EXEC sp_item_brand_info 'A','','','','',0,'','','',0,0,0,0,'','','','','','','','','','','','','',0,0,'','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
+    const result = await sql.query(`EXEC sp_item_brand_info_ramya 'A','','','','',0,'','','',0,0,0,0,'','','','','','','','','','','','','',0,0,'','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,''`);
 
     res.json(result.recordset);
   } catch (err) {
@@ -2768,44 +2768,13 @@ const getAllItemBrandData = async (req, res) => {
 
 //ADD DATAS Item  DETAILS  TABLE
 const addItemBrandData = async (req, res) => {
-  const {
-    company_code,
-    Item_code,
-    Item_variant,
-    Item_name,
-    Item_wigh,
-    Item_BaseUOM,
-    Item_SecondaryUOM,
-    Item_short_name,
-    Item_Last_salesRate_ExTax,
-    Item_Last_salesRate_IncludingTax,
-    Item_std_purch_price,
-    Item_std_sales_price,
-    Item_stock_code,
-    Item_purch_tax_type,
-    Item_sales_tax_type,
-    Item_Costing_Method,
-    Item_stock_type,
-    hsn,
-    Item_Register_Brand,
-    Item_Our_Brand,
-    status,
-    barcodeimg,
-    Item_other_purch_taxtype,
-    Item_other_sales_taxtype,
-    MRP_price,
-    discount_Percentage,
-    created_by,
-    modified_by,
-    tempstr1,
-    tempstr2,
-    tempstr3,
-    tempstr4,
-    datetime1,
-    datetime2,
-    datetime3,
-    datetime4,
-  } = req.body;
+  const { company_code, Item_code, Item_variant, Item_name, Item_wigh, Item_BaseUOM,
+    Item_SecondaryUOM, Item_short_name, Item_Last_salesRate_ExTax, Item_Last_salesRate_IncludingTax, Item_std_purch_price,
+    Item_std_sales_price, Item_stock_code, Item_purch_tax_type, Item_sales_tax_type, Item_Costing_Method,
+    Item_stock_type, hsn, Item_Register_Brand, Item_Our_Brand, status, barcodeimg, Item_other_purch_taxtype,
+    Item_other_sales_taxtype, MRP_price, discount_Percentage, created_by, modified_by,
+    tempstr1, tempstr2, tempstr3, tempstr4, datetime1, datetime2, datetime3, datetime4,
+    standard_cost, costing_methods } = req.body;
 
   let item_images = null;
 
@@ -2816,11 +2785,9 @@ const addItemBrandData = async (req, res) => {
   try {
     pool = await sql.connect(dbConfig);
 
-    // const bufferImage = Buffer.from(item_images, 'base64')
-
     const result = await pool
       .request()
-      .input("mode", sql.NVarChar, "I") // Insert mode
+      .input("mode", sql.NVarChar, "I") 
       .input("company_code", sql.NVarChar, company_code)
       .input("Item_code", sql.NVarChar, Item_code)
       .input("Item_variant", sql.NVarChar, Item_variant)
@@ -2858,10 +2825,12 @@ const addItemBrandData = async (req, res) => {
       .input("datetime2", sql.NVarChar, datetime2)
       .input("datetime3", sql.NVarChar, datetime3)
       .input("datetime4", sql.NVarChar, datetime4)
-      .query(
-        `EXEC sp_item_brand_info @mode,@company_code,@Item_code,@Item_variant,@Item_name,@Item_wigh,@Item_BaseUOM,@Item_SecondaryUOM,@Item_short_name,@Item_Last_salesRate_ExTax,
+      .input("standard_cost", sql.Decimal(10, 2), standard_cost)
+      .input("costing_methods", sql.NVarChar, costing_methods)
+      .query(`EXEC sp_item_brand_info_ramya @mode,@company_code,@Item_code,@Item_variant,@Item_name,@Item_wigh,@Item_BaseUOM,@Item_SecondaryUOM,@Item_short_name,@Item_Last_salesRate_ExTax,
      @Item_Last_salesRate_IncludingTax,@Item_std_purch_price,@Item_std_sales_price,@Item_stock_code,@Item_purch_tax_type,@Item_sales_tax_type,@Item_Costing_Method,@Item_stock_type,
-     @hsn,@Item_Register_Brand,@Item_Our_Brand,@status,@item_images, @barcodeimg,@Item_other_purch_taxtype,@Item_other_sales_taxtype,@MRP_price,@discount_Percentage,'',@created_by,@modified_by,@tempstr1,@tempstr2,@tempstr3,@tempstr4,@datetime1,@datetime2,@datetime3,@datetime4`);
+     @hsn,@Item_Register_Brand,@Item_Our_Brand,@status,@item_images, @barcodeimg,@Item_other_purch_taxtype,@Item_other_sales_taxtype,@MRP_price,@discount_Percentage,'',@created_by,@modified_by,
+     @tempstr1,@tempstr2,@tempstr3,@tempstr4,@datetime1,@datetime2,@datetime3,@datetime4,@standard_cost,@costing_methods`);
 
     // Return success response
     if (result.rowsAffected && result.rowsAffected[0] > 0) {
@@ -2899,8 +2868,8 @@ const deleteItemData = async (req, res) => {
         .input("Item_code", Item_code)
         .input("company_code", sql.NVarChar, req.headers['company_code'])
         .input("modified_by", sql.NVarChar, req.headers['modified-by'])
-        .query(`EXEC sp_item_brand_info  'D',@company_code,@Item_code,'','',0,'','','',0,0,0,0,'','','','','','','','','','','','','',0,0,'','',@modified_by,NULL,NULL,NULL,NULL
-              ,NULL,NULL,NULL,NULL`);
+        .query(`EXEC sp_item_brand_info_ramya  'D',@company_code,@Item_code,'','',0,'','','',0,0,0,0,'','','','','','','','','','','','','',0,0,'','',@modified_by,NULL,NULL,NULL,NULL
+              ,NULL,NULL,NULL,NULL,0,''`);
     }
 
 
@@ -2914,31 +2883,15 @@ const deleteItemData = async (req, res) => {
 //VENDOR HRD INFO //
 
 const addVendorHdrData = async (req, res) => {
-  const {
-    company_code,
-    vendor_code,
-    vendor_name,
-    status,
-    vendor_logo,
-    panno,
-    vendor_gst_no,
-    created_by,
-    modified_by,
-    tempstr1,
-    tempstr2,
-    tempstr3,
-    tempstr4,
-    datetime1,
-    datetime2,
-    datetime3,
-    datetime4,
-  } = req.body;
+  const { company_code, vendor_code, vendor_name, status, vendor_logo, panno,
+    vendor_gst_no, created_by, modified_by, vendor_type, tempstr2, tempstr3, tempstr4,
+    datetime1, datetime2, datetime3, datetime4 } = req.body;
   let pool;
   try {
     pool = await sql.connect(dbConfig);
     const result = await pool
       .request()
-      .input("mode", sql.NVarChar, "I") // Insert mode
+      .input("mode", sql.NVarChar, "I") 
       .input("company_code", sql.NVarChar, company_code)
       .input("vendor_code", sql.NVarChar, vendor_code)
       .input("vendor_name", sql.NVarChar, vendor_name)
@@ -2948,7 +2901,7 @@ const addVendorHdrData = async (req, res) => {
       .input("vendor_gst_no", sql.NVarChar, vendor_gst_no)
       .input("created_by", sql.NVarChar, created_by)
       .input("modified_by", sql.NVarChar, modified_by)
-      .input("tempstr1", sql.NVarChar, tempstr1)
+      .input("vendor_type", sql.NVarChar, vendor_type)
       .input("tempstr2", sql.NVarChar, tempstr2)
       .input("tempstr3", sql.NVarChar, tempstr3)
       .input("tempstr4", sql.NVarChar, tempstr4)
@@ -2956,15 +2909,13 @@ const addVendorHdrData = async (req, res) => {
       .input("datetime2", sql.NVarChar, datetime2)
       .input("datetime3", sql.NVarChar, datetime3)
       .input("datetime4", sql.NVarChar, datetime4)
-      .query(
-        `EXEC sp_vendor_info_hdr @mode,@company_code,@vendor_code, @vendor_name, @status,'',@panno,@vendor_gst_no,@created_by,@modified_by,
-        @tempstr1,@tempstr2,@tempstr3,@tempstr4,@datetime1,@datetime2,@datetime3,@datetime4`);
+      .query(`EXEC sp_vendor_info_hdr_test @mode,@company_code,@vendor_code, @vendor_name, @status,'',@panno,@vendor_gst_no,@created_by,@modified_by,
+        @vendor_type,@tempstr2,@tempstr3,@tempstr4,@datetime1,@datetime2,@datetime3,@datetime4`);
     if (result.rowsAffected && result.rowsAffected[0] > 0) {
       return res.status(200).json({ success: true, message: 'Data inserted successfully' });
     }
   } catch (err) {
     {
-      // Handle unexpected errors
       res.status(500).json({ message: err.message || 'Internal Server Error' });
     }
   }
@@ -2974,7 +2925,7 @@ const addVendorHdrData = async (req, res) => {
 const getAllVendorHdrData = async (req, res) => {
   try {
     await connection.connectToDatabase();
-    const result = await sql.query(`EXEC sp_vendor_info_hdr 'A','','','','','','','','','',null,null,null,null,null,null,null,null`);
+    const result = await sql.query(`EXEC sp_vendor_info_hdr_test 'A','','','','','','','','','',null,null,null,null,null,null,null,null`);
 
     res.json(result.recordset);
   } catch (err) {
@@ -2988,7 +2939,7 @@ const getAllVendorHdrData = async (req, res) => {
 const getAllVendorDetData = async (req, res) => {
   try {
     await connection.connectToDatabase();
-    const result = await sql.query(`EXEC sp_vendor_details_info_hdr 'A','','','','','','','','','','','','' ,'','','',
+    const result = await sql.query(`EXEC sp_vendor_details_info_hdr_test 'A','','','','','','','','','','','','' ,'','','',
       '','','','',0,'','','','','','','','','',NULL,NULL,NULL,null,null,null,null,null`);
 
     res.json(result.recordset);
@@ -3081,7 +3032,7 @@ const addVendorDetData = async (req, res) => {
       .input("datetime3", sql.NVarChar, datetime3)
       .input("datetime4", sql.NVarChar, datetime4)
       .query(
-        `EXEC sp_vendor_details_info_hdr @mode, @vendor_code, @company_code, '', '', '', '', @vendor_addr_1, @vendor_addr_2,
+        `EXEC sp_vendor_details_info_hdr_test @mode, @vendor_code, @company_code, '', '', '', '', @vendor_addr_1, @vendor_addr_2,
         @vendor_addr_3, @vendor_addr_4, @vendor_area_code, @vendor_state_code, @vendor_country_code, @vendor_imex_no, @vendor_office_no, @vendor_resi_no, @vendor_mobile_no,
          @vendor_fax_no, @vendor_email_id, @vendor_credit_limit, @vendor_transport_code, @vendor_salesman_code, @vendor_broker_code, @vendor_weekday_code, @contact_person,@office_type,'',@created_by, @modified_by,
           @opening_balance, @balance_type, @tempstr3, @tempstr4, @datetime1, @datetime2, @datetime3, @datetime4`
@@ -3119,6 +3070,7 @@ const updvendordetData = async (req, res) => {
         .input("vendor_name", sql.NVarChar, updatedRow.vendor_name)
         .input("status", sql.NVarChar, updatedRow.status)
         .input("panno", sql.NVarChar, updatedRow.panno)
+        .input("vendor_type", sql.NVarChar, updatedRow.vendor_type)
         .input("vendor_gst_no", sql.NVarChar, updatedRow.vendor_gst_no)
         .input("vendor_addr_1", sql.NVarChar, updatedRow.vendor_addr_1)
         .input("vendor_addr_2", sql.NVarChar, updatedRow.vendor_addr_2)
@@ -3152,9 +3104,9 @@ const updvendordetData = async (req, res) => {
         .input("datetime3", sql.NVarChar, updatedRow.datetime3)
         .input("datetime4", sql.NVarChar, updatedRow.datetime4)
         .query(
-          `EXEC sp_vendor_details_info_hdr @mode,@vendor_code,@company_code,@vendor_name,@status,@panno,@vendor_gst_no,@vendor_addr_1,@vendor_addr_2,@vendor_addr_3,
+          `EXEC sp_vendor_details_info_hdr_test @mode,@vendor_code,@company_code,@vendor_name,@status,@panno,@vendor_gst_no,@vendor_addr_1,@vendor_addr_2,@vendor_addr_3,
             @vendor_addr_4,@vendor_area_code,@vendor_state_code ,@vendor_country_code,@vendor_imex_no,@vendor_office_no,@vendor_resi_no,@vendor_mobile_no,@vendor_fax_no,@vendor_email_id,
-            @vendor_credit_limit,@vendor_transport_code,@vendor_salesman_code,@vendor_broker_code,@vendor_weekday_code, @contact_person,@office_type,@keyfield,@created_by, @modified_by, @opening_balance, @balance_type, @tempstr3, @tempstr4,
+            @vendor_credit_limit,@vendor_transport_code,@vendor_salesman_code,@vendor_broker_code,@vendor_weekday_code, @contact_person,@office_type,@keyfield,@created_by, @modified_by, @opening_balance, @balance_type, @vendor_type, @tempstr4,
              @datetime1, @datetime2, @datetime3, @datetime4`
         );
     }
@@ -3179,7 +3131,7 @@ const VendordeleteData = async (req, res) => {
   try {
     const pool = await connection.connectToDatabase();
 
-    const deleteQuery = `EXEC sp_vendor_details_info_hdr 'D','',@company_code,'','','','','','','','','','' ,'','','','','','','',0,
+    const deleteQuery = `EXEC sp_vendor_details_info_hdr_test 'D','',@company_code,'','','','','','','','','','' ,'','','','','','','',0,
       '','','','','','',@keyfield,'',@modified_by,NULL,NULL,NULL,null,null,null,null,null
       `;
     for (let i = 0; i < keyfieldsToDelete.length; i++) {
@@ -3285,8 +3237,8 @@ const getitemcodepurdata = async (req, res) => {
       .input("mode", sql.NVarChar, "STPIC")
       .input("Item_code", sql.NVarChar, Item_code)
       .input("company_code", sql.NVarChar, company_code)
-      .query(`EXEC sp_item_brand_info @mode,@company_code,@Item_code,'','',0,'','','',0,0,0,0,'','','','','','','','','','','','','',0,0,'','','',NULL,NULL,NULL,NULL
-               ,NULL,NULL,NULL,NULL `);
+      .query(`EXEC sp_item_brand_info_ramya @mode,@company_code,@Item_code,'','',0,'','','',0,0,0,0,'','','','','','','','','','','','','',0,0,'','','',NULL,NULL,NULL,NULL
+               ,NULL,NULL,NULL,NULL,0,'' `);
     // Send response
     if (result.recordset.length > 0) {
       res.status(200).json(result.recordset); // 200 OK if data is found
@@ -3546,7 +3498,7 @@ const locationdeleteData = async (req, res) => {
 };
 
 const getitemsearchdata = async (req, res) => {
-  const { company_code, Item_code, Item_name, Item_variant, Item_short_name, Item_Our_Brand, status } = req.body;
+  const { company_code, Item_code, Item_name, Item_variant, costing_methods, standard_cost,  Item_short_name, Item_Our_Brand, status } = req.body;
 
   try {
     const pool = await connection.connectToDatabase();
@@ -3561,7 +3513,10 @@ const getitemsearchdata = async (req, res) => {
       .input("Item_short_name", sql.NVarChar, Item_short_name)
       .input("Item_Our_Brand", sql.NVarChar, Item_Our_Brand)
       .input("status", sql.NVarChar, status)
-      .query(`EXEC sp_item_brand_info @mode,@company_code,@Item_code,@Item_variant,@Item_name,0,'','',@Item_short_name,0,0,0,0,'','','','','','','',@Item_Our_Brand,@status,'','','','',0,0,'','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
+      .input("standard_cost", sql.Decimal(10,2), standard_cost)
+      .input("costing_methods", sql.NVarChar, costing_methods)
+      .query(`EXEC sp_item_brand_info_ramya @mode,@company_code,@Item_code,@Item_variant,@Item_name,0,'','',@Item_short_name,0,0,0,0,'','','','','','','',
+        @Item_Our_Brand,@status,'','','','',0,0,'','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,@standard_cost,@costing_methods`);
 
     // Send response
     if (result.recordset.length > 0) {
@@ -3591,7 +3546,7 @@ const getitempursearchdata = async (req, res) => {
       .input("Item_short_name", sql.NVarChar, Item_short_name)
       .input("Item_Our_Brand", sql.NVarChar, Item_Our_Brand)
       .input("status", sql.NVarChar, status)
-      .query(`EXEC sp_item_brand_info @mode,@company_code,@Item_code,@Item_variant, @Item_name,0,'','',@Item_short_name,0,0,0,0,'','','','','','','',@Item_Our_Brand, @status,'','','','',0,0,'','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL `);
+      .query(`EXEC sp_item_brand_info_ramya @mode,@company_code,@Item_code,@Item_variant, @Item_name,0,'','',@Item_short_name,0,0,0,0,'','','','','','','',@Item_Our_Brand, @status,'','','','',0,0,'','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,'' `);
     // Send response
     if (result.recordset.length > 0) {
       res.status(200).json(result.recordset); // 200 OK if data is found
@@ -4157,7 +4112,7 @@ const roledeleteData = async (req, res) => {
 
 
 const getvendorSearchdata = async (req, res) => {
-  const { company_code, vendor_code, vendor_name, panno, vendor_gst_no, vendor_addr_1, vendor_area_code, vendor_state_code, vendor_country_code, vendor_mobile_no, status, opening_balance, balance_type } = req.body;
+  const { company_code, vendor_code, vendor_name, panno, vendor_type, vendor_gst_no, vendor_addr_1, vendor_area_code, vendor_state_code, vendor_country_code, vendor_mobile_no, status, opening_balance, balance_type } = req.body;
 
   try {
     // Connect to the database
@@ -4180,8 +4135,9 @@ const getvendorSearchdata = async (req, res) => {
       .input("vendor_mobile_no", sql.NVarChar, vendor_mobile_no)
       .input("opening_balance", sql.Decimal(18, 2), opening_balance)
       .input("balance_type", sql.VarChar, balance_type)
-      .query(`EXEC sp_vendor_details_info_hdr @mode,@vendor_code,@company_code,@vendor_name,@status,@panno,@vendor_gst_no,@vendor_addr_1,'','','',@vendor_area_code,@vendor_state_code,
-        @vendor_country_code,'','','',@vendor_mobile_no,'' ,'',0,'','','','','','','','','',@opening_balance,@balance_type,NULL,NULL,NULL,null,null,null`);
+      .input("vendor_type", sql.VarChar, vendor_type)
+      .query(`EXEC sp_vendor_details_info_hdr_test @mode,@vendor_code,@company_code,@vendor_name,@status,@panno,@vendor_gst_no,@vendor_addr_1,'','','',@vendor_area_code,@vendor_state_code,
+        @vendor_country_code,'','','',@vendor_mobile_no,'' ,'',0,'','','','','','','','','',@opening_balance,@balance_type,@vendor_type,NULL,NULL,null,null,null`);
 
     // Send response
     if (result.recordset.length > 0) {
@@ -4591,7 +4547,7 @@ const getPartyCode = async (req, res) => {
       .input("mode", sql.NVarChar, "VCS")
       .input("company_code", sql.NVarChar, company_code)
       .input("vendor_code", sql.NVarChar, vendor_code)
-      .query(`EXEC sp_vendor_details_info_hdr @mode,@vendor_code,@company_code,'','','','','','','','','','' ,'','','','','','','',0,'','','','','','','','','',NULL,null,null,null,null,null,null,null`);
+      .query(`EXEC sp_vendor_details_info_hdr_test @mode,@vendor_code,@company_code,'','','','','','','','','','' ,'','','','','','','',0,'','','','','','','','','',NULL,null,null,null,null,null,null,null`);
 
     // Send response
     if (result.recordset.length > 0) {
@@ -5745,9 +5701,9 @@ const getItemPrice = async (req, res) => {
       .input("Item_code", sql.NVarChar, Item_code)
 
 
-      .query(`EXEC sp_item_brand_info @mode,'',@Item_code,'','',0,'','','',0,0,0,
-                           0,'','','','','','','','','','','','','',0,0,'','','',NULL,NULL,NULL,NULL,NULL
-						   ,NULL,NULL,NULL`);
+      .query(`EXEC sp_item_brand_info_ramya @mode,'',@Item_code,'','',0,'','','',0,0,0,
+      0,'','','','','','','','','','','','','',0,0,'','','',NULL,NULL,NULL,NULL,NULL
+						   ,NULL,NULL,NULL,0,''`);
 
     // Send response
     if (result.recordset.length > 0) {
@@ -5939,9 +5895,9 @@ const getAllItemVarient = async (req, res) => {
       .request()
       .input('mode', sql.NVarChar, 'IV')
       .input('company_code', sql.NVarChar, company_code)
-      .query(`EXEC sp_item_brand_info @mode,@company_code,'','','',0,'','','',0,0,0,
+      .query(`EXEC sp_item_brand_info_ramya @mode,@company_code,'','','',0,'','','',0,0,0,
                            0,'','','','','','','','','','','','','',0,0,'','','',NULL,NULL,NULL,NULL,NULL
-						   ,NULL,NULL,NULL`);
+						   ,NULL,NULL,NULL,0,''`);
 
     res.json(result.recordset);
   } catch (err) {
@@ -10430,7 +10386,8 @@ const getitemsalsearchdata = async (req, res) => {
       .input("Item_Our_Brand", sql.NVarChar, Item_Our_Brand)
       .input("status", sql.NVarChar, status)
       .input("type", sql.NVarChar, type)
-      .query(`EXEC sp_item_brand_info @mode,@company_code,@Item_code,@Item_variant, @Item_name,0,'','',@Item_short_name,0,0,0,0,'','','','','','','',@Item_Our_Brand, @status,'','','','',0,0,@type,'','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL `);
+      .query(`EXEC sp_item_brand_info_ramya @mode,@company_code,@Item_code,@Item_variant, @Item_name,0,'','',@Item_short_name,0,0,0,0,'','','','','','','',
+        @Item_Our_Brand, @status,'','','','',0,0,@type,'','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,''`);
     // Send response
     if (result.recordset.length > 0) {
       res.status(200).json(result.recordset); // 200 OK if data is found
@@ -11726,9 +11683,9 @@ const getItemCodeQuotation = async (req, res) => {
       .request()
       .input("mode", sql.NVarChar, "STPI")
       .input("Item_code", sql.NVarChar, Item_code)
-      .query(`EXEC sp_item_brand_info @mode,'',@Item_code,'','',0,'','','',0,0,0,
+      .query(`EXEC sp_item_brand_info_ramya @mode,'',@Item_code,'','',0,'','','',0,0,0,
           0,'','','','','','','','','','','','',0,0,'','','',NULL,NULL,NULL,NULL,NULL
-    ,NULL,NULL,NULL `);
+    ,NULL,NULL,NULL,0,''`);
 
     // Send response
     if (result.recordset.length > 0) {
@@ -12214,9 +12171,9 @@ const getItemCodeDcData = async (req, res) => {
       .request()
       .input("mode", sql.NVarChar, "STIDC")
       .input("Item_code", sql.NVarChar, Item_code)
-      .query(`EXEC sp_item_brand_info @mode,'',@Item_code,'','',0,'','','',0,0,0,
+      .query(`EXEC sp_item_brand_info_ramya @mode,'',@Item_code,'','',0,'','','',0,0,0,
                   0,'','','','','','','','','','','','',0,0,'','','',NULL,NULL,NULL,NULL,NULL
-            ,NULL,NULL,NULL `);
+            ,NULL,NULL,NULL,0,''`);
 
     // Send response
     if (result.recordset.length > 0) {
@@ -13758,10 +13715,7 @@ const inventoryIssuanceAll = async (req, res) => {
 const addInventoryIssuancedetails = async (req, res) => {
   const {
     company_code, IssuanceID, DateIssued, Warehouse, Department, ItemSNo, ItemCode, ItemName, Serial_No, QuantityIssued, ReasonForIssuance,
-    IssuedBy, ApprovalStatus, ActionTaken, Notes, created_by, modified_by,
-    tempstr1, tempstr2, tempstr3, tempstr4, datetime1, datetime2, datetime3, datetime4,
-
-  } = req.body;
+    IssuedBy, ApprovalStatus, ActionTaken, Notes, created_by, modified_by, tempstr1, tempstr2, tempstr3, tempstr4, datetime1, datetime2, datetime3, datetime4, rate, total } = req.body;
   let pool;
   try {
     pool = await sql.connect(dbConfig);
@@ -13793,10 +13747,10 @@ const addInventoryIssuancedetails = async (req, res) => {
       .input("datetime2", sql.NVarChar, datetime2)
       .input("datetime3", sql.NVarChar, datetime3)
       .input("datetime4", sql.NVarChar, datetime4)
-      .query(
-        `EXEC sp_InventoryIssuances_details @mode,@company_code,@IssuanceID,@DateIssued,@Warehouse,@Department,@ItemSNo,@ItemCode,@ItemName,@Serial_No,@QuantityIssued,@ReasonForIssuance,
-            @IssuedBy,@ApprovalStatus,@ActionTaken,@Notes,@created_by,@modified_by,
-            @tempstr1,@tempstr2,@tempstr3,@tempstr4,@datetime1,@datetime2,@datetime3,@datetime4`);
+      .input("rate", sql.Decimal(10,2), rate)
+      .input("total", sql.Decimal(10,2), total)
+      .query( `EXEC sp_InventoryIssuances_details_test @mode,@company_code,@IssuanceID,@DateIssued,@Warehouse,@Department,@ItemSNo,@ItemCode,@ItemName,@Serial_No,@QuantityIssued,@ReasonForIssuance,
+      @IssuedBy,@ApprovalStatus,@ActionTaken,@Notes,@created_by,@modified_by,@tempstr1,@tempstr2,@tempstr3,@tempstr4,@datetime1,@datetime2,@datetime3,@datetime4,@rate,@total`);
     res.json({ success: true, message: "Data inserted successfully" });
   } catch (err) {
     console.error(err);
@@ -13814,8 +13768,8 @@ const InventoryIssuanceDeleteDetailData = async (req, res) => {
       .input("mode", sql.NVarChar, "D")
       .input("company_code", sql.NVarChar, company_code)
       .input("IssuanceID", sql.NVarChar, IssuanceID)
-      .query(`EXEC sp_InventoryIssuances_details @mode,@company_code,@IssuanceID,'','','','',0,'','',0,'',
-            '','','','','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
+      .query(`EXEC sp_InventoryIssuances_details_test @mode,@company_code,@IssuanceID,'','','','',0,'','',0,'',
+            '','','','','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,0`);
     res.status(200).json(" InventoryIssuance deleted successfully");
   } catch (err) {
     console.error("Error", err);
@@ -13832,8 +13786,8 @@ const getAllInventoryIssuancedetailData = async (req, res) => {
       .request()
       .input("mode", sql.NVarChar, "A") // Insert mode
       .input("company_code", sql.NVarChar, company_code)
-      .query(`EXEC sp_InventoryIssuances_details 'A',@company_code,'','','','',0,'','','',0,'',
-            '','','','','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
+      .query(`EXEC sp_InventoryIssuances_details_test 'A',@company_code,'','','','',0,'','','',0,'',
+      '','','','','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,0`);
 
     res.json(result.recordset);
   } catch (err) {
@@ -14700,11 +14654,13 @@ const updateitemData = async (req, res) => {
         .input("datetime2", sql.NVarChar, updatedRow.datetime2)
         .input("datetime3", sql.NVarChar, updatedRow.datetime3)
         .input("datetime4", sql.NVarChar, updatedRow.datetime4)
-        .query(`EXEC sp_item_brand_info @mode, @company_code, @Item_code, @Item_variant, @Item_name, @Item_wigh,
-                                @Item_BaseUOM, @Item_SecondaryUOM, @Item_short_name, @Item_Last_salesRate_ExTax, @Item_Last_salesRate_IncludingTax,
-                                @Item_std_purch_price, @Item_std_sales_price, @Item_stock_code, @Item_purch_tax_type, @Item_sales_tax_type,
-                                @Item_Costing_Method, @Item_stock_type, @hsn, @Item_Register_Brand, @Item_Our_Brand, @status,'','', @Item_other_purch_taxtype,@Item_other_sales_taxtype,@MRP_price,@discount_Percentage,
-                                '',@created_by, @modified_by, @tempstr1, @tempstr2, @tempstr3, @tempstr4, @datetime1, @datetime2, @datetime3, @datetime4`);
+        .input("standard_cost", sql.Decimal(10,2), updatedRow.standard_cost)
+        .input("costing_methods", sql.NVarChar, updatedRow.costing_methods)
+        .query(`EXEC sp_item_brand_info_ramya @mode, @company_code, @Item_code, @Item_variant, @Item_name, @Item_wigh,
+        @Item_BaseUOM, @Item_SecondaryUOM, @Item_short_name, @Item_Last_salesRate_ExTax, @Item_Last_salesRate_IncludingTax,
+        @Item_std_purch_price, @Item_std_sales_price, @Item_stock_code, @Item_purch_tax_type, @Item_sales_tax_type,
+        @Item_Costing_Method, @Item_stock_type, @hsn, @Item_Register_Brand, @Item_Our_Brand, @status,'','', @Item_other_purch_taxtype,@Item_other_sales_taxtype,@MRP_price,@discount_Percentage,
+        '',@created_by, @modified_by, @tempstr1, @tempstr2, @tempstr3, @tempstr4, @datetime1, @datetime2, @datetime3, @datetime4,@standard_cost,@costing_methods`);
     }
 
     res.status(200).json("Edited data saved successfully");
@@ -14713,130 +14669,6 @@ const updateitemData = async (req, res) => {
     res.status(500).json({ message: err.message || "Internal Server Error" });
   }
 };
-
-
-// const updateitemData = async (req, res) => {
-//   const { Item_code, Item_variant } = req.body; 
-//   const updatedData = req.body.updatedData; // Getting the body data
-
-//   let item_images = null;
-
-//   // If an image file is uploaded, capture the binary data
-//   if (req.file) {
-//     item_images = req.file.buffer;
-//   }
-
-//   // Logging the input data for debugging purposes
-//   console.log("Item_code:", Item_code);
-//   console.log("Item_variant:", Item_variant);
-//   console.log("updatedData:", updatedData);
-//   console.log("req.file:", req.file);
-
-//   // Check if the required data is available
-//   if (!Item_code || !Item_variant || !updatedData) {
-//     res.status(400).json("Invalid or empty input data.");
-//     return;
-//   }
-
-//   try {
-//     const pool = await connection.connectToDatabase();
-
-//     const updatedRow = updatedData; // Assuming 'updatedData' is a JSON object for one item
-
-//     // Run the update query using both `Item_code` and `Item_variant` for the WHERE condition
-//     await pool.request()
-//       .input("mode", sql.NVarChar, "U")
-//       .input("company_code", sql.NVarChar, req.headers['company_code'])  // From headers
-//       .input("Item_code", sql.VarChar, Item_code)  // First WHERE condition
-//       .input("Item_variant", sql.VarChar, Item_variant)  // Second WHERE condition
-//       .input("Item_name", sql.VarChar, updatedRow.Item_name)
-//       .input("Item_wigh", sql.Decimal(10, 2), updatedRow.Item_wigh)
-//       .input("Item_BaseUOM", sql.NVarChar, updatedRow.Item_BaseUOM)
-//       .input("Item_SecondaryUOM", sql.NVarChar, updatedRow.Item_SecondaryUOM)
-//       .input("Item_short_name", sql.NVarChar, updatedRow.Item_short_name)
-//       .input("Item_Last_salesRate_ExTax", sql.Decimal(12, 2), updatedRow.Item_Last_salesRate_ExTax)
-//       .input("Item_Last_salesRate_IncludingTax", sql.Decimal(12, 2), updatedRow.Item_Last_salesRate_IncludingTax)
-//       .input("Item_std_purch_price", sql.Decimal(12, 2), updatedRow.Item_std_purch_price)
-//       .input("Item_std_sales_price", sql.Decimal(12, 2), updatedRow.Item_std_sales_price)
-//       .input("Item_stock_code", sql.VarChar, updatedRow.Item_stock_code)
-//       .input("Item_purch_tax_type", sql.VarChar, updatedRow.Item_purch_tax_type)
-//       .input("Item_sales_tax_type", sql.VarChar, updatedRow.Item_sales_tax_type)
-//       .input("Item_Costing_Method", sql.VarChar, updatedRow.Item_Costing_Method)
-//       .input("Item_stock_type", sql.VarChar, updatedRow.Item_stock_type)
-//       .input("hsn", sql.VarChar, updatedRow.hsn)
-//       .input("Item_Register_Brand", sql.VarChar, updatedRow.Item_Register_Brand)
-//       .input("Item_Our_Brand", sql.VarChar, updatedRow.Item_Our_Brand)
-//       .input("status", sql.VarChar, updatedRow.status)
-//       .input("item_images", sql.VarBinary, item_images || null)  // Update item_images if uploaded, otherwise null
-//       .input("created_by", sql.NVarChar, updatedRow.created_by)
-//       .input("modified_by", sql.NVarChar, req.headers['modified-by'])
-//       .input("tempstr1", sql.NVarChar, updatedRow.tempstr1)
-//       .input("tempstr2", sql.NVarChar, updatedRow.tempstr2)
-//       .input("tempstr3", sql.NVarChar, updatedRow.tempstr3)
-//       .input("tempstr4", sql.NVarChar, updatedRow.tempstr4)
-//       .input("datetime1", sql.NVarChar, updatedRow.datetime1)
-//       .input("datetime2", sql.NVarChar, updatedRow.datetime2)
-//       .input("datetime3", sql.NVarChar, updatedRow.datetime3)
-//       .input("datetime4", sql.NVarChar, updatedRow.datetime4)
-//       .query(
-//         `EXEC sp_item_brand_info @mode, @company_code, @Item_code, @Item_variant, @Item_name, @Item_wigh,
-//         @Item_BaseUOM, @Item_SecondaryUOM, @Item_short_name, @Item_Last_salesRate_ExTax, @Item_Last_salesRate_IncludingTax,
-//         @Item_std_purch_price, @Item_std_sales_price, @Item_stock_code, @Item_purch_tax_type, @Item_sales_tax_type,
-//         @Item_Costing_Method, @Item_stock_type, @hsn, @Item_Register_Brand, @Item_Our_Brand, @status, @item_images,
-//         @created_by, @modified_by, @tempstr1, @tempstr2, @tempstr3, @tempstr4, @datetime1, @datetime2, @datetime3, @datetime4`
-//       );
-
-//     res.status(200).json("Updated data successfully");
-//   } catch (error) {
-//     console.error("Error updating data:", error);
-//     res.status(500).json({ message: err.message || 'Internal Server Error' });
-//   } finally {
-//     connection.closeDatabaseConnection();
-//   }
-// };
-
-// const updateitemData = async (req, res) => {
-//   const { Item_code, Item_variant, Item_name } = req.body;
-
-//   if (!Item_code || !Item_variant ) {
-//     return res.status(400).json("Invalid or empty input data.");
-//   }
-
-//   let item_images = null;
-//   if (req.file) {
-//     item_images = req.file.buffer;
-//   }
-
-//   console.log("Item_code:", Item_code);
-//   console.log("Item_variant:", Item_variant);
-//   console.log("Item_name:", Item_name);
-//   console.log("req.file:", req.file);
-
-//   try {
-//     const pool = await connection.connectToDatabase();
-
-//     await pool.request()
-//       .input("mode", sql.NVarChar, "U")
-//       .input("Item_code", sql.VarChar, Item_code)
-//       .input("Item_variant", sql.VarChar, Item_variant)
-//       .input("Item_name", sql.VarChar, Item_name)
-//       .input("item_images", sql.VarBinary, item_images || null)
-//       .query(
-//         `EXEC sp_item_brand_info @mode, '', @Item_code, @Item_variant, @Item_name, 0,
-//         '', '', '', 0, 0,
-//         0,0, '', '', '',
-//         '', '', '', '', '', '', @item_images,
-//         '', '', '', '', '', '', '', '', '', ''`
-//       );
-
-//     res.status(200).json("Updated data successfully");
-//   } catch (error) {
-//     console.error("Error updating data:", error);
-//     res.status(500).json({ message: err.message || 'Internal Server Error' });
-//   } finally {
-//     connection.closeDatabaseConnection();
-//   }
-// };
 
 const getallEmployeePopUp = async (req, res) => {
   const { employee_no, employee_name, desgination, employee_type, company_code } = req.body;
@@ -15624,9 +15456,9 @@ const UpdateItemImage = async (req, res) => {
       .request()
       .input("item_code", sql.NVarChar, item_code)
       .input("item_images", sql.VarBinary, item_images)
-      .query(`EXEC sp_item_brand_info  'IIU','',@item_code,'','',0,'','','',0,0,0,
-                           0,'','','','','','','','','',@item_images,'','','',0,0,'','','',NULL,NULL,NULL,NULL,NULL
-						   ,NULL,NULL,NULL`);
+      .query(`EXEC sp_item_brand_info_ramya  'IIU','',@item_code,'','',0,'','','',0,0,0,
+      0,'','','','','','','','','',@item_images,'','','',0,0,'','','',NULL,NULL,NULL,NULL,NULL
+			,NULL,NULL,NULL,0,''`);
 
     // Return success response
     if (result.rowsAffected && result.rowsAffected[0] > 0) {
@@ -15935,8 +15767,8 @@ const ItemUpdate = async (req, res) => {
   const { company_code, Item_code, Item_variant, Item_name, Item_wigh, Item_BaseUOM, Item_SecondaryUOM, Item_short_name, Item_Last_salesRate_ExTax,
     Item_Last_salesRate_IncludingTax, Item_std_purch_price, Item_std_sales_price, Item_stock_code, Item_purch_tax_type,
     Item_sales_tax_type, Item_Costing_Method, Item_stock_type, hsn, Item_Register_Brand, Item_Our_Brand,
-    status, Item_other_purch_taxtype, Item_other_sales_taxtype, MRP_price, discount_Percentage, created_by, modified_by
-  } = req.body;
+    status, Item_other_purch_taxtype, Item_other_sales_taxtype, MRP_price, discount_Percentage, created_by, modified_by,
+  standard_cost, costing_methods } = req.body;
 
   let item_images = null;
 
@@ -15978,11 +15810,13 @@ const ItemUpdate = async (req, res) => {
       .input("discount_Percentage", sql.Decimal(5, 2), discount_Percentage)
       .input("created_by", sql.NVarChar, created_by)
       .input("modified_by", sql.NVarChar, modified_by)
-      .query(`EXEC sp_item_brand_info @mode, @company_code, @Item_code, @Item_variant, @Item_name, @Item_wigh,
-                        @Item_BaseUOM, @Item_SecondaryUOM, @Item_short_name, @Item_Last_salesRate_ExTax, @Item_Last_salesRate_IncludingTax,
-                        @Item_std_purch_price, @Item_std_sales_price, @Item_stock_code, @Item_purch_tax_type, @Item_sales_tax_type,
-                        @Item_Costing_Method, @Item_stock_type, @hsn, @Item_Register_Brand, @Item_Our_Brand, @status,@item_images,'',@Item_other_purch_taxtype,@Item_other_sales_taxtype,@MRP_price,@discount_Percentage,
-                        '',@created_by, @modified_by, NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
+      .input("standard_cost", sql.Decimal(10, 2), standard_cost)
+      .input("costing_methods", sql.NVarChar, costing_methods)
+      .query(`EXEC sp_item_brand_info_ramya @mode, @company_code, @Item_code, @Item_variant, @Item_name, @Item_wigh,
+      @Item_BaseUOM, @Item_SecondaryUOM, @Item_short_name, @Item_Last_salesRate_ExTax, @Item_Last_salesRate_IncludingTax,
+      @Item_std_purch_price, @Item_std_sales_price, @Item_stock_code, @Item_purch_tax_type, @Item_sales_tax_type,
+      @Item_Costing_Method, @Item_stock_type, @hsn, @Item_Register_Brand, @Item_Our_Brand, @status,@item_images,'',@Item_other_purch_taxtype,@Item_other_sales_taxtype,@MRP_price,@discount_Percentage,
+      '',@created_by, @modified_by, NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,@standard_cost,@costing_methods`);
 
 
     res.status(200).json("Edited data saved successfully");
@@ -16058,7 +15892,8 @@ const VendorUpdate = async (req, res) => {
   const { vendor_code, company_code, vendor_name, vendor_gst_no, vendor_addr_1, vendor_addr_2, vendor_addr_3, vendor_addr_4,
     vendor_area_code, vendor_state_code, vendor_country_code, vendor_imex_no, vendor_office_no, vendor_resi_no, vendor_mobile_no,
     vendor_fax_no, vendor_email_id, vendor_credit_limit, vendor_transport_code, vendor_salesman_code, vendor_broker_code,
-    vendor_weekday_code, contact_person, office_type, keyfield, modified_by, opening_balance, balance_type } = req.body;
+    vendor_weekday_code, contact_person, office_type, keyfield, modified_by, status, 
+    vendor_type, opening_balance, balance_type } = req.body;
 
   let pool;
   try {
@@ -16094,9 +15929,11 @@ const VendorUpdate = async (req, res) => {
       .input("modified_by", sql.NVarChar, modified_by)
       .input("opening_balance", sql.Decimal(18,2), opening_balance)
       .input("balance_type", sql.VarChar, balance_type)
-      .query(`EXEC sp_vendor_details_info_hdr @mode,@vendor_code,@company_code,@vendor_name,'','',@vendor_gst_no,@vendor_addr_1,@vendor_addr_2,@vendor_addr_3,
+      .input("status", sql.VarChar, status)
+      .input("vendor_type", sql.VarChar, vendor_type)
+      .query(`EXEC sp_vendor_details_info_hdr_test @mode,@vendor_code,@company_code,@vendor_name,@status,'',@vendor_gst_no,@vendor_addr_1,@vendor_addr_2,@vendor_addr_3,
               @vendor_addr_4,@vendor_area_code,@vendor_state_code ,@vendor_country_code,@vendor_imex_no,@vendor_office_no,@vendor_resi_no,@vendor_mobile_no,@vendor_fax_no,@vendor_email_id,
-              @vendor_credit_limit,@vendor_transport_code,@vendor_salesman_code,@vendor_broker_code,@vendor_weekday_code, @contact_person,@office_type,@keyfield,'', @modified_by, @opening_balance, @balance_type, '', '',
+              @vendor_credit_limit,@vendor_transport_code,@vendor_salesman_code,@vendor_broker_code,@vendor_weekday_code, @contact_person,@office_type,@keyfield,'', @modified_by, @opening_balance, @balance_type, @vendor_type, '',
                '', '', '', ''`);
 
     res.status(200).json("Updated data successfully");
@@ -21776,9 +21613,9 @@ const getItemCodeSalesDataQuote = async (req, res) => {
       .input("mode", sql.NVarChar, "STIICQ")
       .input("company_code", sql.NVarChar, company_code)
       .input("Item_code", sql.NVarChar, Item_code)
-      .query(`EXEC sp_item_brand_info 'STIICQ',@company_code,@Item_code,'','',0,'','','',0,0,0,
+      .query(`EXEC sp_item_brand_info_ramya 'STIICQ',@company_code,@Item_code,'','',0,'','','',0,0,0,
                     0,'','','','','','','','','','','','','',0,0,'','','',NULL,NULL,NULL,NULL,NULL,NULL
-              ,NULL,NULL`);
+              ,NULL,NULL,0,''`);
     // Send response
     if (result.recordset.length > 0) {
       res.status(200).json(result.recordset); // 200 OK if data is found
@@ -22276,9 +22113,9 @@ const getItemCodeOtherSalesData = async (req, res) => {
       .input("mode", sql.NVarChar, "STIICO")
       .input("company_code", sql.NVarChar, company_code)
       .input("Item_code", sql.NVarChar, Item_code)
-      .query(`EXEC sp_item_brand_info @mode,@company_code,@Item_code,'','',0,'','','',0,0,0,
+      .query(`EXEC sp_item_brand_info_ramya @mode,@company_code,@Item_code,'','',0,'','','',0,0,0,
       0,'','','','','','','','','','','','','',0,0,'','','',NULL,NULL,NULL,NULL,NULL,NULL
-,NULL,NULL`);
+,NULL,NULL,0,''`);
     // Send response
     if (result.recordset.length > 0) {
       res.status(200).json(result.recordset); // 200 OK if data is found
@@ -22460,7 +22297,7 @@ const getVendorDetails = async (req, res) => {
       .input("mode", sql.NVarChar, "PV")
       .input("company_code", sql.NVarChar, company_code)
       .input("vendor_code", sql.NVarChar, vendor_code)
-      .query(`EXEC sp_vendor_details_info_hdr @mode,@vendor_code,@company_code,'','','','','','','','','','' ,'','','','','','','',0,'','','','','','','','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
+      .query(`EXEC sp_vendor_details_info_hdr_test @mode,@vendor_code,@company_code,'','','','','','','','','','' ,'','','','','','','',0,'','','','','','','','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
 
     if (result.recordset.length > 0) {
       res.status(200).json(result.recordset);
@@ -23427,7 +23264,7 @@ const getItemCode = async (req, res) => {
       .request()
       .input("mode", sql.NVarChar, "OI")
       .input("company_code", sql.NVarChar, company_code)
-      .query(`EXEC [sp_item_brand_info] @mode,@company_code,'','','',0,'','','',0,0,0,0,'','','','','','','','','','','','','',0,0,'','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
+      .query(`EXEC [sp_item_brand_info_ramya] @mode,@company_code,'','','',0,'','','',0,0,0,0,'','','','','','','','','','','','','',0,0,'','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,''`);
 
     if (result.recordset.length > 0) {
       res.status(200).json(result.recordset);
@@ -25238,9 +25075,9 @@ const getitemcodevariant = async (req, res) => {
       .input("Item_code", sql.NVarChar, Item_code)
       .input("Item_variant", sql.NVarChar, Item_variant)
       .input("company_code", sql.NVarChar, company_code)
-      .query(`EXEC sp_item_brand_info @mode,@company_code,@Item_code,@Item_variant,'',0,'','','',0,0,0,
+      .query(`EXEC sp_item_brand_info_ramya @mode,@company_code,@Item_code,@Item_variant,'',0,'','','',0,0,0,
                            0,'','','','','','','','','','','','','',0,0,'','','',NULL,NULL,NULL,NULL
-						   ,NULL,NULL,NULL,NULL`);
+						   ,NULL,NULL,NULL,NULL,0,''`);
     if (result.recordset.length > 0) {
       res.status(200).json(result.recordset); // 200 OK if data is found
     }
@@ -28762,7 +28599,7 @@ const vendorCodeDropdown = async (req, res) => {
       .request()
       .input("mode", sql.NVarChar, "VC")
       .input("company_code", sql.NVarChar, company_code)
-      .query(`EXEC sp_vendor_details_info_hdr @mode,'',@company_code,'','','','','','','','','','' ,'','','','','','','',0,'','','','','','','','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
+      .query(`EXEC sp_vendor_details_info_hdr_test @mode,'',@company_code,'','','','','','','','','','' ,'','','','','','','',0,'','','','','','','','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
 
     if (result.recordset && result.recordset.length > 0) {
       res.status(200).json(result.recordset);
@@ -29031,7 +28868,8 @@ const getSalesItemCode = async (req, res) => {
       .request()
       .input("mode", sql.NVarChar, "SI")
       .input("company_code", sql.NVarChar, company_code)
-      .query(`EXEC [sp_item_brand_info] @mode,@company_code,'','','',0,'','','',0,0,0,0,'','','','','','','','','','','','','',0,0,'','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
+      .query(`EXEC [sp_item_brand_info_ramya] @mode,@company_code,'','','',0,'','','',0,0,0,0,'','','','','','','','','','','','','',0,0,'','','',
+      NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,''`);
     if (result.recordset.length > 0) {
       res.status(200).json(result.recordset);
     } else {
@@ -36289,18 +36127,14 @@ const opening_balanceDelete = async (req, res) => {
 // };
 const opening_balanceLoopInsert = async (req, res) => {
   const opening_balanceData = req.body.opening_balanceData;
-
   if (!opening_balanceData || !opening_balanceData.length) {
     return res
       .status(400)
       .json({ message: "Invalid or empty opening_balanceData array." });
   }
-
   try {
     const pool = await sql.connect(dbConfig);
-
     let generatedTransactionNo = "";
-
     for (const item of opening_balanceData) {
       const result = await pool
         .request()
@@ -36311,11 +36145,7 @@ const opening_balanceLoopInsert = async (req, res) => {
         .input("party_type", sql.NVarChar, item.party_type)
         .input("party_code", sql.NVarChar, item.party_code)
         .input("keyfield", sql.NVarChar, "")
-        .input(
-          "opening_amount",
-          sql.Decimal(18, 2),
-          item.opening_amount
-        )
+        .input("opening_amount", sql.Decimal(18, 2), item.opening_amount )
         .input("balance_type", sql.NVarChar, item.balance_type)
         .input("remarks", sql.NVarChar, item.remarks)
         .input("status", sql.NVarChar, item.status)
@@ -36325,26 +36155,7 @@ const opening_balanceLoopInsert = async (req, res) => {
         .input("created_date", sql.DateTime, item.created_date)
         .input("modified_by", sql.NVarChar, item.modified_by)
         .input("modified_date", sql.DateTime, item.modified_date)
-        .query(`
-          EXEC sp_opening_balance
-          @mode,
-          @transaction_no,
-          @financial_year,
-          @entry_date,
-          @party_type,
-          @party_code,
-          @keyfield,
-          @opening_amount,
-          @balance_type,
-          @remarks,
-          @status,
-          @data_deleted,
-          @company_code,
-          @created_by,
-          @created_date,
-          @modified_by,
-          @modified_date
-        `);
+        .query(`EXEC sp_opening_balance @mode, @transaction_no, @financial_year, @entry_date, @party_type, @party_code, @keyfield, @opening_amount, @balance_type, @remarks, @status, @data_deleted, @company_code, @created_by, @created_date, @modified_by, @modified_date `);
 
       if (
         result.recordset &&
@@ -36354,14 +36165,12 @@ const opening_balanceLoopInsert = async (req, res) => {
           result.recordset[0].transaction_no;
       }
     }
-
     res.status(200).json({
       message: "opening_balance data inserted successfully",
       transaction_no: generatedTransactionNo,
     });
   } catch (err) {
     console.error("Error in opening_balanceLoopInsert:", err);
-
     res.status(500).json({
       message: err.message || "Internal Server Error",
     });
@@ -36722,7 +36531,7 @@ const vendorCodeDropdownExpenses = async (req, res) => {
       .request()
       .input("mode", sql.NVarChar, "VCE")
       .input("company_code", sql.NVarChar, company_code)
-      .query(`EXEC sp_vendor_details_info_hdr @mode,'',@company_code,'','','','','','','','','','' ,'','','','','','','',0,'','','','','','','','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
+      .query(`EXEC sp_vendor_details_info_hdr_test @mode,'',@company_code,'','','','','','','','','','' ,'','','','','','','',0,'','','','','','','','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
 
     if (result.recordset && result.recordset.length > 0) {
       res.status(200).json(result.recordset);
@@ -37112,7 +36921,8 @@ const Vendor_PaymentInsert = async (req, res) => {
       .input("created_date", sql.DateTime, created_date)
       .input("modified_by", sql.NVarChar, modified_by)
       .input("modified_date", sql.DateTime, modified_date)
-      .query(`EXEC sp_Vendor_Payment @mode, @vendor_code, @TransactionNo, @TransactionDate, @TransactionType, @Site_ID, @PONo, @PO_date, @PO_amt, @paid_amt, @bal_amt, @pending, @keyfield, @Remarks, @TypeofPay, @Data_deleted, @company_code, @created_by, @created_date, @modified_by, @modified_date`);
+      .query(`EXEC sp_Vendor_Payment @mode, @vendor_code, @TransactionNo, @TransactionDate, @TransactionType, @Site_ID, @PONo, @PO_date, @PO_amt, @paid_amt, @bal_amt, 
+        @pending, @keyfield, @Remarks, @TypeofPay, @Data_deleted, @company_code, @created_by, @created_date, @modified_by, @modified_date, ''`);
 
     res.status(200).json({ success: true, message: "Vendor_Payment insertd successfully" });
   } catch (err) {
@@ -37155,7 +36965,8 @@ const Vendor_PaymentUpdate = async (req, res) => {
       .input("created_date", sql.DateTime, created_date)
       .input("modified_by", sql.NVarChar, modified_by)
       .input("modified_date", sql.DateTime, modified_date)
-      .query(`EXEC sp_Vendor_Payment @mode, @vendor_code, @TransactionNo, @TransactionDate, @TransactionType, @Site_ID, @PONo, @PO_date, @PO_amt, @paid_amt, @bal_amt, @pending, @keyfield, @Remarks, @TypeofPay, @Data_deleted, @company_code, @created_by, @created_date, @modified_by, @modified_date`);
+      .query(`EXEC sp_Vendor_Payment @mode, @vendor_code, @TransactionNo, @TransactionDate, @TransactionType, @Site_ID, @PONo, @PO_date, @PO_amt, @paid_amt, @bal_amt, @pending,
+         @keyfield, @Remarks, @TypeofPay, @Data_deleted, @company_code, @created_by, @created_date, @modified_by, @modified_date,''`);
 
     res.status(200).json({ success: true, message: "Vendor_Payment updated successfully" });
   } catch (err) {
@@ -37198,7 +37009,8 @@ const Vendor_PaymentDelete = async (req, res) => {
       .input("created_date", sql.DateTime, created_date)
       .input("modified_by", sql.NVarChar, modified_by)
       .input("modified_date", sql.DateTime, modified_date)
-      .query(`EXEC sp_Vendor_Payment @mode, @vendor_code, @TransactionNo, @TransactionDate, @TransactionType, @Site_ID, @PONo, @PO_date, @PO_amt, @paid_amt, @bal_amt, @pending, @keyfield, @Remarks, @TypeofPay, @Data_deleted, @company_code, @created_by, @created_date, @modified_by, @modified_date`);
+      .query(`EXEC sp_Vendor_Payment @mode, @vendor_code, @TransactionNo, @TransactionDate, @TransactionType, @Site_ID, @PONo, @PO_date, @PO_amt, @paid_amt, @bal_amt, @pending,
+         @keyfield, @Remarks, @TypeofPay, @Data_deleted, @company_code, @created_by, @created_date, @modified_by, @modified_date,''`);
 
     res.status(200).json({ success: true, message: "Vendor_Payment deleted successfully" });
   } catch (err) {
@@ -37241,7 +37053,9 @@ const Vendor_PaymentLoopInsert = async (req, res) => {
         .input("created_date", sql.DateTime, item.created_date)
         .input("modified_by", sql.NVarChar, item.modified_by)
         .input("modified_date", sql.DateTime, item.modified_date)
-        .query(`EXEC sp_Vendor_Payment @mode, @vendor_code, @TransactionNo, @TransactionDate, @TransactionType, @Site_ID, @PONo, @PO_date, @PO_amt, @paid_amt, @bal_amt, @pending, @keyfield, @Remarks, @TypeofPay, @Data_deleted, @company_code, @created_by, @created_date, @modified_by, @modified_date`);
+        .input("Location", sql.NVarChar, item.Location)
+        .query(`EXEC sp_Vendor_Payment @mode, @vendor_code, @TransactionNo, @TransactionDate, @TransactionType, @Site_ID, @PONo, @PO_date, @PO_amt, @paid_amt, @bal_amt, @pending,
+           @keyfield, @Remarks, @TypeofPay, @Data_deleted, @company_code, @created_by, @created_date, @modified_by, @modified_date, @Location`);
     }
     res.status(200).json("Vendor_Payment data inserted successfully");
   } catch (err) {
@@ -37282,7 +37096,8 @@ const Vendor_PaymentLoopUpdate = async (req, res) => {
         .input("created_date", sql.DateTime, item.created_date)
         .input("modified_by", sql.NVarChar, item.modified_by)
         .input("modified_date", sql.DateTime, item.modified_date)
-        .query(`EXEC sp_Vendor_Payment @mode, @vendor_code, @TransactionNo, @TransactionDate, @TransactionType, @Site_ID, @PONo, @PO_date, @PO_amt, @paid_amt, @bal_amt, @pending, @keyfield, @Remarks, @TypeofPay, @Data_deleted, @company_code, @created_by, @created_date, @modified_by, @modified_date`);
+        .query(`EXEC sp_Vendor_Payment @mode, @vendor_code, @TransactionNo, @TransactionDate, @TransactionType, @Site_ID, @PONo, @PO_date, @PO_amt, @paid_amt, @bal_amt, @pending,
+           @keyfield, @Remarks, @TypeofPay, @Data_deleted, @company_code, @created_by, @created_date, @modified_by, @modified_date,''`);
     }
     res.status(200).json("Vendor_Payment data updated successfully");
   } catch (err) {
@@ -37323,7 +37138,8 @@ const Vendor_PaymentLoopDelete = async (req, res) => {
         .input("created_date", sql.DateTime, item.created_date)
         .input("modified_by", sql.NVarChar, item.modified_by)
         .input("modified_date", sql.DateTime, item.modified_date)
-        .query(`EXEC sp_Vendor_Payment @mode, @vendor_code, @TransactionNo, @TransactionDate, @TransactionType, @Site_ID, @PONo, @PO_date, @PO_amt, @paid_amt, @bal_amt, @pending, @keyfield, @Remarks, @TypeofPay, @Data_deleted, @company_code, @created_by, @created_date, @modified_by, @modified_date`);
+        .query(`EXEC sp_Vendor_Payment @mode, @vendor_code, @TransactionNo, @TransactionDate, @TransactionType, @Site_ID, @PONo, @PO_date, @PO_amt, @paid_amt, @bal_amt, @pending,
+           @keyfield, @Remarks, @TypeofPay, @Data_deleted, @company_code, @created_by, @created_date, @modified_by, @modified_date, ''`);
     }
     res.status(200).json("Vendor_Payment data deleted successfully");
   } catch (err) {
@@ -37353,7 +37169,10 @@ const updateVendorPayment = async (req, res) => {
         .input("paid_amt", sql.Decimal(14, 2), updatedRow.receivedAmount)
         .input("company_code", sql.NVarChar, req.headers['company_code'])
         .input("keyfield", sql.NVarChar, updatedRow.keyfield)
-        .query(`EXEC sp_Vendor_Payment @mode, @vendor_code, '', '', '', '', '', @PO_date, 0, @paid_amt, 0, '', @keyfield, '', '',  '', @company_code, '', NULL, '', NULL`);
+        .input("TypeofPay", sql.NVarChar, updatedRow.TypeofPay)
+        .input("Remarks", sql.NVarChar, updatedRow.Remarks)
+        .query(`EXEC sp_Vendor_Payment @mode, @vendor_code, '', '', '', '', '', @PO_date, 0, @paid_amt, 0, '', @keyfield, @Remarks, @TypeofPay,  '', @company_code, '', NULL,
+        '',NULL, ''`);
     }
     res.status(200).json("Vendor payment updated successfully");
   }
@@ -37379,7 +37198,7 @@ const getPendingVendorPayment = async (req, res) => {
       .input("PO_date", sql.NVarChar, PO_date)
       .input("TransactionType", sql.NVarChar, TransactionType)
       .input("company_code", sql.NVarChar, company_code)
-      .query(`EXEC sp_Vendor_Payment @mode, @vendor_code, '', '', @TransactionType, '', '', @PO_date, 0, 0, 0, '', '', '', '',  '', @company_code, '', NULL, '', NULL`);
+      .query(`EXEC sp_Vendor_Payment @mode, @vendor_code, '', '', @TransactionType, '', '', @PO_date, 0, 0, 0, '', '', '', '',  '', @company_code, '', NULL, '', NULL,''`);
 
     if (result.recordset.length > 0) {
       res.status(200).json(result.recordset);
@@ -37396,6 +37215,42 @@ const getPendingVendorPayment = async (req, res) => {
   }
 };
 //code ended by sakthi on 05-26-26
+
+//Code Added by Pavun on 27-05-2026
+const getVendorType = async (req, res) => {
+  const { company_code } = req.body;
+  try {
+    const pool = await connection.connectToDatabase();
+    const result = await pool
+      .request()
+      .input("company_code", sql.NVarChar, company_code)
+      .query(
+        "EXEC sp_attribute_Info 'F',@company_code,'VendorType','','', '','','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+      );
+    res.json(result.recordset);
+  } catch (err) {
+    console.error("Error during update:", err);
+    res.status(500).json({ message: err.message || 'Internal Server Error' });
+  }
+};
+
+const getCostingMethods = async (req, res) => {
+  const { company_code } = req.body;
+  try {
+    const pool = await connection.connectToDatabase();
+    const result = await pool
+      .request()
+      .input("company_code", sql.NVarChar, company_code)
+      .query(
+        "EXEC sp_attribute_Info 'F',@company_code,'Costing Methods','','', '','','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+      );
+    res.json(result.recordset);
+  } catch (err) {
+    console.error("Error during update:", err);
+    res.status(500).json({ message: err.message || 'Internal Server Error' });
+  }
+};
+//Code Ended by Pavun on 27-05-2026
 
 module.exports = {
   login,
@@ -38611,7 +38466,9 @@ module.exports = {
   Vendor_PaymentLoopUpdate, 
   Vendor_PaymentLoopDelete,
   updateVendorPayment,
-  getPendingVendorPayment
+  getPendingVendorPayment,
+  getVendorType,
+  getCostingMethods
 
 
 };

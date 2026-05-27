@@ -28,7 +28,7 @@ function AttriDetGrid() {
   const [attributedetails_name, setattributedetails_name] = useState("");
   const [descriptions, setdescriptions] = useState("");
   const [editedData, setEditedData] = useState([]);
-    const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const [createdBy, setCreatedBy] = useState("");
   const [modifiedBy, setModifiedBy] = useState("");
@@ -70,7 +70,7 @@ function AttriDetGrid() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ company_code: sessionStorage.getItem("selectedCompanyCode"),attributeheader_code, attributedetails_code, attributedetails_name, descriptions }), // Send as search criteria
+        body: JSON.stringify({ company_code: sessionStorage.getItem("selectedCompanyCode"), attributeheader_code, attributedetails_code, attributedetails_name, descriptions }), // Send as search criteria
       });
 
       if (response.ok) {
@@ -366,11 +366,9 @@ function AttriDetGrid() {
     showConfirmationToast(
       "Are you sure you want to update the data in the selected rows?",
       async () => {
-        setLoading(true);
-
         try {
 
-
+          setLoading(true);
           const response = await fetch(`${config.apiBaseUrl}/updattridetData`, {
             method: "POST",
             headers: {
@@ -389,16 +387,13 @@ function AttriDetGrid() {
             }), // Send the selected rows for saving along with their header and detail codes
           });
 
-          if (response.status === 200) {
-            setTimeout(() => {
-              toast.success("Data Updated Successfully")
-              handleSearch();
-            }, 3000);
-            return;
-
+          const result = await response.json();
+          if (response.ok) {
+            toast.success("Data Updated Successfully", {
+              onClose: () => handleSearch(),
+            });
           } else {
-            const errorResponse = await response.json();
-            toast.warning(errorResponse.message || "Failed to update");
+            toast.warning(result.message || "Failed to update");
           }
         } catch (error) {
           console.error("Error saving data:", error);
@@ -412,8 +407,6 @@ function AttriDetGrid() {
       }
     );
   };
-
-
 
   const deleteSelectedRows = async () => {
     const selectedRows = gridApi.getSelectedRows();
@@ -445,23 +438,19 @@ function AttriDetGrid() {
             body: JSON.stringify({ attributeheader_codesToDelete, attributedetails_codeToDelete }),
             "company_code": company_code,
             "modified_by": modified_by
-            // Corrected the key name to match the server-side expectation
           });
-
+          const result = await response.json();
           if (response.ok) {
-            setTimeout(() => {
-              toast.success("Data Deleted successfully")
-              handleSearch();
-            }, 1000);
-
+            toast.success("Data Deleted Successfully", {
+              onClose: () => handleSearch(),
+            });
           } else {
-            const errorResponse = await response.json();
-            toast.warning(errorResponse.message || "Failed to Delete");
+            toast.warning(result.message || "Failed to Delete");
           }
         } catch (error) {
           console.error("Error deleting rows:", error);
           toast.error('Error Deleting Data: ' + error.message);
-        }  finally {
+        } finally {
           setLoading(false);
         }
       },
@@ -504,8 +493,8 @@ function AttriDetGrid() {
   return (
     <div className="container-fluid Topnav-screen">
       <div>
-                            {loading && <LoadingScreen />}
-        
+        {loading && <LoadingScreen />}
+
         <ToastContainer position="top-right" className="toast-design" theme="colored" />
         <div className="shadow-lg p-1 bg-body-tertiary rounded  mb-2 mt-2">
           <div className=" d-flex justify-content-between  ">
@@ -524,7 +513,6 @@ function AttriDetGrid() {
                     required
                     title="Add Attribute"
                   >
-                    {" "}
                     <i class="fa-solid fa-user-plus"></i>{" "}
                   </addbutton>
                 )}
@@ -589,7 +577,6 @@ function AttriDetGrid() {
                           onClick={handleNavigatesToForm}
                         >
                           <i class="fa-solid fa-user-plus"></i>
-                          {" "}
                         </icon>
                       )}
                     </li>
@@ -599,7 +586,6 @@ function AttriDetGrid() {
                           class="icon"
                           onClick={deleteSelectedRows}
                         >
-
                           <i class="fa-solid fa-user-minus"></i>
                         </icon>
                       )}
@@ -620,7 +606,6 @@ function AttriDetGrid() {
                           class="icon"
                           onClick={generateReport}
                         >
-
                           <i class="fa-solid fa-print"></i>
                         </icon>
                       )}

@@ -556,7 +556,6 @@ const AddSiteMasterScreen = () => {
                         toast.success("Data Updated Successfully", {
                             onClose: () => handleSearch(),
                         });
-                        return;
                     } else {
                         toast.warning(result.message || "Failed to update data");
                     }

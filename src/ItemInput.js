@@ -35,7 +35,7 @@ function ItemInput({ }) {
   const [Item_Register_Brand, setItem_Register_Brand] = useState("");
   const [Item_Our_Brand, setItem_Our_Brand] = useState("");
   const [status, setStatus] = useState("");
-  const [error, setError] = useState("");
+  const [error, setError] = useState(false);
 
   const [regbranddrop, setregbranddrop] = useState([]);
   const [ourbranddrop, setourbranddrop] = useState([]);
@@ -88,6 +88,8 @@ function ItemInput({ }) {
   const shortname = useRef(null);
   const MrpPrice = useRef(null);
   const discount = useRef(null);
+  const CostingMethod = useRef(null);
+  const StandardCost = useRef(null);
   const [hasValueChanged, setHasValueChanged] = useState(false);
   const [barcodeValue, setBarcodeValue] = useState('');
   const [barcode, setBarcode] = useState("");
@@ -96,15 +98,18 @@ function ItemInput({ }) {
 
   const created_by = sessionStorage.getItem('selectedUserCode')
   const modified_by = sessionStorage.getItem("selectedUserCode");
-  const [isUpdated, setIsUpdated] = useState(false);
+
+  const [costingMethodDrop, setCostingMethodDrop] = useState([]);
+  const [selectedCostingMethod, setSelectedCostingMethod] = useState("");
+  const [costingMethod, setCostingMethod] = useState("");
+  const [standardCost, setStandardCost] = useState("");
 
   const location = useLocation();
   const { mode, selectedRow } = location.state || {};
 
-  console.log(selectedRow);
-
   const clearInputFields = () => {
     setBarcodeValue("");
+    setBarcode("");
     setItem_code("");
     setItem_name("");
     setItem_wigh(0);
@@ -122,7 +127,8 @@ function ItemInput({ }) {
     setSelectedBrand('');
     setSelectedStatus('');
     setselectedsaltax('');
-    setSelectedImage('');
+    setSelectedImage(null);
+    setItem_image("");
     setselectedpurtax('');
     setselectedvarient('');
     setMRPPrice(0);
@@ -139,6 +145,9 @@ function ItemInput({ }) {
     setItem_variant('');
     setselectedOthersaltax('');
     setselectedOtherpurtax('');
+    setStandardCost(0);
+    setSelectedCostingMethod("");
+    setCostingMethod("");
   };
 
   const arrayBufferToBase64 = (buffer) => {
@@ -151,8 +160,9 @@ function ItemInput({ }) {
   };
 
   useEffect(() => {
-    if (mode === "update" && selectedRow && !isUpdated) {
+    if (mode === "update" && selectedRow) {
       setBarcodeValue(selectedRow.Barcode_Data || "")
+      setBarcode(selectedRow.Barcode_Data || "")
       setItem_code(selectedRow.Item_code || "");
       setItem_name(selectedRow.Item_name || "");
       setItem_wigh(selectedRow.Item_wigh || 0);
@@ -176,6 +186,8 @@ function ItemInput({ }) {
       setItem_purch_tax_type(selectedRow.Item_purch_tax_type || "");
       setItem_purch_othertax_type(selectedRow.Item_other_purch_taxtype || "");
       setItem_variant(selectedRow.Item_variant || "");
+      setStandardCost(selectedRow.standard_cost || "");
+      setCostingMethod(selectedRow.costing_methods || "");
       setSelectedUom({
         label: selectedRow.Item_BaseUOM,
         value: selectedRow.Item_BaseUOM,
@@ -217,6 +229,10 @@ function ItemInput({ }) {
         label: selectedRow.Item_variant,
         value: selectedRow.Item_variant,
       });
+      setSelectedCostingMethod({
+        label: selectedRow.costing_methods,
+        value: selectedRow.costing_methods,
+      });
 
       if (selectedRow.item_images && selectedRow.item_images.data) {
         const base64Image = arrayBufferToBase64(selectedRow.item_images.data);
@@ -230,7 +246,7 @@ function ItemInput({ }) {
     } else if (mode === "create") {
       clearInputFields();
     }
-  }, [mode, selectedRow, isUpdated]);
+  }, [mode, selectedRow]);
 
 
   const base64ToFile = (base64Data, fileName) => {
@@ -373,9 +389,20 @@ function ItemInput({ }) {
       .catch((error) => console.error('Error fetching data:', error));
   }, []);
 
+  useEffect(() => {
+    const company_code = sessionStorage.getItem('selectedCompanyCode');
 
-
-
+    fetch(`${config.apiBaseUrl}/getCostingMethods`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ company_code })
+    })
+      .then((data) => data.json())
+      .then((val) => setCostingMethodDrop(val))
+      .catch((error) => console.error('Error fetching data:', error));
+  }, []);
 
   useEffect(() => {
     const company_code = sessionStorage.getItem('selectedCompanyCode');
@@ -516,6 +543,7 @@ function ItemInput({ }) {
     value: option.attributedetails_name,
     label: option.attributedetails_name,
   }));
+
   const filteredOptionVariant = variantdrop.map((option) => ({
     value: option.attributedetails_name,
     label: option.attributedetails_name,
@@ -526,15 +554,12 @@ function ItemInput({ }) {
     label: option.tax_type,
   }));
 
-
-
   const filteredOptionOthertaxitemsales = Array.isArray(Othersaltaxdrop)
     ? Othersaltaxdrop.map((option) => ({
       value: option.Other_Sales_tax_type,
       label: option.Other_Sales_tax_type,  // Concatenate ApprovedBy and EmployeeId with ' - '
     }))
     : [];
-
 
   const filteredOptiontaxitempur = purtaxdrop.map((option) => ({
     value: option.tax_type,
@@ -546,66 +571,65 @@ function ItemInput({ }) {
     label: option.Other_purch_tax_type,
   }));
 
+  const filteredOptionCostingMethod = costingMethodDrop.map((option) => ({
+    value: option.attributedetails_name,
+    label: option.attributedetails_name,
+  }));
 
   const handleChangeRegister = (selectedRegister) => {
     setSelectedRegister(selectedRegister);
     setItem_Register_Brand(selectedRegister ? selectedRegister.value : '');
-
   };
 
   const handleChangeBrand = (selectedBrand) => {
     setSelectedBrand(selectedBrand);
     setItem_Our_Brand(selectedBrand ? selectedBrand.value : '');
-
   };
-
 
   const handleChangeStatus = (selectedStatus) => {
     setSelectedStatus(selectedStatus);
     setStatus(selectedStatus ? selectedStatus.value : '');
-
   };
 
   const handleChangeUom = (selectedUom) => {
     setSelectedUom(selectedUom);
     setItem_BaseUOM(selectedUom ? selectedUom.value : '');
-      setItem_wigh(1000);
+    // setItem_wigh(1000);
   };
 
   const handleChangeSuom = (selectedSuom) => {
     setSelectedSuom(selectedSuom);
     setItem_SecondaryUOM(selectedSuom ? selectedSuom.value : '');
-
   };
+
   const handleChangeVariant = (selectedvarient) => {
     setselectedvarient(selectedvarient);
     setItem_variant(selectedvarient ? selectedvarient.value : '');
-
   };
 
   const handleChangesaltax = (selectedsaltax) => {
     setselectedsaltax(selectedsaltax);
     setItem_sales_Othertax_type(selectedsaltax ? selectedsaltax.value : '');
-
   };
-
 
   const handleChangeOthersaltax = (selectedsaltax) => {
     setselectedOthersaltax(selectedsaltax);
     setItem_sales_tax_type(selectedsaltax ? selectedsaltax.value : '');
-
   };
 
   const handleChangepurtax = (selectedpurtax) => {
     setselectedpurtax(selectedpurtax);
     setItem_purch_tax_type(selectedpurtax ? selectedpurtax.value : '');
-
   };
 
   const handleChangeotherpurtax = (selectedpurtax) => {
     setselectedOtherpurtax(selectedpurtax);
     setItem_purch_othertax_type(selectedpurtax ? selectedpurtax.value : '');
+  };
 
+  const handleChangeCostingMethod = (selectedCostingMethod) => {
+    setSelectedCostingMethod(selectedCostingMethod);
+    setCostingMethod(selectedCostingMethod ? selectedCostingMethod.value : '');
   };
 
   const handleInsert = async () => {
@@ -625,11 +649,15 @@ function ItemInput({ }) {
       !Item_Register_Brand ||
       !Item_Our_Brand ||
       !MRPprice ||
-      !status
+      !status ||
+      !standardCost ||
+      !costingMethod
     ) {
-      setError(" ");
+      setError(true);
+      toast.warning("Missing Required Fields");
       return;
     }
+    setError(false);
     setLoading(true);
 
     try {
@@ -659,6 +687,8 @@ function ItemInput({ }) {
       formData.append("barcodeimg", barcode);
       formData.append("MRP_price", MRPprice);
       formData.append("discount_Percentage", Discount);
+      formData.append("standard_cost", standardCost);
+      formData.append("costing_methods", costingMethod);
       formData.append("created_by", sessionStorage.getItem('selectedUserCode'));
 
       if (item_images) {
@@ -674,25 +704,15 @@ function ItemInput({ }) {
         toast.success("Data inserted Successfully", {
           onClose: () => clearInputFields()
         });
-      } else if (response.status === 400) {
+      } else {
         const errorResponse = await response.json();
         console.error(errorResponse.message);
-        toast.warning(errorResponse.message, {
-
-        });
-      } else {
-        console.error("Failed to insert data");
-        toast.error('Failed to insert data', {
-
-        });
+        toast.warning(errorResponse.message);
       }
     } catch (error) {
       console.error("Error inserting data:", error);
-      toast.error('Error inserting data: ' + error.message, {
-
-      });
-    }
-    finally {
+      toast.error('Error inserting data: ' + error.message);
+    } finally {
       setLoading(false);
     }
   };
@@ -730,53 +750,59 @@ function ItemInput({ }) {
   const handleUpdate = async () => {
     if (
       !Item_code ||
-      !selectedvarient ||
+      !Item_variant ||
       !Item_name ||
-      !selectedUom ||
-      !selectedSuom ||
+      !Item_BaseUOM ||
+      !Item_SecondaryUOM ||
       !Item_std_purch_price ||
       !Item_std_sales_price ||
-      !selectedOtherpurtax ||
-      !selectedOthersaltax ||
-      !selectedpurtax ||
-      !selectedsaltax ||
+      !Item_purch_tax_type ||
+      !Item_sales_tax_type ||
+      !Item_sales_Othertax_type ||
+      !Item_purch_othertax_type ||
       !hsn ||
-      !selectedRegister ||
-      !selectedBrand ||
+      !Item_Register_Brand ||
+      !Item_Our_Brand ||
       !MRPprice ||
-      !selectedStatus
+      !status ||
+      !standardCost ||
+      !costingMethod
     ) {
-      setError(" ");
+      setError(true);
+      toast.warning("Missing Required Fields");
       return;
     }
+    setError(false);
     setLoading(true);
 
     try {
       const formData = new FormData();
       formData.append("company_code", sessionStorage.getItem('selectedCompanyCode'));
       formData.append("Item_code", Item_code);
-      formData.append("Item_variant", selectedvarient.value);
+      formData.append("Item_variant", Item_variant);
       formData.append("Item_name", Item_name);
       formData.append("Item_wigh", Item_wigh);
-      formData.append("Item_BaseUOM", selectedUom.value);
-      formData.append("Item_SecondaryUOM", selectedSuom.value);
+      formData.append("Item_BaseUOM", Item_BaseUOM);
+      formData.append("Item_SecondaryUOM", Item_SecondaryUOM);
       formData.append("Item_short_name", Item_short_name);
       formData.append("Item_Last_salesRate_ExTax", Item_Last_salesRate_ExTax);
       formData.append("Item_Last_salesRate_IncludingTax", Item_Last_salesRate_IncludingTax);
       formData.append("Item_std_purch_price", Item_std_purch_price);
       formData.append("Item_std_sales_price", Item_std_sales_price);
       formData.append("Item_stock_code", Item_stock_code);
-      formData.append("Item_purch_tax_type", selectedpurtax.value);
-      formData.append("Item_sales_tax_type", selectedsaltax.value);
-      formData.append("Item_other_purch_taxtype", selectedOtherpurtax.value);
-      formData.append("Item_other_sales_taxtype", selectedOthersaltax.value);
+      formData.append("Item_purch_tax_type", Item_purch_tax_type);
+      formData.append("Item_sales_tax_type", Item_sales_tax_type);
+      formData.append("Item_other_purch_taxtype", Item_sales_Othertax_type);
+      formData.append("Item_other_sales_taxtype", Item_purch_othertax_type);
       formData.append("Item_stock_type", Item_stock_type);
       formData.append("hsn", hsn);
       formData.append("MRP_price", MRPprice);
       formData.append("discount_Percentage", Discount);
-      formData.append("Item_Register_Brand", selectedRegister.value);
-      formData.append("Item_Our_Brand", selectedBrand.value);
-      formData.append("status", selectedStatus.value);
+      formData.append("Item_Register_Brand", Item_Register_Brand);
+      formData.append("Item_Our_Brand", Item_Our_Brand);
+      formData.append("status", status);
+      formData.append("standard_cost", standardCost);
+      formData.append("costing_methods", costingMethod);
       formData.append("created_by", sessionStorage.getItem('selectedUserCode'));
 
       if (item_images) {
@@ -792,19 +818,15 @@ function ItemInput({ }) {
         toast.success("Data updated successfully", {
           onClose: () => clearInputFields()
         });
-      } else if (response.status === 400) {
+      } else {
         const errorResponse = await response.json();
         console.error(errorResponse.message);
         toast.warning(errorResponse.message);
-      } else {
-        console.error("Failed to insert data");
-        toast.error("Failed to Update data");
       }
     } catch (error) {
       console.error("Error inserting data:", error);
       toast.error('Error inserting data: ' + error.message);
-    }
-    finally {
+    } finally {
       setLoading(false);
     }
   };
@@ -847,6 +869,15 @@ function ItemInput({ }) {
     };
   }, []);
 
+  const handleStandardCostChange = (e) => {
+    const value = e.target.value;
+
+    // Numeric + positive only
+    if (/^\d{0,10}(\.\d{0,2})?$/.test(value)) {
+      setStandardCost(value);
+    }
+  };
+
   return (
     <div class="container-fluid Topnav-screen ">
       <div className="">
@@ -866,8 +897,8 @@ function ItemInput({ }) {
 
               <button onClick={handleNavigate} className=" btn btn-danger shadow-none rounded-0 h-70 fs-5" required title="Close">
                 <i class="fa-solid fa-xmark"></i>
-              </button></div>
-
+              </button>
+            </div>
 
           </div>
 
@@ -877,16 +908,10 @@ function ItemInput({ }) {
               <div class="row">
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
-                    <div class="d-flex justify-content-start">
-                      <div>
-                        <label for="state" class="exp-form-labels">
-                          Code
-                        </label>
-                      </div>
-                      <div>
-                        <span className="text-danger">*</span>
-                      </div>
-                    </div><input
+                    <label for="state" className={`exp-form-labels ${error && !Item_code ? 'text-danger' : ''}`}>
+                      Code<span className="text-danger">*</span>
+                    </label>
+                    <input
                       id="Icode"
                       class="exp-input-field form-control"
                       type="text"
@@ -898,25 +923,15 @@ function ItemInput({ }) {
                       ref={inputRef}
                       readOnly={mode === "update"}
                       onKeyDown={(e) => handleKeyDown(e, variant, code)}
-                    />                  {error && !Item_code && <div className="text-danger">Code should not be blank</div>}
-
-
+                    />
                   </div>
                 </div>
 
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
-                    <div class="d-flex justify-content-start">
-                      <div>
-                        <label for="state" class="exp-form-labels">
-                          Variant
-
-                        </label>
-                      </div>
-                      <div>
-                        <span className="text-danger">*</span>
-                      </div>
-                    </div>
+                    <label for="state" className={`exp-form-labels ${error && !Item_variant ? 'text-danger' : ''}`}>
+                      Variant<span className="text-danger">*</span>
+                    </label>
                     <div title="Select the Variant">
                       <Select
                         id="SUOM"
@@ -931,24 +946,16 @@ function ItemInput({ }) {
                         isDisabled={mode === "update"}
                         onKeyDown={(e) => handleKeyDown(e, nam, variant)}
                       />
-                      {error && !Item_variant && <div className="text-danger">Variant should not be blank</div>}
-
                     </div>
                   </div>
                 </div>
+
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
-                    <div class="d-flex justify-content-start">
-                      <div>
-                        <label for="state" class="exp-form-labels">
-                          Name
-
-                        </label>
-                      </div>
-                      <div>
-                        <span className="text-danger">*</span>
-                      </div>
-                    </div> <input
+                    <label for="state" className={`exp-form-labels ${error && !Item_name ? 'text-danger' : ''}`}>
+                      Name<span className="text-danger">*</span>
+                    </label>
+                    <input
                       id="Iname"
                       class="exp-input-field form-control"
                       type="text"
@@ -960,26 +967,16 @@ function ItemInput({ }) {
                       defaultValue={0}
                       ref={nam}
                       onKeyDown={(e) => handleKeyDown(e, weigh, nam)}
-                    />            {error && !Item_name && <div className="text-danger">Name should not be blank</div>}
-
-
+                    />
                   </div>
-
                 </div>
 
                 <div className="col-md-3 form-group mb-2 ">
                   <div class="exp-form-floating">
-
-                    <div>
-                      <label for="state" class="exp-form-labels">
-                        Short Name<div>
-                          {/* <span className="text-danger">*</span> */}
-                        </div>
-
-                      </label>
-
-
-                    </div><input
+                    <label for="state" class="exp-form-labels">
+                      Short Name
+                    </label>
+                    <input
                       id="Ishname"
                       class="exp-input-field form-control"
                       type="text"
@@ -991,29 +988,14 @@ function ItemInput({ }) {
                       ref={shortname}
                       onKeyDown={(e) => handleKeyDown(e, withouttax, shortname)}
                     />
-                    {/* {error && !Item_short_name && <div className="text-danger">Short Name should not be blank</div>} */}
-
-
                   </div>
                 </div>
 
-
-
-
-
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
-
-                    <div>
-                      <label for="state" class="exp-form-labels">
-                        Base UOM <div>
-                          <span className="text-danger">*</span>
-                        </div>
-
-                      </label>
-                    </div>
-
-
+                    <label for="state" className={`exp-form-labels ${error && !Item_BaseUOM ? 'text-danger' : ''}`}>
+                      Base UOM <span className="text-danger">*</span>
+                    </label>
                     <div title="Select the Base UOM">
                       <Select
                         id="BUOM"
@@ -1026,24 +1008,15 @@ function ItemInput({ }) {
                         ref={baseuom}
                         onKeyDown={(e) => handleKeyDown(e, seceondoryuom, baseuom)}
                       />
-                      {error && !Item_BaseUOM && <div className="text-danger">Base UOM should not be blank</div>}
-
                     </div>
                   </div>
                 </div>
 
-
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
-                    <div class="d-flex justify-content-start">
-                      <div>
-                        <label for="state" class="exp-form-labels">
-                          Procurement Unit <div>
-                            <span className="text-danger">*</span>
-                          </div>
-                        </label>
-                      </div>
-                    </div>
+                    <label for="state" className={`exp-form-labels ${error && !Item_SecondaryUOM ? 'text-danger' : ''}`}>
+                      Procurement Unit<span className="text-danger">*</span>
+                    </label>
                     <div title="Select the Secondary UOM">
                       <Select
                         id="SUOM"
@@ -1056,11 +1029,8 @@ function ItemInput({ }) {
                         ref={seceondoryuom}
                         onKeyDown={(e) => handleKeyDown(e, shortname, seceondoryuom)}
                       />
-                      {error && !Item_SecondaryUOM && <div className="text-danger">Secondary UOM should not be blank</div>}
-
                     </div>
                   </div>
-
                 </div>
 
                 <div className="col-md-3 form-group mb-2">
@@ -1079,17 +1049,15 @@ function ItemInput({ }) {
                       ref={weigh}
                       onKeyDown={(e) => handleKeyDown(e, baseuom, weigh)}
                     />
-
                   </div>
                 </div>
-
-
 
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
                     <label for="Iwotax" class="exp-form-labels">
                       Without Tax
-                    </label><input
+                    </label>
+                    <input
                       id="Iwotax"
                       class="exp-input-field form-control"
                       type="Number"
@@ -1101,14 +1069,15 @@ function ItemInput({ }) {
                       ref={withouttax}
                       onKeyDown={(e) => handleKeyDown(e, withtax, withouttax)}
                     />
-
                   </div>
                 </div>
+
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
                     <label for="Iwtax" class="exp-form-labels">
                       With Tax
-                    </label><input
+                    </label>
+                    <input
                       id="Iwtax"
                       class="exp-input-field form-control"
                       type="Number"
@@ -1120,26 +1089,15 @@ function ItemInput({ }) {
                       ref={withtax}
                       onKeyDown={(e) => handleKeyDown(e, purchaseprice, withtax)}
                     />
-
                   </div>
                 </div>
 
-
-
                 <div className="col-md-3 form-group mb-2">
-
                   <div class="exp-form-floating">
-                    <div class="d-flex justify-content-start">
-                      <div>
-                        <label for="state" class="exp-form-labels">
-                          Purchase Price
-
-                        </label>
-                      </div>
-                      <div>
-                        <span className="text-danger">*</span>
-                      </div>
-                    </div><input
+                    <label for="state" className={`exp-form-labels ${error && !Item_std_purch_price ? 'text-danger' : ''}`}>
+                      Purchase Price<span className="text-danger">*</span>
+                    </label>
+                    <input
                       id="Ipprice"
                       class="exp-input-field form-control"
                       type="number"
@@ -1151,24 +1109,15 @@ function ItemInput({ }) {
                       ref={purchaseprice}
                       onKeyDown={(e) => handleKeyDown(e, salesprice, purchaseprice)}
                     />
-                    {error && !Item_std_purch_price && <div className="text-danger">Purchase Price should not be blank</div>}
-
                   </div>
                 </div>
 
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
-                    <div class="d-flex justify-content-start">
-                      <div>
-                        <label for="state" class="exp-form-labels">
-                          Sales Price
-
-                        </label>
-                      </div>
-                      <div>
-                        <span className="text-danger">*</span>
-                      </div>
-                    </div><input
+                    <label for="state" className={`exp-form-labels ${error && !Item_std_sales_price ? 'text-danger' : ''}`}>
+                      Sales Price<span className="text-danger">*</span>
+                    </label>
+                    <input
                       id="Isprice"
                       class="exp-input-field form-control"
                       type="number"
@@ -1179,24 +1128,16 @@ function ItemInput({ }) {
                       maxLength={20}
                       ref={salesprice}
                       onKeyDown={(e) => handleKeyDown(e, MrpPrice, salesprice)}
-                    />            {error && !Item_std_sales_price && <div className="text-danger">Sales Price should not be blank</div>}
-
-
+                    />
                   </div>
                 </div>
+
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
-                    <div class="d-flex justify-content-start">
-                      <div>
-                        <label for="state" class="exp-form-labels">
-                          MRP Price
-
-                        </label>
-                      </div>
-                      <div>
-                        <span className="text-danger">*</span>
-                      </div>
-                    </div><input
+                    <label for="state" className={`exp-form-labels ${error && !MRPprice ? 'text-danger' : ''}`}>
+                      MRP Price<span className="text-danger">*</span>
+                    </label>
+                    <input
                       id="Isprice"
                       class="exp-input-field form-control"
                       type="number"
@@ -1207,23 +1148,16 @@ function ItemInput({ }) {
                       maxLength={20}
                       ref={MrpPrice}
                       onKeyDown={(e) => handleKeyDown(e, discount, MrpPrice)}
-                    />{error && !MRPprice && <div className="text-danger">MRP Price should not be blank</div>}
-
-
+                    />
                   </div>
                 </div>
 
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
-                    <div class="d-flex justify-content-start">
-                      <div>
-                        <label for="state" class="exp-form-labels">
-                          Discount %
-
-                        </label>
-                      </div>
-
-                    </div><input
+                    <label for="state" class="exp-form-labels">
+                      Discount %
+                    </label>
+                    <input
                       id="Disc%"
                       class="exp-input-field form-control"
                       type="number"
@@ -1235,53 +1169,35 @@ function ItemInput({ }) {
                       ref={discount}
                       onKeyDown={(e) => handleKeyDown(e, Lpurchasetaxtype, discount)}
                     />
-
-
                   </div>
                 </div>
 
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
-                    <div class="d-flex justify-content-start">
-                      <div>
-                        <label for="state" class="exp-form-labels">
-                          Local Purchase Tax Type
-
-                        </label>
-                      </div>
-                      <div>
-                        <span className="text-danger">*</span>
-                      </div>
-                    </div>
-                    <div title="Select the Local Purchase Tax Type ">  <Select
-                      id="SUOM"
-                      value={selectedpurtax}
-                      onChange={handleChangepurtax}
-                      options={filteredOptiontaxitempur}
-                      className="exp-input-field"
-                      placeholder=""
-                      maxLength={18}
-                      ref={Lpurchasetaxtype}
-                      onKeyDown={(e) => handleKeyDown(e, Opurchasetaxtype, Lpurchasetaxtype)}
-                    />
-                      {error && !Item_purch_tax_type && <div className="text-danger">Purchase Tax Type should not be blank</div>}
+                    <label for="state" className={`exp-form-labels ${error && !Item_purch_tax_type ? 'text-danger' : ''}`}>
+                      Local Purchase Tax Type<span className="text-danger">*</span>
+                    </label>
+                    <div title="Select the Local Purchase Tax Type ">
+                      <Select
+                        id="SUOM"
+                        value={selectedpurtax}
+                        onChange={handleChangepurtax}
+                        options={filteredOptiontaxitempur}
+                        className="exp-input-field"
+                        placeholder=""
+                        maxLength={18}
+                        ref={Lpurchasetaxtype}
+                        onKeyDown={(e) => handleKeyDown(e, Opurchasetaxtype, Lpurchasetaxtype)}
+                      />
                     </div>
                   </div>
                 </div>
 
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
-                    <div class="d-flex justify-content-start">
-                      <div>
-                        <label for="state" class="exp-form-labels">
-                          Other Purchase Tax Type
-
-                        </label>
-                      </div>
-                      <div>
-                        <span className="text-danger">*</span>
-                      </div>
-                    </div>
+                    <label for="state" className={`exp-form-labels ${error && !Item_purch_othertax_type ? 'text-danger' : ''}`}>
+                      Other Purchase Tax Type<span className="text-danger">*</span>
+                    </label>
                     <div title="Select the Other Purchase Tax Type ">
                       <Select
                         id="SUOM"
@@ -1294,25 +1210,15 @@ function ItemInput({ }) {
                         ref={Opurchasetaxtype}
                         onKeyDown={(e) => handleKeyDown(e, Lsalestaxtype, Opurchasetaxtype)}
                       />
-                      {error && !Item_purch_othertax_type && <div className="text-danger">Purchase Tax Type should not be blank</div>}
-
                     </div>
                   </div>
                 </div>
 
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
-                    <div class="d-flex justify-content-start">
-                      <div>
-                        <label for="state" class="exp-form-labels">
-                          Local Sales Tax Type
-
-                        </label>
-                      </div>
-                      <div>
-                        <span className="text-danger">*</span>
-                      </div>
-                    </div>
+                    <label for="state" className={`exp-form-labels ${error && !Item_sales_tax_type ? 'text-danger' : ''}`}>
+                      Local Sales Tax Type<span className="text-danger">*</span>
+                    </label>
                     <div title="Select the Local Sales Tax Type ">
                       <Select
                         id="SUOM"
@@ -1324,27 +1230,17 @@ function ItemInput({ }) {
                         maxLength={18}
                         ref={Lsalestaxtype}
                         onKeyDown={(e) => handleKeyDown(e, Osalestaxtype, Lsalestaxtype)}
-                      /> {error && !Item_sales_tax_type && <div className="text-danger">Sales Tax Type should not be blank</div>}
-
-
+                      />
                     </div>
                   </div>
                 </div>
+
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
-                    <div class="d-flex justify-content-start">
-                      <div>
-                        <label for="state" class="exp-form-labels">
-                          Other Sales Tax Type
-
-                        </label>
-                      </div>
-                      <div>
-                        <span className="text-danger">*</span>
-                      </div>
-                    </div>
+                    <label for="state" className={`exp-form-labels ${error && !Item_sales_Othertax_type ? 'text-danger' : ''}`}>
+                      Other Sales Tax Type<span className="text-danger">*</span>
+                    </label>
                     <div title="Select the Other Sales Tax Type ">
-
                       <Select
                         id="SUOM"
                         value={selectedsaltax}
@@ -1355,9 +1251,7 @@ function ItemInput({ }) {
                         maxLength={18}
                         ref={Osalestaxtype}
                         onKeyDown={(e) => handleKeyDown(e, stockcode, Osalestaxtype)}
-                      />         {error && !Item_sales_Othertax_type && <div className="text-danger">Sales Tax Type should not be blank</div>}
-
-
+                      />
                     </div>
                   </div>
                 </div>
@@ -1366,7 +1260,8 @@ function ItemInput({ }) {
                   <div class="exp-form-floating">
                     <label for="Istcode" class="exp-form-labels">
                       Stock Code
-                    </label> <input
+                    </label>
+                    <input
                       id="Istcode"
                       class="exp-input-field form-control"
                       type="text"
@@ -1378,23 +1273,15 @@ function ItemInput({ }) {
                       ref={stockcode}
                       onKeyDown={(e) => handleKeyDown(e, stocktype, stockcode)}
                     />
-
                   </div>
                 </div>
 
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
-                    <div class="d-flex justify-content-start">
-                      <div>
-                        <label for="state" class="exp-form-labels">
-                          Stock type
-
-                        </label>
-                      </div>
-                      <div>
-                        {/* <span className="text-danger">*</span> */}
-                      </div>
-                    </div><input
+                    <label for="state" class="exp-form-labels">
+                      Stock type
+                    </label>
+                    <input
                       id="Isttype"
                       class="exp-input-field form-control"
                       type="text"
@@ -1406,24 +1293,15 @@ function ItemInput({ }) {
                       ref={stocktype}
                       onKeyDown={(e) => handleKeyDown(e, HSNcode, stocktype)}
                     />
-                    {/* {error && !Item_stock_type && <div className="text-danger">Stock Type should not be blank</div>} */}
-
                   </div>
                 </div>
 
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
-                    <div class="d-flex justify-content-start">
-                      <div>
-                        <label for="state" class="exp-form-labels">
-                          HSN Code
-
-                        </label>
-                      </div>
-                      <div>
-                        <span className="text-danger">*</span>
-                      </div>
-                    </div><input
+                    <label for="state" className={`exp-form-labels ${error && !hsn ? 'text-danger' : ''}`}>
+                      HSN Code<span className="text-danger">*</span>
+                    </label>
+                    <input
                       id="Ihsn"
                       class="exp-input-field form-control"
                       type="text"
@@ -1434,27 +1312,16 @@ function ItemInput({ }) {
                       maxLength={6}
                       ref={HSNcode}
                       onKeyDown={(e) => handleKeyDown(e, regbrand, HSNcode)}
-                    />            {error && !hsn && <div className="text-danger">HSN Code should not be blank</div>}
-
-
+                    />
                   </div>
                 </div>
 
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
-                    <div class="d-flex justify-content-start">
-                      <div>
-                        <label for="state" class="exp-form-labels">
-                          Register Brand
-
-                        </label>
-                      </div>
-                      <div>
-                        <span className="text-danger">*</span>
-                      </div>
-                    </div>
+                    <label for="state" className={`exp-form-labels ${error && !Item_Register_Brand ? 'text-danger' : ''}`}>
+                      Register Brand<span className="text-danger">*</span>
+                    </label>
                     <div title="Select the Register Brand ">
-
                       <Select
                         id="regbrand"
                         value={selectedRegister}
@@ -1466,30 +1333,16 @@ function ItemInput({ }) {
                         ref={regbrand}
                         onKeyDown={(e) => handleKeyDown(e, ourbrand, regbrand)}
                       />
-                      {error && !status && <div className="text-danger">Register Brand should not be blank</div>}
-
-
                     </div>
                   </div>
                 </div>
 
-
-
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
-                    <div class="d-flex justify-content-start">
-                      <div>
-                        <label for="state" class="exp-form-labels">
-                          Our Brand
-
-                        </label>
-                      </div>
-                      <div>
-                        <span className="text-danger">*</span>
-                      </div>
-                    </div>
+                    <label for="state" className={`exp-form-labels ${error && !Item_Our_Brand ? 'text-danger' : ''}`}>
+                      Our Brand<span className="text-danger">*</span>
+                    </label>
                     <div title="Select the Our Brand ">
-
                       <Select
                         id="ahsts"
                         value={selectedBrand}
@@ -1501,27 +1354,16 @@ function ItemInput({ }) {
                         ref={ourbrand}
                         onKeyDown={(e) => handleKeyDown(e, Status, ourbrand)}
                       />
-                      {error && !status && <div className="text-danger">Our Brand should not be blank</div>}
-
-
                     </div>
                   </div>
                 </div>
+
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
-
-                    <div>
-                      <label for="state" class="exp-form-labels">
-                        Status <div>
-                          <span className="text-danger">*</span>
-                        </div>
-
-                      </label>
-
-
-                    </div>
+                    <label for="state" className={`exp-form-labels ${error && !status ? 'text-danger' : ''}`}>
+                      Status<span className="text-danger">*</span>
+                    </label>
                     <div title="Select the Our Brand ">
-
                       <Select
                         id="ahsts"
                         value={selectedStatus}
@@ -1533,17 +1375,14 @@ function ItemInput({ }) {
                         ref={Status}
                         onKeyDown={(e) => handleKeyDown(e, img, Status)}
                       />
-                      {error && !status && <div className="text-danger">Status should not be blank</div>}
-
-
                     </div>
                   </div>
                 </div>
+
                 <div className="col-md-3 form-group mb-2 ">
                   <div class="exp-form-floating">
                     <label for="locno" class="exp-form-labels">
                       Image
-
                     </label>
                     <input type="file"
                       class="exp-input-field form-control"
@@ -1554,6 +1393,7 @@ function ItemInput({ }) {
                     />
                   </div>
                 </div>
+
                 {selectedImage && (
                   <div className="col-md-3 form-group mb-2">
                     <div class="exp-form-floating">
@@ -1562,109 +1402,104 @@ function ItemInput({ }) {
                         alt="Selected Preview"
                         className="avatar rounded sm mt-4"
                         style={{ height: '200px', width: '200px' }}
-                      /></div></div>
+                      />
+                    </div>
+                  </div>
                 )}
+
                 <div className="col-md-3 form-group mb-2">
-                  <div class="exp-form-floating">
-                    <div class="d-flex justify-content-start">
-                      <div>
-                        <label for="state" class="exp-form-labels">
-                          Barcode
-                        </label>
-                      </div>
-                      <div>
-                        {/* <span className="text-danger">*</span> */}
-                      </div>
-                    </div><input
+                  <div className="exp-form-floating">
+                    <label htmlFor="barcode" className="exp-form-labels">
+                      Barcode
+                    </label>
+
+                    <input
                       id="barcode"
-                      class="exp-input-field form-control"
+                      className="exp-input-field form-control"
                       type="text"
-                      placeholder=""
-                      required title="Please enter the barcode value"
                       value={barcode}
                       onChange={handleInputChange}
                       maxLength={18}
+                      placeholder=""
+                      required
                       ref={barCode}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
-                          if (mode === "create") {
-                            handleInsert();
-                          } else {
-                            handleUpdate();
-                          }
-                        }
-                      }}
+                      onKeyDown={(e) => handleKeyDown(e, StandardCost, barCode)}
+                      title="Please enter the barcode value"
                     />
-
-
                   </div>
                 </div>
-                <div className="col-md-3 form-group mb-2" >
-                  <div class="exp-form-floating">
 
-
-
-
-
-
-                    <div ref={componentRef} style={{ marginTop: '20px', overflowX: "auto" }}>
-                      {barcodeValue && <Barcode value={Item_code} displayValue={false} height={20} />}
-                    </div></div>
-                </div>
-
-
-                {/* <div className="col-md-3 form-group  mb-2">
-            {mode === "create" ? (
-                <div class="exp-form-floating">
-                  <div class="d-flex justify-content-start">
-                    <div>
-                      <label for="state" class="exp-form-labels">
-                        Created By
-                      </label>
+                {barcode?.trim() !== "" && (
+                  <div className="col-md-3 form-group mb-2">
+                    <div className="exp-form-floating">
+                      <div
+                        ref={componentRef}
+                        style={{ marginTop: "20px", overflowX: "auto" }}
+                      >
+                        <Barcode
+                          value={barcode}
+                          displayValue={true}
+                          height={40}
+                          width={1.5}
+                        />
+                      </div>
                     </div>
                   </div>
-                  <input
-                    id="emailid"
-                    class="exp-input-field form-control"
-                    type="text"
-                    placeholder=""
-                    required
-                    title="Please enter the email ID"
-                    value={created_by}
-                  />
-                </div>
-                ) : (
-            <div class="exp-form-floating">
-                  <div class="d-flex justify-content-start">
-                    <div>
-                      <label for="state" class="exp-form-labels">
-                        Modified By
-                      </label>
-                    </div>
-                  </div>
-                  <input
-                    id="emailid"
-                    class="exp-input-field form-control"
-                    type="text"
-                    placeholder=""
-                    required
-                    title="Please enter the email ID"
-                    value={modified_by}
-                  />
-                </div>
                 )}
 
-          </div> */}
+                <div className="col-md-3 form-group mb-2">
+                  <div class="exp-form-floating">
+                    <label for="state" className={`exp-form-labels ${error && !standardCost ? 'text-danger' : ''}`}>
+                      Standard Cost<span className="text-danger">*</span>
+                    </label>
+                    <input
+                      id="Ihsn"
+                      class="exp-input-field form-control"
+                      type="text"
+                      placeholder=""
+                      required title="Please enter the HSN code"
+                      value={standardCost}
+                      onChange={handleStandardCostChange}
+                      maxLength={6}
+                      ref={StandardCost}
+                      onKeyDown={(e) => handleKeyDown(e, CostingMethod, StandardCost)}
+                    />
+                  </div>
+                </div>
 
-
-
+                <div className="col-md-3 form-group mb-2">
+                  <div class="exp-form-floating">
+                    <label for="state" className={`exp-form-labels ${error && !costingMethod ? 'text-danger' : ''}`}>
+                      Costing Methods<span className="text-danger">*</span>
+                    </label>
+                    <div title="Select the Register Brand ">
+                      <Select
+                        id="regbrand"
+                        value={selectedCostingMethod}
+                        onChange={handleChangeCostingMethod}
+                        options={filteredOptionCostingMethod}
+                        className="exp-input-field"
+                        placeholder=""
+                        maxLength={30}
+                        ref={CostingMethod}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') {
+                            if (mode === "create") {
+                              handleInsert();
+                            } else {
+                              handleUpdate();
+                            }
+                          }
+                        }}
+                      />
+                    </div>
+                  </div>
+                </div>
 
                 <div class="col-md-3 form-group">
                   <div class="d-flex justify-content-start ">
 
                     {mode === "create" ? (
-
-
                       <button onClick={handleInsert} className="mt-4" title="Save">
                         <i class="fa-solid fa-floppy-disk"></i>
                       </button>
@@ -1685,16 +1520,11 @@ function ItemInput({ }) {
                       </button>
 
                     </div>
-
-                  </div></div>
-
-
-
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-
-
         </div>
       </div>
     </div>

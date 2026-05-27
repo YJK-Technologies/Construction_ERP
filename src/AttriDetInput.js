@@ -22,53 +22,49 @@ function AttriDetInput({ }) {
   const [selectedRows, setSelectedRows] = useState([]);
   const [selectedHeader, setSelectedHeader] = useState('Cash');
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState(false);
   const code = useRef(null);
   const subcode = useRef(null);
   const detailname = useRef(null);
   const description = useRef(null);
   const [hasValueChanged, setHasValueChanged] = useState(false);
   const created_by = sessionStorage.getItem('selectedUserCode')
-
-
-
-
-  console.log(selectedRows);
   const modified_by = sessionStorage.getItem("selectedUserCode");
 
   const location = useLocation();
   const { mode, selectedRow } = location.state || {};
-  const [isUpdated, setIsUpdated] = useState(false);
-
-
-  console.log(selectedRow)
 
   const clearInputFields = () => {
     setSelectedHeader("");
+    setAttributeheader_Code("");
     setAttributedetails_code("");
     setAttributedetails_name("");
     setDescriptions("");
   };
 
   useEffect(() => {
-    if (mode === "update" && selectedRow && !isUpdated) {
+    if (mode === "update" && selectedRow) {
       setSelectedHeader({
         label: selectedRow.attributeheader_code,
         value: selectedRow.attributeheader_code,
       });
-    setAttributeheader_Code(selectedRow.attributeheader_code || "");
-    setAttributedetails_code(selectedRow.attributedetails_code || "");
-    setAttributedetails_name(selectedRow.attributedetails_name || "");
-    setDescriptions(selectedRow.descriptions || "");
+      setAttributeheader_Code(selectedRow.attributeheader_code || "");
+      setAttributedetails_code(selectedRow.attributedetails_code || "");
+      setAttributedetails_name(selectedRow.attributedetails_name || "");
+      setDescriptions(selectedRow.descriptions || "");
     } else if (mode === "create") {
       clearInputFields();
     }
-  }, [mode, selectedRow, isUpdated]);
+  }, [mode, selectedRow]);
 
-  useEffect(() => {
+  const fetchHdrCode = () => {
     fetch(`${config.apiBaseUrl}/hdrcode`)
       .then((data) => data.json())
       .then((val) => setCodedrop(val));
+  };
+
+  useEffect(() => {
+    fetchHdrCode();
   }, []);
 
   const filteredOptionHeader = statusdrop.map((option) => ({
@@ -83,10 +79,11 @@ function AttriDetInput({ }) {
 
   const handleInsert = async () => {
     if (!attributeheader_code || !attributedetails_code || !attributedetails_name) {
-          setError(" ");
-          toast.warning("Missing Required Fields");
-          return;
-        }
+      setError(true);
+      toast.warning("Missing Required Fields");
+      return;
+    }
+    setError(false);
     setLoading(true);
 
     try {
@@ -105,26 +102,17 @@ function AttriDetInput({ }) {
         }),
       });
       if (response.ok) {
-                   toast.success("Data inserted Successfully", {
-                     onClose: () => clearInputFields()
-                   });
-      } else if (response.status === 400) {
-        const errorResponse = await response.json();
-        console.error(errorResponse.message);
-        toast.warning(errorResponse.message, {
-
+        toast.success("Data inserted Successfully", {
+          onClose: () => clearInputFields()
         });
       } else {
-        console.error("Failed to insert data");
-        toast.error('Failed to insert data', {
-
-        });
+        const errorResponse = await response.json();
+        console.error(errorResponse.message);
+        toast.warning(errorResponse.message);
       }
     } catch (error) {
       console.error("Error inserting data:", error);
-      toast.error('Error inserting data: ' + error.message, {
-
-      });
+      toast.error('Error inserting data: ' + error.message);
     }
     finally {
       setLoading(false);
@@ -132,42 +120,34 @@ function AttriDetInput({ }) {
   };
 
   const handleNavigateToForm = () => {
-    navigate("/AddAttributeHeader", { selectedRows }); // Pass selectedRows as props to the Input component
+    navigate("/AddAttributeHeader", { selectedRows });
   };
+
   const handleNavigate = () => {
-    navigate("/Attribute"); // Pass selectedRows as props to the Input component
+    navigate("/Attribute");
   };
 
   const handleKeyDown = async (e, nextFieldRef, value, hasValueChanged, setHasValueChanged) => {
     if (e.key === 'Enter') {
-      // Check if the value has changed and handle the search logic
       if (hasValueChanged) {
-        await handleKeyDownStatus(e); // Trigger the search function
-        setHasValueChanged(false); // Reset the flag after the search
+        setHasValueChanged(false);
       }
 
-      // Move to the next field if the current field has a valid value
       if (value) {
         nextFieldRef.current.focus();
       } else {
-        e.preventDefault(); // Prevent moving to the next field if the value is empty
+        e.preventDefault();
       }
-    }
-  };
-
-  const handleKeyDownStatus = async (e) => {
-    if (e.key === 'Enter' && hasValueChanged) { // Only trigger search if the value has changed
-      // Trigger the search function
-      setHasValueChanged(false); // Reset the flag after search
     }
   };
 
   const handleClickOpen = (params) => {
     setOpen2(true);
-    console.log("Opening popup...");
   };
+
   const handleClose = () => {
     setOpen2(false);
+    fetchHdrCode();
   };
 
   const handleUpdate = async () => {
@@ -176,14 +156,13 @@ function AttriDetInput({ }) {
       !attributedetails_code ||
       !attributedetails_name ||
       !descriptions
-
     ) {
-       setError(" ");
-       toast.warning("Missing Required Fields");
-       return;
-        }
+      setError(true);
+      toast.warning("Missing Required Fields");
+      return;
+    }
+    setError(false);
     setLoading(true);
-
 
     try {
       const response = await fetch(`${config.apiBaseUrl}/AttributeUpdate`, {
@@ -201,16 +180,13 @@ function AttriDetInput({ }) {
         }),
       });
       if (response.ok) {
-                   toast.success("Data updated successfully", {
-                     onClose: () => clearInputFields()
-                   });
-      } else if (response.status === 400) {
+        toast.success("Data updated successfully", {
+          onClose: () => clearInputFields()
+        });
+      } else {
         const errorResponse = await response.json();
         console.error(errorResponse.message);
         toast.warning(errorResponse.message);
-      } else {
-        console.error("Failed to insert data");
-        toast.error("Failed to insert data");
       }
     } catch (error) {
       console.error("Error Update data:", error);
@@ -220,9 +196,6 @@ function AttriDetInput({ }) {
       setLoading(false);
     }
   };
-
-
-
 
   return (
     <div class="container-fluid Topnav-screen ">
@@ -255,15 +228,10 @@ function AttriDetInput({ }) {
                 <div class="row">
                   <div className="col-md-3 form-group">
                     <div class="exp-form-floating">
-                      <div class="d-flex justify-content-start">
-                        <div>
-                          <label for="rid" class="exp-form-labels">
-                            Code
-                          </label></div>
-                        <div> <span className="text-danger">*</span></div>
-                      </div>
+                      <label for="rid" className={`exp-form-labels ${error && !attributeheader_code ? 'text-danger' : ''}`}>
+                        Code<span className="text-danger">*</span>
+                      </label>
                       <div className="d-flex justify-content-between input-group" title="Select the Code">
-                       
                         <Select
                           id="HdrCode"
                           value={selectedHeader}
@@ -277,24 +245,16 @@ function AttriDetInput({ }) {
                           onKeyDown={(e) => handleKeyDown(e, subcode, code)}
                         />
                         {mode !== "update" && (<button onClick={handleClickOpen} class="atthdrcode position-absolute me-5 pb-2 " required title="Add Header"><i class="fa-solid fa-plus"></i></button>)}
-
                       </div>
-
-                      {error && !attributeheader_code && <div className="text-danger">Attribute Header Code should not be blank</div>}
-
-
                     </div>
                   </div>
 
                   <div className="col-md-3 form-group">
                     <div class="exp-form-floating">
-
-                      <div class="d-flex justify-content-start">
-                        <div><label for="rid" class="exp-form-labels">
-                          subcode
-                        </label></div>
-                        <div> <span className="text-danger">*</span></div>
-                      </div><input
+                      <label for="rid" className={`exp-form-labels ${error && !attributedetails_code ? 'text-danger' : ''}`}>
+                        Sub Code<span className="text-danger">*</span>
+                      </label>
+                      <input
                         id="adcode"
                         class="exp-input-field form-control"
                         type="text"
@@ -306,20 +266,15 @@ function AttriDetInput({ }) {
                         ref={subcode}
                         readOnly={mode === "update"}
                         onKeyDown={(e) => handleKeyDown(e, detailname, subcode)}
-                      /> {error && !attributedetails_code && <div className="text-danger">Attribute Sub Code should not be blank</div>}
-
-
+                      />
                     </div>
                   </div>
                   <div className="col-md-3 form-group">
                     <div class="exp-form-floating">
-
-                      <div class="d-flex justify-content-start">
-                        <div><label for="rid" class="exp-form-labels">
-                          Detail Name
-                        </label></div>
-                        <div> <span className="text-danger">*</span></div>
-                      </div><input
+                      <label for="rid" className={`exp-form-labels ${error && !attributedetails_name ? 'text-danger' : ''}`}>
+                        Detail Name<span className="text-danger">*</span>
+                      </label>
+                      <input
                         id="adnames"
                         class="exp-input-field form-control"
                         type="text"
@@ -330,20 +285,16 @@ function AttriDetInput({ }) {
                         maxLength={250}
                         ref={detailname}
                         onKeyDown={(e) => handleKeyDown(e, description, detailname)}
-                      />{error && !attributedetails_name && <div className="text-danger">Attribute Detail Name should not be blank</div>}
-
-
+                      />
                     </div>
                   </div>
 
                   <div className="col-md-3 form-group">
                     <div class="exp-form-floating">
-
-                      <div class="d-flex justify-content-start">
-                        <div><label for="rid" class="exp-form-labels">
-                          Description
-                        </label></div>
-                      </div><input
+                      <label for="rid" class="exp-form-labels">
+                        Description
+                      </label>
+                      <input
                         id="addesc"
                         class="exp-input-field form-control"
                         type="text"
@@ -353,7 +304,6 @@ function AttriDetInput({ }) {
                         onChange={(e) => setDescriptions(e.target.value)}
                         maxLength={250}
                         ref={description}
-                        // onKeyDown={(e) => handleKeyDown(e, description)}
                         onKeyDown={(e) => {
                           if (e.key === 'Enter') {
                             if (mode === "create") {
@@ -364,49 +314,8 @@ function AttriDetInput({ }) {
                           }
                         }}
                       />
-
                     </div>
                   </div>
-                  {/* <div className="col-md-3 form-group  mb-2">
-            {mode === "create" ? (
-            <div class="exp-form-floating">
-            <div class="d-flex justify-content-start">
-                <div>
-                   <label for="state" class="exp-form-labels">
-                 Created By 
-                  
-                </label>
-                </div> 
-                </div><input
-                id="emailid"
-                class="exp-input-field form-control"
-                type="text"
-                placeholder=""
-                required title="Please enter the email ID"
-                value={created_by}
-              />  
-            </div>
-             ) : (
-              <div class="exp-form-floating">
-                <div class="d-flex justify-content-start">
-                  <div>
-                    <label for="state" class="exp-form-labels">
-                      Modified By
-                    </label>
-                  </div>
-                </div>
-                <input
-                  id="emailid"
-                  class="exp-input-field form-control"
-                  type="text"
-                  placeholder=""
-                  required
-                  title="Please enter the email ID"
-                  value={modified_by}
-                />
-              </div>
-              )}
-          </div>  */}
                   <div class="col-md-3 form-group d-flex justify-content-start mb-4">
                     {mode === "create" ? (
                       <button onClick={handleInsert} className="mt-4" title="Save">
