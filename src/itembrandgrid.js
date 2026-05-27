@@ -38,19 +38,25 @@ function ItemBrandGrid() {
   const [selectedStatus, setSelectedStatus] = useState('');
   const [statusgriddrop, setStatusGriddrop] = useState([]);
   const [brandgriddrop, setBrandGriddrop] = useState([]);
-   const [Dropbaseuom, setDropbaseuom] = useState([]);
+  const [Dropbaseuom, setDropbaseuom] = useState([]);
   const [dropsecondryuom, setdropsecondryuom] = useState([]);
   const [Regbrand, setRegbrand] = useState([]);
   const [ourbranddrop, setourbranddrop] = useState([]);
   const [selectedItemCode, setSelectedItemCode] = useState(null);
   const [selectedItemImage, setSelectedItemIamge] = useState(null);
-  const [loading, setLoading] = useState(false);    
+  const [loading, setLoading] = useState(false);
   const [createdBy, setCreatedBy] = useState("");
   const [modifiedBy, setModifiedBy] = useState("");
   const [createdDate, setCreatedDate] = useState("");
   const [modifiedDate, setModifiedDate] = useState("");
 
   const [open, setOpen] = React.useState(false);
+
+  const [costingMethodDrop, setCostingMethodDrop] = useState([]);
+  const [costingMethodDropGrid, setCostingMethodDropGrid] = useState([]);
+  const [selectedCostingMethod, setSelectedCostingMethod] = useState("");
+  const [costingMethod, setCostingMethod] = useState("");
+  const [standardCost, setStandardCost] = useState("");
 
   const handleClose = () => {
     setOpen(false);
@@ -71,16 +77,16 @@ function ItemBrandGrid() {
     .filter(permission => permission.screen_type === 'Item')
     .map(permission => permission.permission_type.toLowerCase());
 
- useEffect(() => {
+  useEffect(() => {
     const company_code = sessionStorage.getItem('selectedCompanyCode');
-    
+
     fetch(`${config.apiBaseUrl}/uom`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ company_code })
-    })      .then((response) => response.json())
+    }).then((response) => response.json())
       .then((data) => {
         // Extract city names from the fetched data
         const UOMOption = data.map(option => option.attributedetails_name);
@@ -89,16 +95,16 @@ function ItemBrandGrid() {
       .catch((error) => console.error('Error fetching data:', error));
   }, []);
 
-   useEffect(() => {
+  useEffect(() => {
     const company_code = sessionStorage.getItem('selectedCompanyCode');
-    
+
     fetch(`${config.apiBaseUrl}/uom`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ company_code })
-    })      .then((response) => response.json())
+    }).then((response) => response.json())
       .then((data) => {
         // Extract city names from the fetched data
         const UOMOption = data.map(option => option.attributedetails_name);
@@ -109,7 +115,24 @@ function ItemBrandGrid() {
 
   useEffect(() => {
     const company_code = sessionStorage.getItem('selectedCompanyCode');
-    
+
+    fetch(`${config.apiBaseUrl}/getCostingMethods`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ company_code })
+    }).then((response) => response.json())
+      .then((data) => {
+        const CostingMethods = data.map(option => option.attributedetails_name);
+        setCostingMethodDropGrid(CostingMethods);
+      })
+      .catch((error) => console.error('Error fetching data:', error));
+  }, []);
+
+  useEffect(() => {
+    const company_code = sessionStorage.getItem('selectedCompanyCode');
+
     fetch(`${config.apiBaseUrl}/ourbrand`, {
       method: 'POST',
       headers: {
@@ -122,16 +145,16 @@ function ItemBrandGrid() {
       .catch((error) => console.error('Error fetching data:', error));
   }, []);
 
- useEffect(() => {
+  useEffect(() => {
     const company_code = sessionStorage.getItem('selectedCompanyCode');
-    
+
     fetch(`${config.apiBaseUrl}/regbrand`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ company_code })
-    })      .then((response) => response.json())
+    }).then((response) => response.json())
       .then((data) => {
         // Extract city names from the fetched data
         const Regoption = data.map(option => option.attributedetails_name);
@@ -142,14 +165,14 @@ function ItemBrandGrid() {
 
   useEffect(() => {
     const company_code = sessionStorage.getItem('selectedCompanyCode');
-    
+
     fetch(`${config.apiBaseUrl}/status`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ company_code })
-    })      .then((response) => response.json())
+    }).then((response) => response.json())
       .then((data) => {
         // Extract city names from the fetched data
         const statusOption = data.map(option => option.attributedetails_name);
@@ -160,14 +183,14 @@ function ItemBrandGrid() {
 
   useEffect(() => {
     const company_code = sessionStorage.getItem('selectedCompanyCode');
-    
+
     fetch(`${config.apiBaseUrl}/ourbrand`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ company_code })
-    })      .then((response) => response.json())
+    }).then((response) => response.json())
       .then((data) => {
         // Extract city names from the fetched data
         const brandOption = data.map(option => option.attributedetails_name);
@@ -176,11 +199,24 @@ function ItemBrandGrid() {
       .catch((error) => console.error('Error fetching data:', error));
   }, []);
 
+  useEffect(() => {
+    const company_code = sessionStorage.getItem('selectedCompanyCode');
 
+    fetch(`${config.apiBaseUrl}/getCostingMethods`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ company_code })
+    })
+      .then((data) => data.json())
+      .then((val) => setCostingMethodDrop(val))
+      .catch((error) => console.error('Error fetching data:', error));
+  }, []);
 
   useEffect(() => {
     const company_code = sessionStorage.getItem('selectedCompanyCode');
-    
+
     fetch(`${config.apiBaseUrl}/status`, {
       method: 'POST',
       headers: {
@@ -193,7 +229,10 @@ function ItemBrandGrid() {
       .catch((error) => console.error('Error fetching data:', error));
   }, []);
 
-
+  const filteredOptionCostingMethod = costingMethodDrop.map((option) => ({
+    value: option.attributedetails_name,
+    label: option.attributedetails_name,
+  }));
 
   const filteredOptionBrand = ourbranddrop.map((option) => ({
     value: option.attributedetails_name,
@@ -217,6 +256,12 @@ function ItemBrandGrid() {
     setstatus(selectedStatus ? selectedStatus.value : '');
   };
 
+  const handleChangeCostingMethod = (selectedCostingMethod) => {
+    setSelectedCostingMethod(selectedCostingMethod);
+    setCostingMethod(selectedCostingMethod ? selectedCostingMethod.value : '');
+  };
+
+
   const reloadGridData = () => {
     window.location.reload();
   };
@@ -230,7 +275,17 @@ function ItemBrandGrid() {
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({ company_code, Item_code, Item_name, Item_variant, Item_short_name, Item_Our_Brand, status }) // Send company_no and company_name as search criteria
+        body: JSON.stringify({ 
+          company_code, 
+          Item_code, 
+          Item_name, 
+          Item_variant, 
+          Item_short_name, 
+          Item_Our_Brand, 
+          status,
+          standard_cost : standardCost ? standardCost: 0,
+          costing_methods : costingMethod
+         }) 
       });
       if (response.ok) {
         const searchData = await response.json();
@@ -247,7 +302,7 @@ function ItemBrandGrid() {
     } catch (error) {
       console.error("Error saving data:", error);
       toast.error("Error updating data: " + error.message);
-    }finally {
+    } finally {
       setLoading(false);
     }
 
@@ -265,8 +320,6 @@ function ItemBrandGrid() {
   };
 
   const columnDefs = [
-
-
     {
       headerCheckboxSelection: true,
       checkboxSelection: true,
@@ -274,8 +327,6 @@ function ItemBrandGrid() {
       field: "Item_code",
       //editable: true,
       cellStyle: { textAlign: "center" },
-      // minWidth: 250,
-      // maxWidth: 250,
       cellEditorParams: {
         maxLength: 18,
       },
@@ -397,7 +448,7 @@ function ItemBrandGrid() {
       editable: true,
       cellStyle: { textAlign: "center" },
       // minWidth: 150,
-       cellEditor: "agSelectCellEditor",
+      cellEditor: "agSelectCellEditor",
       cellEditorParams: {
         maxLength: 60,
         values: Dropbaseuom
@@ -563,12 +614,11 @@ function ItemBrandGrid() {
       editable: true,
       cellStyle: { textAlign: "center" },
       // minWidth: 150,
-      cellEditor : "agSelectCellEditor",
+      cellEditor: "agSelectCellEditor",
       cellEditorParams: {
         maxLength: 30,
         values: Regbrand
       },
-      
     },
     {
       headerName: "Our Brand",
@@ -592,7 +642,24 @@ function ItemBrandGrid() {
         values: statusgriddrop
       },
     },
-
+    {
+      headerName: "Standard Cost",
+      field: "standard_cost",
+      editable: true,
+      cellStyle: { textAlign: "center" },
+      // minWidth: 150,
+    },
+    {
+      headerName: "Costing Methods",
+      field: "costing_methods",
+      editable: true,
+      cellStyle: { textAlign: "center" },
+      // minWidth: 150,
+      cellEditor: "agSelectCellEditor",
+      cellEditorParams: {
+        values: costingMethodDropGrid
+      },
+    },
   ];
 
   const defaultColDef = {
@@ -642,6 +709,8 @@ function ItemBrandGrid() {
         "Register Brand": row.Item_Register_Brand,
         "Our Brand": row.Item_Our_Brand,
         "Status": row.status,
+        "Standard Cost": row.standard_cost,
+        "Costing Methods": row.costing_methods,
         // "Annual Report URL": row.AnnualReportURL,
         // "created by": row.created_by,
         // "created date": row.created_date,
@@ -818,10 +887,10 @@ function ItemBrandGrid() {
         } catch (error) {
           console.error("Error saving data:", error);
           toast.error("Error Updating Data: " + error.message);
-        }finally {
+        } finally {
           setLoading(false);
         }
-    
+
       },
       () => {
         toast.info("Data updated cancelled.");
@@ -868,10 +937,10 @@ function ItemBrandGrid() {
         } catch (err) {
           console.error("Error deleting rows:", err);
           toast.error('Error Deleting Data:' + err.message);
-        }finally {
+        } finally {
           setLoading(false);
         }
-    
+
       },
       () => {
         toast.info("Data Delete cancelled.");
@@ -908,12 +977,19 @@ function ItemBrandGrid() {
     }
   };
 
+  const handleStandardCostChange = (e) => {
+    const value = e.target.value;
 
+    // Numeric + positive only
+    if (/^\d{0,10}(\.\d{0,2})?$/.test(value)) {
+      setStandardCost(value);
+    }
+  };
 
   return (
     <div className="container-fluid Topnav-screen">
       <div>
-      {loading && <LoadingScreen />}
+        {loading && <LoadingScreen />}
         <ToastContainer position="top-right" className="toast-design" theme="colored" />
         <div className="shadow-lg p-1 bg-body-tertiary rounded  mb-2 mt-2">
           <div className=" d-flex justify-content-between  ">
@@ -1102,17 +1178,17 @@ function ItemBrandGrid() {
                   Our Brand
                 </label>
                 <div title="Select the Own Brand">
-                <Select
-                  id="ahsts"
-                  value={selectedBrand}
-                  onChange={handleChangeBrand}
-                  onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                  options={filteredOptionBrand}
-                  className="exp-input-field"
-                  placeholder=""
-                  maxLength={30}
-                />
-              </div>
+                  <Select
+                    id="ahsts"
+                    value={selectedBrand}
+                    onChange={handleChangeBrand}
+                    onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                    options={filteredOptionBrand}
+                    className="exp-input-field"
+                    placeholder=""
+                    maxLength={30}
+                  />
+                </div>
               </div>
             </div>
 
@@ -1122,19 +1198,56 @@ function ItemBrandGrid() {
                 <label class="exp-form-labels">
                   Status
                 </label>
-<div title="Select the Status">
-                <Select
-                  id="ahsts"
-                  value={selectedStatus}
-                  onChange={handleChangeStatus}
-                  // onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                  options={filteredOptionStatus}
-                  className="exp-input-field"
-                  placeholder=""
-                />
-</div>
+                <div title="Select the Status">
+                  <Select
+                    id="ahsts"
+                    value={selectedStatus}
+                    onChange={handleChangeStatus}
+                    // onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                    options={filteredOptionStatus}
+                    className="exp-input-field"
+                    placeholder=""
+                  />
+                </div>
               </div>
             </div>
+
+            <div className="col-md-3 form-group mb-2">
+              <div class="exp-form-floating">
+                <label for="state" className={`exp-form-labels`}>
+                  Standard Cost
+                </label>
+                <input
+                  id="Ihsn"
+                  class="exp-input-field form-control"
+                  type="text"
+                  placeholder=""
+                  required title="Please enter the HSN code"
+                  value={standardCost}
+                  onChange={handleStandardCostChange}
+                />
+              </div>
+            </div>
+
+            <div className="col-md-3 form-group mb-2">
+              <div class="exp-form-floating">
+                <label for="state" className={`exp-form-labels`}>
+                  Costing Methods
+                </label>
+                <div title="Select the Register Brand ">
+                  <Select
+                    id="regbrand"
+                    value={selectedCostingMethod}
+                    onChange={handleChangeCostingMethod}
+                    options={filteredOptionCostingMethod}
+                    className="exp-input-field"
+                    placeholder=""
+                    maxLength={30}
+                  />
+                </div>
+              </div>
+            </div>
+
             <div className="col-md-3 form-group mt-4">
               <div class="exp-form-floating">
                 <div class=" d-flex  justify-content-center">

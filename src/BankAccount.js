@@ -622,10 +622,10 @@ function BankAccInput({ }) {
             <div className="shadow-lg p-3 bg-body-tertiary rounded  mb-2">
               <div class="row">
                 <div className="col-md-3 form-group mb-2">
-                  <div class="d-flex justify-content-start">
-                    <div><label htmlFor="rid" className="exp-form-labels">Accountant code</label></div>
-                    <div><span className="text-danger">*</span></div>
-                  </div>
+                    <div>
+                      <label htmlFor="rid" className="exp-form-labels">
+                      Accountant code<span className="text-danger">*</span>
+                      </label>
                   <input
                     id="cusad1"
                     className="exp-input-field form-control"
@@ -639,6 +639,7 @@ function BankAccInput({ }) {
                     readOnly={mode === "update"}
                     onKeyDown={(e) => handleKeyDown(e, User, Accountant)}
                   />
+                </div>
                 </div>
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">

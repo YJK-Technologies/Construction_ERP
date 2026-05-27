@@ -130,14 +130,26 @@ const columnDefs = [
     cellStyle: { textAlign: "center" },
   },
   {
-    headerName: "combined_tax_details",
+    headerName: "Combined Tax Details",
     field: "combined_tax_details",
     editable: false,
     cellStyle: { textAlign: "center" },
   },
   {
-    headerName: "combined_tax_percent",
+    headerName: "Combined Tax Percent",
     field: "combined_tax_percent",
+    editable: false,
+    cellStyle: { textAlign: "center" },
+  },
+  {
+    headerName: "Standard Cost",
+    field: "standard_cost",
+    editable: false,
+    cellStyle: { textAlign: "center" },
+  },
+  {
+    headerName: "Costing Methods",
+    field: "costing_methods",
     editable: false,
     cellStyle: { textAlign: "center" },
   },
@@ -232,6 +244,7 @@ export default function InventoryIssuedItemPopup({ open, handleClose, handleItem
       taxType: row.Item_purch_tax_type,
       taxDetails: row.combined_tax_details,
       taxPer: row.combined_tax_percent,
+      rate: row.standard_cost,
     }));
     handleItem(selectedData);
     handleClose();

@@ -437,6 +437,7 @@ function BankAccGrid() {
       gridApi.setQuickFilter(e.target.value);
     }
   };
+
   const generateReport = () => {
     const selectedRows = gridApi.getSelectedRows();
     if (selectedRows.length === 0) {
@@ -585,17 +586,12 @@ function BankAccGrid() {
     );
     reportWindow.document.write("</body></html>");
     reportWindow.document.close();
-  };
-
-
-
-  /*const handleNavigateToForm = () => {
-    navigate("/form");
-  };*/
+  }
 
   const handleNavigatesToForm = () => {
     navigate("/AddBankAccount", { state: { mode: "create" } }); // Pass selectedRows as props to the Input component
   };
+
   const handleNavigateWithRowData = (selectedRow) => {
     navigate("/AddBankAccount", { state: { mode: "update", selectedRow } });
   };
@@ -605,6 +601,7 @@ function BankAccGrid() {
     const selectedData = selectedNodes.map((node) => node.data);
     setSelectedRows(selectedData);
   };
+
   // Assuming you have a unique identifier for each row, such as 'id'
   const onCellValueChanged = (params) => {
     const updatedRowData = [...rowData];
@@ -614,12 +611,9 @@ function BankAccGrid() {
     if (rowIndex !== -1) {
       updatedRowData[rowIndex][params.colDef.field] = params.newValue;
       setRowData(updatedRowData);
-
-      // Add the edited row data to the state
       setEditedData((prevData) => [...prevData, updatedRowData[rowIndex]]);
     }
   };
-
 
   const saveEditedData = async () => {
 
@@ -647,16 +641,13 @@ function BankAccGrid() {
             },
             body: JSON.stringify({ editedData: selectedRowsData }), // Send only the selected rows for saving
           });
-
-          if (response.status === 200) {
-            setTimeout(() => {
-              toast.success("Data Updated Successfully")
-              handleSearch();
-            }, 1000);
-            return;
+          const result = await response.json();
+          if (response.ok) {
+            toast.success("Data Updated Successfully", {
+              onClose: () => handleSearch(),
+            });
           } else {
-            const errorResponse = await response.json();
-            toast.warning(errorResponse.message || "Failed to insert sales data");
+            toast.warning(result.message || "Failed to insert sales data");
           }
         } catch (error) {
           console.error("Error saving data:", error);
@@ -665,14 +656,12 @@ function BankAccGrid() {
         finally {
           setLoading(false);
         }
-
       },
       () => {
         toast.info("Data updated cancelled.");
       }
     );
   };
-
 
   const deleteSelectedRows = async () => {
     const selectedRows = gridApi.getSelectedRows();
@@ -704,16 +693,14 @@ function BankAccGrid() {
             "company_code": company_code,
 
           });
+          const result = await response.json();
 
           if (response.ok) {
-            console.log("Rows deleted successfully:", account_codesToDelete);
-            setTimeout(() => {
-              toast.success("Data Deleted successfully")
-              handleSearch();
-            }, 1000);
+            toast.success("Data deleted successfully", {
+              onClose: () => handleSearch(),
+            });
           } else {
-            const errorResponse = await response.json();
-            toast.warning(errorResponse.message || "Failed to insert sales data");
+            toast.warning(result.message || "Failed to insert sales data");
           }
         } catch (error) {
           console.error("Error deleting rows:", error);

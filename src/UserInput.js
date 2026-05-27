@@ -359,38 +359,19 @@ function UserInput({ }) {
     }
   };
 
-
   function validateEmail(email) {
     const emailRegex = /^[A-Za-z\._\-0-9]*[@][A-Za-z]*[\.][a-z]{2,4}$/;
     return emailRegex.test(email);
   }
 
   const handleNavigate = () => {
-    navigate("/User"); // Pass selectedRows as props to the Input component
+    navigate("/User");
   };
-
-  // const handleKeyDown = async (e, nextFieldRef, value, hasValueChanged, setHasValueChanged) => {
-  //   if (e.key === 'Enter') {
-  //     // Check if the value has changed and handle the search logic
-  //     if (hasValueChanged) {
-  //       await handleKeyDownStatus(e); // Trigger the search function
-  //       setHasValueChanged(false); // Reset the flag after the search
-  //     }
-
-  //     // Move to the next field if the current field has a valid value
-  //     if (value) {
-  //       nextFieldRef.current.focus();
-  //     } else {
-  //       e.preventDefault(); // Prevent moving to the next field if the value is empty
-  //     }
-  //   }
-  // };
 
   const handleKeyDown = (e, nextRef, currentRef) => {
     if (e.key === 'Enter') {
       e.preventDefault();
 
-      // For update mode, skip to Email from Log In/Out
       if (mode === 'update' && currentRef === loginlogout) {
         email.current?.focus();
       } else {
@@ -400,12 +381,10 @@ function UserInput({ }) {
   };
 
   const handleKeyDownStatus = async (e) => {
-    if (e.key === 'Enter' && hasValueChanged) { // Only trigger search if the value has changed
-      // Trigger the search function
-      setHasValueChanged(false); // Reset the flag after search
+    if (e.key === 'Enter' && hasValueChanged) { 
+      setHasValueChanged(false); 
     }
   };
-
 
   const handleUpdate = async () => {
     if (
