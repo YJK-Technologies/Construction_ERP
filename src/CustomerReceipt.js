@@ -463,11 +463,12 @@ function AssetsReturn({ }) {
                 }));
 
                 const advanceResponse = await fetch(
-                    `${config.apiBaseUrl}/Customer_ReceiptLoopInsert`,
+                    `${config.apiBaseUrl}/CustomerReceiptLoopInsert`,
                     {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json",
+                            "company_code": sessionStorage.getItem("selectedCompanyCode")
                         },
                         body: JSON.stringify({
                             Vendor_PaymentData: AdvanceInsertData,
@@ -523,9 +524,11 @@ function AssetsReturn({ }) {
                 }
             }
 
-            toast.success("Data processed successfully", {
-                onClose: () => fetchQuotationData(),
-            });
+            toast.success("Data processed successfully");
+
+if (type?.toLowerCase() !== "advance") {
+    fetchQuotationData();
+}
 
         } catch (error) {
 
