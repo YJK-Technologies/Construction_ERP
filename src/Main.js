@@ -64,7 +64,7 @@ import UserScreenInput from "./userscreeninput.js";
 import CustomerDetGrid from "./Customerdetgrid.js";
 import CustomerHdrInput from "./Customerhdrinput.js"; 
 import CustomerDetInput from "./customerdetinput.js";
-// import OpeningbalanceGrid from "./OpeningbalanceGrid.js";
+// // import OpeningbalanceGrid from "./OpeningbalanceGrid.js";
 import OpeningBalanceItem from "./OpeningBalanceItem.js";
 import OpeningbalanceInput from "./Openingbalanceinput.js";
 import AdjustmentGrid from "./Adjustmentgrid.js";
@@ -158,6 +158,15 @@ import SiteWarehouse from "./siteWarehouseMapping.js";
 import Expenses from "./Expenses.js";
 import CustomerReceipt from "./CustomerReceipt.js";
 import VendorPayment from "./Transaction/VendorPayment.js";
+import Openingbalance from "./Transaction/Openingbalance.js";
+import SiteMaster from "./SiteGrid.js";
+import AddSiteMaster from "./AddSiteMaster.js";
+import SiteWarehouse from "./siteWarehouseMapping.js";
+import Expenses from "./Expenses.js";
+import CustomerReceipt from "./CustomerReceipt.js";
+import VendorPayment from "./Transaction/VendorPayment.js";
+import SitewiseIncome from "./SitewiseIncome.js";
+
 
 function Main() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -349,6 +358,13 @@ function Main() {
      { path: "/Expenses", component: <Expenses /> },
      { path: "/CustomerReceipt", component: <CustomerReceipt /> },
      { path: "/VendorPayment", component: <VendorPayment /> },
+     { path: "/AddSiteMaster", component: <AddSiteMaster /> },
+     { path: "/SiteMaster", component: <SiteMaster /> },
+     { path: "/SiteWarehouse", component: <SiteWarehouse /> },
+     { path: "/Expenses", component: <Expenses /> },
+     { path: "/CustomerReceipt", component: <CustomerReceipt /> },
+     { path: "/VendorPayment", component: <VendorPayment /> },
+     { path: "/SitewiseIncome", component: <SitewiseIncome /> },
   ];
  
   return (
