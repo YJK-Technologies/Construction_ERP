@@ -36127,18 +36127,14 @@ const opening_balanceDelete = async (req, res) => {
 // };
 const opening_balanceLoopInsert = async (req, res) => {
   const opening_balanceData = req.body.opening_balanceData;
-
   if (!opening_balanceData || !opening_balanceData.length) {
     return res
       .status(400)
       .json({ message: "Invalid or empty opening_balanceData array." });
   }
-
   try {
     const pool = await sql.connect(dbConfig);
-
     let generatedTransactionNo = "";
-
     for (const item of opening_balanceData) {
       const result = await pool
         .request()
@@ -36149,11 +36145,7 @@ const opening_balanceLoopInsert = async (req, res) => {
         .input("party_type", sql.NVarChar, item.party_type)
         .input("party_code", sql.NVarChar, item.party_code)
         .input("keyfield", sql.NVarChar, "")
-        .input(
-          "opening_amount",
-          sql.Decimal(18, 2),
-          item.opening_amount
-        )
+        .input("opening_amount", sql.Decimal(18, 2), item.opening_amount )
         .input("balance_type", sql.NVarChar, item.balance_type)
         .input("remarks", sql.NVarChar, item.remarks)
         .input("status", sql.NVarChar, item.status)
@@ -36163,26 +36155,7 @@ const opening_balanceLoopInsert = async (req, res) => {
         .input("created_date", sql.DateTime, item.created_date)
         .input("modified_by", sql.NVarChar, item.modified_by)
         .input("modified_date", sql.DateTime, item.modified_date)
-        .query(`
-          EXEC sp_opening_balance
-          @mode,
-          @transaction_no,
-          @financial_year,
-          @entry_date,
-          @party_type,
-          @party_code,
-          @keyfield,
-          @opening_amount,
-          @balance_type,
-          @remarks,
-          @status,
-          @data_deleted,
-          @company_code,
-          @created_by,
-          @created_date,
-          @modified_by,
-          @modified_date
-        `);
+        .query(`EXEC sp_opening_balance @mode, @transaction_no, @financial_year, @entry_date, @party_type, @party_code, @keyfield, @opening_amount, @balance_type, @remarks, @status, @data_deleted, @company_code, @created_by, @created_date, @modified_by, @modified_date `);
 
       if (
         result.recordset &&
@@ -36192,14 +36165,12 @@ const opening_balanceLoopInsert = async (req, res) => {
           result.recordset[0].transaction_no;
       }
     }
-
     res.status(200).json({
       message: "opening_balance data inserted successfully",
       transaction_no: generatedTransactionNo,
     });
   } catch (err) {
     console.error("Error in opening_balanceLoopInsert:", err);
-
     res.status(500).json({
       message: err.message || "Internal Server Error",
     });
@@ -37191,7 +37162,9 @@ const updateVendorPayment = async (req, res) => {
         .input("paid_amt", sql.Decimal(14, 2), updatedRow.receivedAmount)
         .input("company_code", sql.NVarChar, req.headers['company_code'])
         .input("keyfield", sql.NVarChar, updatedRow.keyfield)
-        .query(`EXEC sp_Vendor_Payment @mode, @vendor_code, '', '', '', '', '', @PO_date, 0, @paid_amt, 0, '', @keyfield, '', '',  '', @company_code, '', NULL, '', NULL`);
+        .input("TypeofPay", sql.NVarChar, updatedRow.TypeofPay)
+        .input("Remarks", sql.NVarChar, updatedRow.Remarks)
+        .query(`EXEC sp_Vendor_Payment @mode, @vendor_code, '', '', '', '', '', @PO_date, 0, @paid_amt, 0, '', @keyfield, @Remarks, @TypeofPay,  '', @company_code, '', NULL, '', NULL`);
     }
     res.status(200).json("Vendor payment updated successfully");
   }
