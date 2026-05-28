@@ -2306,7 +2306,7 @@ const Sidebar = () => {
                   </Link>
                 )}
               </div>
-<div className=" ms-3">
+              <div className=" ms-3">
                 {screenType.includes("SitewiseIncome") && (
                   <Link
                     to="/SitewiseIncome"

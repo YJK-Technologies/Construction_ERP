@@ -159,6 +159,7 @@ import CustomerReceipt from "./CustomerReceipt.js";
 import VendorPayment from "./Transaction/VendorPayment.js";
 import Openingbalance from "./Transaction/Openingbalance.js";
 import SitewiseIncome from "./SitewiseIncome.js";
+import IEanalysis from "./Reports/IncomeExpenseAnalysis.js";
 
 
 function Main() {
@@ -352,6 +353,7 @@ function Main() {
      { path: "/CustomerReceipt", component: <CustomerReceipt /> },
      { path: "/VendorPayment", component: <VendorPayment /> },
      { path: "/SitewiseIncome", component: <SitewiseIncome /> },
+     { path: "/IEanalysis", component: <IEanalysis /> },
   ];
  
   return (
