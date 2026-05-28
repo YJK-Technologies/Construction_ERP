@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
@@ -17,8 +17,60 @@ import { CheckboxCellEditor, CheckboxCellRenderer } from "ag-grid-community";
 import swal from "sweetalert2";
 import Swal from "sweetalert2";
 import * as XLSX from 'xlsx';
+import Select from "react-select";
 
 const config = require("./Apiconfig");
+
+const ReferenceSelectEditor = React.forwardRef((props, ref) => {
+
+  const referenceType = props?.data?.reference_type;
+
+  const options = props.getReferenceOptions(referenceType);
+
+  const formattedOptions = options.map(item => ({
+    value: item.value,
+    label: item.label
+  }));
+
+  const selectedOption = formattedOptions.find(
+    option => option.value === props.value
+  );
+
+  const [selected, setSelected] = useState(selectedOption || null);
+
+  React.useImperativeHandle(ref, () => ({
+    getValue() {
+      return selected ? selected.value : "";
+    }
+  }));
+
+  return (
+    <div style={{ width: "100%" }}>
+      <Select
+        autoFocus
+        menuPortalTarget={document.body}
+        options={formattedOptions}
+        value={selected}
+        onChange={(option) => {
+
+          setSelected(option);
+
+          setTimeout(() => {
+            props.stopEditing();
+          });
+        }}
+        placeholder="Select..."
+        isClearable
+        styles={{
+          menuPortal: base => ({
+            ...base,
+            zIndex: 9999
+          })
+        }}
+      />
+    </div>
+  );
+});
 
 function OpeningbalanceGrid() {
   const [rowData, setRowData] = useState(
@@ -35,11 +87,17 @@ function OpeningbalanceGrid() {
   );
   const [gridApi, setGridApi] = useState(null);
   const [gridColumnApi, setGridColumnApi] = useState(null);
+  const gridRef = useRef();
   const [transaction_date, settransaction_date] = useState("");
   const [transaction_no, settransaction_no] = useState("");
 
+    const getTodayDate = () => {
+    const today = new Date();
+    return today.toISOString().split('T')[0]; // 'YYYY-MM-DD'
+  };
+
   const [expense_no, setexpense_no] = useState("");
-  const [expense_date, setexpense_date] = useState("");
+  const [expense_date, setexpense_date] = useState(getTodayDate());
 
   const [additionalData, setAdditionalData] = useState({
     modified_by: "",
@@ -62,6 +120,8 @@ function OpeningbalanceGrid() {
   const [CustomerDrop, setCustomerDrop] = useState([]);
   const [VendorDrop, setVendorDrop] = useState([]);
   const [SiteDrop, setSiteDrop] = useState([]);
+
+
 
   // Use Effects
   useEffect(() => {
@@ -283,8 +343,8 @@ function OpeningbalanceGrid() {
     {
       headerName: "S.No",
       field: "serialNumber",
-        headerCheckboxSelection: true,
-        checkboxSelection: true,
+      headerCheckboxSelection: true,
+      checkboxSelection: true,
       maxWidth: 80,
       sortable: false,
       editable: false,
@@ -315,21 +375,15 @@ function OpeningbalanceGrid() {
     {
       headerName: "Reference Code - Name",
       field: "reference_code",
-      editable: true,
+      editable: !showAsterisk,
       cellStyle: { textAlign: "left" },
-
-      cellEditor: "agSelectCellEditor",
-
-      cellEditorParams: (params) => {
-
-        const referenceType = params?.data?.reference_type;
-
-        const options = getReferenceOptions(referenceType);
-
-        return {
-          values: options.map(d => d.label)
-        };
+      flex: 2,
+      cellEditor: ReferenceSelectEditor,
+      cellEditorParams: {
+        getReferenceOptions
       },
+
+
 
       valueFormatter: (params) => {
 
@@ -348,28 +402,27 @@ function OpeningbalanceGrid() {
 
       valueSetter: (params) => {
 
-        const selectedLabel = params.newValue;
+  const selectedValue = params.newValue;
 
-        const referenceType = params?.data?.reference_type;
+  const referenceType = params?.data?.reference_type;
 
-        const options = getReferenceOptions(referenceType);
+  const options = getReferenceOptions(referenceType);
 
-        const item = options.find(
-          d => d.label === selectedLabel
-        );
+  const item = options.find(
+    d => d.value === selectedValue
+  );
 
-        if (item) {
+  if (item) {
 
-          params.data.reference_code = item.value;
+    params.data.reference_code = item.value;
 
-          // Optional
-          params.data.reference_name = item.label;
+    params.data.reference_name = item.label;
 
-          return true;
-        }
+    return true;
+  }
 
-        return false;
-      }
+  return false;
+}
     },
     {
       headerName: "Payment Mode",
@@ -418,6 +471,7 @@ function OpeningbalanceGrid() {
   const handleExpensesCode = async (params) => {
     setLoading(true);
     const company_code = sessionStorage.getItem("selectedCompanyCode");
+    const Location = sessionStorage.getItem("selectedLocationCode");
     try {
       const response = await fetch(`${config.apiBaseUrl}/getitemcodepurdata`, {
         method: "POST",
@@ -562,6 +616,7 @@ function OpeningbalanceGrid() {
         company_code: sessionStorage.getItem("selectedCompanyCode"),
         expense_date,
         created_by: sessionStorage.getItem("selectedUserCode"),
+        Location: sessionStorage.getItem("selectedLocationCode")
       };
 
       const response = await fetch(`${config.apiBaseUrl}/Expenses_HdrInsert`, {
@@ -594,6 +649,9 @@ function OpeningbalanceGrid() {
 
   const ExpensesDetails = async (expense_no) => {
     try {
+      const company_code = sessionStorage.getItem("selectedCompanyCode");
+      const created_by = sessionStorage.getItem("selectedUserCode");
+      const Location = sessionStorage.getItem("selectedLocationCode");
 
       const validRows = rowData.filter((row) =>
         row.expense_type &&
@@ -629,6 +687,8 @@ function OpeningbalanceGrid() {
 
           amount: Number(row.amount) || 0,
 
+          Expens_Sno: Number(row.serialNumber) || 0,
+
           description: row.description || "",
 
           is_approved: row.is_approved || 0,
@@ -637,7 +697,8 @@ function OpeningbalanceGrid() {
           keyfield: row.keyfield || "",
           data_deleted: row.data_deleted || "N",
 
-          Expens_Sno: row.Expens_Sno || 0,
+          Expens_Sno: row.serialNumber,
+          Location
         };
 
         console.log("Sending Details :", Details);
@@ -678,6 +739,7 @@ function OpeningbalanceGrid() {
       async () => {
         setLoading(true);
         try {
+          const Location = sessionStorage.getItem("selectedLocationCode");
           const detailResult = await OIDetailDelete();
           const headerResult = await OIHeaderDelete();
 
@@ -707,7 +769,7 @@ function OpeningbalanceGrid() {
   };
 
   const OIHeaderDelete = async () => {
-     console.log(expense_date);
+    console.log(expense_date);
     try {
       const response = await fetch(`${config.apiBaseUrl}/Expenses_HdrDelete`, {
         method: "POST",
@@ -717,12 +779,13 @@ function OpeningbalanceGrid() {
         body: JSON.stringify({
           expense_no,
           expense_date,
-          company_code: sessionStorage.getItem("selectedCompanyCode")
+          company_code: sessionStorage.getItem("selectedCompanyCode"),
+          Location: sessionStorage.getItem("selectedLocationCode")
 
         }),
 
       });
-console.log("Detail dellete successfully :", expense_date);
+      console.log("Detail dellete successfully :", expense_date);
       if (response.ok) {
         return true;
       } else {
@@ -737,31 +800,62 @@ console.log("Detail dellete successfully :", expense_date);
   };
 
   const OIDetailDelete = async () => {
+
+    // GET SELECTED ROW
+    const selectedRows = gridRef.current.api.getSelectedRows();
+
+    if (selectedRows.length === 0) {
+      toast.warning("Please select a row");
+      return;
+    }
+
+    // FIRST SELECTED ROW
+    const selectedRow = selectedRows[0];
+
     try {
+
       const response = await fetch(`${config.apiBaseUrl}/ExpensesDelete`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
+
         body: JSON.stringify({
+
           expense_no,
-          company_code: sessionStorage.getItem("selectedCompanyCode")
+
+          // ADD THIS
+          Expens_Sno: selectedRow.serialNumber,
+
+          company_code: sessionStorage.getItem("selectedCompanyCode"),
+
+          Location_Code: sessionStorage.getItem("selectedLocationCode")
+
         }),
       });
 
       if (response.ok) {
+
+        toast.success("Deleted Successfully");
+
         return true;
+
       } else {
+
         const errorResponse = await response.json();
+
         console.error(errorResponse.details || errorResponse.message);
+
         return errorResponse.message || errorResponse.details;
       }
+
     } catch (error) {
+
       console.error("Error executing API calls:", error);
+
       return "Error occurred during detail deletion.";
     }
   };
-
   const handleAddRow = () => {
     const serialNumber = rowData.length + 1;
     const newRow = { serialNumber, itemCode: "", itemName: "", purchaseQty: 0 };
@@ -963,38 +1057,38 @@ console.log("Detail dellete successfully :", expense_date);
   };
 
   const handleExcelDownload = () => {
-  
-  
-      if (rowData.length === 0 || 
-        !expense_no || 
-        !expense_date 
-        ) {
-        Swal.fire({
-          icon: 'warning',
-          title: 'No Data Available',
-          text: 'There is no data to export.',
-        });
-        return;
-      }
-  
-      const headerData = [{
-        "company code": sessionStorage.getItem('selectedCompanyCode'),
-        "Expenses No": expense_no,
-        "Expenses Date": expense_date
-      }];
-  
-      const transformedData = transformRowData(rowData);
-      const rowDataSheet = XLSX.utils.json_to_sheet(transformedData);
-      const headerSheet = XLSX.utils.json_to_sheet(headerData);
-  
-      const workbook = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(workbook, headerSheet, "Header Data");
-      XLSX.utils.book_append_sheet(workbook, rowDataSheet, "Expenses Details");
-  
-      XLSX.writeFile(workbook, "Expenses.xlsx");
-    };
 
-    const transformRowData = (data) => {
+
+    if (rowData.length === 0 ||
+      !expense_no ||
+      !expense_date
+    ) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'No Data Available',
+        text: 'There is no data to export.',
+      });
+      return;
+    }
+
+    const headerData = [{
+      "company code": sessionStorage.getItem('selectedCompanyCode'),
+      "Expenses No": expense_no,
+      "Expenses Date": expense_date
+    }];
+
+    const transformedData = transformRowData(rowData);
+    const rowDataSheet = XLSX.utils.json_to_sheet(transformedData);
+    const headerSheet = XLSX.utils.json_to_sheet(headerData);
+
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, headerSheet, "Header Data");
+    XLSX.utils.book_append_sheet(workbook, rowDataSheet, "Expenses Details");
+
+    XLSX.writeFile(workbook, "Expenses.xlsx");
+  };
+
+  const transformRowData = (data) => {
     return data.map(row => ({
       "S.No": row.serialNumber,
       "Expense Type": row.expense_type,
@@ -1005,7 +1099,7 @@ console.log("Detail dellete successfully :", expense_date);
       "Amount": row.amount,
       "Description": row.description,
       "Is Approved": row.is_approved,
-     
+
     }));
   };
 
@@ -1034,9 +1128,9 @@ console.log("Detail dellete successfully :", expense_date);
                     <i class="fa-regular fa-floppy-disk"></i>
                   </savebutton>
                 )}
-                <printbutton className="purbut" title='excel' onClick={handleExcelDownload}>
-              <i class="fa-solid fa-file-excel"></i>
-            </printbutton>
+              <printbutton className="purbut" title='excel' onClick={handleExcelDownload}>
+                <i class="fa-solid fa-file-excel"></i>
+              </printbutton>
               {["delete", "all permission"].some((permission) =>
                 openingItemPermission.includes(permission)
               ) && (
@@ -1108,7 +1202,7 @@ console.log("Detail dellete successfully :", expense_date);
             <div className="col-md-3 form-group ">
               <div class="exp-form-floating">
                 <label for="rolname" className={`${deleteError && !expense_no ? "red" : ""}`}>
-                  Expenses No {showAsterisk && <span className="text-danger">*</span>}
+                  Expenses No{showAsterisk && <span className="text-danger">*</span>}
                 </label>
                 <div class="d-flex justify-content-end">
                   <input
@@ -1165,6 +1259,7 @@ console.log("Detail dellete successfully :", expense_date);
           </div>
           <div class="ag-theme-alpine" style={{ height: 545, width: "100%" }}>
             <AgGridReact
+              ref={gridRef}
               rowData={rowData}
               columnDefs={columnDefs}
               defaultColDef={defaultColDef}

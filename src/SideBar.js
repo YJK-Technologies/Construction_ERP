@@ -297,7 +297,11 @@ const Sidebar = () => {
     "ReceivedGoodsRt",
     "OIAnalysis",
     "DataWiseStock",
-    "SitewiseIncome"
+    "SitewiseIncome",
+    "IEanalysis",
+    "SSmaterial",
+    "MaterialUsage",
+    "ExpensesTracking"
   ];
 
   return (
@@ -2306,7 +2310,7 @@ const Sidebar = () => {
                   </Link>
                 )}
               </div>
-<div className=" ms-3">
+              <div className=" ms-3">
                 {screenType.includes("SitewiseIncome") && (
                   <Link
                     to="/SitewiseIncome"
@@ -2326,7 +2330,132 @@ const Sidebar = () => {
                       </svg>
                       <span className={collapsed ? "hidden" : ""}>
                         {" "}
-                       Site-wise Income & Expense Analysis Report
+                        Site-wise Income & Expense Analysis Report
+                      </span>
+                    </div>
+                  </Link>
+                )}
+              </div>
+              <div className=" ms-3">
+                {screenType.includes("IEanalysis") && (
+                  <Link
+                    to="/IEanalysis"
+                    className="nav-link"
+                    title="Income Expense Analysis Report"
+                  >
+                    <div class="menu-item">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="26"
+                        height="26"
+                        fill="currentColor"
+                        className="me-3"
+                        viewBox="0 0 24 24"
+                      >
+                        <path d="M3 3h2v18H3V3zm16 7h2v11h-2V10zM11 13h2v8h-2v-8zm-4-4h2v12H7V9zm8-6h2v18h-2V3z" />
+                      </svg>
+                      <span className={collapsed ? "hidden" : ""}>
+                        Income & Expense Analysis Report
+                      </span>
+                    </div>
+                  </Link>
+                )}
+              </div>
+              <div className=" ms-3">
+                {screenType.includes("SSmaterial") && (
+                  <Link
+                    to="/SSmaterial"
+                    className="nav-link"
+                    title="Supervisor & Site Material Report"
+                  >
+                    <div class="menu-item">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="26"
+                        height="26"
+                        fill="currentColor"
+                        className="me-3"
+                        viewBox="0 0 24 24"
+                      >
+                        <path d="M10 4a4 4 0 100 8 4 4 0 000-8zm0 10c-3.33 0-6 1.34-6 4v2h12v-2c0-2.66-2.67-4-6-4zm8-3h-2V9h-2V7h2V5h2v2h2v2h-2v2z" />
+                      </svg>
+                      <span className={collapsed ? "hidden" : ""}>
+                        Supervisor & Site Material Report
+                      </span>
+                    </div>
+                  </Link>
+                )}
+              </div>
+              <div className=" ms-3">
+                {screenType.includes("MaterialUsage") && (
+                  <Link
+                    to="/MaterialUsage"
+                    className="nav-link"
+                    title="Material Usage Details – Site Wise Report"
+                  >
+                    <div class="menu-item">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="26"
+                        height="26"
+                        fill="currentColor"
+                        className="me-4"
+                        viewBox="0 0 24 24"
+                      >
+                        <path d="M21 16V8l-9-5-9 5v8l9 5 9-5zm-9 3.84L5 16.11V9.89l7 3.89 7-3.89v6.22l-7 3.73zm0-8.13L5.74 8 12 4.53 18.26 8 12 11.71z" />
+                      </svg>
+                      <span className={collapsed ? "hidden" : ""}>
+                        Material Usage Details – Site Wise Report
+                      </span>
+                    </div>
+                  </Link>
+                )}
+              </div>
+              <div className=" ms-3">
+                {screenType.includes("ExpensesTracking") && (
+                  <Link
+                    to="/ExpensesTracking"
+                    className="nav-link"
+                    title="Expenses Tracking"
+                  >
+                    <div class="menu-item">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="26"
+                        height="26"
+                        fill="currentColor"
+                        className="me-3"
+                        viewBox="0 0 24 24"
+                      >
+                        <path d="M21 7H3V5a2 2 0 012-2h14a2 2 0 012 2v2zm0 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V9h18zm-4 3a2 2 0 100 4 2 2 0 000-4z" />
+                      </svg>
+                      <span className={collapsed ? "hidden" : ""}>
+                        Expenses Tracking
+                      </span>
+                    </div>
+                  </Link>
+                )}
+              </div>
+              <div className=" ms-3">
+                {screenType.includes("ExpenseSummary") && (
+                  <Link
+                    to="/ExpenseSummary"
+                    className="nav-link"
+                    title="Expense Summary – Site Wise"
+                  >
+                    <div class="menu-item">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="26"
+                        height="26"
+                        fill="currentColor"
+                        className="me-4"
+                        viewBox="0 0 24 24"
+                      >
+                        <path d="M11 2v20c-5.05-.5-9-4.76-9-10s3.95-9.5 9-10zm2 0c5.05.5 9 4.76 9 10s-3.95 9.5-9 10V2zm2 10h5c-.22-2.76-2.24-5.01-5-5.74V12z" />
+                      </svg>
+                      <span className={collapsed ? "hidden" : ""}>
+                        Expense Summary – Site Wise
                       </span>
                     </div>
                   </Link>
@@ -2337,7 +2466,7 @@ const Sidebar = () => {
         )}
 
       </div>
-    
+
       <div
         className="sidebar-footer position-fixed text-center bg-dark pt-2 fw-bold pb-1"
         style={{ paddingRight: "85px", paddingLeft: "70px" }}
@@ -2345,7 +2474,7 @@ const Sidebar = () => {
         <h3 className="">YJK Technologies</h3>
         <h3 className="">Version 1.0.0</h3>
       </div>
-      </div>
+    </div>
   );
 };
 

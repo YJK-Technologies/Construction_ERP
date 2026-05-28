@@ -248,6 +248,7 @@ const UnplannedIssued = () => {
                 taxType: matchedItem.Item_purch_tax_type,
                 taxDetails: matchedItem.combined_tax_details,
                 taxPer: matchedItem.combined_tax_percent,
+                Rate: matchedItem.standard_cost,
                 warehouse: selectedWarehouse ? selectedWarehouse.value : '',
                 department: selecteddept ? selecteddept.value : '',
               };
@@ -1218,123 +1219,6 @@ const UnplannedIssued = () => {
     }
   };
 
-  // const handleUpdateButtonClick = async () => {
-
-  //   if (!issuedId || !issuedDate || !selectedIssued) {
-  //     setError(" ");
-  //     toast.warning("Please select the Atlest one row to update ");
-  //     return;
-  //   }
-
-  //   if (rowData.length === 0) {
-  //     toast.warning("No Inventory Return found to save.");
-  //     return;
-  //   }
-
-  //   const filteredRowData = rowData.filter((row) => row.quantityIssued > 0);
-
-  //   const hasNullWarehouse = filteredRowData.some((row) => !row.warehouse || row.warehouse.trim() === "");
-  //   if (hasNullWarehouse) {
-  //     toast.warning("One or more rows have a null or empty warehouse.");
-  //     return;
-  //   }
-
-  //   if (filteredRowData.length === 0) {
-  //     toast.warning("Please check Quantity Returned");
-  //     return;
-  //   }
-
-  //   try {
-
-  //     const [detailResult] = await Promise.all([
-  //       handleDeleteUpdateDetail()
-  //     ]);
-
-  //     if (!detailResult) {
-  //       throw new Error('Detail deletion failed');
-  //     }
-
-  //     await Promise.all([
-  //       updateInvReturnDetails()
-  //     ]);
-
-  //     toast.warning("Inventory Return Upadated Successfully");
-
-  //     console.log('Update successful');
-  //   } catch (error) {
-  //     console.error('Update failed:', error);
-  //   }
-  // };
-  // const handleDeleteUpdateDetail = async () => {
-  //   try {
-  //     const response = await fetch(`${config.apiBaseUrl}/InventoryIssuanceDeleteDetailData`, {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json"
-  //       },
-  //       body: JSON.stringify({ IssuedID: issuedId })
-  //     });
-  //     if (response.ok) {
-  //       return true
-  //     } else {
-  //       console.log("Failed to fetch some data");
-  //     }
-  //   } catch (error) {
-  //     console.error("Error executing API calls:", error);
-  //   }
-  // };
-  // const updateInvReturnDetails = async () => {
-  //   try {
-  //     // Filter out invalid rows (empty or incomplete rows)
-  //     const validRows = rowData.filter(row =>
-  //       row.itemCode && row.itemName && row.quantityIssued > 0
-  //     );
-
-  //     for (const row of validRows) {
-  //       const Details = {
-  //         created_by: sessionStorage.getItem('selectedUserCode'),
-  //         IssuanceID: issuedId,
-  //         DateIssued: issuedDate,
-  //         Warehouse: row.warehouse,
-  //         Department: row.department,
-  //         ItemSNo: row.serialNumber,
-  //         ItemCode: row.itemCode,
-  //         ItemName: row.itemName,
-  //         Serial_No: row.serialno,
-  //         QuantityIssued: Number(row.quantityIssued),
-  //         ReasonForIssuance: row.reasonForIssuance,
-  //         Condition: row.condition,
-  //         IssuedBy: row.issuedBy,
-  //         ApprovalStatus: row.approvalStatus,
-  //         ActionTaken: row.actionTaken,
-  //         Notes: row.notes,
-  //       };
-
-  //       const response = await fetch(`${config.apiBaseUrl}/addInventoryIssuancedetails`, {
-  //         method: "POST",
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //         },
-  //         body: JSON.stringify(Details),
-  //       });
-
-  //       if (response.ok) {
-  //         console.log("Inventory Issuance Data updated successfully");
-  //         return true;
-  //       } else {
-  //         const errorResponse = await response.json();
-  //         console.error(errorResponse.message); // Log error message
-  //         toast.warning(errorResponse.message);
-  //       }
-  //     }
-  //   } catch (error) {
-  //     console.error("Error inserting data:", error);
-  //     toast.error('Error inserting data: ' + error.message);
-  //   }
-  // };
-
-  //CODE ITEM CODE TO ADD NEW ROW FUNCTION
-
   const handleCellValueChanged = (params) => {
     const { colDef, rowIndex, newValue } = params;
     const lastRowIndex = rowData.length - 1;
@@ -1383,6 +1267,54 @@ const UnplannedIssued = () => {
       setIssuedDate(selectedDate);
     } else {
       toast.warning('Transaction date must be between April 1st, 2024 and March 31st, 2025.');
+    }
+  };
+
+  const formatToTwoDecimalPoints = (number) => {
+    return parseFloat(number).toFixed(2);
+  };
+
+  const ItemAmountCalculation = async (params) => {
+    try {
+      const response = await fetch(`${config.apiBaseUrl}/inventoryIssueCalculation`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          Rate: params.data.Rate,
+          quantityIssued: params.data.quantityIssued,
+        })
+      });
+
+      if (response.ok) {
+        const searchData = await response.json();
+
+        const updatedRowData = rowData.map(row => {
+          if (row.serialNumber === params.data.serialNumber) {
+            const matchedItem = searchData.find(item => {
+              console.log("Item ID being checked:", item.id);
+              return item.id === row.id;
+            });
+            if (matchedItem) {
+              return {
+                ...row,
+                Total: formatToTwoDecimalPoints(matchedItem.Total ?? 0),
+              };
+            }
+          }
+          return row;
+        });
+
+        setRowData(updatedRowData);
+
+      } else if (response.status === 404) {
+        console.log("Data not found");
+      } else {
+        console.log("Bad request");
+      }
+    } catch (error) {
+      console.error("Error fetching search data:", error);
     }
   };
 
@@ -1507,7 +1439,7 @@ const UnplannedIssued = () => {
                   />
                   <div className='position-absolute mt-1 me-2'>
                     <span className="icon searchIcon"
-                     title='Inventory Issue Help'
+                      title='Inventory Issue Help'
                       onClick={handleInvIssued}>
                       <i class="fa fa-search"></i>
                     </span>
@@ -1539,17 +1471,17 @@ const UnplannedIssued = () => {
               </label>
               <div class="exp-form-floating">
                 <div title="select the transaction type">
-                <Select
-                  id="issuedType"
-                  className="exp-input-field"
-                  placeholder=""
-                  required
-                  value={selectedIssued}
-                  onChange={handleChangeIssued}
-                  options={filteredOptionIssued}
-                  data-tip="Please select a transaction type"
-                />
-              </div>
+                  <Select
+                    id="issuedType"
+                    className="exp-input-field"
+                    placeholder=""
+                    required
+                    value={selectedIssued}
+                    onChange={handleChangeIssued}
+                    options={filteredOptionIssued}
+                    data-tip="Please select a transaction type"
+                  />
+                </div>
               </div>
             </div>
             <div className="col-md-3 form-group">
@@ -1559,37 +1491,37 @@ const UnplannedIssued = () => {
                     <label for="rid" class="exp-form-labels">Department ID</label>
                   </div>
                 </div>
-                 <div class="exp-form-floating">
+                <div class="exp-form-floating">
                   <div title="select a department ID">
-                  <Select
-                    id="deptid"
-                    value={selecteddept}
-                    onChange={handleChangedept}
-                    options={filteredOptionDepartment}
-                    className=" exp-input-field position-relative "
-                    data-tip="Please select a department ID"
-                    placeholder=""
-                  />
+                    <Select
+                      id="deptid"
+                      value={selecteddept}
+                      onChange={handleChangedept}
+                      options={filteredOptionDepartment}
+                      className=" exp-input-field position-relative "
+                      data-tip="Please select a department ID"
+                      placeholder=""
+                    />
                   </div>
                 </div>
               </div>
-            
+
             </div>
             <div className="col-md-3 form-group mb-2">
               <label for="">Default Warehouse</label>
               <div class="exp-form-floating">
                 <div title='Select a default warehouse'>
-                <Select
-                  id="returnType"
-                  className="exp-input-field"
-                  placeholder=""
-                  required
-                  value={selectedWarehouse}
-                  onChange={handleChangeWarehouse}
-                   options={filteredOptionWarehouse}
-                  data-tip="Please select a default warehouse"
-                />
-              </div>
+                  <Select
+                    id="returnType"
+                    className="exp-input-field"
+                    placeholder=""
+                    required
+                    value={selectedWarehouse}
+                    onChange={handleChangeWarehouse}
+                    options={filteredOptionWarehouse}
+                    data-tip="Please select a default warehouse"
+                  />
+                </div>
               </div>
             </div>
           </div>
@@ -1618,7 +1550,12 @@ const UnplannedIssued = () => {
               columnDefs={columnDefs}
               rowData={rowData}
               defaultColDef={{ editable: true, resizable: true }}
-              onCellValueChanged={handleCellValueChanged}
+              onCellValueChanged={async (event) => {
+                if (event.colDef.field === 'quantityIssued' || event.colDef.field === 'Rate') {
+                  await ItemAmountCalculation(event);
+                }
+                handleCellValueChanged(event);
+              }}
             />
           </div>
         </div>
@@ -1645,10 +1582,3 @@ const UnplannedIssued = () => {
 }
 
 export default UnplannedIssued
-
-
-
-
-
-
-
