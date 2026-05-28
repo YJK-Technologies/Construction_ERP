@@ -110,7 +110,7 @@ const AddAddSiteMasterScreen = () => {
                 value: selectedRow.Tolerance_Type,
             });
             setToleranceType(selectedRow.Tolerance_Type || "");
-            setToleranceValues(selectedRow.Tolerance_values || "");
+            setToleranceValues(selectedRow.Tolerance_values || 0);
             setSelectedWarehouse({
                 label: selectedRow.Warehouses,
                 value: selectedRow.Warehouses,
@@ -164,8 +164,26 @@ const AddAddSiteMasterScreen = () => {
             body: JSON.stringify({ company_code }),
         })
             .then((data) => data.json())
-            .then((val) => setSiteStatusDrop(val))
+            .then((val) => {
+
+                setSiteStatusDrop(val);
+
+                const defaultOption = val.find(
+                    (option) => option.attributedetails_name === "Running"
+                );
+
+                if (defaultOption) {
+                    const formattedOption = {
+                        value: defaultOption.attributedetails_name,
+                        label: defaultOption.attributedetails_name,
+                    };
+
+                    setSelectedSiteStatus(formattedOption);
+                    setSiteStatus(formattedOption.value);
+                }
+            })
             .catch((error) => console.error("Error fetching data:", error));
+
     }, []);
 
     useEffect(() => {
@@ -179,8 +197,26 @@ const AddAddSiteMasterScreen = () => {
             body: JSON.stringify({ company_code }),
         })
             .then((data) => data.json())
-            .then((val) => setStatusDrop(val))
+            .then((val) => {
+
+                setStatusDrop(val);
+
+                const defaultOption = val.find(
+                    (option) => option.attributedetails_name === "Active"
+                );
+
+                if (defaultOption) {
+                    const formattedOption = {
+                        value: defaultOption.attributedetails_name,
+                        label: defaultOption.attributedetails_name,
+                    };
+
+                    setSelectedStatus(formattedOption);
+                    setStatus(formattedOption.value);
+                }
+            })
             .catch((error) => console.error("Error fetching data:", error));
+
     }, []);
 
     useEffect(() => {
@@ -280,6 +316,17 @@ const AddAddSiteMasterScreen = () => {
             return;
         }
 
+        if (startDate && endDate) {
+
+            const start = new Date(startDate);
+            const end = new Date(endDate);
+
+            if (end < start) {
+                toast.warning("End Date should be greater than or equal to Start Date");
+                return;
+            }
+        }
+
         setError(false);
         setLoading(true);
 
@@ -303,7 +350,7 @@ const AddAddSiteMasterScreen = () => {
                     status: status,
                     Warehouses: warehouse,
                     Tolerance_Type: toleranceType,
-                    Tolerance_values: toleranceValues,
+                    Tolerance_values: toleranceValues ? toleranceValues : 0,
                     created_by: sessionStorage.getItem('selectedUserCode')
                 }),
             });
@@ -332,6 +379,17 @@ const AddAddSiteMasterScreen = () => {
             return;
         }
 
+        if (startDate && endDate) {
+
+            const start = new Date(startDate);
+            const end = new Date(endDate);
+
+            if (end < start) {
+                toast.warning("End Date should be greater than or equal to Start Date");
+                return;
+            }
+        }
+
         setError(false);
         setLoading(true);
 
@@ -355,7 +413,7 @@ const AddAddSiteMasterScreen = () => {
                     status: status,
                     Warehouses: warehouse,
                     Tolerance_Type: toleranceType,
-                    Tolerance_values: toleranceValues,
+                    Tolerance_values: toleranceValues ? toleranceValues : 0,
                     keyfield: keyfield,
                     modified_by: sessionStorage.getItem('selectedUserCode')
                 }),
@@ -433,6 +491,7 @@ const AddAddSiteMasterScreen = () => {
                                     title="Enter Site ID"
                                     className="exp-input-field form-control"
                                     value={siteId}
+                                    readOnly={mode === "update"}
                                     onChange={(e) => setSiteId(e.target.value)}
                                 />
                             </div>
