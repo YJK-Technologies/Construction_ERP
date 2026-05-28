@@ -65,7 +65,7 @@ export default function InventoryIssuedWarehousePopup({ open, handleClose, handl
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({company_code : sessionStorage.getItem('selectedCompanyCode'), warehouse_code, warehouse_name, status, location_no }) // Send company_no and company_name as search criteria
+        body: JSON.stringify({company_code : sessionStorage.getItem('selectedCompanyCode'), Location_Code: sessionStorage.getItem("selectedLocationCode"), warehouse_code, warehouse_name, status, location_no }) // Send company_no and company_name as search criteria
       });
       if (response.ok) {
         const searchData = await response.json();

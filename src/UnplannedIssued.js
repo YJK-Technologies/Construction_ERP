@@ -631,6 +631,7 @@ const UnplannedIssued = () => {
           Rate: item.rate,
           warehouse: selectedWarehouse ? selectedWarehouse.value : '',
           department: selecteddept ? selecteddept.value : '',
+          Location_Code: sessionStorage.getItem("selectedLocationCode")
         };
         updatedRowDataCopy.push(newRow); // Push the new row to the updatedRowDataCopy
         return true;
@@ -717,6 +718,7 @@ const UnplannedIssued = () => {
 
       const Header = {
         company_code: sessionStorage.getItem('selectedCompanyCode'),
+        Location_Code: sessionStorage.getItem("selectedLocationCode"),
         DateIssued: issuedDate,
         Issued_Type: issuedType,
         created_by: sessionStorage.getItem('selectedUserCode')
@@ -763,6 +765,7 @@ const UnplannedIssued = () => {
         const Details = {
           created_by: sessionStorage.getItem('selectedUserCode'),
           company_code: sessionStorage.getItem('selectedCompanyCode'),
+          Location_Code: sessionStorage.getItem("selectedLocationCode"),
           IssuanceID: IssuedID,
           DateIssued: issuedDate,
           Warehouse: row.warehouse,
@@ -855,7 +858,7 @@ const UnplannedIssued = () => {
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({ IssuanceID: issuedId, company_code: sessionStorage.getItem("selectedCompanyCode") })
+        body: JSON.stringify({ IssuanceID: issuedId, company_code: sessionStorage.getItem("selectedCompanyCode"), Location_Code: sessionStorage.getItem("selectedLocationCode") })
       });
       if (response.ok) {
         return true
@@ -875,7 +878,7 @@ const UnplannedIssued = () => {
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({ IssuanceID: issuedId, company_code: sessionStorage.getItem("selectedCompanyCode") })
+        body: JSON.stringify({ IssuanceID: issuedId, company_code: sessionStorage.getItem("selectedCompanyCode"),Location_Code: sessionStorage.getItem("selectedLocationCode"), })
       });
       if (response.ok) {
         return true;
