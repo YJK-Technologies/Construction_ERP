@@ -34986,7 +34986,7 @@ const ExpensesInsert = async (req, res) => {
       .input("created_by", sql.NVarChar, created_by)
       .query(`EXEC sp_Expenses_Details @mode, @expense_no, @expense_date, @expense_type, @reference_type, @reference_code, 
         @reference_name, @payment_mode, @amount, @description, @is_approved, @is_closed, @keyfield, 
-        @data_deleted, @Expens_Sno, @company_code, @created_by, ''`);
+        @data_deleted, @Expens_Sno, @company_code, @created_by, '', '', ''`);
 
     res.status(200).json({ success: true, message: "Expenses insertd successfully" });
   } catch (err) {
@@ -35025,7 +35025,7 @@ const ExpensesUpdate = async (req, res) => {
       .input("company_code", sql.NVarChar, company_code)
       .input("created_by", sql.NVarChar, created_by)
       .input("modified_by", sql.NVarChar, modified_by)
-      .query(`EXEC sp_Expenses_Details @mode, @expense_no, @expense_date, @expense_type, @reference_type, @reference_code, @reference_name, @payment_mode, @amount, @description, @is_approved, @is_closed, @keyfield, @data_deleted,@Expens_Sno, @company_code, @created_by, @modified_by`);
+      .query(`EXEC sp_Expenses_Details @mode, @expense_no, @expense_date, @expense_type, @reference_type, @reference_code, @reference_name, @payment_mode, @amount, @description, @is_approved, @is_closed, @keyfield, @data_deleted,@Expens_Sno, @company_code, @created_by, @modified_by, '', ''`);
 
     res.status(200).json({ success: true, message: "Expenses updated successfully" });
   } catch (err) {
@@ -35049,7 +35049,7 @@ const ExpensesDelete = async (req, res) => {
       .input("company_code", sql.NVarChar, company_code)
       .query(`EXEC sp_Expenses_Details @mode, @expense_no, '', '', '', '', 
         '', '', 0, '', '', '', @keyfield, '', '',
-        @company_code, '', ''`);
+        @company_code, '', '', '', ''`);
 
     res.status(200).json({ success: true, message: "Expenses deleted successfully" });
   } catch (err) {
@@ -35088,7 +35088,7 @@ const ExpensesLoopInsert = async (req, res) => {
         .input("Expens_Sno", sql.Int, item.Expens_Sno)
         .input("company_code", sql.NVarChar, item.company_code)
         .input("created_by", sql.NVarChar, item.created_by)
-        .query(`EXEC sp_Expenses_Details @mode, @expense_no, @expense_date, @expense_type, @reference_type, @reference_code, @reference_name, @payment_mode, @amount, @description, @is_approved, @is_closed, @keyfield, @data_deleted, @Expens_Sno, @company_code, @created_by, ''`);
+        .query(`EXEC sp_Expenses_Details @mode, @expense_no, @expense_date, @expense_type, @reference_type, @reference_code, @reference_name, @payment_mode, @amount, @description, @is_approved, @is_closed, @keyfield, @data_deleted, @Expens_Sno, @company_code, @created_by, '', '', ''`);
     }
     res.status(200).json("Expenses data inserted successfully");
   } catch (err) {
@@ -35126,7 +35126,7 @@ const ExpensesLoopUpdate = async (req, res) => {
         .input("company_code", sql.NVarChar, item.company_code)
         .input("created_by", sql.NVarChar, item.created_by)
         .input("modified_by", sql.NVarChar, item.modified_by)
-        .query(`EXEC sp_Expenses_Details @mode, @expense_no, @expense_date, @expense_type, @reference_type, @reference_code, @reference_name, @payment_mode, @amount, @description, @is_approved, @is_closed, @keyfield, @data_deleted, @Expens_Sno, @company_code, @created_by, @modified_by`);
+        .query(`EXEC sp_Expenses_Details @mode, @expense_no, @expense_date, @expense_type, @reference_type, @reference_code, @reference_name, @payment_mode, @amount, @description, @is_approved, @is_closed, @keyfield, @data_deleted, @Expens_Sno, @company_code, @created_by, @modified_by, '', ''`);
     }
     res.status(200).json("Expenses data updated successfully");
   } catch (err) {
@@ -35152,7 +35152,7 @@ const ExpensesLoopDelete = async (req, res) => {
         .input("company_code", sql.NVarChar, item.company_code)
         .query(`EXEC sp_Expenses_Details @mode, @expense_no, '', '', '', 
           '', '', '', '', '', '', '', 
-          @keyfield, '', '', @company_code, '', ''`);
+          @keyfield, '', '', @company_code, '', '', '', ''`);
     }
     res.status(200).json("Expenses data deleted successfully");
   } catch (err) {
@@ -36602,7 +36602,7 @@ const ExpensesSC = async (req, res) => {
       .input("modified_by", sql.NVarChar, modified_by || '')
       .input("Start_Date", sql.NVarChar, Start_Date || '')
       .input("End_Date", sql.NVarChar, End_Date || '')
-      .query(`EXEC sp_Expenses_Details_Test @mode, @expense_no, @expense_date, @expense_type, @reference_type, @reference_code, 
+      .query(`EXEC sp_Expenses_Details @mode, @expense_no, @expense_date, @expense_type, @reference_type, @reference_code, 
         @reference_name, @payment_mode, @amount, @description, @is_approved, @is_closed, @keyfield, 
         @data_deleted, @Expens_Sno, @company_code, @created_by, @modified_by, @Start_Date, @End_Date`);
 
