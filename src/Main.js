@@ -160,6 +160,10 @@ import VendorPayment from "./Transaction/VendorPayment.js";
 import Openingbalance from "./Transaction/Openingbalance.js";
 import SitewiseIncome from "./SitewiseIncome.js";
 import IEanalysis from "./Reports/IncomeExpenseAnalysis.js";
+import SSmaterial from "./Reports/SupervisorSiteMaterial.js";
+import MaterialUsage from "./Reports/MaterialUsageDetails.js";
+import ExpensesTracking from "./Reports/ExpensesTracking.js";
+import ExpenseSummary from "./Reports/ExpenseSummary.js";
 
 
 function Main() {
@@ -354,6 +358,10 @@ function Main() {
      { path: "/VendorPayment", component: <VendorPayment /> },
      { path: "/SitewiseIncome", component: <SitewiseIncome /> },
      { path: "/IEanalysis", component: <IEanalysis /> },
+     { path: "/SSmaterial", component: <SSmaterial /> },
+     { path: "/MaterialUsage", component: <MaterialUsage /> },
+     { path: "/ExpensesTracking", component: <ExpensesTracking /> },
+     { path: "/ExpenseSummary", component: <ExpenseSummary /> },
   ];
  
   return (

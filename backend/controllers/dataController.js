@@ -37252,6 +37252,26 @@ const getCostingMethods = async (req, res) => {
 };
 //Code Ended by Pavun on 27-05-2026
 
+//Code Added by pavum on 28-05-2026
+const inventoryIssueCalculation = async (req, res) => {
+  const { company_code, Rate, quantityIssued } = req.body;
+  try {
+    const pool = await connection.connectToDatabase();
+    const result = await pool
+      .request()
+      .input("mode", sql.NVarChar, "IAC")
+      .input("company_code", sql.NVarChar, company_code)
+      .input("Rate", sql.Decimal(10,2), Rate)
+      .input("quantityIssued", sql.Decimal(10,2), quantityIssued)
+      .query(`EXEC sp_InventoryIssueCalculation @mode,@company_code,@Rate,@quantityIssued`);
+    res.json(result.recordset);
+  } catch (err) {
+    console.error("Error during update:", err);
+    res.status(500).json({ message: err.message || 'Internal Server Error' });
+  }
+};
+//Code Ended by pavum on 28-05-2026
+
 module.exports = {
   login,
   forgetPassword,
@@ -38468,7 +38488,8 @@ module.exports = {
   updateVendorPayment,
   getPendingVendorPayment,
   getVendorType,
-  getCostingMethods
+  getCostingMethods,
+  inventoryIssueCalculation
 
 
 };

@@ -12,7 +12,7 @@ import LoadingScreen from '../Loading';
 import LZString from "lz-string";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-const IncomeExpenseAnalysis = () => {
+const SupervisorSiteMaterial = () => {
 
   const [rowData, setRowData] = useState([]);
   const [gridApi, setGridApi] = useState(null);
@@ -35,8 +35,10 @@ const IncomeExpenseAnalysis = () => {
   const companyName = sessionStorage.getItem('selectedCompanyName');
   const [loading, setLoading] = useState(false);
 
-  const [customer, setCustomer] = useState("");
+  const [customerCode, setCustomerCode] = useState("");
   const [siteID, setSiteID] = useState("");
+  const [vendorCode, setVendorCode] = useState("");
+  const [material, setMaterial] = useState("");
 
   const permissions = JSON.parse(sessionStorage.getItem('permissions')) || {};
   const companyPermissions = permissions
@@ -205,18 +207,33 @@ const IncomeExpenseAnalysis = () => {
       editable: true,
     },
     {
-      headerName: "Total Income",
-      field: "total_income",
+      headerName: "Vendor Code",
+      field: "vendor_code",
       editable: true,
     },
     {
-      headerName: "Total Expense",
-      field: "total_expense",
+      headerName: "Vendor Name",
+      field: "vendor_name",
       editable: true,
     },
     {
-      headerName: "Net Profit",
-      field: "net_profit",
+      headerName: "Material Name",
+      field: "material_name",
+      editable: true,
+    },
+    {
+      headerName: "Quantity",
+      field: "quantity",
+      editable: true,
+    },
+    {
+      headerName: "Rate",
+      field: "rate",
+      editable: true,
+    },
+    {
+      headerName: "Total Amount",
+      field: "total_amount",
       editable: true,
     },
   ];
@@ -512,11 +529,11 @@ const IncomeExpenseAnalysis = () => {
       <div>
         <div className="shadow-lg p-1 bg-body-tertiary rounded mb-2">
           <div className="d-flex justify-content-between ">
-            <h1 className='purbut mt-3'>Income & Expense Analysis Report</h1>
+            <h1 className='purbut mt-3'>Supervisor & Site Material Report</h1>
             <div className="mobileview">
               <div className="d-flex justify-content-between ">
                 <div className="d-flex justify-content-start ">
-                  <h1 className='h1'>Income & Expense Analysis Report</h1>
+                  <h1 className='h1'>Supervisor & Site Material Report</h1>
                 </div>
                 <div className="d-flex justify-content-end mt-1 ms-5">
                   <div className="dropdown">
@@ -557,17 +574,17 @@ const IncomeExpenseAnalysis = () => {
         <div className="row ms-4 mt-3 mb-3 me-4">
 
           <div className="col-md-3 form-group mb-2">
-            <label className="">Customer</label>
+            <label className="">Customer Code</label>
             <div className="exp-form-floating">
               <div className="d-flex justify-content-end">
                 <input
                   id="wcode"
                   className="exp-input-field form-control justify-content-start"
                   placeholder=""
-                  title='Please Enter the Customer'
-                  value={customer}
-                  // onKeyDown={(e) => e.key === "Enter" && fetchGstReport()}
-                  onChange={(e) => setCustomer(e.target.value)}
+                  title='Please Enter the Customer Code'
+                  value={customerCode}
+                //   onKeyDown={(e) => e.key === "Enter" && fetchGstReport()}
+                  onChange={(e) => setCustomerCode(e.target.value)}
                 />
                 <div className='position-absolute mt-1 me-2'>
                   <span className="icon searchIcon">
@@ -588,8 +605,52 @@ const IncomeExpenseAnalysis = () => {
                   placeholder=""
                   title='Please Enter the Site ID'
                   value={siteID}
-                  // onKeyDown={(e) => e.key === "Enter" && fetchGstReport()}
+                //   onKeyDown={(e) => e.key === "Enter" && fetchGstReport()}
                   onChange={(e) => setSiteID(e.target.value)}
+                />
+                <div className='position-absolute mt-1 me-2'>
+                  <span className="icon searchIcon">
+                    <i class="fa fa-search"></i>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="col-md-3 form-group mb-2">
+            <label className="">Vendor Code</label>
+            <div className="exp-form-floating">
+              <div className="d-flex justify-content-end">
+                <input
+                  id="wcode"
+                  className="exp-input-field form-control justify-content-start"
+                  placeholder=""
+                  title='Please Enter the Vendor Code'
+                  value={vendorCode}
+                //   onKeyDown={(e) => e.key === "Enter" && fetchGstReport()}
+                  onChange={(e) => setVendorCode(e.target.value)}
+                />
+                <div className='position-absolute mt-1 me-2'>
+                  <span className="icon searchIcon">
+                    <i class="fa fa-search"></i>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="col-md-3 form-group mb-2">
+            <label className="">Material</label>
+            <div className="exp-form-floating">
+              <div className="d-flex justify-content-end">
+                <input
+                  id="wcode"
+                  className="exp-input-field form-control justify-content-start"
+                  placeholder=""
+                  title='Please Enter the Material'
+                  value={material}
+                //   onKeyDown={(e) => e.key === "Enter" && fetchGstReport()}
+                  onChange={(e) => setMaterial(e.target.value)}
                 />
                 <div className='position-absolute mt-1 me-2'>
                   <span className="icon searchIcon">
@@ -635,4 +696,4 @@ const IncomeExpenseAnalysis = () => {
   );
 }
 
-export default IncomeExpenseAnalysis;
+export default SupervisorSiteMaterial;

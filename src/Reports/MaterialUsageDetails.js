@@ -12,7 +12,7 @@ import LoadingScreen from '../Loading';
 import LZString from "lz-string";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-const IncomeExpenseAnalysis = () => {
+const MaterialUsageDetails = () => {
 
   const [rowData, setRowData] = useState([]);
   const [gridApi, setGridApi] = useState(null);
@@ -35,8 +35,8 @@ const IncomeExpenseAnalysis = () => {
   const companyName = sessionStorage.getItem('selectedCompanyName');
   const [loading, setLoading] = useState(false);
 
-  const [customer, setCustomer] = useState("");
   const [siteID, setSiteID] = useState("");
+  const [material, setMaterial] = useState("");
 
   const permissions = JSON.parse(sessionStorage.getItem('permissions')) || {};
   const companyPermissions = permissions
@@ -185,16 +185,6 @@ const IncomeExpenseAnalysis = () => {
       editable: false,
     },
     {
-      headerName: "Customer Code",
-      field: "customer_code",
-      editable: true,
-    },
-    {
-      headerName: "Customer Name",
-      field: "customer_name",
-      editable: true,
-    },
-    {
       headerName: "Site ID",
       field: "site_id",
       editable: true,
@@ -205,18 +195,43 @@ const IncomeExpenseAnalysis = () => {
       editable: true,
     },
     {
-      headerName: "Total Income",
-      field: "total_income",
+      headerName: "Material Code",
+      field: "material_code",
       editable: true,
     },
     {
-      headerName: "Total Expense",
-      field: "total_expense",
+      headerName: "Material Name",
+      field: "material_name",
       editable: true,
     },
     {
-      headerName: "Net Profit",
-      field: "net_profit",
+      headerName: "Issued Qty",
+      field: "issued_qty",
+      editable: true,
+    },
+    {
+      headerName: "Used Qty",
+      field: "used_qty",
+      editable: true,
+    },
+    {
+      headerName: "Return Qty",
+      field: "return_qty",
+      editable: true,
+    },
+    {
+      headerName: "Balance Qty",
+      field: "balance_qty",
+      editable: true,
+    },
+    {
+      headerName: "Rate",
+      field: "rate",
+      editable: true,
+    },
+    {
+      headerName: "Amount",
+      field: "total_cost",
       editable: true,
     },
   ];
@@ -512,11 +527,11 @@ const IncomeExpenseAnalysis = () => {
       <div>
         <div className="shadow-lg p-1 bg-body-tertiary rounded mb-2">
           <div className="d-flex justify-content-between ">
-            <h1 className='purbut mt-3'>Income & Expense Analysis Report</h1>
+            <h1 className='purbut mt-3'>Material Usage Details – Site Wise Report</h1>
             <div className="mobileview">
               <div className="d-flex justify-content-between ">
                 <div className="d-flex justify-content-start ">
-                  <h1 className='h1'>Income & Expense Analysis Report</h1>
+                  <h1 className='h1'>Material Usage Details – Site Wise Report</h1>
                 </div>
                 <div className="d-flex justify-content-end mt-1 ms-5">
                   <div className="dropdown">
@@ -557,28 +572,6 @@ const IncomeExpenseAnalysis = () => {
         <div className="row ms-4 mt-3 mb-3 me-4">
 
           <div className="col-md-3 form-group mb-2">
-            <label className="">Customer</label>
-            <div className="exp-form-floating">
-              <div className="d-flex justify-content-end">
-                <input
-                  id="wcode"
-                  className="exp-input-field form-control justify-content-start"
-                  placeholder=""
-                  title='Please Enter the Customer'
-                  value={customer}
-                  // onKeyDown={(e) => e.key === "Enter" && fetchGstReport()}
-                  onChange={(e) => setCustomer(e.target.value)}
-                />
-                <div className='position-absolute mt-1 me-2'>
-                  <span className="icon searchIcon">
-                    <i class="fa fa-search"></i>
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="col-md-3 form-group mb-2">
             <label className="">Site ID</label>
             <div className="exp-form-floating">
               <div className="d-flex justify-content-end">
@@ -588,14 +581,36 @@ const IncomeExpenseAnalysis = () => {
                   placeholder=""
                   title='Please Enter the Site ID'
                   value={siteID}
-                  // onKeyDown={(e) => e.key === "Enter" && fetchGstReport()}
+                //   onKeyDown={(e) => e.key === "Enter" && fetchGstReport()}
                   onChange={(e) => setSiteID(e.target.value)}
                 />
-                <div className='position-absolute mt-1 me-2'>
+                {/* <div className='position-absolute mt-1 me-2'>
                   <span className="icon searchIcon">
                     <i class="fa fa-search"></i>
                   </span>
-                </div>
+                </div> */}
+              </div>
+            </div>
+          </div>
+
+          <div className="col-md-3 form-group mb-2">
+            <label className="">Material</label>
+            <div className="exp-form-floating">
+              <div className="d-flex justify-content-end">
+                <input
+                  id="wcode"
+                  className="exp-input-field form-control justify-content-start"
+                  placeholder=""
+                  title='Please Enter the Material'
+                  value={material}
+                //   onKeyDown={(e) => e.key === "Enter" && fetchGstReport()}
+                  onChange={(e) => setMaterial(e.target.value)}
+                />
+                {/* <div className='position-absolute mt-1 me-2'>
+                  <span className="icon searchIcon">
+                    <i class="fa fa-search"></i>
+                  </span>
+                </div> */}
               </div>
             </div>
           </div>
@@ -635,4 +650,4 @@ const IncomeExpenseAnalysis = () => {
   );
 }
 
-export default IncomeExpenseAnalysis;
+export default MaterialUsageDetails;
