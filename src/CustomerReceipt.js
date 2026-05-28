@@ -10,6 +10,10 @@ import { faPlus, faMinus } from "@fortawesome/free-solid-svg-icons";
 const config = require('./Apiconfig');
 
 function AssetsReturn({ }) {
+    const getTodayDate = () => {
+    const today = new Date();
+    return today.toISOString().split('T')[0]; // 'YYYY-MM-DD'
+  };
     const [rowData, setRowData] = useState([]);
     const [customerDrop, setCustomerDrop] = useState([]);
     const [typeDrop, setTypeDrop] = useState([]);
@@ -17,8 +21,10 @@ function AssetsReturn({ }) {
     const [type, setType] = useState('');
     const [selectedCustomer, setSelectedCustomer] = useState('');
     const [selectedType, setSelectedType] = useState('');
-    const [transactionDate, setTransactionDate] = useState('');
+    const [transactionDate, setTransactionDate] = useState(getTodayDate());
     const [gridApi, setGridApi] = useState(null);
+
+    
 
     const permissions = JSON.parse(sessionStorage.getItem('permissions')) || {};
     const purchasePermission = permissions

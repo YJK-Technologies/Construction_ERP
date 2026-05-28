@@ -84,7 +84,8 @@ function Purchase() {
   const [warehouse_code, setWarehousecode] = useState("");
   const [showAsterisk, setShowAsterisk] = useState(false);
 
-
+  const Location_Code = sessionStorage.getItem("selectedLocationCode");
+  
   const navigate = useNavigate();
 
   const location = useLocation();
@@ -459,6 +460,7 @@ function Purchase() {
   //ITEM CODE TO SEARCH IN AG GRID
   const handleItemCode = async (params) => {
     const company_code = sessionStorage.getItem("selectedCompanyCode");
+    
     setLoading(true)
     try {
       const response = await fetch(`${config.apiBaseUrl}/getitemcodepurdata`, {
@@ -1339,7 +1341,8 @@ function Purchase() {
         tax_amount: TotalTax,
         total_amount: TotalBill,
         rounded_off: round_difference,
-        created_by: sessionStorage.getItem('selectedUserCode')
+        created_by: sessionStorage.getItem('selectedUserCode'),
+        Location_Code
       };
 
       const response = await fetch(`${config.apiBaseUrl}/addpurchasehdrdata`, {
@@ -1406,7 +1409,8 @@ function Purchase() {
           purchase_type: purchaseType,
           transaction_no: transaction_no,
           transaction_date: transactionDate,
-          ItemSNo: row.serialNumber
+          ItemSNo: row.serialNumber,
+          Location_Code
         };
 
         const response = await fetch(`${config.apiBaseUrl}/addpurhdetData`, {
