@@ -111,6 +111,7 @@ export default function ObPopup({ open, handleClose, handleOb }) {
         },
         body: JSON.stringify({
           company_code: sessionStorage.getItem("selectedCompanyCode"),
+          Location_Code: sessionStorage.getItem("selectedLocationCode"),
           transaction_no,
           financial_year,
           entry_date,

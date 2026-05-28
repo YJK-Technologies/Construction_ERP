@@ -179,6 +179,7 @@ export default function InventoryIssuedItemPopup({ open, handleClose, handleItem
     setLoading(true);
     try {
       const company_code = sessionStorage.getItem('selectedCompanyCode');
+      const Location_Code = sessionStorage.getItem('selectedLocationCode');
       const response = await fetch(`${config.apiBaseUrl}/itempursearchdata`, {
         method: "POST",
         headers: {
@@ -191,7 +192,8 @@ export default function InventoryIssuedItemPopup({ open, handleClose, handleItem
           Item_short_name,
           Item_Our_Brand,
           status,
-          company_code // Include company_code in the request payload
+          company_code, // Include company_code in the request payload
+          Location_Code // Include Location_Code in the request payload
         })
       });
   
