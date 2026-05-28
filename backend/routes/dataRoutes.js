@@ -1248,6 +1248,9 @@ router.post("/updateVendorPayment", dataController.updateVendorPayment)
 router.post("/getPendingVendorPayment", dataController.getPendingVendorPayment)
 router.post("/getVendorType", dataController.getVendorType)
 router.post("/getCostingMethods", dataController.getCostingMethods)
+router.post("/getOB_data", dataController.getOB_data)
+router.post("/get_GOB", dataController.get_GOB)
+router.post("/inventoryIssueCalculation", dataController.inventoryIssueCalculation)
 
 
 module.exports = router;

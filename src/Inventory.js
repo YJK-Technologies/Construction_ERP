@@ -4009,26 +4009,12 @@ function Sales() {
               </div>
             </div>
             <div className="shadow-lg p-1 mt-2 bg-body-tertiary rounded  pt-3 pb-4" align="left">
-              <div class="d-flex justify-content-between ms-4" style={{ marginBlock: "", marginTop: "10px" }} >
-                <div align="left" class="d-flex justify-content-start" style={{ marginLeft: "14px" }}>
-                  <purButton
-                    type="button"
-                    className={`"toggle-btn"  ${activeTable === 'myTable' ? 'active' : ''}`}
-                    onClick={() => handleToggleTable('myTable')}>
-                    Item Details
-                  </purButton>
-                  <purButton
-                    type="button"
-                    className={`"toggle-btn" ${activeTable === 'tax' ? 'active' : ''}`}
-                    onClick={() => handleToggleTable('tax')}>
-                    Tax Details
-                  </purButton>
-                </div>
 
-                <div className="d-flex align-items-end gap-3">
+              <div className="row ms-3 me-3">
 
-                  <div className="form-group mb-2">
-                    <label>Product/Items Filter</label>
+                <div className="col-md-2 form-group mb-2">
+                  <label>Product/Items Filter</label>
+                  <div class="exp-form-floating">
                     <Select
                       id="Product"
                       value={selectedProduct}
@@ -4039,92 +4025,148 @@ function Sales() {
                       required
                     />
                   </div>
+                </div>
 
-                  <div className="form-group md-3 mb-2" style={{ width: "260px" }} >
-                    <label>Product/Items Name</label>
-                    <Select
-                      className="exp-input-field"
-                      id="itemCode"
-                      required
-                      placeholder=""
-                      maxLength={18}
-                      autoComplete="off"
-                      options={dynamicOptions}
-                      onChange={handleItemCode}
-                    />
-                  </div>
-                  <div className="form-group mb-2">
-                    <label>Measurement</label>
-                    <Select
-                      id="Product"
-                      value={selectedCount}
-                      onChange={handleChangeCount}
-                      options={filteredOptionCount}
-                      className="exp-input-field"
-                      required
-                    />
-                  </div>
-                  <div className="form-group md-3 mb-2">
-                    <label htmlFor="paidAmount" className="">Weight</label>
-                    <input
-                      id="Quantity"
-                      type="number"
-                      className="form-control exp-input-field"
-                      value={Weight}
-                      onChange={(e) => setWeight(e.target.value)}
-                      autoComplete="off"
-                    />
-                  </div>
-                  <div className="form-group md-3 mb-2">
-                    <label htmlFor="paidAmount" className="">Quantity</label>
-                    <input
-                      id="Quantity"
-                      type="number"
-                      className="form-control exp-input-field"
-                      value={Quantity}
-                      onChange={(e) => setQuantity(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter") {
+                <div className="col-md-2 form-group mb-2">
+                  <label>Product/Items Name</label>
+                  <Select
+                    className="exp-input-field"
+                    id="itemCode"
+                    required
+                    placeholder=""
+                    maxLength={18}
+                    autoComplete="off"
+                    options={dynamicOptions}
+                    onChange={handleItemCode}
+                  />
+                </div>
 
-                          if (!lastAddedRow) {
-                            toast.error("Please select a product/item first.");
-                            return;
-                          }
+                <div className="col-md-2 form-group mb-2">
+                  <label>Measurement</label>
+                  <Select
+                    id="Product"
+                    value={selectedCount}
+                    onChange={handleChangeCount}
+                    options={filteredOptionCount}
+                    className="exp-input-field"
+                    required
+                  />
+                </div>
 
-                          ItemSalesAmountCalculation(
-                            { data: lastAddedRow }, // ✅ only the last added row
-                            {
-                              bill_qty: Quantity,
-                              measurements: selectedCount?.value || 0,
-                              Weight: Weight
-                            }
-                          );
+                <div className="col-md-2 form-group mb-2">
+                  <label htmlFor="paidAmount" className="">Weight</label>
+                  <input
+                    id="Quantity"
+                    type="number"
+                    className="form-control exp-input-field"
+                    value={Weight}
+                    onChange={(e) => setWeight(e.target.value)}
+                    autoComplete="off"
+                  />
+                </div>
 
+                <div className="col-md-2 form-group mb-2">
+                  <label htmlFor="paidAmount" className="">Quantity</label>
+                  <input
+                    id="Quantity"
+                    type="number"
+                    className="form-control exp-input-field"
+                    value={Quantity}
+                    onChange={(e) => setQuantity(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+
+                        if (!lastAddedRow) {
+                          toast.error("Please select a product/item first.");
+                          return;
                         }
-                      }}
-                      autoComplete="off"
-                    />
-                  </div>
 
+                        ItemSalesAmountCalculation(
+                          { data: lastAddedRow }, // ✅ only the last added row
+                          {
+                            bill_qty: Quantity,
+                            measurements: selectedCount?.value || 0,
+                            Weight: Weight
+                          }
+                        );
 
+                      }
+                    }}
+                    autoComplete="off"
+                  />
                 </div>
-
-                <div align="" class="d-flex justify-content-end" style={{ marginRight: "50px" }}>
-                  <icon
-                    type="button"
-                    className="popups-btn"
-                    onClick={handleAddRow}>
-                    <FontAwesomeIcon icon={faPlus} />
-                  </icon>
-                  <icon
-                    type="button"
-                    className="popups-btn"
-                    onClick={handleRemoveRow}>
-                    <FontAwesomeIcon icon={faMinus} />
-                  </icon>
-                </div>
-
               </div>
+
+              <div class="d-flex justify-content-between " style={{ marginBlock: "", marginTop: "10px" }} >
+                <div className="purbut">
+                  <div align="left" class="d-flex justify-content-start ms-5" style={{ marginLeft: "14px" }}>
+                    <purButton
+                      type="button"
+                      className={`"toggle-btn"  ${activeTable === 'myTable' ? 'active' : ''}`}
+                      onClick={() => handleToggleTable('myTable')}>
+                      Item Details
+                    </purButton>
+                    <purButton
+                      type="button"
+                      className={`"toggle-btn" ${activeTable === 'tax' ? 'active' : ''}`}
+                      onClick={() => handleToggleTable('tax')}>
+                      Tax Details
+                    </purButton>
+                  </div>
+                </div>
+
+                <div className='mobileview'>
+                  <div align="left" class="d-flex justify-content-start ms-1">
+                    <purButton
+                      type="button"
+                      className={`"toggle-btn"  ${activeTable === 'myTable' ? 'active' : ''}`}
+                      onClick={() => handleToggleTable('myTable')}>
+                      Item Details
+                    </purButton>
+                    <purButton
+                      type="button"
+                      className={`"toggle-btn" ${activeTable === 'tax' ? 'active' : ''}`}
+                      onClick={() => handleToggleTable('tax')}>
+                      Tax Details
+                    </purButton>
+                  </div>
+                </div>
+
+                <div className='purbut'>
+                  <div align="" class="d-flex justify-content-end" style={{ marginRight: "50px" }}>
+                    <icon
+                      type="button"
+                      className="popups-btn"
+                      onClick={handleAddRow}>
+                      <FontAwesomeIcon icon={faPlus} />
+                    </icon>
+                    <icon
+                      type="button"
+                      className="popups-btn"
+                      onClick={handleRemoveRow}>
+                      <FontAwesomeIcon icon={faMinus} />
+                    </icon>
+                  </div>
+                </div>
+
+                <div className='mobileview'>
+                  <div class="d-flex justify-content-start" >
+                    <icon
+                      type="button"
+                      className="popups-btn fs-6 ms-0 text-dark "
+                      onClick={handleAddRow}>
+                      <FontAwesomeIcon icon={faPlus} />
+                    </icon>
+                    <icon
+                      type="button"
+                      className="popups-btn fs-6 ms-0 text-dark"
+                      onClick={handleRemoveRow}>
+                      <FontAwesomeIcon icon={faMinus} />
+                    </icon>
+                  </div>
+                </div>
+              </div>
+
               <div className="ag-theme-alpine" style={{ height: 437, width: "100%" }}>
                 <AgGridReact
                   columnDefs={activeTable === 'myTable' ? columnDefs : columnDefsTax}

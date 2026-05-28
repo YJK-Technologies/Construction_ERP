@@ -65,6 +65,14 @@ function Openingbalance() {
   const [showStatusColumn, setShowStatusColumn] = useState(false);
   const [statusdrop, setStatusdrop] = useState([]);
 
+  const [financialYear, setFinancialYear] = useState("");
+  const [entryDate, setEntryDate] = useState("");
+  const [partyType, setPartyType] = useState("");
+  const [partyCode, setPartyCode] = useState("");
+  const [openingAmount, setOpeningAmount] = useState("");
+  const [balanceType, setBalanceType] = useState("");
+  const [remarks, setRemarks] = useState("");
+
   //code added by Harish purpose of set user permisssion
   const permissions = JSON.parse(sessionStorage.getItem("permissions")) || {};
   const openingItemPermission = permissions
@@ -101,17 +109,17 @@ function Openingbalance() {
   };
 
   const getFinancialYear = () => {
-  const today = new Date();
-  const year = today.getFullYear();
-  const month = today.getMonth() + 1; // 1-12
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = today.getMonth() + 1; // 1-12
 
-  // FY starts April 1
-  if (month >= 4) {
-    return `${year}-${year + 1}`;
-  } else {
-    return `${year - 1}-${year}`;
-  }
-};
+    // FY starts April 1
+    if (month >= 4) {
+      return `${year}-${year + 1}`;
+    } else {
+      return `${year - 1}-${year}`;
+    }
+  };
 
   // const handleCustomerSelect = async (selectedData) => {
   //   let updatedRowDataCopy = [...rowData];
@@ -151,87 +159,115 @@ function Openingbalance() {
 
   const handleUpdateRow = async (row) => {
     try {
-    const payload = {
-      mode: "U",
-      transaction_no: row.TransactionNo || row.transaction_no,
-      financial_year: getFinancialYear(),
-      entry_date: row.entry_date,
-      party_type: row.party_type,
-      party_code: row.party_code,
-      keyfield: row.keyfield,
-      opening_amount: parseFloat(row.opening_amount),
-      balance_type: row.balance_type,
-      remarks: row.remarks,
-      status: row.status,
-      data_deleted: false,
+      const payload = {
+        mode: "U",
+        transaction_no: row.TransactionNo || row.transaction_no,
+        financial_year: getFinancialYear(),
+        entry_date: row.entry_date,
+        party_type: row.party_type,
+        party_code: row.party_code,
+        keyfield: row.keyfield,
+        opening_amount: parseFloat(row.opening_amount),
+        balance_type: row.balance_type,
+        remarks: row.remarks,
+        status: row.status,
+        data_deleted: false,
 
-      company_code: sessionStorage.getItem("selectedCompanyCode"), // 🔥 FIX
-      created_by: sessionStorage.getItem("selectedUserCode"),      // 🔥 FIX
-      created_date: new Date(),
-      modified_by: sessionStorage.getItem("selectedUserCode"),
-      modified_date: new Date(),
-    };
+        company_code: sessionStorage.getItem("selectedCompanyCode"), // 🔥 FIX
+        created_by: sessionStorage.getItem("selectedUserCode"), // 🔥 FIX
+        Location_Code: sessionStorage.getItem("selectedLocationCode"),
+        created_date: new Date(),
+        modified_by: sessionStorage.getItem("selectedUserCode"),
+        modified_date: new Date(),
+      };
 
-    console.log("UPDATE PAYLOAD:", payload);
+      console.log("UPDATE PAYLOAD:", payload);
 
-    const response = await fetch(
-      `${config.apiBaseUrl}/opening_balanceLoopUpdate`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ opening_balanceData: [payload] }),
-      }
-    );
-
-    const data = await response.json();
-
-    if (response.ok) {
-      toast.success("Updated Successfully");
-    } else {
-      toast.error(data.message || "Update Failed");
-    }
-    } catch (err) {
-      console.error(err);
-      toast.error("Error updating row");
-    }
-  };
-
-  const handleDeleteRow = async (row) => {
-    try {
-      console.log("Delete Row :", row);
-      // toast.warning(`Delete clicked for ${row.party_code}`);
-      // later API call here
       const response = await fetch(
-        `${config.apiBaseUrl}/opening_balanceLoopDelete`,
+        `${config.apiBaseUrl}/opening_balanceLoopUpdate`,
         {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            opening_balanceData: [row],
-          }),
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ opening_balanceData: [payload] }),
         },
       );
 
       const data = await response.json();
 
       if (response.ok) {
-        toast.success("Row Deleted Successfully");
-
-        const updatedRows = rowData.filter(
-          (item) => item.serialNumber !== row.serialNumber,
-        );
-
-        setRowData(updatedRows);
+        toast.success("Updated Successfully");
       } else {
-        toast.error(data.message || "Delete Failed");
+        toast.error(data.message || "Update Failed");
       }
-    } catch (error) {
-      console.error(error);
-      toast.error("Error while deleting row");
+    } catch (err) {
+      console.error(err);
+      toast.error("Error updating row");
     }
   };
+
+  const handleDeleteRow = async (rowData) => {
+    const company_code = sessionStorage.getItem("selectedCompanyCode");
+    const Location_Code = sessionStorage.getItem("selectedLocationCode");
+    const modified_by = sessionStorage.getItem("selectedUserCode");
+
+    const opening_balanceDelete = {
+      opening_balanceData: Array.isArray(rowData)
+        ? rowData.map((row) => ({
+            ...row,
+            company_code,
+            Location_Code,
+            modified_by,
+          }))
+        : [
+            {
+              ...rowData,
+              company_code,
+              Location_Code,
+              modified_by,
+            },
+          ],
+    };
+
+    showConfirmationToast(
+      "Are you sure you want to delete the selected row?",
+      async () => {
+        try {
+          console.log("Delete Payload :", opening_balanceDelete);
+
+          const response = await fetch(
+            `${config.apiBaseUrl}/opening_balanceLoopDelete`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                company_code: company_code,
+              },
+              body: JSON.stringify(opening_balanceDelete),
+            },
+          );
+
+          const data = await response.json();
+          if (response.ok) {
+            toast.success("Row Deleted Successfully");
+            setRowData((prevRows) =>
+              prevRows.filter(
+                (item) => item.serialNumber !== rowData.serialNumber,
+              ),
+            );
+          } else {
+            toast.error(data.message || "Delete Failed");
+          }
+        } catch (error) {
+          console.error(error);
+          toast.error("Error while deleting row");
+        }
+      },
+      () => {
+        toast.info("Delete cancelled");
+      },
+    );
+  };
+
   const filteredOptionParty = Array.isArray(partyDrop)
     ? partyDrop.map((option) => ({
         value: option.descriptions,
@@ -298,18 +334,18 @@ function Openingbalance() {
   }));
 
   useEffect(() => {
-    const company_code = sessionStorage.getItem('selectedCompanyCode');
+    const company_code = sessionStorage.getItem("selectedCompanyCode");
 
     fetch(`${config.apiBaseUrl}/status`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify({ company_code })
+      body: JSON.stringify({ company_code }),
     })
       .then((data) => data.json())
       .then((val) => setStatusdrop(val))
-      .catch((error) => console.error('Error fetching data:', error));
+      .catch((error) => console.error("Error fetching data:", error));
   }, []);
 
   const columnDefs = useMemo(
@@ -317,9 +353,11 @@ function Openingbalance() {
       {
         headerName: "S.No",
         field: "serialNumber",
-        maxWidth: 80,
+        maxWidth: 100,
         sortable: false,
         editable: false,
+        // checkboxSelection: true,
+        // headerCheckboxSelection: true,
       },
       {
         headerName: "Transaction No",
@@ -448,17 +486,17 @@ function Openingbalance() {
         },
       },
       {
-  headerName: "Opening Amount",
-  field: "opening_amount",
-  editable: !showAsterisk,
-  filter: true,
-  sortable: false,
+        headerName: "Opening Amount",
+        field: "opening_amount",
+        editable: !showAsterisk,
+        filter: true,
+        sortable: false,
 
-  valueParser: (params) => {
-    const value = parseFloat(params.newValue);
-    return isNaN(value) ? "" : value;
-  },
-},
+        valueParser: (params) => {
+          const value = parseFloat(params.newValue);
+          return isNaN(value) ? "" : value;
+        },
+      },
       {
         headerName: "Remarks",
         field: "remarks",
@@ -509,94 +547,6 @@ function Openingbalance() {
     [partyDrop, showAsterisk, isExistingData, statusdrop, showStatusColumn],
   );
 
-  const handleItemCode = async (params) => {
-    setLoading(true);
-    const company_code = sessionStorage.getItem("selectedCompanyCode");
-    try {
-      const response = await fetch(`${config.apiBaseUrl}/getitemcodepurdata`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ company_code, Item_code: params.data.itemCode }),
-      });
-
-      if (response.ok) {
-        const searchData = await response.json();
-        const updatedRow = rowData.map((row) => {
-          if (row.party_code === params.data.itemCode) {
-            const matchedItem = searchData.find((item) => item.id === row.id);
-            if (matchedItem) {
-              return {
-                ...row,
-                itemCode: matchedItem.Item_code,
-                itemName: matchedItem.Item_name,
-              };
-            }
-          }
-          return row;
-        });
-        setRowData(updatedRow);
-        console.log(updatedRow);
-      } else if (response.status === 404) {
-        toast.warning("Data not found!", {
-          onClose: () => {
-            const updatedRowData = rowData.map((row) => {
-              if (row.itemCode === params.data.itemCode) {
-                return {
-                  ...row,
-                  itemCode: "",
-                  itemName: "",
-                };
-              }
-              return row;
-            });
-            setRowData(updatedRowData);
-          },
-        });
-      } else {
-        console.log("Bad request");
-      }
-    } catch (error) {
-      console.error("Error fetching search data:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleItem = async (selectedData) => {
-    console.log("Selected Data:", selectedData);
-    let updatedRowDataCopy = [...rowData];
-    let highestSerialNumber = updatedRowDataCopy.reduce(
-      (max, row) => Math.max(max, row.serialNumber),
-      0,
-    );
-
-    selectedData.forEach((item) => {
-      const existingItemWithSameCode = updatedRowDataCopy.find(
-        (row) => row.serialNumber === global && row.itemCode === globalItem,
-      );
-
-      if (existingItemWithSameCode) {
-        console.log("if", existingItemWithSameCode);
-        existingItemWithSameCode.itemCode = item.itemCode;
-        existingItemWithSameCode.itemName = item.itemName;
-      } else {
-        console.log("else");
-        highestSerialNumber += 1;
-        const newRow = {
-          serialNumber: highestSerialNumber,
-          itemCode: item.itemCode,
-          itemName: item.itemName,
-        };
-        updatedRowDataCopy.push(newRow);
-      }
-    });
-
-    setRowData(updatedRowDataCopy);
-    return true;
-  };
-
   const defaultColDef = {
     resizable: true,
   };
@@ -606,54 +556,53 @@ function Openingbalance() {
     setGridColumnApi(params.columnApi);
   };
 
+  // const handleCellValueChanged = (params) => {
+  //   const { colDef, rowIndex, newValue } = params;
 
-// const handleCellValueChanged = (params) => {
-//   const { colDef, rowIndex, newValue } = params;
+  //   // Prevent auto row add for existing fetched records
+  //   if (isExistingData) return;
 
-//   // Prevent auto row add for existing fetched records
-//   if (isExistingData) return;
+  //   const lastRowIndex = rowData.length - 1;
 
-//   const lastRowIndex = rowData.length - 1;
+  //   if (colDef.field === "opening_amount") {
+  //     const amount = parseFloat(newValue);
 
-//   if (colDef.field === "opening_amount") {
-//     const amount = parseFloat(newValue);
+  //     // Prevent invalid numbers
+  //     if (isNaN(amount)) return;
 
-//     // Prevent invalid numbers
-//     if (isNaN(amount)) return;
+  //     // Add new row only for last row
+  //     if (amount > 0 && rowIndex === lastRowIndex) {
+  //       const serialNumber = rowData.length + 1;
 
-//     // Add new row only for last row
-//     if (amount > 0 && rowIndex === lastRowIndex) {
-//       const serialNumber = rowData.length + 1;
+  //       const newRowData = {
+  //         serialNumber,
+  //         TransactionNo: "",
+  //         entry_date: getFinancialYearDate(),
+  //         party_type: "",
+  //         party_code: "",
+  //         itemName: "",
+  //         balance_type: "",
+  //         opening_amount: "",
+  //         remarks: "",
+  //       };
 
-//       const newRowData = {
-//         serialNumber,
-//         TransactionNo: "",
-//         entry_date: getFinancialYearDate(),
-//         party_type: "",
-//         party_code: "",
-//         itemName: "",
-//         balance_type: "",
-//         opening_amount: "",
-//         remarks: "",
-//       };
+  //       setRowData((prevRowData) => [...prevRowData, newRowData]);
+  //     }
+  //   }
+  // };
 
-//       setRowData((prevRowData) => [...prevRowData, newRowData]);
-//     }
-//   }
-// };
+  const handleCellValueChanged = (params) => {
+    const { colDef, newValue } = params;
 
-const handleCellValueChanged = (params) => {
-  const { colDef, newValue } = params;
+    if (colDef.field === "opening_amount") {
+      const amount = parseFloat(newValue);
 
-  if (colDef.field === "opening_amount") {
-    const amount = parseFloat(newValue);
-
-    // prevent invalid number issue
-    if (isNaN(amount)) {
-      params.node.setDataValue("opening_amount", "");
+      // prevent invalid number issue
+      if (isNaN(amount)) {
+        params.node.setDataValue("opening_amount", "");
+      }
     }
-  }
-};
+  };
 
   const handleSave = async () => {
     try {
@@ -681,6 +630,7 @@ const handleCellValueChanged = (params) => {
           data_deleted: false,
           company_code: sessionStorage.getItem("selectedCompanyCode"),
           created_by: sessionStorage.getItem("selectedUserCode"),
+          Location_Code: sessionStorage.getItem("selectedLocationCode"),
           created_date: new Date(),
           modified_by: "",
           modified_date: null,
@@ -733,144 +683,6 @@ const handleCellValueChanged = (params) => {
       setLoading(false);
     }
   };
-  const OpeningItemDetails = async (transaction_no) => {
-    try {
-      const validRows = rowData.filter(
-        (row) => row.itemCode && row.itemName && row.billQty > 0,
-      );
-
-      for (const row of validRows) {
-        const Details = {
-          company_code: sessionStorage.getItem("selectedCompanyCode"),
-          created_by: sessionStorage.getItem("selectedUserCode"),
-          transaction_date,
-          transaction_no,
-          Item_SNo: row.serialNumber,
-          Item_code: row.itemCode,
-          Item_name: row.itemName,
-          bill_qty: row.billQty,
-        };
-
-        const response = await fetch(
-          `${config.apiBaseUrl}/addOpeningItemDetail`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(Details),
-          },
-        );
-
-        if (response.ok) {
-          console.log("Data inserted successfully");
-        } else {
-          const errorResponse = await response.json();
-          toast.warning(errorResponse.message || "Failed to insert sales data");
-          console.error(errorResponse.details || errorResponse.message);
-        }
-      }
-    } catch (error) {
-      console.error("Error inserting data:", error);
-      toast.error("Error inserting data: " + error.message);
-    }
-  };
-
-  const handleDeleteButtonClick = async () => {
-    if (!transaction_no) {
-      setDeleteError(" ");
-      toast.warning("Error: Missing required fields");
-      return;
-    }
-
-    showConfirmationToast(
-      "Are you sure you want to delete the data?",
-      async () => {
-        setLoading(true);
-        try {
-          const detailResult = await OIDetailDelete();
-          const headerResult = await OIHeaderDelete();
-
-          if (headerResult === true && detailResult === true) {
-            console.log("Data Deleted Successfully");
-            toast.success("Data Deleted Successfully", {
-              autoClose: true,
-              onClose: () => {
-                window.location.reload();
-              },
-            });
-          } else {
-            const errorMessage =
-              headerResult !== true ? headerResult : detailResult;
-            toast.error(errorMessage);
-          }
-        } catch (error) {
-          console.error("Error executing API calls:", error);
-          toast.error("Error occurred: " + error.message);
-        } finally {
-          setLoading(false);
-        }
-      },
-      () => {
-        toast.info("Data deletion cancelled.");
-      },
-    );
-  };
-
-  const OIHeaderDelete = async () => {
-    try {
-      const response = await fetch(`${config.apiBaseUrl}/openingitemdelhdr`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          transaction_no,
-          company_code: sessionStorage.getItem("selectedCompanyCode"),
-        }),
-      });
-
-      if (response.ok) {
-        return true;
-      } else {
-        const errorResponse = await response.json();
-        console.error(errorResponse.details || errorResponse.message);
-        return errorResponse.message || errorResponse.details;
-      }
-    } catch (error) {
-      console.error("Error executing API calls:", error);
-      return "Error occurred during header deletion.";
-    }
-  };
-
-  const OIDetailDelete = async () => {
-    try {
-      const response = await fetch(
-        `${config.apiBaseUrl}/deleteOpeningItemDetail`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            transaction_no,
-            company_code: sessionStorage.getItem("selectedCompanyCode"),
-          }),
-        },
-      );
-
-      if (response.ok) {
-        return true;
-      } else {
-        const errorResponse = await response.json();
-        console.error(errorResponse.details || errorResponse.message);
-        return errorResponse.message || errorResponse.details;
-      }
-    } catch (error) {
-      console.error("Error executing API calls:", error);
-      return "Error occurred during detail deletion.";
-    }
-  };
 
   const formatDate = (isoDateString) => {
     const date = new Date(isoDateString);
@@ -882,14 +694,15 @@ const handleCellValueChanged = (params) => {
 
   const handleKeyPress = (e) => {
     if (e.key === "Enter") {
-      handleOpeningItem(transaction_no);
+      handleGetOpeningBalance(transaction_no);
     }
   };
 
-  const handleOpeningItem = async (code) => {
-    setLoading(true);
+  const handleGetOpeningBalance = async (code) => {
     try {
-      const response = await fetch(`${config.apiBaseUrl}/getallOpeningItem`, {
+      setLoading(true);
+
+      const response = await fetch(`${config.apiBaseUrl}/get_GOB`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -899,66 +712,100 @@ const handleCellValueChanged = (params) => {
           company_code: sessionStorage.getItem("selectedCompanyCode"),
         }),
       });
+
+      const data = await response.json();
+
+      console.log("FETCHED DATA :", data);
+
       if (response.ok) {
-        setSaveButtonVisible(false);
-        setShowAsterisk(true);
-        const searchData = await response.json();
-        if (searchData.Header && searchData.Header.length > 0) {
-          const item = searchData.Header[0];
-          settransaction_date(formatDate(item.transaction_date));
-          settransaction_no(item.transaction_no);
-        } else {
-          console.log("Header Data is empty or not found");
-          settransaction_date("");
-          settransaction_no("");
-        }
-
-        if (searchData.Details && searchData.Details.length > 0) {
-          const updatedRowData = searchData.Details.map((item) => {
-            return {
-              serialNumber: item.Item_SNo,
-              entry_date: formatDate(item.transaction_date),
-              itemCode: item.Item_code,
-              itemName: item.Item_name,
-              billQty: item.bill_qty,
-            };
-          });
-
-          setRowData(updatedRowData);
-        } else {
-          console.log("Detail Data is empty or not found");
-          setRowData([
-            {
-              serialNumber: 1,
-              itemCode: "",
-              itemName: "",
-              billQty: "",
-            },
-          ]);
-        }
-
-        console.log("data fetched successfully");
-      } else if (response.status === 404) {
-        toast.warning("Data not found");
-
-        settransaction_date("");
-        settransaction_no("");
-        setRowData([
+        // grid data set
+        const formattedData = [
           {
             serialNumber: 1,
-            itemCode: "",
-            itemName: "",
-            billQty: "",
+            TransactionNo: data.transaction_no,
+            entry_date: formatDate(data.entry_date),
+            party_type: data.party_type,
+            party_code: data.party_code,
+            itemName: data.party_code,
+            balance_type: data.balance_type,
+            opening_amount: data.opening_amount,
+            remarks: data.remarks,
+            financial_year: data.financial_year,
+            keyfield: data.keyfield,
+            status: data.status,
           },
-        ]);
-      } else {
-        console.log("Bad request");
+        ];
+
+        setRowData(formattedData);
+
+        // header values
+        settransaction_no(data.transaction_no);
+        settransaction_date(formatDate(data.entry_date));
+
+        setIsExistingData(true);
+        setShowStatusColumn(true);
+      } else if (response.status === 404) {
+        toast.warning("Data not found");
       }
-    } catch (error) {
-      console.error("Error fetching search data:", error);
+    } catch (err) {
+      console.error(err);
+      toast.error("Fetch failed");
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleAddRow = () => {
+    const serialNumber = rowData.length + 1;
+
+    const newRow = {
+      serialNumber,
+      TransactionNo: "",
+      entry_date: getFinancialYearDate(),
+      party_type: "",
+      party_code: "",
+      itemName: "",
+      balance_type: "",
+      opening_amount: "",
+      remarks: "",
+      financial_year: getFinancialYear(),
+      keyfield: "",
+      status: "Active",
+    };
+
+    setRowData((prev) => [...prev, newRow]);
+  };
+  const handleRemoveRow = () => {
+    // fetched data rows delete prevent
+    if (isExistingData) {
+      toast.warning("Fetched data rows cannot be removed");
+      return;
+    }
+
+    if (rowData.length === 1) {
+      setRowData([
+        {
+          serialNumber: 1,
+          TransactionNo: "",
+          entry_date: getFinancialYearDate(),
+          party_type: "",
+          party_code: "",
+          itemName: "",
+          balance_type: "",
+          opening_amount: "",
+          remarks: "",
+          financial_year: getFinancialYear(),
+          keyfield: "",
+          status: "Active",
+        },
+      ]);
+
+      return;
+    }
+
+    const updatedRowData = rowData.slice(0, -1);
+
+    setRowData(updatedRowData);
   };
 
   const [open, setOpen] = React.useState(false);
@@ -1022,49 +869,6 @@ const handleCellValueChanged = (params) => {
       settransaction_no(selectedData[0].transaction_no);
       setRowData(formattedData);
       setShowStatusColumn(true);
-    }
-  };
-
-  const OpeningBalanceDetail = async (transactionNo) => {
-    try {
-      const response = await fetch(
-        `${config.apiBaseUrl}/getallOpeningItemDetail`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            transaction_no: transactionNo,
-            company_code: sessionStorage.getItem("selectedCompanyCode"),
-          }),
-        },
-      );
-
-      if (response.ok) {
-        const searchData = await response.json();
-        const newRowData = searchData.map((item, index) => ({
-          serialNumber: index + 1,
-          TransactionNo: item.transaction_no,
-          entry_date: formatDate(item.entry_date),
-          party_type: item.party_type,
-          party_code: item.party_code,
-          itemName: item.party_code, // temporary
-          balance_type: item.balance_type,
-          opening_amount: item.opening_amount,
-          remarks: item.remarks,
-          keyfield: item.keyfield,
-          status: item.status,
-        }));
-
-        setRowData(newRowData);
-      } else if (response.status === 404) {
-        console.log("Data not found");
-      } else {
-        console.log("Bad request");
-      }
-    } catch (error) {
-      console.error("Error fetching search data:", error);
     }
   };
 
@@ -1150,17 +954,6 @@ const handleCellValueChanged = (params) => {
                     <i class="fa-regular fa-floppy-disk"></i>
                   </savebutton>
                 )}
-              {["delete", "all permission"].some((permission) =>
-                openingItemPermission.includes(permission),
-              ) && (
-                <delbutton
-                  className="purbut"
-                  title="Delete"
-                  onClick={handleDeleteButtonClick}
-                >
-                  <i class="fa-solid fa-trash"></i>
-                </delbutton>
-              )}
               <printbutton
                 className="purbut"
                 title="Reload"
@@ -1197,15 +990,6 @@ const handleCellValueChanged = (params) => {
                         )}
                       </li>
                     )}
-                    <li class="iconbutton  d-flex justify-content-center text-danger">
-                      {["delete", "all permission"].some((permission) =>
-                        openingItemPermission.includes(permission),
-                      ) && (
-                        <icon class="icon" onClick={handleDeleteButtonClick}>
-                          <i class="fa-solid fa-trash"></i>
-                        </icon>
-                      )}
-                    </li>
                     <li class="iconbutton  d-flex justify-content-center">
                       <icon class="icon" onClick={handleReload}>
                         <i class="fa-solid fa-arrow-rotate-right"></i>
@@ -1277,6 +1061,30 @@ const handleCellValueChanged = (params) => {
               </div>
             </div>
           </div>
+          {!isExistingData && (
+            <div
+              className="d-flex justify-content-end mb-2"
+              style={{ marginRight: "50px" }}
+            >
+              <icon
+                type="button"
+                className="popups-btn"
+                title="Add row"
+                onClick={handleAddRow}
+              >
+                <FontAwesomeIcon icon={faPlus} />
+              </icon>
+
+              <icon
+                type="button"
+                className="popups-btn"
+                title="Less row"
+                onClick={handleRemoveRow}
+              >
+                <FontAwesomeIcon icon={faMinus} />
+              </icon>
+            </div>
+          )}
           <div class="ag-theme-alpine" style={{ height: 545, width: "100%" }}>
             <AgGridReact
               rowData={rowData}
@@ -1286,14 +1094,10 @@ const handleCellValueChanged = (params) => {
               onCellValueChanged={handleCellValueChanged}
               paginationAutoPageSize={true}
               pagination={true}
+              rowSelection="multiple"
             />
           </div>
           <div>
-            <PurchaseItemPopup
-              open={open1}
-              handleClose={handleClose}
-              handleItem={handleItem}
-            />
             <PoCustomerPopup
               open={open2}
               handleClose={handleClose}
