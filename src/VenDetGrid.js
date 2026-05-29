@@ -336,6 +336,7 @@ function VenDetGrid() {
             : 0,
           balance_type,
           status,
+          vendor_type: vendorType
         }),
       });
       if (response.ok) {
