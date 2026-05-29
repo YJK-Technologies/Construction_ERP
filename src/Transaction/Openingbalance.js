@@ -63,6 +63,7 @@ function Openingbalance() {
   const [balance_typeDrop, setbalance_typeDrop] = useState([]);
   const [isExistingData, setIsExistingData] = useState(false);
   const [showStatusColumn, setShowStatusColumn] = useState(false);
+  const [showTransactionColumn, setShowTransactionColumn] = useState(false);
   const [statusdrop, setStatusdrop] = useState([]);
 
   const [financialYear, setFinancialYear] = useState("");
@@ -360,13 +361,6 @@ function Openingbalance() {
         // headerCheckboxSelection: true,
       },
       {
-        headerName: "Transaction No",
-        field: "TransactionNo",
-        sortable: false,
-        editable: false,
-        hide: true,
-      },
-      {
         headerName: "Action",
         field: "action",
         hide: !isExistingData,
@@ -393,6 +387,13 @@ function Openingbalance() {
             </div>
           );
         },
+      },
+      {
+        headerName: "Transaction No",
+        field: "TransactionNo",
+        sortable: false,
+        editable: false,
+        hide: !showTransactionColumn,
       },
       {
         headerName: "Transaction Date",
@@ -427,7 +428,7 @@ function Openingbalance() {
       {
         headerName: "Party Code",
         field: "party_code",
-        editable: false,
+        editable: !showAsterisk,
         filter: true,
         sortable: false,
         cellRenderer: (params) => {
@@ -850,6 +851,8 @@ function Openingbalance() {
     setIsExistingData(true);
 
     if (selectedData && selectedData.length > 0) {
+      // SHOW TRANSACTION COLUMN
+       setShowTransactionColumn(true);
       const formattedData = selectedData.map((item, index) => ({
         serialNumber: index + 1,
 
@@ -874,6 +877,7 @@ function Openingbalance() {
 
   const handleReload = () => {
     setIsExistingData(false);
+    setShowTransactionColumn(false);
     window.location.reload();
   };
 
@@ -897,34 +901,349 @@ function Openingbalance() {
   };
 
   const handleCustomerSelect = (selectedData) => {
-    const updatedRowData = [...rowData];
+  const updatedRowData = [...rowData];
 
-    if (selectedData.length > 0) {
-      updatedRowData[global - 1] = {
-        ...updatedRowData[global - 1],
-        party_code: selectedData[0].CustomerCode,
-        itemName: selectedData[0].CustomerName,
+  if (selectedData && selectedData.length > 0) {
+    const customer = selectedData[0];
+
+    // =========================================
+    // CHECK OB DATA EXISTS
+    // =========================================
+
+    const hasOBData =
+      customer.OB_transaction_no &&
+      customer.OB_opening_amount &&
+      customer.OB_keyfield;
+
+    updatedRowData[global - 1] = {
+      ...updatedRowData[global - 1],
+
+      // =================================
+      // NORMAL CUSTOMER VALUES
+      // =================================
+
+      party_type: "Customer",
+
+      party_code: customer.CustomerCode,
+
+      itemName: customer.CustomerName,
+
+      // =================================
+      // OB VALUES (ONLY IF EXISTS)
+      // =================================
+
+      TransactionNo: hasOBData
+        ? customer.OB_transaction_no || ""
+        : "",
+
+      entry_date: hasOBData
+        ? customer.OB_entry_date || ""
+        : getFinancialYearDate(),
+
+      financial_year: hasOBData
+        ? customer.OB_financial_year || ""
+        : "",
+
+      keyfield: hasOBData
+        ? customer.OB_keyfield || ""
+        : "",
+
+      balance_type: hasOBData
+        ? customer.OB_balance_type || ""
+        : "",
+
+      opening_amount: hasOBData
+        ? customer.OB_opening_amount || ""
+        : "",
+
+      remarks: hasOBData
+        ? customer.OB_remarks || ""
+        : "",
+
+      status: hasOBData
+        ? customer.OB_status || "Active"
+        : "Active",
+    };
+
+    // =========================================
+    // SHOW ACTION COLUMN ONLY IF OB EXISTS
+    // =========================================
+
+    if (hasOBData) {
+      setIsExistingData(true);
+      setShowStatusColumn(true);
+      setShowTransactionColumn(true);
+
+      settransaction_no(customer.OB_transaction_no);
+    } else {
+      setIsExistingData(false);
+      setShowStatusColumn(false);
+      setShowTransactionColumn(false);
+
+      settransaction_no("");
+    }
+  }
+
+  setRowData(updatedRowData);
+
+  setOpen2(false);
+};
+
+const handlePartyCodeFetch = async (params) => {
+  try {
+    const row = params.data;
+
+    if (!row.party_type || !row.party_code) {
+      return;
+    }
+
+    let apiUrl = "";
+    let payload = {};
+
+    // =========================================
+    // CUSTOMER
+    // =========================================
+
+    if (row.party_type === "Customer") {
+      apiUrl = `${config.apiBaseUrl}/getCustomerSearchdata`;
+
+      payload = {
+        company_code: sessionStorage.getItem("selectedCompanyCode"),
+        customer_code: row.party_code,
       };
     }
 
-    setRowData(updatedRowData);
-    setOpen2(false);
-  };
+    // =========================================
+    // VENDOR
+    // =========================================
 
-  const handleVendorSelect = (selectedData) => {
-    const updatedRowData = [...rowData];
+    else if (row.party_type === "Vendor") {
+      apiUrl = `${config.apiBaseUrl}/vendorsearchdata`;
 
-    if (selectedData.length > 0) {
-      updatedRowData[global - 1] = {
-        ...updatedRowData[global - 1],
-        party_code: selectedData[0].VendorCode,
-        itemName: selectedData[0].VendorName,
+      payload = {
+        company_code: sessionStorage.getItem("selectedCompanyCode"),
+        vendor_code: row.party_code,
       };
     }
 
-    setRowData(updatedRowData);
+    else {
+      return;
+    }
+
+    const response = await fetch(apiUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok || !data.length) {
+      toast.warning("Party not found");
+      return;
+    }
+
+    const result = data[0];
+
+    // =========================================
+    // COMMON VALUES
+    // =========================================
+
+    const partyCode =
+      row.party_type === "Customer"
+        ? result.customer_code
+        : result.vendor_code;
+
+    const partyName =
+      row.party_type === "Customer"
+        ? result.customer_name
+        : result.vendor_name;
+
+    // =========================================
+    // CHECK OB EXISTS
+    // =========================================
+
+    const hasOBData =
+      result.OB_transaction_no &&
+      result.OB_opening_amount &&
+      result.OB_keyfield;
+
+    const updatedRows = [...rowData];
+
+    updatedRows[params.node.rowIndex] = {
+      ...updatedRows[params.node.rowIndex],
+
+      party_code: partyCode,
+
+      itemName: partyName,
+
+      // =====================================
+      // OB VALUES
+      // =====================================
+
+      TransactionNo: hasOBData
+        ? result.OB_transaction_no || ""
+        : "",
+
+      entry_date: hasOBData
+        ? result.OB_entry_date || ""
+        : getFinancialYearDate(),
+
+      financial_year: hasOBData
+        ? result.OB_financial_year || ""
+        : "",
+
+      keyfield: hasOBData
+        ? result.OB_keyfield || ""
+        : "",
+
+      balance_type: hasOBData
+        ? result.OB_balance_type || ""
+        : "",
+
+      opening_amount: hasOBData
+        ? result.OB_opening_amount || ""
+        : "",
+
+      remarks: hasOBData
+        ? result.OB_remarks || ""
+        : "",
+
+      status: hasOBData
+        ? result.OB_status || "Active"
+        : "Active",
+    };
+
+    // =========================================
+    // EXISTING OB
+    // =========================================
+
+    if (hasOBData) {
+      setIsExistingData(true);
+      setShowTransactionColumn(true);
+      setShowStatusColumn(true);
+
+      settransaction_no(result.OB_transaction_no);
+    }
+
+    // =========================================
+    // NORMAL ENTRY
+    // =========================================
+
+    else {
+      setIsExistingData(false);
+      setShowTransactionColumn(false);
+      setShowStatusColumn(false);
+    }
+
+    setRowData(updatedRows);
+  } catch (error) {
+    console.error(error);
+
+    toast.error("Error fetching party data");
+  }
+};
+
+const handleVendorSelect = (selectedData) => {
+  if (!selectedData || selectedData.length === 0) {
     setOpen4(false);
-  };
+    return;
+  }
+
+  const vendor = selectedData[0];
+
+  // =========================================
+  // CHECK OB DATA EXISTS
+  // =========================================
+
+  const hasOBData =
+    vendor.OB_transaction_no &&
+    vendor.OB_opening_amount !== null &&
+    vendor.OB_opening_amount !== undefined &&
+    vendor.OB_keyfield;
+
+  // =========================================
+  // IF OB DATA EXISTS
+  // SAME LIKE handleOI()
+  // =========================================
+
+  if (hasOBData) {
+    setIsExistingData(true);
+    setShowStatusColumn(true);
+    setShowTransactionColumn(true);
+
+    const formattedData = [
+      {
+        serialNumber: 1,
+
+        TransactionNo: vendor.OB_transaction_no,
+
+        entry_date: vendor.OB_entry_date,
+
+        party_type: "Vendor",
+
+        party_code: vendor.VendorCode,
+
+        itemName: vendor.VendorName,
+
+        balance_type: vendor.OB_balance_type,
+
+        opening_amount: vendor.OB_opening_amount,
+
+        financial_year: vendor.OB_financial_year,
+
+        keyfield: vendor.OB_keyfield,
+
+        remarks: vendor.OB_remarks,
+
+        status: vendor.OB_status || "Active",
+      },
+    ];
+
+    settransaction_no(vendor.OB_transaction_no);
+
+    setRowData(formattedData);
+  }
+
+  // =========================================
+  // NORMAL VENDOR SELECT
+  // =========================================
+
+  else {
+    setIsExistingData(false);
+    setShowStatusColumn(false);
+    setShowTransactionColumn(false);
+
+    const updatedRowData = [...rowData];
+
+    updatedRowData[global - 1] = {
+      ...updatedRowData[global - 1],
+
+      party_type: "Vendor",
+
+      party_code: vendor.VendorCode,
+
+      itemName: vendor.VendorName,
+
+      // CLEAR OLD OB VALUES
+      TransactionNo: "",
+      balance_type: "",
+      opening_amount: "",
+      financial_year: "",
+      keyfield: "",
+      remarks: "",
+      status: "Active",
+    };
+
+    settransaction_no("");
+
+    setRowData(updatedRowData);
+  }
+
+  setOpen4(false);
+};
   return (
     <div className="container-fluid Topnav-screen">
       {loading && <LoadingScreen />}
@@ -1095,6 +1414,14 @@ function Openingbalance() {
               paginationAutoPageSize={true}
               pagination={true}
               rowSelection="multiple"
+              onCellKeyDown={(params) => {
+              if (
+                params.event.key === "Enter" &&
+                params.colDef.field === "party_code"
+              ) {
+                handlePartyCodeFetch(params);
+              }
+            }}
             />
           </div>
           <div>

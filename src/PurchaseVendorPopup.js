@@ -344,8 +344,24 @@ export default function PurchaseVendorPopup({ open, handleClose, handleVendor })
       Country: row.vendor_country_code,
       MobileNo: row.vendor_mobile_no,
       ContactPerson: row.contact_person,
-      GSTNo: row.vendor_gst_no
-    }));
+      GSTNo: row.vendor_gst_no,
+
+      // =========================
+      // OPENING BALANCE VALUES
+      // =========================
+
+      OB_balance_type: row.OB_balance_type,
+      OB_opening_amount: row.OB_opening_amount,
+      OB_remarks: row.OB_remarks,
+      OB_status: row.OB_status,
+      OB_transaction_no: row.OB_transaction_no,
+      OB_location_code: row.OB_location_code,
+      OB_data_deleted: row.OB_data_deleted,
+      OB_entry_date: row.OB_entry_date,
+      OB_financial_year: row.OB_financial_year,
+      OB_party_code: row.OB_party_code,
+      OB_keyfield: row.OB_keyfield,
+      }));
 
     handleVendor(selectedData);
     handleClose();

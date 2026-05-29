@@ -82,6 +82,7 @@ function TaxInvoice() {
     const [templateName, setTemplateName] = useState('');
     const [printOption, setPrintOption] = useState("");
     const [printCopies, setPrintCopies] = useState(1);
+    const Location_Code = sessionStorage.getItem("selectedLocationCode");
 
     const location = useLocation();
     const savedPath = sessionStorage.getItem('currentPath');
@@ -1422,6 +1423,7 @@ function TaxInvoice() {
                 shipTo_contact_person: shipToData['Contact Person'],
                 advance_amount: advanceAmount,
                 bal_amt: balanceAmount,
+                Location_Code,
                 created_by: sessionStorage.getItem('selectedUserCode'),
                 pending: pendingStatus,
                 ...(selectedInvoice?.label === "Proforma Invoice"
@@ -1501,7 +1503,8 @@ function TaxInvoice() {
                     unit_price: row.unitPrice,
                     tax_amt: row.taxAmount,
                     hsn_code: row.HSNCode,
-                    type: row.type
+                    type: row.type,
+                    Location_Code
                 };
 
                 const response = await fetch(`${config.apiBaseUrl}/addTaxInvoicedetail_list`, {
@@ -1554,6 +1557,7 @@ function TaxInvoice() {
                         tax_name_details: taxRow.taxDetail,
                         tax_amt: taxRow.TaxAmount,
                         tax_per: taxRow.TaxPercentage,
+                        Location_Code,
                         created_by: sessionStorage.getItem('selectedUserCode')
                     };
 
@@ -1596,6 +1600,7 @@ function TaxInvoice() {
                     company_code: sessionStorage.getItem('selectedCompanyCode'),
                     invoice_type: invoicetype,
                     bill_no: bill_no,
+                    Location_Code,
                     Terms_conditions: row.Terms_conditions
                 };
 
@@ -1707,6 +1712,7 @@ function TaxInvoice() {
                 shipTo_contact_person: shipToData['Contact Person'],
                 advance_amount: advanceAmount,
                 bal_amt: balanceAmount,
+                Location_Code,
                 modified_by: sessionStorage.getItem('selectedUserCode'),
                 ...(selectedInvoice?.label === "Proforma Invoice"
                     ? {
@@ -2613,8 +2619,10 @@ function TaxInvoice() {
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify({
-                    bill_no: new_running_no, invoice_type: invoicetype,
+                    bill_no: new_running_no,
+                    invoice_type: invoicetype,
                     company_code: sessionStorage.getItem("selectedCompanyCode"),
+                    Location_Code,
                     modified_by: sessionStorage.getItem("selectedUserCode")
                 })
             });
@@ -2636,7 +2644,7 @@ function TaxInvoice() {
                 headers: {
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify({ bill_no: new_running_no, invoice_type: invoicetype, company_code: sessionStorage.getItem("selectedCompanyCode") })
+                body: JSON.stringify({ bill_no: new_running_no, Location_Code, invoice_type: invoicetype, company_code: sessionStorage.getItem("selectedCompanyCode") })
             });
             if (response.ok) {
                 console.log("Rows deleted successfully:", new_running_no);
@@ -2657,7 +2665,7 @@ function TaxInvoice() {
                 headers: {
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify({ bill_no: new_running_no, invoice_type: invoicetype, company_code: sessionStorage.getItem("selectedCompanyCode") })
+                body: JSON.stringify({ bill_no: new_running_no, Location_Code, invoice_type: invoicetype, company_code: sessionStorage.getItem("selectedCompanyCode") })
             });
             if (response.ok) {
                 console.log("Rows deleted successfully:", new_running_no);
@@ -2678,7 +2686,7 @@ function TaxInvoice() {
                 headers: {
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify({ bill_no: new_running_no.toString(), invoice_type: invoicetype, company_code: sessionStorage.getItem("selectedCompanyCode") })
+                body: JSON.stringify({ bill_no: new_running_no.toString(), Location_Code, invoice_type: invoicetype, company_code: sessionStorage.getItem("selectedCompanyCode") })
             });
             if (response.ok) {
                 console.log("Rows deleted successfully:", new_running_no);

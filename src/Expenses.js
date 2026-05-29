@@ -1071,18 +1071,18 @@ function OpeningbalanceGrid() {
       return;
     }
 
-    const headerData = [{
-      "company code": sessionStorage.getItem('selectedCompanyCode'),
-      "Expenses No": expense_no,
-      "Expenses Date": expense_date
-    }];
+    // const headerData = [{
+    //   "company code": sessionStorage.getItem('selectedCompanyCode'),
+    //   "Expenses No": expense_no,
+    //   "Expenses Date": expense_date
+    // }];
 
     const transformedData = transformRowData(rowData);
     const rowDataSheet = XLSX.utils.json_to_sheet(transformedData);
-    const headerSheet = XLSX.utils.json_to_sheet(headerData);
+    // const headerSheet = XLSX.utils.json_to_sheet(headerData);
 
     const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, headerSheet, "Header Data");
+    // XLSX.utils.book_append_sheet(workbook, headerSheet, "Header Data");
     XLSX.utils.book_append_sheet(workbook, rowDataSheet, "Expenses Details");
 
     XLSX.writeFile(workbook, "Expenses.xlsx");
