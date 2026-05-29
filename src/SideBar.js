@@ -1706,7 +1706,7 @@ const Sidebar = () => {
                   </>
                 )}
 
-              <div className=" ms-3">
+              {/* <div className=" ms-3">
                 {screenType.includes("PendingCustomer") && (
                   <Link
                     to="/PendingCustomer"
@@ -1738,7 +1738,7 @@ const Sidebar = () => {
                     </div>
                   </Link>
                 )}
-              </div>
+              </div> */}
               <div className=" ms-3">
                 {screenType.includes("ReceivedGoods") && (
                   <Link
@@ -1965,7 +1965,7 @@ const Sidebar = () => {
                 )}
               </div>
 
-              <div className=" ms-3">
+              {/* <div className=" ms-3">
                 {screenType.includes("Payment") && (
                   <Link to="/Payment" className="nav-link" title="Payment">
                     <div class="menu-item">
@@ -1987,7 +1987,7 @@ const Sidebar = () => {
                     </div>
                   </Link>
                 )}
-              </div>
+              </div> */}
 
               <div className=" ms-3">
                 {screenType.includes("CustomerReceipt") && (
