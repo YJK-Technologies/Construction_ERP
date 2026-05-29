@@ -437,7 +437,10 @@ function VenDetInput({ }) {
       !vendor_email_id ||
       !vendor_credit_limit ||
       !vendor_country_code ||
-      !vendor_state_code
+      !vendor_state_code ||
+      !balance_type ||
+      !vendor_area_code ||
+      !opening_balance
     ) {
       setError(true);
       toast.warning("Missing required fields");
@@ -680,7 +683,7 @@ function VenDetInput({ }) {
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
                     <label for="rid" className={`exp-form-labels ${error && !vendor_addr_1 ? 'text-danger' : ''}`}>
-                      Address1<span className="text-danger">*</span>
+                      Address 1<span className="text-danger">*</span>
                     </label>
                     <input
                       id="venad1"
@@ -700,7 +703,7 @@ function VenDetInput({ }) {
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
                     <label for="rid" className={`exp-form-labels ${error && !vendor_addr_2 ? 'text-danger' : ''}`}>
-                      Address2<span className="text-danger">*</span>
+                      Address 2<span className="text-danger">*</span>
                     </label>
                     <input
                       id="venad2"
@@ -721,7 +724,7 @@ function VenDetInput({ }) {
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
                     <label for="venad3" class="exp-form-labels">
-                      Address3
+                      Address 3
                     </label>
                     <input
                       id="venad3"
@@ -742,7 +745,7 @@ function VenDetInput({ }) {
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
                     <label for="venad4" class="exp-form-labels">
-                      Address4
+                      Address 4
                     </label>
                     <input
                       id="venad4"
@@ -1097,7 +1100,7 @@ function VenDetInput({ }) {
                     <label for="ventrans" class="exp-form-labels">
                       Office Type
                     </label>
-                    <div title="Select the Office Type ">
+                    <div title="Select the Office Type">
                       <Select
                         id="officeType"
                         value={selectedOffice}
@@ -1118,6 +1121,7 @@ function VenDetInput({ }) {
                     </label>
                     <input
                       id="officeType"
+                      title="Enter the Contact Person"
                       value={contact_person}
                       onChange={(e) => setContact_person(e.target.value)}
                       className="exp-input-field form-control"

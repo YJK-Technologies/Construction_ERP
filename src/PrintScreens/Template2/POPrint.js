@@ -270,11 +270,13 @@ const Invoice = () => {
                             <p className="" style={{ fontSize: "12px" }}>
                                 <strong className="text-decoration-underline">TERMS AND CONDITIONS</strong><br />
                             </p>
-                            {headerData.map((row, index) => (
-                                <p key={index} style={{ fontSize: "12px" }}>
-                                    {index + 1}.{row.Terms_Conditions}
-                                </p>
-                            ))}
+                            {headerData[0]?.Terms_Conditions
+                                ?.split("\n")
+                                .map((term, index) => (
+                                    <p key={index} style={{ fontSize: "12px" }}>
+                                        {index + 1}. {term}
+                                    </p>
+                                ))}
                             {/* <p className="" style={{ fontSize: "12px" }}>
                                 <strong className="text-decoration-underline">
                                     PAYMENT TERMS

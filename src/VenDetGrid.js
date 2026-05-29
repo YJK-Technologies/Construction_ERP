@@ -193,7 +193,7 @@ function VenDetGrid() {
       .then((response) => response.json())
       .then((data) => {
         // Extract city names from the fetched data
-        const statusOption = data.map((option) => option.attributedetails_name);
+        const statusOption = data.map((option) => option.keyfield);
         setBrokerGriddrop(statusOption);
       })
       .catch((error) => console.error("Error fetching data:", error));

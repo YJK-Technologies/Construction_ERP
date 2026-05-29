@@ -130,7 +130,7 @@ const Invoice = () => {
                                         </tr>
                                         <tr className="large-row border-dark">
                                             <td className="p-1"><strong>Delivery Terms:</strong>
-                                                <br /> {headerData[0].remarks} 
+                                                <br /> {headerData[0].remarks}
                                             </td>
                                         </tr>
                                     </td>
@@ -190,15 +190,17 @@ const Invoice = () => {
                 </section>
                 <div className="bank-details">
                     <div className="d-flex justify-content-between">
-                    <div className="col-6 mt-3">
+                        <div className="col-6 mt-3">
                             <p className="mb-3" style={{ fontSize: "12px" }}>
                                 <strong className="text-decoration-underline">TERMS AND CONDITIONS</strong><br />
                             </p>
-                            {headerData.map((row, index) => (
-                                <p key={index} style={{ fontSize: "12px" }}>
-                                    {index + 1}.{row.Terms_Conditions}
-                                </p>
-                            ))}
+                            {headerData[0]?.Terms_Conditions
+                                ?.split("\n")
+                                .map((term, index) => (
+                                    <p key={index} style={{ fontSize: "12px" }}>
+                                        {index + 1}. {term}
+                                    </p>
+                                ))}
                         </div>
                         <div className="col-6 ms-auto">
                             <div

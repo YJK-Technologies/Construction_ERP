@@ -265,6 +265,7 @@ export default function TaxInvoicePopup({ open, handleClose, handletaxinvoice, i
   const [selectedInvoice, setselectedInvoice] = useState(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const Location_Code = sessionStorage.getItem("selectedLocationCode");
 
   const handleSearch = async () => {
     if (!invoicetype) {
@@ -281,6 +282,7 @@ export default function TaxInvoicePopup({ open, handleClose, handletaxinvoice, i
         body: JSON.stringify({
           bill_no, bill_date, sales_type, pay_type, billTo_customer_name, shipTo_customer_name,
           invoice_type: invoicetype,
+          Location_Code,
           company_code: sessionStorage.getItem('selectedCompanyCode')
         })
       });
