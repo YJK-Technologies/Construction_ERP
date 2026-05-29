@@ -684,7 +684,8 @@ function Purchase() {
         },
         body: JSON.stringify({
           transaction_no: transactionNo,
-          company_code: sessionStorage.getItem('selectedCompanyCode')
+          company_code: sessionStorage.getItem('selectedCompanyCode'),
+          Location_Code: sessionStorage.getItem("selectedLocationCode"), 
         })
       });
       if (response.ok) {
@@ -1456,7 +1457,8 @@ function Purchase() {
             tax_name_details: taxRow.TaxType,
             tax_amt: taxRow.TaxAmount,
             tax_per: taxRow.TaxPercentage,
-            created_by: sessionStorage.getItem('selectedUserCode')
+            created_by: sessionStorage.getItem('selectedUserCode'),
+            Location_Code
           };
 
           const response = await fetch(`${config.apiBaseUrl}/purtaxdetail`, {
@@ -2169,8 +2171,9 @@ function Purchase() {
         },
         body: JSON.stringify({
           company_code: sessionStorage.getItem('selectedCompanyCode'), transaction_no: transactionNumber,
-          modified_by: sessionStorage.getItem("selectedUserCode")
-
+          modified_by: sessionStorage.getItem("selectedUserCode"),
+          Location_Code: sessionStorage.getItem("selectedLocationCode")
+          
         })
       });
       if (response.ok) {
@@ -2193,7 +2196,9 @@ function Purchase() {
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({ company_code: sessionStorage.getItem('selectedCompanyCode'), transaction_no: transactionNumber })
+        body: JSON.stringify({ company_code: sessionStorage.getItem('selectedCompanyCode'), transaction_no: transactionNumber,
+          Location_Code: sessionStorage.getItem("selectedLocationCode")
+         })
       });
       if (response.ok) {
         console.log("Rows deleted successfully:", transactionNumber);
@@ -2214,7 +2219,8 @@ function Purchase() {
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({ company_code: sessionStorage.getItem('selectedCompanyCode'), transaction_no: transactionNumber })
+        body: JSON.stringify({ company_code: sessionStorage.getItem('selectedCompanyCode'), 
+          transaction_no: transactionNumber,Location_Code: sessionStorage.getItem("selectedLocationCode") })
       });
       if (response.ok) {
         return true
@@ -2555,7 +2561,9 @@ function Purchase() {
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({ transaction_no: TransactionNo })
+        body: JSON.stringify({ transaction_no: TransactionNo, 
+          company_code: sessionStorage.getItem("selectedCompanyCode"),
+          Location_Code: sessionStorage.getItem("selectedLocationCode"), })
       });
 
       if (response.ok) {
@@ -2604,7 +2612,9 @@ function Purchase() {
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({ transaction_no: TransactionNo })
+        body: JSON.stringify({ transaction_no: TransactionNo,
+          company_code: sessionStorage.getItem("selectedCompanyCode"),
+         })
       });
 
       if (response.ok) {
@@ -2883,6 +2893,7 @@ function Purchase() {
         body: JSON.stringify({
           transaction_no: transactionNumber,
           company_code: sessionStorage.getItem('selectedCompanyCode'),
+          Location_Code: sessionStorage.getItem("selectedLocationCode"), 
           authroization_status: selectedStatus.value
         })
       });
@@ -2905,7 +2916,9 @@ function Purchase() {
         },
         body: JSON.stringify({
           transaction_no: transactionNumber,
-          authroization_status: selectedStatus.value
+          authroization_status: selectedStatus.value,
+          company_code: sessionStorage.getItem('selectedCompanyCode'),
+          Location_Code: sessionStorage.getItem("selectedLocationCode"), 
         })
       });
       if (response.ok) {
@@ -2928,6 +2941,7 @@ function Purchase() {
         body: JSON.stringify({
           transaction_no: transactionNumber,
           company_code: sessionStorage.getItem('selectedCompanyCode'),
+          Location_Code: sessionStorage.getItem("selectedLocationCode"), 
           authroization_status: selectedStatus.value
         })
       });
