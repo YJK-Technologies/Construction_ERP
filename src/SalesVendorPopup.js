@@ -281,26 +281,45 @@ export default function SalesVendorPopup({ open, handleClose, handleVendor }) {
   };
 
   const handleConfirm = () => {
-    const selectedData = selectedRows.map(row => ({
-      CustomerCode: row.customer_code,
-      CustomerName: row.customer_name,
-      Address1: row.customer_addr_1,
-      Address2: row.customer_addr_2,
-      Address3: row.customer_addr_3,
-      Address4: row.customer_addr_4,
-      State: row.customer_state,
-      Country: row.customer_country,
-      MobileNo: row.customer_mobile_no,
-      ContactPerson: row.contact_person,
-      GSTNo: row.customer_gst_no,
-    }));
-    console.log('Selected Data:', selectedData);
-    handleVendor(selectedData);
-    handleClose();
-    clearInputs([]);
-    setRowData([]);
-    setSelectedRows([]);
-  }
+  const selectedData = selectedRows.map((row) => ({
+    CustomerCode: row.customer_code,
+    CustomerName: row.customer_name,
+
+    // =========================
+    // CUSTOMER DETAILS
+    // =========================
+    Address1: row.customer_addr_1,
+    Address2: row.customer_addr_2,
+    Address3: row.customer_addr_3,
+    Address4: row.customer_addr_4,
+    State: row.customer_state,
+    Country: row.customer_country,
+    MobileNo: row.customer_mobile_no,
+    ContactPerson: row.contact_person,
+    GSTNo: row.customer_gst_no,
+
+    // =========================
+    // OB VALUES
+    // =========================
+    OB_transaction_no: row.OB_transaction_no,
+    OB_entry_date: row.OB_entry_date,
+    OB_financial_year: row.OB_financial_year,
+    OB_keyfield: row.OB_keyfield,
+    OB_opening_amount: row.OB_opening_amount,
+    OB_balance_type: row.OB_balance_type,
+    OB_remarks: row.OB_remarks,
+    OB_status: row.OB_status,
+  }));
+
+  console.log("Selected Data:", selectedData);
+
+  handleVendor(selectedData);
+
+  handleClose();
+  clearInputs([]);
+  setRowData([]);
+  setSelectedRows([]);
+};
 
   return (
     <div>
