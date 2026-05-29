@@ -1786,6 +1786,7 @@ function PurchaseOrder() {
 
       const Header = {
         company_code: sessionStorage.getItem("selectedCompanyCode"),
+        Location_Code: sessionStorage.getItem("selectedLocationCode"), 
         vendor_code: headerRowData[0].billTo,
         Entry_date: entryDate,
         purchase_amount: TotalPurchase,
@@ -1853,6 +1854,7 @@ function PurchaseOrder() {
       for (const row of validRows) {
         const Details = {
           company_code: sessionStorage.getItem("selectedCompanyCode"),
+          Location_Code: sessionStorage.getItem("selectedLocationCode"), 
           created_by: sessionStorage.getItem("selectedUserCode"),
           transaction_no: transaction_no.toString(),
           item_code: row.itemCode,
@@ -1934,6 +1936,7 @@ function PurchaseOrder() {
           const Details = {
             vendor_code,
             company_code: sessionStorage.getItem("selectedCompanyCode"),
+            Location_Code: sessionStorage.getItem("selectedLocationCode"), 
             transaction_no: transaction_no.toString(),
             tax_type: row.taxType,
             item_code: row.itemCode,
@@ -1985,6 +1988,7 @@ function PurchaseOrder() {
         const Details = {
           created_by: sessionStorage.getItem("selectedUserCode"),
           company_code: sessionStorage.getItem("selectedCompanyCode"),
+          Location_Code: sessionStorage.getItem("selectedLocationCode"), 
           transaction_no: transaction_no,
           Terms_conditions: row.Terms_conditions,
         };
@@ -2039,6 +2043,7 @@ function PurchaseOrder() {
           }, {});
           const Header = {
             company_code: sessionStorage.getItem("selectedCompanyCode"),
+            Location_Code: sessionStorage.getItem("selectedLocationCode"), 
             transaction_no: transactionNo,
             vendor_code: headerRowData[0].billTo,
             Entry_date: entryDate,
@@ -2723,6 +2728,7 @@ function PurchaseOrder() {
         body: JSON.stringify({
           transaction_no: transactionNo,
           company_code: sessionStorage.getItem("selectedCompanyCode"),
+          Location_Code: sessionStorage.getItem("selectedLocationCode"), 
           modified_by: sessionStorage.getItem("selectedUserCode"),
         }),
       });
@@ -2752,6 +2758,7 @@ function PurchaseOrder() {
         body: JSON.stringify({
           transaction_no: transactionNo,
           company_code: sessionStorage.getItem("selectedCompanyCode"),
+          Location_Code: sessionStorage.getItem("selectedLocationCode"), 
         }),
       });
       if (response.ok) {
@@ -2779,6 +2786,7 @@ function PurchaseOrder() {
         body: JSON.stringify({
           transaction_no: transactionNo,
           company_code: sessionStorage.getItem("selectedCompanyCode"),
+          Location_Code: sessionStorage.getItem("selectedLocationCode"), 
         }),
       });
       if (response.ok) {
@@ -2808,6 +2816,7 @@ function PurchaseOrder() {
           body: JSON.stringify({
             transaction_no: transactionNo.toString(),
             company_code: sessionStorage.getItem("selectedCompanyCode"),
+            Location_Code: sessionStorage.getItem("selectedLocationCode"), 
             modified_by: sessionStorage.getItem("selectedUserCode"),
           }),
         },
