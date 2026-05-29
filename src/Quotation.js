@@ -1431,7 +1431,7 @@ function Quotation() {
         headerKey = 'QuotationheaderData';
         detailKey = 'QuotationdetailData';
         taxKey = 'QuotationtaxData';
-        url = '/QuotationTemplate1'; 
+        url = '/QuotationTemplate2'; 
 
         sessionStorage.setItem(headerKey, LZString.compress(JSON.stringify(headerData)));
         sessionStorage.setItem(detailKey, LZString.compress(JSON.stringify(detailData)));

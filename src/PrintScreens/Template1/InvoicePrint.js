@@ -6,16 +6,16 @@ import LZString from "lz-string";
 
 const getPageName = (page) => {
     switch (page) {
-      case "1":
-        return "Original";
-      case "2":
-        return "Duplicate";
-      case "3":
-        return "Triplicate";
-      default:
-        return "";
+        case "1":
+            return "Original";
+        case "2":
+            return "Duplicate";
+        case "3":
+            return "Triplicate";
+        default:
+            return "";
     }
-  };
+};
 
 const Invoice = () => {
     const [headerData, setHeaderData] = useState(null);
@@ -86,8 +86,8 @@ const Invoice = () => {
         <div>
             <div className="InvoiceContainer custom-text topnav-screen">
                 <div className="d-flex justify-content-between align-items-center border border-bottom-0 mb-0 border-1 border-dark text-dark px-3">
-                <p className="m-0 w-50 " style={{ fontSize: "15px" }}>E-Way Bill No:{headerData[0].Eway_bill_no}</p>
-                <h2 className="w-50 fs-5 m-0">INVOICE</h2>
+                    <p className="m-0 w-50 " style={{ fontSize: "15px" }}>E-Way Bill No:{headerData[0].Eway_bill_no}</p>
+                    <h2 className="w-50 fs-5 m-0">INVOICE</h2>
                     <p className="m-0" style={{ fontSize: "15px" }}>{getPageName(page)}</p>
                 </div>
                 <div class="invoice">
@@ -149,11 +149,14 @@ const Invoice = () => {
                                         </tr>
                                         <tr className="small-row border-bottom border-dark">
                                             <td className="p-1"><strong>Terms of Payment:</strong>
-                                                <br /> {headerData.map((row, index) => (
-                                                    <p key={index} style={{ fontSize: "12px" }}>
-                                                        {index + 1}.{row.Terms_Conditions}
-                                                    </p>
-                                                ))}
+                                                <br />
+                                                {headerData[0]?.Terms_Conditions
+                                                    ?.split("\n")
+                                                    .map((term, index) => (
+                                                        <p key={index} style={{ fontSize: "12px" }}>
+                                                            {index + 1}. {term}
+                                                        </p>
+                                                    ))}
                                             </td>
                                         </tr>
                                         <tr className="small-row border-bottom border-dark">
@@ -249,7 +252,7 @@ const Invoice = () => {
                 </section>
                 <div className="bank-details">
                     <div className="d-flex justify-content-between">
-                    <div className="col-6 ms-auto">
+                        <div className="col-6 ms-auto">
                             <div
                                 className="border-dark border-bottom-0 border-top-0 border-end-0"
                                 style={{

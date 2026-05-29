@@ -717,7 +717,6 @@ router.post("/QuoTermsandConditionsDelete",dataController.QuoTermsandConditionsD
 router.get("/getallQuoTermsandConditions",dataController.getallQuoTermsandConditions)
 router.post("/TITermsandConditions",dataController.TITermsandConditions)
 router.post("/TITermsandConditionsDelete",dataController.TITermsandConditionsDelete)
-router.get("/getallTITermsandConditions",dataController.getallTITermsandConditions)
 router.post("/EmployeeCompanyISC",dataController. EmployeeCompanyISC)
 router.post("/getItemCodeOtherSalesData",dataController.getItemCodeOtherSalesData)
 router.post("/ProductCodeDetailOther",dataController.ProductCodeDetailOther)
