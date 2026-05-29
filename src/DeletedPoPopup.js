@@ -229,7 +229,9 @@ export default function DeletedPurchaseOrderPopup({ open, handleClose, handleDel
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({ transaction_no, Entry_date, vendor_name, ShipTo_customer_name, company_code: sessionStorage.getItem("selectedCompanyCode") })
+        body: JSON.stringify({ transaction_no, Entry_date, vendor_name, ShipTo_customer_name, 
+          company_code: sessionStorage.getItem("selectedCompanyCode"),
+        Location_Code: sessionStorage.getItem("selectedLocationCode"),  })
       });
       if (response.ok) {
         const searchData = await response.json();
