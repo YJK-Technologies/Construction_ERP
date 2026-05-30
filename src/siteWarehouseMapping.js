@@ -121,11 +121,13 @@ const SiteWarehouseMappingScreen = () => {
             .catch((error) => console.error("Error fetching data:", error));
     }, []);
 
-    const filteredOptionSiteId = siteIdDrop.map((option) => ({
-        value: option.site_id,
-        label: `${option.site_id} - ${option.site_name}`,
-    }));
-
+    const filteredOptionSiteId = Array.isArray(siteIdDrop)
+        ? siteIdDrop.map((option) => ({
+            value: option.site_id,
+            label: `${option.site_id} - ${option.site_name}`,
+        }))
+        : [];
+        
     const filteredOptionStatus = statusDrop.map((option) => ({
         value: option.attributedetails_name,
         label: option.attributedetails_name,
@@ -221,10 +223,12 @@ const SiteWarehouseMappingScreen = () => {
             .catch((error) => console.error("Error fetching data:", error));
     }, []);
 
-    const filteredOptionSiteIdSc = siteIdDropSc.map((option) => ({
-        value: option.site_id,
-        label: `${option.site_id} - ${option.site_name}`,
-    }));
+    const filteredOptionSiteIdSc = Array.isArray(siteIdDropSc)
+        ? siteIdDropSc.map((option) => ({
+            value: option.site_id,
+            label: `${option.site_id} - ${option.site_name}`,
+        }))
+        : [];
 
     const filteredOptionStatusSc = statusDropSc.map((option) => ({
         value: option.attributedetails_name,

@@ -652,10 +652,9 @@ function UserGrid() {
 
           if (response.ok) {
             console.log("Data saved successfully!");
-            setTimeout(() => {
-              toast.success("Data Updated Successfully")
-              handleSearch();
-            }, 1000);
+            toast.success("Data Updated successfully", {
+              onClose: () => handleSearch()
+            });
             return;
           } else {
             const errorResponse = await response.json();
@@ -704,10 +703,9 @@ function UserGrid() {
 
           if (response.ok) {
             console.log("Rows deleted successfully:", user_codesToDelete);
-            setTimeout(() => {
-              toast.success("Data Deleted successfully")
-              handleSearch();
-            }, 1000);
+            toast.success("Data Deleted successfully", {
+              onClose: () => handleSearch()
+            });
           } else {
             const errorResponse = await response.json();
             toast.warning(errorResponse.message || "Failed to insert sales data");

@@ -266,6 +266,19 @@ function NumberSeriesGrid() {
       },
 
     },
+    {
+      headerName: "KeyField",
+      field: "keyfield",
+      editable: true,
+      hide: true,
+      cellStyle: { textAlign: "left" },
+      // minWidth: 150,
+      cellEditor: "agSelectCellEditor",
+      cellEditorParams: {
+        values: statusgriddrop
+      },
+
+    },
   ];
 
   const defaultColDef = {

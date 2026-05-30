@@ -494,6 +494,8 @@ function VendorPayment({ }) {
 
         company_code: sessionStorage.getItem("selectedCompanyCode"),
 
+        Location_Code: sessionStorage.getItem("selectedLocationCode"),
+
         vendor_code: vendor,
 
         TransactionType: type,
@@ -785,6 +787,8 @@ function VendorPayment({ }) {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
+              "company_code": sessionStorage.getItem("selectedCompanyCode"),
+              "Location_Code": sessionStorage.getItem("selectedLocationCode")
             },
             body: JSON.stringify({
               Vendor_PaymentData: advanceRows,
@@ -811,6 +815,8 @@ function VendorPayment({ }) {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
+              "company_code": sessionStorage.getItem("selectedCompanyCode"),
+              "Location_Code": sessionStorage.getItem("selectedLocationCode")
             },
             body: JSON.stringify({
               editedData: normalRows,

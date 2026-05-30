@@ -777,7 +777,7 @@ const Sidebar = () => {
                   </Link>
                 )}
               </div>
-              <div className="ms-3">
+              {/* <div className="ms-3">
                 {screenType.includes("ClientInfo") && (
                   <Link
                     to="/ClientInfo"
@@ -805,7 +805,7 @@ const Sidebar = () => {
                     </div>
                   </Link>
                 )}
-              </div>
+              </div> */}
               <div className=" ms-3">
                 {screenType.includes("Department") && (
                   <Link

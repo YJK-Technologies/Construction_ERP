@@ -181,7 +181,7 @@ function UserScreenInput({ }) {
       });
       if (response.ok) {
         console.log("Data inserted successfully");
-          toast.success("Data updated successfully!", {
+          toast.success("Data inserted successfully!", {
             onClose: () => clearInputFields(),
           });
       } else {
@@ -349,7 +349,7 @@ function UserScreenInput({ }) {
                     <div class="exp-form-floating">
                       <div class="d-flex justify-content-start">
                         <div>
-                          <label for="state" class="exp-form-labels" className={`${error && !permission_type ? 'text-danger' : ''}`}>
+                          <label for="state" className={`${error && !permission_type ? 'text-danger' : ''}`}>
                             Permission Type<span className="text-danger">*</span>
                           </label>
                         </div>
