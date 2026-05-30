@@ -348,6 +348,7 @@ function VenDetInput({ }) {
       label: `${option.vendor_code} - ${option.vendor_name}`,
     }))
   : [];
+  
   const filteredOptionTransaction = TRcodedrop.map((option) => ({
     value: option.keyfield,
     label: option.keyfield,
@@ -572,14 +573,10 @@ function VenDetInput({ }) {
         toast.success("Data updated successfully", {
           onClose: () => clearInputFields(),
         });
-      } else if (response.status === 400) {
+      } else {
         const errorResponse = await response.json();
         console.error(errorResponse.message);
         toast.warning(errorResponse.message, {});
-      } else {
-        console.error("Failed to insert data");
-        const errorResponse = await response.json();
-        toast.error("Error inserting data: " + errorResponse.message);
       }
     } catch (error) {
       console.error("Error inserting data:", error);
@@ -812,7 +809,7 @@ function VenDetInput({ }) {
                         onKeyDown={(e) => handleKeyDown(e, Country, State)}
                       />
                     </div>
-                  </div>{" "}
+                  </div>
                 </div>
 
                 <div className="col-md-3 form-group mb-2">
@@ -843,7 +840,7 @@ function VenDetInput({ }) {
                           IMEX No
                         </label>
                       </div>
-                    </div>{" "}
+                    </div>
                     <input
                       id="venimex"
                       class="exp-input-field form-control"
@@ -1064,7 +1061,7 @@ function VenDetInput({ }) {
                         onKeyDown={(e) => handleKeyDown(e, Broker, Sales)}
                       />
                     </div>
-                  </div>{" "}
+                  </div>
                 </div>
 
                 <div className="col-md-3 form-group mb-2">

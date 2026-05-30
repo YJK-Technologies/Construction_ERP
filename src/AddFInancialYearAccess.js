@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import "./input.css";
-//import "./exp.css";
+import LoadingScreen from './Loading';
 import { useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import Select from 'react-select'
@@ -17,12 +17,11 @@ function StdAccInput({ }) {
   const [selectedLockType, setSelectedLockType] = useState("");
   const [Lockdrop, setLockdrop] = useState([]);
   const [LockType, setLockType] = useState([]);
-  const [isUpdated, setIsUpdated] = useState(false);
   const [keyfield, setKeyfield] = useState('');
   const [loading, setLoading] = useState(false);
   const [base_accgroup_code, setbase_accgroup_code] = useState("");
   const [selectedRows, setSelectedRows] = useState([]);
-  const [error, setError] = useState("");
+  const [error, setError] = useState(false);
   const [selectedStatus, setSelectedStatus] = useState('base');
   const [selectBaseacc, setselectedbaseacc] = useState('');
   const StartYear = useRef(null)
@@ -34,20 +33,17 @@ function StdAccInput({ }) {
   const location = useLocation();
   const { mode, selectedRow } = location.state || {};
 
-  console.log(selectedRow);
-
-  console.log(selectedRow);
   const clearInputFields = () => {
     setStartYear("");
     setEndYear("");
+    setSelectedTransaction("");
     setTransactionType("");
+    setSelectedLockType("");
     setLockType("");
-
   };
 
-
   useEffect(() => {
-    if (mode === "update" && selectedRow && !isUpdated) {
+    if (mode === "update" && selectedRow) {
       if (selectedRow.start_year) {
         const formattedStartYear = new Date(selectedRow.start_year).toISOString().split("T")[0];
         setStartYear(formattedStartYear);
@@ -61,10 +57,10 @@ function StdAccInput({ }) {
       } else {
         setEndYear("");
       }
+
       setTransactionType(selectedRow.transaction_type || "");
       setLockType(selectedRow.locked || "");
       setKeyfield(selectedRow.keyfield || "");
-
       setSelectedTransaction({
         label: selectedRow.transaction_type,
         value: selectedRow.transaction_type,
@@ -73,26 +69,22 @@ function StdAccInput({ }) {
         label: selectedRow.locked,
         value: selectedRow.locked,
       });
-
-
     } else if (mode === "create") {
       clearInputFields();
     }
-  }, [mode, selectedRow, isUpdated]);
+  }, [mode, selectedRow]);
 
   const getFinancialYearDates = () => {
     const now = new Date();
     const currentYear = now.getFullYear();
-    const currentMonth = now.getMonth() + 1; // getMonth() is 0-based
+    const currentMonth = now.getMonth() + 1; 
     console.log(currentMonth)
     let startYear, endYear;
 
     if (currentMonth < 4) {
-      // Jan, Feb, Mar ? current FY started last year
       startYear = currentYear - 1;
       endYear = currentYear;
     } else {
-      // Apr to Dec ? FY starts this year
       startYear = currentYear;
       endYear = currentYear + 1;
     }
@@ -102,6 +94,7 @@ function StdAccInput({ }) {
 
     return { FirstDate, LastDate };
   };
+
   const { FirstDate, LastDate } = getFinancialYearDates();
 
 
@@ -109,6 +102,7 @@ function StdAccInput({ }) {
     setSelectedTransaction(selectedTransaction);
     setTransactionType(selectedTransaction ? selectedTransaction.value : '');
   };
+
   const filteredOptionTransaction = transactiondrop.map((option) => ({
     value: option.attributedetails_name,
     label: option.attributedetails_name,
@@ -132,6 +126,7 @@ function StdAccInput({ }) {
     setSelectedLockType(selectedLockType);
     setLockType(selectedLockType ? selectedLockType.value : '');
   };
+
   const filteredOptionLockType = Lockdrop.map((option) => ({
     value: option.attributedetails_name,
     label: option.attributedetails_name,
@@ -151,85 +146,6 @@ function StdAccInput({ }) {
       .then((val) => setLockdrop(val));
   }, []);
 
-
-
-  //  useEffect(() => {
-  //    const company_code = sessionStorage.getItem('selectedCompanyCode');
-
-  //    fetch(`${config.apiBaseUrl}/status`, {
-  //      method: 'POST',
-  //      headers: {
-  //        'Content-Type': 'application/json',
-  //      },
-  //      body: JSON.stringify({ company_code })
-  //    })
-  //      .then((data) => data.json())
-  //      .then((val) => setStatusdrop(val))
-  //      .catch((error) => console.error('Error fetching data:', error));
-  //  }, []);
-
-
-  //  useEffect(() => {
-  //    fetch(`${config.apiBaseUrl}/getbasaccode`)
-  //      .then((data) => data.json())
-  //      .then((val) => setbaseaccdrop(val));
-  //  }, []);
-
-
-  // //  useEffect(() => {
-  // //    const company_code = sessionStorage.getItem('selectedCompanyCode');
-
-  // //    fetch(`${config.apiBaseUrl}/delPer`, {
-  // //      method: 'POST',
-  // //      headers: {
-  // //        'Content-Type': 'application/json',
-  // //      },
-  // //      body: JSON.stringify({ company_code })
-  // //    })
-  // //      .then((data) => data.json())
-  // //      .then((val) => setdeletedrop(val))
-  // //      .catch((error) => console.error('Error fetching data:', error));
-  // //  }, []);
-
-
-  // //  const filteredOptionbaseacc = baseaccdrop.map((option) => ({
-  // //    value: option.base_accgroup_code,
-  // //    label: option.base_accgroup_code,
-  // //  }));
-
-  // //  const filteredOptionStatus = statusdrop.map((option) => ({
-  // //    value: option.attributedetails_name,
-  // //    label: option.attributedetails_name,
-  // //  }));
-
-  // //  const filteredOptionDelete = Array.isArray(deletedrop) ? deletedrop.map((option) => ({
-  // //    value: option.attributedetails_name,
-  // //    label: option.attributedetails_name,
-  // //  })) : [];
-
-
-  // //  const handleChangeStatus = (selectedStatus) => {
-  // //    setSelectedStatus(selectedStatus);
-  // //    setstatus(selectedStatus ? selectedStatus.value : '');
-  // //    setError(false);
-  // //  };
-
-  // //  const handleChangebaseacc = (selectedbaseacc) => {
-  // //    setselectedbaseacc(selectedbaseacc);
-  // //    setbase_accgroup_code(selectedbaseacc ? selectedbaseacc.value : '');
-  // //    setError(false);
-  // //  };
-
-  // //  const handleChangeDelete = (selectedDelete) => {
-  // //    setSelectedDelete(selectedDelete);
-  // //    setdeletePermission(selectedDelete ? selectedDelete.value : '');
-  // //    setError(false);
-  //  //};
-
-  const handleNavigateToForm = () => {
-    navigate("/AddBaseAccount", { selectedRows }); // Pass selectedRows as props to the Input component
-  };
-
   const handleInsert = async () => {
     if (
       !startYear ||
@@ -237,7 +153,7 @@ function StdAccInput({ }) {
       !TransactionType ||
       !LockType
     ) {
-      setError(" ");
+      setError(true);
       toast.warning("Error: Missing required fields");
       return;
     }
@@ -253,7 +169,9 @@ function StdAccInput({ }) {
       toast.warning("Start Year cannot be greater than End Year.");
       return;
     }
-    //   if (validateInputs()) {
+
+    setError(false);
+    setLoading(true);
     try {
 
       const response = await fetch(`${config.apiBaseUrl}/AddFinacnialyearlockscreen`, {
@@ -268,27 +186,22 @@ function StdAccInput({ }) {
           transaction_type: TransactionType,
           locked: LockType,
           created_by: sessionStorage.getItem('selectedUserCode')
-
         }),
       });
-       if (response.ok) {
-           toast.success("Data inserted Successfully", {
-           onClose: () => clearInputFields()
-           });
-      } else if (response.status === 400) {
+      if (response.ok) {
+        toast.success("Data inserted Successfully", {
+          onClose: () => clearInputFields()
+        });
+      } else {
         const errorResponse = await response.json();
         console.error(errorResponse.message);
         toast.warning(errorResponse.message)
-
-      } else {
-        console.error("Failed to insert data");
-        // Show generic error message using SweetAlert
-        toast.error('Failed to insert data')
       }
     } catch (error) {
       console.error("Error inserting data:", error);
-      // Show error message using SweetAlert
       toast.error('Error inserting data: ' + error.message)
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -298,13 +211,14 @@ function StdAccInput({ }) {
       !endYear ||
       !TransactionType ||
       !LockType
-    )
-      // {
-      //     setError(" ");
+    ) {
+      setError(true);
+      toast.warning("Error: Missing required fields");
+      return;
+    }
 
-      //     return;
-      //   }
-      setLoading(true);
+    setError(false);
+    setLoading(true);
 
     try {
       const response = await fetch(`${config.apiBaseUrl}/UpdateFinacnialyearlock`, {
@@ -314,7 +228,7 @@ function StdAccInput({ }) {
         },
         body: JSON.stringify({
           company_code: sessionStorage.getItem('selectedCompanyCode'),
-           start_year: startYear,
+          start_year: startYear,
           end_year: endYear,
           transaction_type: TransactionType,
           locked: LockType,
@@ -322,62 +236,51 @@ function StdAccInput({ }) {
           keyfield
         }),
       });
-            if (response.ok) {
-            toast.success("Data updated successfully", {
-            onClose: () => clearInputFields()
-           });
-
-      } else if (response.status === 400) {
+      if (response.ok) {
+        toast.success("Data updated successfully", {
+          onClose: () => clearInputFields()
+        });
+      } else {
         const errorResponse = await response.json();
         console.error(errorResponse.message);
         toast.warning(errorResponse.message);
-      } else {
-        console.error("Failed to insert data");
-        toast.error("Failed to Update data");
       }
     } catch (error) {
       console.error("Error inserting data:", error);
       toast.error('Error inserting data: ' + error.message);
-    }
-    finally {
+    } finally {
       setLoading(false);
     }
   };
-
-
-
 
   const handleNavigate = () => {
     navigate("/FinancialYearAccess");
   };
 
-
   const handleKeyDown = async (e, nextFieldRef, value, hasValueChanged, setHasValueChanged) => {
     if (e.key === 'Enter') {
-      // Check if the value has changed and handle the search logic
       if (hasValueChanged) {
-        await handleKeyDownStatus(e); // Trigger the search function
-        setHasValueChanged(false); // Reset the flag after the search
+        await handleKeyDownStatus(e); 
+        setHasValueChanged(false); 
       }
 
-      // Move to the next field if the current field has a valid value
       if (value) {
         nextFieldRef.current.focus();
       } else {
-        e.preventDefault(); // Prevent moving to the next field if the value is empty
+        e.preventDefault(); 
       }
     }
   };
 
   const handleKeyDownStatus = async (e) => {
-    if (e.key === 'Enter' && hasValueChanged) { // Only trigger search if the value has changed
-      // Trigger the search function
-      setHasValueChanged(false); // Reset the flag after search
+    if (e.key === 'Enter' && hasValueChanged) {
+      setHasValueChanged(false); 
     }
   };
-  return (
 
+  return (
     <div class="container-fluid Topnav-screen ">
+      {loading && <LoadingScreen />}
       <ToastContainer position="top-right" className="toast-design" theme="colored" />
       <div className="">
         <div class="">
@@ -393,16 +296,15 @@ function StdAccInput({ }) {
               </div>
             </div>
           </div>
+
           <div className="shadow-lg p-3 mt-2 pt-4 pb-4 bg-body-tertiary rounded">
             <div className="row ">
               <div className="col-md-3 form-group ">
                 <div class="exp-form-floating">
-                  <div class="d-flex justify-content-start">
-                    <div>  <label htmlFor="party_code" className={`${error && !startYear ? 'red' : ''}`}>
-                      Start Year
-                    </label></div>
-                    <div> <span className="text-danger">*</span></div>
-                  </div> <input
+                  <label htmlFor="party_code" className={`${error && !startYear ? 'red' : ''}`}>
+                    Start Year<span className="text-danger">*</span>
+                  </label>
+                  <input
                     id="stdcode"
                     class="exp-input-field form-control"
                     type="Date"
@@ -411,9 +313,9 @@ function StdAccInput({ }) {
                     ref={StartYear}
                     onKeyDown={(e) => handleKeyDown(e, EndYear, StartYear)}
                   />
-                  {/* {error && !startYear && <div className="text-danger">Start Year should not be blank</div>} */}
                 </div>
               </div>
+
               <div className="col-md-3 form-group ">
                 <div class="exp-form-floating">
                   <div class="d-flex justify-content-start">
@@ -430,21 +332,18 @@ function StdAccInput({ }) {
                     ref={EndYear}
                     onKeyDown={(e) => handleKeyDown(e, transactionType, EndYear)}
                   />
-                  {/* {error && !endYear && <div className="text-danger">End Year should not be blank</div>} */}
                 </div>
               </div>
+
               <div className="col-md-3 form-group ">
-                <div class="d-flex justify-content-start">
-                  <div><label htmlFor="party_code" className={`${error && !TransactionType ? 'red' : ''}`}>
-                    Transactions Type
-                  </label></div>
-                  <div> <span className="text-danger">*</span></div>
-                </div>
-                <div className="">
-                 <div title="Select the Transactions Type">       
+                <label htmlFor="party_code" className={`${error && !TransactionType ? 'red' : ''}`}>
+                  Transactions Type<span className="text-danger">*</span>
+                </label>
+                <div title="Select the Transactions Type">
                   <Select
                     id="taxtransaction"
                     type="text"
+                    className="exp-input-field"
                     value={selectedTransaction}
                     onChange={handleChangeTransaction}
                     options={filteredOptionTransaction}
@@ -452,55 +351,33 @@ function StdAccInput({ }) {
                     onKeyDown={(e) => handleKeyDown(e, lockType, transactionType)}
                   />
                 </div>
-                {/* {error && !selectedTransaction && <div className="text-danger">Transaction Type should not be blank</div>} */}
-              </div>  </div>
+              </div>
+
               <div className="col-md-3 form-group ">
-                <div class="exp-form-floating">
-                  <div class="d-flex justify-content-start">
-                    <div> <label htmlFor="party_code" className={`${error && !selectedLockType ? 'red' : ''}`}>
-                      Locked
-                    </label></div>
-                    <div> <span className="text-danger">*</span></div>
-                  </div>
-                   <div title="Select the Locked Status">     
-                  <Select
-                    class="exp-input-field"
-                    value={selectedLockType}
-                    onChange={handleChangeLockType}
-                    options={filteredOptionLockType}
-                    ref={lockType}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        if (mode === "create") {
-                          handleInsert();
-                        } else {
-                          handleUpdate();
-                        }
-                      }
-                    }}
-                  />
-                </div>
-                {/* {error && !base_accgroup_code && <div className="text-danger">Locked should not be blank</div>} */}
-              </div>   </div>
-              {/* <div className="col-md-3 form-group  ">
-            <div class="exp-form-floating">
-            <div class="d-flex justify-content-start">
-                <div>
-                   <label for="state" class="exp-form-labels">
-                 Created By 
-                  
+                <div class="exp-form-floating"> <label htmlFor="party_code" className={`${error && !LockType ? 'red' : ''}`}>
+                  Locked<span className="text-danger">*</span>
                 </label>
-                </div> 
-                </div><input
-                id="emailid"
-                class="exp-input-field form-control"
-                type="text"
-                placeholder=""
-                required title="Please enter the email ID"
-                value={created_by}
-              />  
-            </div>
-          </div> */}
+                  <div title="Select the Locked Status">
+                    <Select
+                      className="exp-input-field"
+                      value={selectedLockType}
+                      onChange={handleChangeLockType}
+                      options={filteredOptionLockType}
+                      ref={lockType}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          if (mode === "create") {
+                            handleInsert();
+                          } else {
+                            handleUpdate();
+                          }
+                        }
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
+
               <div class="col-md-3 form-group d-flex justify-content-start mb-4">
                 {mode === "create" ? (
                   <button onClick={handleInsert} className="mt-4" title="Save">

@@ -20,12 +20,8 @@ function TaxHdrInput({ open, handleClose }) {
   const [status, setStatus] = useState("");
   const [statusdrop, setStatusdrop] = useState([]);
   const [transactiondrop, setTransactiondrop] = useState([]);
-  /*const [created_by, setCreated_by] = useState("");
-  const [created_date, setCreated_date] = useState("");
-  const [modfied_by, setModified_by] = useState("");
-  const [modfied_date, setModified_date] = useState("");*/
   const [selectedRows, setSelectedRows] = useState([]);
-  const [error, setError] = useState("");
+  const [error, setError] = useState(false);
   const [selectedStatus, setSelectedStatus] = useState('');
   const [selectedtaxtype, setselectedtaxtype] = useState('');
   const [tax_type_Sales, settax_type_Sales] = useState('');
@@ -42,7 +38,20 @@ function TaxHdrInput({ open, handleClose }) {
   const taxOfType = useRef(null);
   const Status = useRef(null);
   const [hasValueChanged, setHasValueChanged] = useState(false);
-  console.log(selectedRows);
+
+  const clearInputFields = () => {
+    settax_type("");
+    settax_name("");
+    settax_shortname("");
+    settax_percentage("");
+    settax_accountcode("");
+    setSelectedTransaction("");
+    settransaction_type("");
+    setselectedtaxtype("");
+    settax_type_Sales("");
+    setSelectedStatus("");
+    setStatus("");
+  };
 
   useEffect(() => {
     const company_code = sessionStorage.getItem('selectedCompanyCode');
@@ -104,27 +113,23 @@ function TaxHdrInput({ open, handleClose }) {
   const filteredOptionTaxtype = Array.isArray(taxtypedrop)
     ? taxtypedrop.map((option) => ({
       value: option.attributedetails_name,
-      label: option.attributedetails_name, // Concatenate ApprovedBy and EmployeeId with ' - '
+      label: option.attributedetails_name,
     }))
     : [];
 
   const handleChangeTransaction = (selectedTransaction) => {
     setSelectedTransaction(selectedTransaction);
     settransaction_type(selectedTransaction ? selectedTransaction.value : '');
-
   };
-
 
   const handleChangeStatus = (selectedStatus) => {
     setSelectedStatus(selectedStatus);
     setStatus(selectedStatus ? selectedStatus.value : '');
-
   };
 
   const handleChangeTaxtype = (selectedStatus) => {
     setselectedtaxtype(selectedStatus);
     settax_type_Sales(selectedStatus ? selectedStatus.value : '');
-
   };
 
 
@@ -137,12 +142,13 @@ function TaxHdrInput({ open, handleClose }) {
       !tax_type_Sales ||
       !status
     ) {
-      setError(" ");
+      setError(true);
       toast.warning("Missing Required Fields");
       return;
     }
+
+    setError(false);
     setLoading(true);
-    //   if (validateInputs()) {
     try {
       const response = await fetch(`${config.apiBaseUrl}/addTaxHdrData`, {
         method: "POST",
@@ -167,36 +173,24 @@ function TaxHdrInput({ open, handleClose }) {
         console.log(searchData);
         const [{ tax_acc_code }] = searchData;
         settax_accountcode(tax_acc_code);
-
-
-        console.log("Data inserted successfully");
-        setTimeout(() => {
-          toast.success("Data inserted successfully!", {
-            onClose: () => window.location.reload(), // Reloads the page after the toast closes
-          });
-        }, 1000);
-      } else if (response.status === 400) {
+        toast.success("Data inserted successfully!", {
+          onClose: () => clearInputFields(),
+        });
+      } else {
         const errorResponse = await response.json();
         console.error(errorResponse.message);
-        //setError(errorResponse.error);
         toast.error('Error inserting data: ' + errorResponse.message);
-      } else {
-        console.error("Failed to insert data");
-        // Show generic error message using SweetAlert
-        toast.error('Fail to Insert Data');
       }
     } catch (error) {
       console.error("Error inserting data:", error);
-      // Show error message using SweetAlert
       toast.error('Error inserting data: ' + error.message);
-    }
-    finally {
+    } finally {
       setLoading(false);
     }
-
   };
+
   const handleNavigate = () => {
-    navigate("/AddTaxDetails"); // Pass selectedRows as props to the Input component
+    navigate("/AddTaxDetails");
   };
 
   const handleKeyDown = async (
@@ -222,9 +216,7 @@ function TaxHdrInput({ open, handleClose }) {
 
   const handleKeyDownStatus = async (e) => {
     if (e.key === "Enter" && hasValueChanged) {
-      // Only trigger search if the value has changed
-      // Trigger the search function
-      setHasValueChanged(false); // Reset the flag after search
+      setHasValueChanged(false);
     }
   };
 
@@ -256,13 +248,12 @@ function TaxHdrInput({ open, handleClose }) {
                   <div class=" ">
                     <div class="row p-4">
                       <div className="col-md-3 form-group mb-2">
+
                         <div class="exp-form-floating">
-                          <div class="d-flex justify-content-start">
-                            <div><label for="rid" class="exp-form-labels">
-                              Tax Type
-                            </label></div>
-                            <div> <span className="text-danger">*</span></div>
-                          </div> <input
+                          <label for="rid" className={`exp-form-labels ${error && !tax_type ? 'text-danger' : ''}`}>
+                            Tax Type<span className="text-danger">*</span>
+                          </label>
+                          <input
                             id="taxtype"
                             class="exp-input-field form-control"
                             type="text"
@@ -273,19 +264,16 @@ function TaxHdrInput({ open, handleClose }) {
                             maxLength={18}
                             ref={Type}
                             onKeyDown={(e) => handleKeyDown(e, Name, Type)}
-                          />            {error && !tax_type && <div className="text-danger">Tax Type should not be blank</div>}
-
-
+                          />
                         </div>
                       </div>
+
                       <div className="col-md-3 form-group mb-2">
                         <div class="exp-form-floating">
-                          <div class="d-flex justify-content-start">
-                            <div><label for="rid" class="exp-form-labels">
-                              Tax Name
-                            </label></div>
-                            <div> <span className="text-danger">*</span></div>
-                          </div><input
+                          <label for="rid" className={`exp-form-labels ${error && !tax_name ? 'text-danger' : ''}`}>
+                            Tax Name<span className="text-danger">*</span>
+                          </label>
+                          <input
                             id="taxname"
                             class="exp-input-field form-control"
                             type="text"
@@ -296,16 +284,16 @@ function TaxHdrInput({ open, handleClose }) {
                             maxLength={250}
                             ref={Name}
                             onKeyDown={(e) => handleKeyDown(e, shortName, Name)}
-                          />            {error && !tax_name && <div className="text-danger">Tax Name should not be blank</div>}
-
-
+                          />
                         </div>
                       </div>
+
                       <div className="col-md-3 form-group mb-2">
                         <div class="exp-form-floating">
                           <label for="taxshortname" class="exp-form-labels">
                             Short Name
-                          </label><input
+                          </label>
+                          <input
                             id="taxshortname"
                             class="exp-input-field form-control"
                             type="text"
@@ -316,17 +304,15 @@ function TaxHdrInput({ open, handleClose }) {
                             ref={shortName}
                             onKeyDown={(e) => handleKeyDown(e, percentage, shortName)}
                           />
-
                         </div>
                       </div>
+
                       <div className="col-md-3 form-group mb-2">
                         <div class="exp-form-floating">
-                          <div class="d-flex justify-content-start">
-                            <div><label for="rid" class="exp-form-labels">
-                              Tax Percentage
-                            </label></div>
-                            <div> <span className="text-danger">*</span></div>
-                          </div><input
+                          <label for="rid" className={`exp-form-labels ${error && !tax_percentage ? 'text-danger' : ''}`}>
+                            Tax Percentage<span className="text-danger">*</span>
+                          </label>
+                          <input
                             id="taxpercent"
                             class="exp-input-field form-control"
                             type="number"
@@ -337,19 +323,16 @@ function TaxHdrInput({ open, handleClose }) {
                             maxLength={50}
                             ref={percentage}
                             onKeyDown={(e) => handleKeyDown(e, accountCode, percentage)}
-                          />            {error && !tax_percentage && <div className="text-danger">Tax Percentage  should not be blank</div>}
-
-
+                          />
                         </div>
                       </div>
 
                       <div className="col-md-3 form-group mb-2">
                         <div class="exp-form-floating">
-                          <div class="d-flex justify-content-start">
-                            <div><label for="rid" class="exp-form-labels">
-                              Tax Account Code
-                            </label></div>
-                          </div> <input
+                          <label for="rid" class="exp-form-labels">
+                            Tax Account Code
+                          </label>
+                          <input
                             id="taxcode"
                             class="exp-input-field form-control"
                             type="text"
@@ -366,29 +349,9 @@ function TaxHdrInput({ open, handleClose }) {
 
                       <div className="col-md-3 form-group mb-2">
                         <div class="exp-form-floating">
-                          <div class="d-flex justify-content-start">
-                            <div><label for="rid" class="exp-form-labels">
-                              Transaction Type
-                            </label></div>
-                            <div> <span className="text-danger">*</span></div>
-                          </div>
-                          {/* <select
-                  name="taxtransaction"
-                  id="taxtransaction"
-                  className="exp-input-field form-control"
-                  placeholder="Select transaction type"
-                 required title="Please select a transaction type"
-                  value={transaction_type}
-                  onChange={(e) => settransaction_type(e.target.value)}
-                    
-                >
-                  <option value=""></option>
-                  {transactiondrop.map((option, index) => (
-                    <option key={index} value={option.attributedetails_name}>
-                      {option.attributedetails_name}
-                    </option>
-                  ))}
-                </select>           */}
+                          <label for="rid" className={`exp-form-labels ${error && !transaction_type ? 'text-danger' : ''}`}>
+                            Transaction Type<span className="text-danger">*</span>
+                          </label>
                           <Select
                             id="taxtransaction"
                             value={selectedTransaction}
@@ -400,18 +363,14 @@ function TaxHdrInput({ open, handleClose }) {
                             ref={transactionType}
                             onKeyDown={(e) => handleKeyDown(e, taxOfType, transactionType)}
                           />
-                          {error && !transaction_type && <div className="text-danger">Tax Transaction Type should not be blank</div>}
-
                         </div>
                       </div>
 
                       <div className="col-md-3 form-group mb-2">
                         <div class="exp-form-floating">
-
-                          <div><label for="rid" class="exp-form-labels">
-                            Types of Tax <div> <span className="text-danger">*</span></div>
-                          </label></div>
-
+                          <label for="rid" className={`exp-form-labels ${error && !tax_type_Sales ? 'text-danger' : ''}`}>
+                            Types of Tax<span className="text-danger">*</span>
+                          </label>
                         </div>
                         <Select
                           id="status"
@@ -424,16 +383,13 @@ function TaxHdrInput({ open, handleClose }) {
                           ref={taxOfType}
                           onKeyDown={(e) => handleKeyDown(e, Status, taxOfType)}
                         />
-                        {error && !tax_type_Sales && <div className="text-danger">Tax Type  should not be blank</div>}
                       </div>
+
                       <div className="col-md-3 form-group mb-2">
                         <div class="exp-form-floating">
-                          <div class="d-flex justify-content-start">
-                            <div><label for="rid" class="exp-form-labels">
-                              Status
-                            </label></div>
-                            <div> <span className="text-danger">*</span></div>
-                          </div>
+                          <label for="rid" className={`exp-form-labels ${error && !status ? 'text-danger' : ''}`}>
+                            Status<span className="text-danger">*</span>
+                          </label>
                           <Select
                             id="status"
                             value={selectedStatus}
@@ -449,10 +405,6 @@ function TaxHdrInput({ open, handleClose }) {
                               }
                             }}
                           />
-                          {error && !status && <div className="text-danger">Status should not be blank</div>}
-
-
-
                         </div>
 
                       </div>
@@ -492,13 +444,12 @@ function TaxHdrInput({ open, handleClose }) {
                   <div class=" ">
                     <div class="row p-4">
                       <div className="col-md-3 form-group mb-2">
+
                         <div class="exp-form-floating">
-                          <div class="d-flex justify-content-start">
-                            <div><label for="rid" class="exp-form-labels">
-                              Tax Type
-                            </label></div>
-                            <div> <span className="text-danger">*</span></div>
-                          </div> <input
+                          <label for="rid" className={`exp-form-labels ${error && !tax_type ? 'text-danger' : ''}`}>
+                            Tax Type<span className="text-danger">*</span>
+                          </label>
+                          <input
                             id="taxtype"
                             class="exp-input-field form-control"
                             type="text"
@@ -507,19 +458,18 @@ function TaxHdrInput({ open, handleClose }) {
                             value={tax_type}
                             onChange={(e) => settax_type(e.target.value)}
                             maxLength={18}
-                          />            {error && !tax_type && <div className="text-danger">Tax Type should not be blank</div>}
-
-
+                            ref={Type}
+                            onKeyDown={(e) => handleKeyDown(e, Name, Type)}
+                          />
                         </div>
                       </div>
+
                       <div className="col-md-3 form-group mb-2">
                         <div class="exp-form-floating">
-                          <div class="d-flex justify-content-start">
-                            <div><label for="rid" class="exp-form-labels">
-                              Tax Name
-                            </label></div>
-                            <div> <span className="text-danger">*</span></div>
-                          </div><input
+                          <label for="rid" className={`exp-form-labels ${error && !tax_name ? 'text-danger' : ''}`}>
+                            Tax Name<span className="text-danger">*</span>
+                          </label>
+                          <input
                             id="taxname"
                             class="exp-input-field form-control"
                             type="text"
@@ -528,16 +478,18 @@ function TaxHdrInput({ open, handleClose }) {
                             value={tax_name}
                             onChange={(e) => settax_name(e.target.value)}
                             maxLength={250}
-                          />            {error && !tax_name && <div className="text-danger">Tax Name should not be blank</div>}
-
-
+                            ref={Name}
+                            onKeyDown={(e) => handleKeyDown(e, shortName, Name)}
+                          />
                         </div>
                       </div>
+
                       <div className="col-md-3 form-group mb-2">
                         <div class="exp-form-floating">
                           <label for="taxshortname" class="exp-form-labels">
                             Short Name
-                          </label><input
+                          </label>
+                          <input
                             id="taxshortname"
                             class="exp-input-field form-control"
                             type="text"
@@ -545,18 +497,18 @@ function TaxHdrInput({ open, handleClose }) {
                             required title="Please enter the short name"
                             value={tax_shortname}
                             onChange={(e) => settax_shortname(e.target.value)}
+                            ref={shortName}
+                            onKeyDown={(e) => handleKeyDown(e, percentage, shortName)}
                           />
-
                         </div>
                       </div>
+
                       <div className="col-md-3 form-group mb-2">
                         <div class="exp-form-floating">
-                          <div class="d-flex justify-content-start">
-                            <div><label for="rid" class="exp-form-labels">
-                              Tax Percentage
-                            </label></div>
-                            <div> <span className="text-danger">*</span></div>
-                          </div><input
+                          <label for="rid" className={`exp-form-labels ${error && !tax_percentage ? 'text-danger' : ''}`}>
+                            Tax Percentage<span className="text-danger">*</span>
+                          </label>
+                          <input
                             id="taxpercent"
                             class="exp-input-field form-control"
                             type="number"
@@ -565,19 +517,18 @@ function TaxHdrInput({ open, handleClose }) {
                             value={tax_percentage}
                             onChange={(e) => settax_percentage(e.target.value)}
                             maxLength={50}
-                          />            {error && !tax_percentage && <div className="text-danger">Tax Percentage  should not be blank</div>}
-
-
+                            ref={percentage}
+                            onKeyDown={(e) => handleKeyDown(e, accountCode, percentage)}
+                          />
                         </div>
                       </div>
 
                       <div className="col-md-3 form-group mb-2">
                         <div class="exp-form-floating">
-                          <div class="d-flex justify-content-start">
-                            <div><label for="rid" class="exp-form-labels">
-                              Tax Account Code
-                            </label></div>
-                          </div> <input
+                          <label for="rid" class="exp-form-labels">
+                            Tax Account Code
+                          </label>
+                          <input
                             id="taxcode"
                             class="exp-input-field form-control"
                             type="text"
@@ -586,35 +537,17 @@ function TaxHdrInput({ open, handleClose }) {
                             value={tax_accountcode}
                             onChange={(e) => settax_accountcode(e.target.value)}
                             maxLength={9}
+                            ref={accountCode}
+                            onKeyDown={(e) => handleKeyDown(e, transactionType, accountCode)}
                           />
                         </div>
                       </div>
 
                       <div className="col-md-3 form-group mb-2">
                         <div class="exp-form-floating">
-                          <div class="d-flex justify-content-start">
-                            <div><label for="rid" class="exp-form-labels">
-                              Transaction Type
-                            </label></div>
-                            <div> <span className="text-danger">*</span></div>
-                          </div>
-                          {/* <select
-                  name="taxtransaction"
-                  id="taxtransaction"
-                  className="exp-input-field form-control"
-                  placeholder="Select transaction type"
-                 required title="Please select a transaction type"
-                  value={transaction_type}
-                  onChange={(e) => settransaction_type(e.target.value)}
-                    
-                >
-                  <option value=""></option>
-                  {transactiondrop.map((option, index) => (
-                    <option key={index} value={option.attributedetails_name}>
-                      {option.attributedetails_name}
-                    </option>
-                  ))}
-                </select>           */}
+                          <label for="rid" className={`exp-form-labels ${error && !transaction_type ? 'text-danger' : ''}`}>
+                            Transaction Type<span className="text-danger">*</span>
+                          </label>
                           <Select
                             id="taxtransaction"
                             value={selectedTransaction}
@@ -623,19 +556,36 @@ function TaxHdrInput({ open, handleClose }) {
                             className="exp-input-field"
                             placeholder=""
                             maxLength={250}
+                            ref={transactionType}
+                            onKeyDown={(e) => handleKeyDown(e, taxOfType, transactionType)}
                           />
-                          {error && !transaction_type && <div className="text-danger">Tax Transaction Type should not be blank</div>}
-
                         </div>
                       </div>
+
                       <div className="col-md-3 form-group mb-2">
                         <div class="exp-form-floating">
-                          <div class="d-flex justify-content-start">
-                            <div><label for="rid" class="exp-form-labels">
-                              Status
-                            </label></div>
-                            <div> <span className="text-danger">*</span></div>
-                          </div>
+                          <label for="rid" className={`exp-form-labels ${error && !tax_type_Sales ? 'text-danger' : ''}`}>
+                            Types of Tax<span className="text-danger">*</span>
+                          </label>
+                        </div>
+                        <Select
+                          id="status"
+                          value={selectedtaxtype}
+                          onChange={handleChangeTaxtype}
+                          options={filteredOptionTaxtype}
+                          className="exp-input-field"
+                          placeholder=""
+                          maxLength={18}
+                          ref={taxOfType}
+                          onKeyDown={(e) => handleKeyDown(e, Status, taxOfType)}
+                        />
+                      </div>
+
+                      <div className="col-md-3 form-group mb-2">
+                        <div class="exp-form-floating">
+                          <label for="rid" className={`exp-form-labels ${error && !status ? 'text-danger' : ''}`}>
+                            Status<span className="text-danger">*</span>
+                          </label>
                           <Select
                             id="status"
                             value={selectedStatus}
@@ -644,17 +594,20 @@ function TaxHdrInput({ open, handleClose }) {
                             className="exp-input-field"
                             placeholder=""
                             maxLength={18}
+                            ref={Status}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') {
+                                handleInsert();
+                              }
+                            }}
                           />
-                          {error && !status && <div className="text-danger">Status should not be blank</div>}
-
-
                         </div>
 
                       </div>
-                      <div class="col-md-3 form-group  ">
-                        <button onClick={handleInsert} class="mt-4" required title="Save"><i class="fa-solid fa-floppy-disk"></i>
-                        </button>
-                      </div>
+                    </div>
+                    <div class="col-md-12 form-group  mb-2 ">
+                      <button onClick={handleInsert} class=" ms-4" required title="Save"> <i class="fa-solid fa-floppy-disk"></i>
+                      </button>
                     </div>
                   </div>
                 </div>
