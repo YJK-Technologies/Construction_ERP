@@ -331,10 +331,12 @@ function VenDetInput({ }) {
       .catch((error) => console.error("Error fetching data:", error));
   }, []);
 
-  const filteredOptionCode = vendorcodedrop.map((option) => ({
-    value: option.vendor_code,
-    label: `${option.vendor_code} - ${option.vendor_name}`,
-  }));
+const filteredOptionCode = Array.isArray(vendorcodedrop)
+  ? vendorcodedrop.map((option) => ({
+      value: option.vendor_code,
+      label: `${option.vendor_code} - ${option.vendor_name}`,
+    }))
+  : [];
 
   const filteredOptionTransaction = TRcodedrop.map((option) => ({
     value: option.keyfield,
