@@ -130,7 +130,9 @@ export default function QuotationPopup({ open, handleClose, handleDeletedQuotati
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({ company_code: sessionStorage.getItem("selectedCompanyCode"), transaction_no, Entry_date, customer_name, contact_person })
+        body: JSON.stringify({ company_code: sessionStorage.getItem("selectedCompanyCode"), 
+          Location_Code: sessionStorage.getItem("selectedLocationCode"),
+          transaction_no, Entry_date, customer_name, contact_person })
       });
       if (response.ok) {
         const searchData = await response.json();

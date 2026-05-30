@@ -229,10 +229,21 @@ function VenDetInput({ }) {
       body: JSON.stringify({ company_code }),
     })
       .then((data) => data.json())
-      .then((val) => setvendorcodedrop(val))
-      .catch((error) =>
-        console.error("Error fetching Vendors:", error)
-      );
+.then((val) => {
+  console.log("Vendor API Response:", val);
+
+  if (Array.isArray(val)) {
+    setvendorcodedrop(val);
+  } else if (Array.isArray(val.data)) {
+    setvendorcodedrop(val.data);
+  } else {
+    setvendorcodedrop([]);
+  }
+})
+.catch((error) => {
+  console.error("Error fetching Vendors:", error);
+  setvendorcodedrop([]);
+});
   };
 
   useEffect(() => {
@@ -331,11 +342,12 @@ function VenDetInput({ }) {
       .catch((error) => console.error("Error fetching data:", error));
   }, []);
 
-  const filteredOptionCode = vendorcodedrop.map((option) => ({
-    value: option.vendor_code,
-    label: `${option.vendor_code} - ${option.vendor_name}`,
-  }));
-
+  const filteredOptionCode = Array.isArray(vendorcodedrop)
+  ? vendorcodedrop.map((option) => ({
+      value: option.vendor_code,
+      label: `${option.vendor_code} - ${option.vendor_name}`,
+    }))
+  : [];
   const filteredOptionTransaction = TRcodedrop.map((option) => ({
     value: option.keyfield,
     label: option.keyfield,

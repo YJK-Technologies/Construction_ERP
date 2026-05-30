@@ -1033,6 +1033,7 @@ function Quotation() {
       rounded_off: round_difference,
       total_amount: TotalBill,
       modified_by: sessionStorage.getItem("selectedUserCode"),
+      Location_Code: sessionStorage.getItem("selectedLocationCode")
     };
 
         const response = await fetch(`${config.apiBaseUrl}/updQuotationheader`, {
@@ -1120,6 +1121,7 @@ function Quotation() {
         rounded_off: round_difference,
         total_amount: TotalBill,
         created_by: sessionStorage.getItem("selectedUserCode"),
+        Location_Code: sessionStorage.getItem("selectedLocationCode")
       };
 
       const response = await fetch(`${config.apiBaseUrl}/addQuotationheader`, {
@@ -1171,6 +1173,7 @@ function Quotation() {
 
         formData.append("created_by", sessionStorage.getItem("selectedUserCode"));
         formData.append("company_code", sessionStorage.getItem("selectedCompanyCode"));
+        formData.append("Location_Code", sessionStorage.getItem("selectedLocationCode"));
         formData.append("item_code", row.itemCode);
         formData.append("item_name", row.itemName);
         formData.append("bill_qty", row.purchaseQty);
@@ -1244,6 +1247,7 @@ function Quotation() {
             tax_amt: taxRow.TaxAmount,
             tax_per: taxRow.TaxPercentage,
             created_by: sessionStorage.getItem("selectedUserCode"),
+            Location_Code: sessionStorage.getItem("selectedLocationCode"),
           };
 
           const response = await fetch(`${config.apiBaseUrl}/addquotetaxdetail`,
@@ -1286,6 +1290,7 @@ function Quotation() {
         const Details = {
           created_by: sessionStorage.getItem('selectedUserCode'),
           company_code: sessionStorage.getItem('selectedCompanyCode'),
+          Location_Code: sessionStorage.getItem("selectedLocationCode"),
           transaction_no: transaction_no,
           Terms_conditions: row.Terms_conditions,
         };
@@ -1567,6 +1572,7 @@ function Quotation() {
         body: JSON.stringify({
           transaction_no: transactionNo,
           company_code: sessionStorage.getItem("selectedCompanyCode"),
+          Location_Code: sessionStorage.getItem("selectedLocationCode"),
           modified_by : sessionStorage.getItem("selectedUserCode")
         }),
       });
@@ -1592,6 +1598,7 @@ function Quotation() {
         body: JSON.stringify({
           transaction_no: transactionNo,
           company_code: sessionStorage.getItem("selectedCompanyCode"),
+          Location_Code: sessionStorage.getItem("selectedLocationCode"),
         }),
       });
       if (response.ok) {
@@ -1615,6 +1622,7 @@ function Quotation() {
         body: JSON.stringify({
           transaction_no: transactionNo,
           company_code: sessionStorage.getItem("selectedCompanyCode"),
+          Location_Code: sessionStorage.getItem("selectedLocationCode"),
         }),
       });
       if (response.ok) {
@@ -1638,6 +1646,7 @@ function Quotation() {
         body: JSON.stringify({
           transaction_no: transactionNo.toString(),
           company_code: sessionStorage.getItem("selectedCompanyCode"),
+          Location_Code: sessionStorage.getItem("selectedLocationCode"),
         }),
       });
       if (response.ok) {

@@ -58,7 +58,15 @@ function AttriDetInput({ }) {
   }, [mode, selectedRow]);
 
   const fetchHdrCode = () => {
-    fetch(`${config.apiBaseUrl}/hdrcode`)
+        const company_code = sessionStorage.getItem("selectedCompanyCode");
+
+   fetch(`${config.apiBaseUrl}/hdrcode`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ company_code }),
+    })
       .then((data) => data.json())
       .then((val) => setCodedrop(val));
   };
