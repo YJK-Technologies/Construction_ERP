@@ -80,6 +80,7 @@ function AssetsReturn({ }) {
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
                         company_code: sessionStorage.getItem("selectedCompanyCode"),
+                        Location_Code: sessionStorage.getItem("selectedLocationCode")
                     }),
                 });
 
@@ -343,6 +344,7 @@ function AssetsReturn({ }) {
             const body = {
                 bill_date: transactionDate,
                 company_code: sessionStorage.getItem('selectedCompanyCode'),
+                Location_Code: sessionStorage.getItem('selectedLocationCode'),
                 customer_code: customer,
                 type: type
             };
@@ -474,7 +476,8 @@ function AssetsReturn({ }) {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json",
-                            "company_code": sessionStorage.getItem("selectedCompanyCode")
+                            "company_code": sessionStorage.getItem("selectedCompanyCode"),
+                            "Location_Code": sessionStorage.getItem("selectedLocationCode")
                         },
                         body: JSON.stringify({
                             Vendor_PaymentData: AdvanceInsertData,
@@ -502,14 +505,15 @@ function AssetsReturn({ }) {
 
                 const company_code =
                     sessionStorage.getItem("selectedCompanyCode");
-
+                const Location_Code = sessionStorage.getItem("selectedLocationCode");
                 const response = await fetch(
                     `${config.apiBaseUrl}/updateCustomerReceipt`,
                     {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json",
-                            company_code: company_code,
+                            "company_code": company_code,
+                            "Location_Code": Location_Code
                         },
                         body: JSON.stringify({
                             editedData: normalRows,
