@@ -11042,7 +11042,7 @@ const getofftype = async (req, res) => {
 
 // quoatuin header and deatils node for crud opertion coded added by AK on 08/22/2024 code begins
 const addQuotationheader = async (req, res) => {
-  const { company_code, Entry_date, transaction_no, customer_code, customer_name, customer_addr_1, customer_addr_2, customer_addr_3, customer_addr_4, customer_state, customer_country, customer_mobile_no, contact_person, purchase_amount, tax_amount, add_fright, less_fright, rounded_off, loading_charges, cartage_paid, other_charges, total_amount, customer_gst_no, kind_attention, quotation_validity, created_by, modified_by,
+  const { company_code, Location_Code, Entry_date, transaction_no, customer_code, customer_name, customer_addr_1, customer_addr_2, customer_addr_3, customer_addr_4, customer_state, customer_country, customer_mobile_no, contact_person, purchase_amount, tax_amount, add_fright, less_fright, rounded_off, loading_charges, cartage_paid, other_charges, total_amount, customer_gst_no, kind_attention, quotation_validity, created_by, modified_by,
     tempstr1, tempstr2, tempstr3, tempstr4, datetime1, datetime2, datetime3, datetime4 } = req.body;
   let pool;
   try {
@@ -11051,6 +11051,7 @@ const addQuotationheader = async (req, res) => {
       .request()
       .input("mode", sql.NVarChar, "I") // Insert mode
       .input("company_code", sql.NVarChar, company_code)
+      .input("Location_Code", sql.NVarChar, Location_Code)
       .input("customer_name", sql.NVarChar, customer_name)
       .input("customer_addr_1", sql.NVarChar, customer_addr_1)
       .input("customer_addr_2", sql.NVarChar, customer_addr_2)
@@ -11085,7 +11086,7 @@ const addQuotationheader = async (req, res) => {
       .input("datetime2", sql.NVarChar, datetime2)
       .input("datetime3", sql.NVarChar, datetime3)
       .input("datetime4", sql.NVarChar, datetime4)
-      .query(`EXEC sp_quotation_hdr @mode ,@company_code, @customer_name,@customer_addr_1,@customer_addr_2,@customer_addr_3,@customer_addr_4, @customer_state,@customer_country,@customer_mobile_no,@contact_person, @Entry_date, @transaction_no,
+      .query(`EXEC sp_quotation_hdr_DG @mode ,@company_code, @Location_Code, @customer_name,@customer_addr_1,@customer_addr_2,@customer_addr_3,@customer_addr_4, @customer_state,@customer_country,@customer_mobile_no,@contact_person, @Entry_date, @transaction_no,
         @customer_code, @purchase_amount,@tax_amount, @add_fright, @less_fright, @rounded_off, @loading_charges, @cartage_paid, @other_charges, @total_amount, @customer_gst_no,@kind_attention,@quotation_validity, @created_by, @modified_by, NULL, NULL, NULL,NULL,NULL,NULL,NULL,NULL`);
     if (result.recordset.length > 0) {
       res.status(200).json(result.recordset);
@@ -11100,7 +11101,7 @@ const addQuotationheader = async (req, res) => {
 
 
 const updQuotationheader = async (req, res) => {
-  const { company_code, Entry_date, transaction_no, customer_code, customer_name, customer_addr_1, customer_addr_2, customer_addr_3, customer_addr_4, customer_state, customer_country, customer_mobile_no, contact_person, purchase_amount, tax_amount, add_fright, less_fright, rounded_off, loading_charges, cartage_paid, other_charges, total_amount, customer_gst_no, kind_attention, quotation_validity, modified_by } = req.body;
+  const { company_code, Location_Code, Entry_date, transaction_no, customer_code, customer_name, customer_addr_1, customer_addr_2, customer_addr_3, customer_addr_4, customer_state, customer_country, customer_mobile_no, contact_person, purchase_amount, tax_amount, add_fright, less_fright, rounded_off, loading_charges, cartage_paid, other_charges, total_amount, customer_gst_no, kind_attention, quotation_validity, modified_by } = req.body;
   let pool;
   try {
     pool = await sql.connect(dbConfig);
@@ -11108,6 +11109,7 @@ const updQuotationheader = async (req, res) => {
       .request()
       .input("mode", sql.NVarChar, "U") // Insert mode
       .input("company_code", sql.NVarChar, company_code)
+      .input("Location_Code", sql.NVarChar, Location_Code)
       .input("customer_name", sql.NVarChar, customer_name)
       .input("customer_addr_1", sql.NVarChar, customer_addr_1)
       .input("customer_addr_2", sql.NVarChar, customer_addr_2)
@@ -11133,7 +11135,7 @@ const updQuotationheader = async (req, res) => {
       .input("kind_attention", sql.NVarChar, kind_attention)
       .input("quotation_validity", sql.NVarChar, quotation_validity)
       .input("modified_by", sql.NVarChar, modified_by)
-      .query(`EXEC sp_quotation_hdr @mode ,@company_code, @customer_name,@customer_addr_1,@customer_addr_2,@customer_addr_3,@customer_addr_4, @customer_state,@customer_country,@customer_mobile_no,@contact_person, @Entry_date, @transaction_no,
+      .query(`EXEC sp_quotation_hdr_DG @mode ,@company_code, @Location_Code, @customer_name,@customer_addr_1,@customer_addr_2,@customer_addr_3,@customer_addr_4, @customer_state,@customer_country,@customer_mobile_no,@contact_person, @Entry_date, @transaction_no,
         @customer_code, @purchase_amount,@tax_amount, @add_fright, @less_fright, @rounded_off, @loading_charges, @cartage_paid, @other_charges, @total_amount, @customer_gst_no,@kind_attention,@quotation_validity, '', @modified_by, NULL, NULL, NULL,NULL,NULL,NULL,NULL,NULL`);
     res.json(result.recordset);
 
@@ -11144,7 +11146,7 @@ const updQuotationheader = async (req, res) => {
 };
 
 const getAllquotehdrData = async (req, res) => {
-  const { company_code } = req.body;
+  const { company_code, Location_Code } = req.body;
   let pool;
   try {
     pool = await sql.connect(dbConfig);
@@ -11152,7 +11154,8 @@ const getAllquotehdrData = async (req, res) => {
       .request()
       .input("mode", sql.NVarChar, "A") // Insert mode
       .input("company_code", sql.NVarChar, company_code)
-      .query(`EXEC sp_quotation_hdr 'A',@company_code,'','','','','','','','','','','','',0,0,0,0,0,0,0,0,0,'','','','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
+      .input("Location_Code", sql.NVarChar, Location_Code)
+      .query(`EXEC sp_quotation_hdr_DG 'A',@company_code, @Location_Code, '','','','','','','','','','','','',0,0,0,0,0,0,0,0,0,'','','','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
     res.json(result.recordset);
   } catch (err) {
     console.error("Error", err);
@@ -11162,7 +11165,7 @@ const getAllquotehdrData = async (req, res) => {
 
 const quotedeletehdrData = async (req, res) => {
   // const purch_autonosToDelete = req.body.purch_autonos;
-  const { company_code, transaction_no, modified_by } = req.body;
+  const { company_code, Location_Code, transaction_no, modified_by } = req.body;
   try {
     const pool = await connection.connectToDatabase();
     try {
@@ -11170,9 +11173,10 @@ const quotedeletehdrData = async (req, res) => {
         .request()
         .input("mode", sql.NVarChar, "D")
         .input("company_code", sql.NVarChar, company_code)
+        .input("Location_Code", sql.NVarChar, Location_Code)
         .input("transaction_no", sql.NVarChar, transaction_no)
         .input("modified_by", sql.NVarChar, modified_by)
-        .query(`EXEC sp_quotation_hdr @mode,@company_code,'','','','','','','','','','',@transaction_no,'',0,0,0,0,0,0,0,0,0,'','','','',@modified_by,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
+        .query(`EXEC sp_quotation_hdr_DG @mode,@company_code, @Location_Code, '','','','','','','','','','',@transaction_no,'',0,0,0,0,0,0,0,0,0,'','','','',@modified_by,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
     } catch (err) {
       if (err.number === 547) {
         // Foreign key constraint violation
@@ -11190,7 +11194,7 @@ const quotedeletehdrData = async (req, res) => {
 };
 
 const getAllquotedetData = async (req, res) => {
-  const { company_code } = req.body;
+  const { company_code, Location_Code } = req.body;
   let pool;
   try {
     pool = await sql.connect(dbConfig);
@@ -11198,7 +11202,8 @@ const getAllquotedetData = async (req, res) => {
       .request()
       .input("mode", sql.NVarChar, "A") // Insert mode
       .input("company_code", sql.NVarChar, company_code)
-      .query(`EXEC sp_quotation_details 'A',@company_code,'','','','',0,'','','',0,0,0,0,0,0,'','','','','',
+      .input("Location_Code", sql.NVarChar, Location_Code)
+      .query(`EXEC sp_quotation_details_Ramya 'A',@company_code, @Location_Code, '','','','',0,'','','',0,0,0,0,0,0,'','','','','',
 NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
 
     res.json(result.recordset);
@@ -11209,7 +11214,7 @@ NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
 };
 
 const addquotationdetail = async (req, res) => {
-  const { company_code, Entry_date, transaction_no, warehouse_code, customer_code, ItemSNo, item_code, item_name, bill_qty, bill_rate,
+  const { company_code, Location_Code, Entry_date, transaction_no, warehouse_code, customer_code, ItemSNo, item_code, item_name, bill_qty, bill_rate,
     item_amt, tax_amount, weight, total_weight, cutomer_name, hsn, Description, created_by, modified_by,
     tempstr1, tempstr2, tempstr3, tempstr4, datetime1, datetime2, datetime3, datetime4,
 
@@ -11227,6 +11232,7 @@ const addquotationdetail = async (req, res) => {
       .request()
       .input("mode", sql.NVarChar, "I") // Insert mode
       .input("company_code", sql.NVarChar, company_code)
+      .input("Location_Code", sql.NVarChar, Location_Code)
       .input("Entry_date", sql.NVarChar, Entry_date)
       .input("transaction_no", sql.NVarChar, transaction_no)
       .input("warehouse_code", sql.NVarChar, warehouse_code)
@@ -11255,7 +11261,7 @@ const addquotationdetail = async (req, res) => {
       .input("datetime3", sql.NVarChar, datetime3)
       .input("datetime4", sql.NVarChar, datetime4)
       .query(
-        `EXEC sp_quotation_details @mode,@company_code,@Entry_date,@transaction_no,@warehouse_code,@customer_code,@ItemSNo,@item_code,@item_name,@item_images,@bill_qty,@bill_rate,
+        `EXEC sp_quotation_details_Ramya @mode,@company_code, @Location_Code, @Entry_date,@transaction_no,@warehouse_code,@customer_code,@ItemSNo,@item_code,@item_name,@item_images,@bill_qty,@bill_rate,
         @item_amt,@tax_amount,@weight,@total_weight,@cutomer_name,
         @hsn,@Description,@created_by,@modified_by,
         @tempstr1,@tempstr2,@tempstr3,@tempstr4,@datetime1,@datetime2,@datetime3,@datetime4`);
@@ -11268,7 +11274,7 @@ const addquotationdetail = async (req, res) => {
 
 const quotedeletedetData = async (req, res) => {
   // const purch_autonosToDelete = req.body.purch_autonos;
-  const { company_code, transaction_no } = req.body;
+  const { company_code, Location_Code, transaction_no } = req.body;
 
   try {
     const pool = await connection.connectToDatabase();
@@ -11277,8 +11283,9 @@ const quotedeletedetData = async (req, res) => {
         .request()
         .input("mode", sql.NVarChar, "D")
         .input("company_code", sql.NVarChar, company_code)
+        .input("Location_Code", sql.NVarChar, Location_Code)
         .input("transaction_no", sql.NVarChar, transaction_no)
-        .query(`EXEC sp_quotation_details 'D',@company_code,'',@transaction_no,'','',0,'','','',0,0,0,0,0,0,'','','','','',
+        .query(`EXEC sp_quotation_details_Ramya 'D',@company_code, @Location_Code, '',@transaction_no,'','',0,'','','',0,0,0,0,0,0,'','','','','',
                 NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
     } catch (err) {
       if (err.number === 547) {
@@ -11345,7 +11352,7 @@ const refNumberToQuotationDetailPrintData = async (req, res) => {
 };
 
 const getAllquotetaxData = async (req, res) => {
-  const { company_code } = req.body;
+  const { company_code, Location_Code } = req.body;
   let pool;
   try {
     pool = await sql.connect(dbConfig);
@@ -11353,7 +11360,8 @@ const getAllquotetaxData = async (req, res) => {
       .request()
       .input("mode", sql.NVarChar, "A") // Insert mode
       .input("company_code", sql.NVarChar, company_code)
-      .query(`EXEC sp_quotation_tax_details 'A',@company_code,'','','',0,0,'','','','',0,0,'','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL
+      .input("Location_Code", sql.NVarChar, Location_Code)
+      .query(`EXEC sp_quotation_tax_details_Ramya 'A',@company_code, @Location_Code, '','','',0,0,'','','','',0,0,'','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL
 `);
 
     res.json(result.recordset);
@@ -11365,7 +11373,7 @@ const getAllquotetaxData = async (req, res) => {
 
 const addquotetaxdetail = async (req, res) => {
   const {
-    company_code, Entry_date, transaction_no, customer_code, ItemSNo, TaxSNo, item_code, item_name, tax_type, tax_name_details, tax_amt, tax_per, tax_acode,
+    company_code, Location_Code, Entry_date, transaction_no, customer_code, ItemSNo, TaxSNo, item_code, item_name, tax_type, tax_name_details, tax_amt, tax_per, tax_acode,
     created_by, modified_by,
     tempstr1, tempstr2, tempstr3, tempstr4, datetime1, datetime2, datetime3, datetime4,
 
@@ -11377,6 +11385,7 @@ const addquotetaxdetail = async (req, res) => {
       .request()
       .input("mode", sql.NVarChar, "I") // Insert mode
       .input("company_code", sql.NVarChar, company_code)
+      .input("Location_Code", sql.NVarChar, Location_Code)
       .input("Entry_date", sql.Date, Entry_date)
       .input("transaction_no", sql.NVarChar, transaction_no)
       .input("customer_code", sql.NVarChar, customer_code)
@@ -11400,7 +11409,7 @@ const addquotetaxdetail = async (req, res) => {
       .input("datetime3", sql.NVarChar, datetime3)
       .input("datetime4", sql.NVarChar, datetime4)
       .query(
-        `EXEC sp_quotation_tax_details @mode,@company_code,@Entry_date,@transaction_no,@customer_code,@ItemSNo,@TaxSNo,@item_code,@item_name,@tax_type,@tax_name_details,
+        `EXEC sp_quotation_tax_details_Ramya @mode,@company_code, @Location_Code, @Entry_date,@transaction_no,@customer_code,@ItemSNo,@TaxSNo,@item_code,@item_name,@tax_type,@tax_name_details,
     @tax_amt,@tax_per,@tax_acode,@created_by,@modified_by,@tempstr1,@tempstr2,@tempstr3,@tempstr4,@datetime1,@datetime2,@datetime3,@datetime4`);
     res.json({ success: true, message: "Data inserted successfully" });
   } catch (err) {
@@ -11410,7 +11419,7 @@ const addquotetaxdetail = async (req, res) => {
 };
 
 const quoteDeleteTaxData = async (req, res) => {
-  const { company_code, transaction_no } = req.body;
+  const { company_code, Location_Code, transaction_no } = req.body;
 
   try {
     const pool = await connection.connectToDatabase();
@@ -11419,8 +11428,9 @@ const quoteDeleteTaxData = async (req, res) => {
         .request()
         .input("mode", sql.NVarChar, "D")
         .input("company_code", sql.NVarChar, company_code)
+        .input("Location_Code", sql.NVarChar, Location_Code)
         .input("transaction_no", sql.NVarChar, transaction_no)
-        .query(`EXEC sp_quotation_tax_details 'D',@company_code,'',@transaction_no,'',0,0,'','','','',0,0,'','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
+        .query(`EXEC sp_quotation_tax_details_Ramya 'D',@company_code, @Location_Code, '',@transaction_no,'',0,0,'','','','',0,0,'','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
     } catch (err) {
       if (err.number === 547) {
         // Foreign key constraint violation
@@ -12285,7 +12295,7 @@ const getDcDetailView = async (req, res) => {
 
 
 const getQuotationSearchData = async (req, res) => {
-  const { company_code, transaction_no, Entry_date, customer_name, contact_person } = req.body;
+  const { company_code, Location_Code, transaction_no, Entry_date, customer_name, contact_person } = req.body;
   try {
     // Connect to the database
     const pool = await connection.connectToDatabase();
@@ -12294,11 +12304,12 @@ const getQuotationSearchData = async (req, res) => {
       .request()
       .input("mode", sql.NVarChar, "SC")
       .input("company_code", sql.NVarChar, company_code)
+      .input("Location_Code", sql.NVarChar, Location_Code)
       .input("transaction_no", sql.NVarChar, transaction_no)
       .input("Entry_date", sql.NVarChar, Entry_date)
       .input("customer_name", sql.NVarChar, customer_name)
       .input("contact_person", sql.NVarChar, contact_person)
-      .query(`EXEC sp_quotation_hdr @mode,@company_code,@customer_name,'','','','','','','',@contact_person,@Entry_date,@transaction_no,'',0,0,0,0,0,0,0,0,0,'','','','','', NULL, NULL, NULL,NULL,NULL,NULL,NULL,NULL`);
+      .query(`EXEC sp_quotation_hdr_DG @mode,@company_code, @Location_Code, @customer_name,'','','','','','','',@contact_person,@Entry_date,@transaction_no,'',0,0,0,0,0,0,0,0,0,'','','','','', NULL, NULL, NULL,NULL,NULL,NULL,NULL,NULL`);
     // Send response
     if (result.recordset.length > 0) {
       res.status(200).json(result.recordset); // 200 OK if data is found
@@ -21832,6 +21843,7 @@ const quoTermsandConditions = async (req, res) => {
   const {
     transaction_no,
     company_code,
+    Location_Code,
     Terms_conditions,
     created_by,
     modified_by,
@@ -21852,6 +21864,7 @@ const quoTermsandConditions = async (req, res) => {
       .input("mode", sql.NVarChar, "I") // Insert mode
       .input("transaction_no", sql.NVarChar, transaction_no)
       .input("company_code", sql.VarChar, company_code)
+      .input("Location_Code", sql.VarChar, Location_Code)
       .input("Terms_conditions", sql.VarChar, Terms_conditions)
       .input("created_by", sql.NVarChar, created_by)
       .input("modified_by", sql.NVarChar, modified_by)
@@ -21864,7 +21877,7 @@ const quoTermsandConditions = async (req, res) => {
       .input("datetime3", sql.NVarChar, datetime3)
       .input("datetime4", sql.NVarChar, datetime4)
       .query(
-        `EXEC sp_Terms_conditions_Quotation @mode,@transaction_no,@company_code,@Terms_conditions,@created_by,'',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
+        `EXEC sp_Terms_conditions_Quotation_Ramya @mode,@transaction_no,@company_code, @Location_Code, @Terms_conditions,@created_by,'',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
     res.status(200).json(" Data Inserted successfully");
   } catch (err) {
     console.error("Error inserting data:", err);
@@ -21877,7 +21890,7 @@ const quoTermsandConditions = async (req, res) => {
 
 
 const QuoTermsandConditionsDelete = async (req, res) => {
-  const { transaction_no, company_code } = req.body;
+  const { transaction_no, company_code, Location_Code } = req.body;
 
   try {
     const pool = await connection.connectToDatabase();
@@ -21885,8 +21898,9 @@ const QuoTermsandConditionsDelete = async (req, res) => {
       .request()
       .input("transaction_no", sql.NVarChar, transaction_no)
       .input("company_code", sql.NVarChar, company_code)
+      .input("Location_Code", sql.NVarChar, Location_Code)
 
-      .query(`EXEC sp_Terms_conditions_Quotation 'D',@transaction_no,@company_code,'','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
+      .query(`EXEC sp_Terms_conditions_Quotation_Ramya 'D',@transaction_no,@company_code, @Location_Code, '','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
 
     res.status(200).json(" data deleted successfully");
   } catch (err) {
@@ -21900,13 +21914,19 @@ const QuoTermsandConditionsDelete = async (req, res) => {
 
 
 const getallQuoTermsandConditions = async (req, res) => {
+  const { company_code, Location_Code } = req.body;
+  let pool;
   try {
-    await connection.connectToDatabase();
-    const result = await sql.query(`EXEC sp_Terms_conditions_Quotation 'A','','','','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
+    pool = await sql.connect(dbConfig);
+    const result = await pool
+      .request()
+      .input("company_code", sql.NVarChar, company_code)
+      .input("Location_Code", sql.NVarChar, Location_Code)
+    .query(`EXEC sp_Terms_conditions_Quotation_Ramya 'A', '','', @Location_Code,'','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
 
     res.json(result.recordset);
   } catch (err) {
-    console.error(err);
+    console.error("Error", err);
     res.status(500).json({ message: err.message || 'Internal Server Error' });
   }
 };
@@ -22996,18 +23016,19 @@ const getDeletedQuotationTerms = async (req, res) => {
 };
 
 const getDeletedQuotationSearchData = async (req, res) => {
-  const { company_code, transaction_no, Entry_date, customer_name, contact_person } = req.body;
+  const { company_code, Location_Code, transaction_no, Entry_date, customer_name, contact_person } = req.body;
   try {
     const pool = await connection.connectToDatabase();
     const result = await pool
       .request()
       .input("mode", sql.NVarChar, "DSC")
       .input("company_code", sql.NVarChar, company_code)
+      .input("Location_Code", sql.NVarChar, Location_Code)
       .input("transaction_no", sql.NVarChar, transaction_no)
       .input("Entry_date", sql.NVarChar, Entry_date)
       .input("customer_name", sql.NVarChar, customer_name)
       .input("contact_person", sql.NVarChar, contact_person)
-      .query(`EXEC sp_quotation_hdr @mode,@company_code,@customer_name,'','','','','','','',@contact_person,@Entry_date,@transaction_no,'',0,0,0,0,0,0,0,0,0,'','','','','', NULL, NULL, NULL,NULL,NULL,NULL,NULL,NULL`);
+      .query(`EXEC sp_quotation_hdr_DG @mode,@company_code, @Location_Code, @customer_name,'','','','','','','',@contact_person,@Entry_date,@transaction_no,'',0,0,0,0,0,0,0,0,0,'','','','','', NULL, NULL, NULL,NULL,NULL,NULL,NULL,NULL`);
     if (result.recordset.length > 0) {
       res.status(200).json(result.recordset);
     } else {
