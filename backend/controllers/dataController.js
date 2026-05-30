@@ -658,10 +658,18 @@ const getInthdrcode = async (req, res) => {
   }
 };
 const gethdrcode = async (req, res) => {
+    const { company_code } = req.body;
+  let pool;
+
   try {
-    await connection.connectToDatabase();
-    const result = await sql.query(
-      "EXEC sp_attribute_Info 'TS','','', '','','','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+    const pool = await connection.connectToDatabase();
+    const result = await pool
+      .request()
+      .input("company_code", sql.NVarChar, company_code)
+
+     .query(
+      
+      "EXEC sp_attribute_Info 'TS',@company_code,'', '','','','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
     );
 
     res.json(result.recordset);

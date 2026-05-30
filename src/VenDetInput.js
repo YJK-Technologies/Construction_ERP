@@ -229,10 +229,21 @@ function VenDetInput({ }) {
       body: JSON.stringify({ company_code }),
     })
       .then((data) => data.json())
-      .then((val) => setvendorcodedrop(val))
-      .catch((error) =>
-        console.error("Error fetching Vendors:", error)
-      );
+.then((val) => {
+  console.log("Vendor API Response:", val);
+
+  if (Array.isArray(val)) {
+    setvendorcodedrop(val);
+  } else if (Array.isArray(val.data)) {
+    setvendorcodedrop(val.data);
+  } else {
+    setvendorcodedrop([]);
+  }
+})
+.catch((error) => {
+  console.error("Error fetching Vendors:", error);
+  setvendorcodedrop([]);
+});
   };
 
   useEffect(() => {
@@ -331,13 +342,13 @@ function VenDetInput({ }) {
       .catch((error) => console.error("Error fetching data:", error));
   }, []);
 
-const filteredOptionCode = Array.isArray(vendorcodedrop)
+  const filteredOptionCode = Array.isArray(vendorcodedrop)
   ? vendorcodedrop.map((option) => ({
       value: option.vendor_code,
       label: `${option.vendor_code} - ${option.vendor_name}`,
     }))
   : [];
-
+  
   const filteredOptionTransaction = TRcodedrop.map((option) => ({
     value: option.keyfield,
     label: option.keyfield,
@@ -562,14 +573,10 @@ const filteredOptionCode = Array.isArray(vendorcodedrop)
         toast.success("Data updated successfully", {
           onClose: () => clearInputFields(),
         });
-      } else if (response.status === 400) {
+      } else {
         const errorResponse = await response.json();
         console.error(errorResponse.message);
         toast.warning(errorResponse.message, {});
-      } else {
-        console.error("Failed to insert data");
-        const errorResponse = await response.json();
-        toast.error("Error inserting data: " + errorResponse.message);
       }
     } catch (error) {
       console.error("Error inserting data:", error);
@@ -802,7 +809,7 @@ const filteredOptionCode = Array.isArray(vendorcodedrop)
                         onKeyDown={(e) => handleKeyDown(e, Country, State)}
                       />
                     </div>
-                  </div>{" "}
+                  </div>
                 </div>
 
                 <div className="col-md-3 form-group mb-2">
@@ -833,7 +840,7 @@ const filteredOptionCode = Array.isArray(vendorcodedrop)
                           IMEX No
                         </label>
                       </div>
-                    </div>{" "}
+                    </div>
                     <input
                       id="venimex"
                       class="exp-input-field form-control"
@@ -1054,7 +1061,7 @@ const filteredOptionCode = Array.isArray(vendorcodedrop)
                         onKeyDown={(e) => handleKeyDown(e, Broker, Sales)}
                       />
                     </div>
-                  </div>{" "}
+                  </div>
                 </div>
 
                 <div className="col-md-3 form-group mb-2">

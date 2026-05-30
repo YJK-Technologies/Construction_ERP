@@ -11,7 +11,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import labels from "./Labels";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import LoadingScreen from './Loading'; 
+import LoadingScreen from './Loading';
 import { showConfirmationToast } from './ToastConfirmation';
 const config = require('./Apiconfig');
 
@@ -33,7 +33,7 @@ function WarehouseGrid() {
   const [statusdrop, setStatusdrop] = useState([]);
   const [statusgriddrop, setStatusGriddrop] = useState([]);
   const [selectedStatus, setSelectedStatus] = useState(null);
-  const [loading, setLoading] = useState(false);    
+  const [loading, setLoading] = useState(false);
   const [createdBy, setCreatedBy] = useState("");
   const [modifiedBy, setModifiedBy] = useState("");
   const [createdDate, setCreatedDate] = useState("");
@@ -44,12 +44,6 @@ function WarehouseGrid() {
   const warehouseGridPermision = permissions
     .filter(permission => permission.screen_type === 'Warehouse')
     .map(permission => permission.permission_type.toLowerCase());
-
-  /*testing for search criteria
-    const [showAddUserForm, setShowAddUserForm] = useState(false);
-   const [editedData, setEditedData] = useState([]);
-   const [startDate, setStartDate] = useState("");
-   const [endDate, setEndDate] = useState("");*/
 
   useEffect(() => {
     fetch(`${config.apiBaseUrl}/locationno`)
@@ -63,26 +57,22 @@ function WarehouseGrid() {
 
   useEffect(() => {
     const company_code = sessionStorage.getItem('selectedCompanyCode');
-    
     fetch(`${config.apiBaseUrl}/status`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ company_code })
-    })      .then((response) => response.json())
+    }).then((response) => response.json())
       .then((data) => {
-        // Extract city names from the fetched data
         const statusOption = data.map(option => option.attributedetails_name);
         setStatusGriddrop(statusOption);
       })
       .catch((error) => console.error('Error fetching data:', error));
   }, []);
 
-  
   useEffect(() => {
     const company_code = sessionStorage.getItem('selectedCompanyCode');
-    
     fetch(`${config.apiBaseUrl}/status`, {
       method: 'POST',
       headers: {
@@ -95,7 +85,6 @@ function WarehouseGrid() {
       .catch((error) => console.error('Error fetching data:', error));
   }, []);
 
-
   const filteredOptionStatus = statusdrop.map((option) => ({
     value: option.attributedetails_name,
     label: option.attributedetails_name,
@@ -105,7 +94,6 @@ function WarehouseGrid() {
     setSelectedStatus(selectedStatus);
     setstatus(selectedStatus ? selectedStatus.value : '');
   };
-
 
   const handleSearch = async () => {
     setLoading(true);
@@ -134,21 +122,16 @@ function WarehouseGrid() {
     } catch (error) {
       console.error("Error saving data:", error);
       toast.error("Error updating data: " + error.message);
-    }finally {
+    } finally {
       setLoading(false);
     }
-
   };
-
 
   const reloadGridData = () => {
     window.location.reload();
   };
 
-
   const columnDefs = [
-
-
     {
       headerCheckboxSelection: true,
       checkboxSelection: true,
@@ -177,8 +160,6 @@ function WarehouseGrid() {
       valueFormatter: (params) => {
         return params.value ? params.value.toUpperCase() : '';
       },
-
-
     },
     {
       headerName: "Warehouse Name",
@@ -203,20 +184,10 @@ function WarehouseGrid() {
       field: "status",
       editable: true,
       cellStyle: { textAlign: "left" },
-      // minWidth: 150,
-      // maxWidth: 150,
       cellEditor: "agSelectCellEditor",
       cellEditorParams: {
         values: statusgriddrop
       },
-      // valueFormatter: (params) => 
-      //   params.value
-      //     ? params.value
-      //         .toLowerCase()
-      //         .split(' ')
-      //         .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-      //         .join(' ')
-      //     : '',
     },
     {
       headerName: "Location No",
@@ -229,33 +200,18 @@ function WarehouseGrid() {
         values: Locationdrop,
       },
       cellEditor: "agSelectCellEditor",
-      // valueFormatter: (params) => 
-      //   params.value
-      //     ? params.value
-      //         .toLowerCase()
-      //         .split(' ')
-      //         .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-      //         .join(' ')
-      //     : '',
     },
   ];
 
-
   const defaultColDef = {
     resizable: true,
-    wrapText: true,
-    // sortable: true,
-    // editable: true,
-    // flex: 1,
-    // filter: true,
-    // floatingFilter: true,
+    wrapText: false,
   };
 
   const onGridReady = (params) => {
     setGridApi(params.api);
     setGridColumnApi(params.columnApi);
   };
-
 
   const generateReport = () => {
     const selectedRows = gridApi.getSelectedRows();
@@ -265,11 +221,6 @@ function WarehouseGrid() {
     };
     const reportData = selectedRows.map((row) => {
       return {
-        /* Date: moment(row.expenses_date).format("YYYY-MM-DD"),
-        Type: row.expenses_type,
-        Expenditure: row.expenses_amount,
-        "Spent By": row.expenses_spentby,
-        Remarks: row.remarks,*/
         "Warehouse Code": row.warehouse_code,
         "Warehouse Name": row.warehouse_name,
         "Status": row.status,
@@ -382,22 +333,22 @@ function WarehouseGrid() {
     const selectedData = selectedNodes.map((node) => node.data);
     setSelectedRows(selectedData);
   };
-  // Assuming you have a unique identifier for each row, such as 'id'
+
   const onCellValueChanged = (params) => {
     const updatedRowData = [...rowData];
     const rowIndex = updatedRowData.findIndex(
       (row) => row.vendor_code === params.data.vendor_code && row.company_code === params.data.company_code && row.keyfield == params.data.keyfield
     );
-  
+
     if (rowIndex !== -1) {
       updatedRowData[rowIndex][params.colDef.field] = params.newValue;
       setRowData(updatedRowData);
-  
+
       setEditedData((prevData) => {
         const existingIndex = prevData.findIndex(
           (item) => item.vendor_code === params.data.vendor_code && item.company_code === params.data.company_code && item.keyfield == params.data.keyfield
         );
-  
+
         if (existingIndex !== -1) {
           const updatedEdited = [...prevData];
           updatedEdited[existingIndex] = updatedRowData[rowIndex];
@@ -414,7 +365,6 @@ function WarehouseGrid() {
 
     const company_code = sessionStorage.getItem('selectedCompanyCode');
     const modified_by = sessionStorage.getItem('selectedUserCode');
-    // Filter the editedData state to include only the selected rows
     const selectedRowsData = editedData.filter(row => selectedRows.some(selectedRow => selectedRow.warehouse_code === row.warehouse_code));
 
     if (selectedRowsData.length === 0) {
@@ -424,10 +374,8 @@ function WarehouseGrid() {
     showConfirmationToast(
       "Are you sure you want to update the data in the selected rows?",
       async () => {
-        setLoading(true);
         try {
-
-
+          setLoading(true);
           const response = await fetch(`${config.apiBaseUrl}/warehouseupdate`, {
             method: "POST",
             headers: {
@@ -435,18 +383,14 @@ function WarehouseGrid() {
               "company_code": company_code,
               "modified-by": modified_by
             },
-            body: JSON.stringify({ editedData: selectedRowsData }), // Send only the selected rows for saving
+            body: JSON.stringify({ editedData: selectedRowsData }),
             "company_code": company_code,
             "modified-by": modified_by
-
           });
-
-
-          if (response.status === 200) {
-            setTimeout(() => {
-              toast.success("Data Updated Successfully")
-              handleSearch();
-            }, 1000);
+          if (response.ok) {
+            toast.success("Data Updated successfully", {
+              onClose: () => handleSearch()
+            });
             return;
           } else {
             const errorResponse = await response.json();
@@ -455,19 +399,15 @@ function WarehouseGrid() {
         } catch (error) {
           console.error("Error saving data:", error);
           toast.error("Error Updating Data: " + error.message);
-        }finally {
+        } finally {
           setLoading(false);
         }
-    
       },
       () => {
         toast.info("Data updated cancelled.");
       }
     );
   };
-
-
-
 
   const deleteSelectedRows = async () => {
     const selectedRows = gridApi.getSelectedRows();
@@ -483,8 +423,8 @@ function WarehouseGrid() {
     showConfirmationToast(
       "Are you sure you want to Delete the data in the selected rows?",
       async () => {
-        setLoading(true);
         try {
+          setLoading(true);
           const response = await fetch(`${config.apiBaseUrl}/Warehousedelete`, {
             method: "POST",
             headers: {
@@ -495,14 +435,12 @@ function WarehouseGrid() {
             body: JSON.stringify({ warehouse_codes: warehouse_codesToDelete }),
             "company_code": company_code,
             "modified_by": modified_by
-
           });
 
           if (response.ok) {
-            setTimeout(() => {
-              toast.success("Data Updated Successfully")
-              handleSearch();
-            }, 1000);
+            toast.success("Data Deleted successfully", {
+              onClose: () => handleSearch()
+            });
             return;
           } else {
             const errorResponse = await response.json();
@@ -511,10 +449,9 @@ function WarehouseGrid() {
         } catch (error) {
           console.error("Error saving data:", error);
           toast.error("Error Updating Data: " + error.message);
-        }finally {
+        } finally {
           setLoading(false);
         }
-    
       },
       () => {
         toast.info("Data Delete cancelled.");
@@ -524,10 +461,9 @@ function WarehouseGrid() {
 
 
   const formatDate = (dateString) => {
-    if (!dateString) return ""; // Return 'N/A' if the date is missing
+    if (!dateString) return ""; 
     const date = new Date(dateString);
 
-    // Format as DD/MM/YYYY
     return new Intl.DateTimeFormat("en-GB", {
       day: "2-digit",
       month: "2-digit",
@@ -555,7 +491,7 @@ function WarehouseGrid() {
   return (
     <div className="container-fluid Topnav-screen">
       <div>
-      {loading && <LoadingScreen />}
+        {loading && <LoadingScreen />}
         <ToastContainer position="top-right" className="toast-design" theme="colored" />
         <div className="shadow-lg p-1 bg-body-tertiary rounded  mb-2 mt-2">
           <div className=" d-flex justify-content-between  ">
@@ -715,18 +651,18 @@ function WarehouseGrid() {
                 <label for="status" class="exp-form-labels">
                   Status
                 </label>
-            <div title="Select the Status">        
-                <Select
-                  id="status"
-                  value={selectedStatus}
-                  onChange={handleChangeStatus}
-                  onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                  options={filteredOptionStatus}
-                  className="exp-input-field"
-                  placeholder=""
-                />
+                <div title="Select the Status">
+                  <Select
+                    id="status"
+                    value={selectedStatus}
+                    onChange={handleChangeStatus}
+                    onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                    options={filteredOptionStatus}
+                    className="exp-input-field"
+                    placeholder=""
+                  />
 
-              </div>
+                </div>
               </div>
             </div>
             <div className="col-md-3 form-group">
@@ -805,8 +741,6 @@ function WarehouseGrid() {
         </div>
       </div>
     </div>
-
-
 
   );
 }
