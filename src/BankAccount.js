@@ -23,7 +23,6 @@ function BankAccInput({ }) {
   const [acc_area_code, setacc_area_code] = useState("");
   const [acc_state_code, setacc_state_code] = useState("");
   const [acc_country_code, setacc_country_code] = useState("");
-  // const [standard_accgroup_code, setstandard_accgroup_code] = useState("");
   const [user_accgroup_code, setuser_accgroup_code] = useState("Bank Account");
   const [account_number, setaccount_number] = useState("");
   const [IFSC_code, setIFSC_code] = useState("");
@@ -124,10 +123,12 @@ function BankAccInput({ }) {
       .catch((error) => console.error('Error fetching data:', error));
   }, []);
 
-  const filteredOptionUser = Userdrop.map((option) => ({
-    value: option.user_accgroup_code,
-    label: option.user_accgroup_name,
-  }));
+  const filteredOptionUser = Array.isArray(Userdrop)
+    ? Userdrop.map((option) => ({
+      value: option.user_accgroup_code,
+      label: option.user_accgroup_name,
+    }))
+    : [];
 
   const handleChangeUser = (selectedUser) => {
     setSelectedUser(selectedUser);
@@ -301,31 +302,33 @@ function BankAccInput({ }) {
       .catch((error) => console.error('Error fetching data:', error));
   }, []);
 
-  const filteredOptionCity = drop.map((option) => ({
-    value: option.attributedetails_name,
-    label: option.attributedetails_name,
-  }));
+  const filteredOptionCity = Array.isArray(drop)
+    ? drop.map((option) => ({
+      value: option.attributedetails_name,
+      label: option.attributedetails_name,
+    }))
+    : [];
 
-  const filteredOptionState = statedrop.map((option) => ({
-    value: option.attributedetails_name,
-    label: option.attributedetails_name,
-  }));
+  const filteredOptionState = Array.isArray(statedrop)
+    ? statedrop.map((option) => ({
+      value: option.attributedetails_name,
+      label: option.attributedetails_name,
+    }))
+    : [];
 
-  const filteredOptionCountry = condrop.map((option) => ({
-    value: option.attributedetails_name,
-    label: option.attributedetails_name,
-  }));
+  const filteredOptionCountry = Array.isArray(condrop)
+    ? condrop.map((option) => ({
+      value: option.attributedetails_name,
+      label: option.attributedetails_name,
+    }))
+    : [];
 
-  const filteredOptionAccountype = accdrop.map((option) => ({
-    value: option.attributedetails_name,
-    label: option.attributedetails_name,
-  }));
-
-  // const handleChangeStdAccGrp = (selectedUserAcc) => {
-  //   setSelectedUserAcc(selectedUserAcc);
-  //   setstandard_accgroup_code(selectedUserAcc ? selectedUserAcc.value : '');
-  //   setError(false);
-  // };
+  const filteredOptionAccountype = Array.isArray(accdrop)
+    ? accdrop.map((option) => ({
+      value: option.attributedetails_name,
+      label: option.attributedetails_name,
+    }))
+    : [];
 
   const handleChangeCity = (selectedCity) => {
     setSelectedCity(selectedCity);
@@ -347,37 +350,9 @@ function BankAccInput({ }) {
     setaccount_type(selectedAcctype ? selectedAcctype.value : '');
   };
 
-
-  // const SelectItem = async (user_accgroup_code) => {
-  //   try {
-  //     const response = await fetch(`${config.apiBaseUrl}/getstdBase`, {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify({ user_accgroup_code: user_accgroup_code }),
-  //     });
-
-  //     if (response.ok) {
-  //       const searchData = await response.json();
-  //       const [{standard_accgroup_code}] = searchData;
-  //       setStandardAccCode(standard_accgroup_code)
-
-  //       console.log(searchData);
-  //     } else if (response.status === 404) {
-  //       console.log("Data not found");
-  //     } else {
-  //       console.log("Bad request");
-  //     }
-  //   } catch (error) {
-  //     console.error("Error fetching search data:", error);
-  //   }
-  // };
-
   const handleNavigate = () => {
-    navigate("/BankAccount", { selectedRows }); // Pass selectedRows as props to the Input component
+    navigate("/BankAccount", { selectedRows });
   };
-
 
   const handleInsert = async () => {
     if (!account_code) {
@@ -386,10 +361,7 @@ function BankAccInput({ }) {
     }
     setLoading(true);
     try {
-      // Create a new FormData instance
       const formData = new FormData();
-
-      // Append data to formData
       formData.append("company_code", sessionStorage.getItem('selectedCompanyCode'));
       formData.append("account_code", account_code);
       formData.append("account_name", account_name);
@@ -594,10 +566,12 @@ function BankAccInput({ }) {
       .catch((error) => console.error('Error fetching data:', error));
   }, []);
 
-  const filteredOptionDefaultBank = defaultBankDrop.map((option) => ({
-    value: option.attributedetails_name,
-    label: option.attributedetails_name,
-  }));
+  const filteredOptionDefaultBank = Array.isArray(defaultBankDrop)
+    ? defaultBankDrop.map((option) => ({
+      value: option.attributedetails_name,
+      label: option.attributedetails_name,
+    }))
+    : [];
 
   const handleChangeDefaultBank = (selectedDefaultBank) => {
     setselectedDefaultBank(selectedDefaultBank);
@@ -622,24 +596,24 @@ function BankAccInput({ }) {
             <div className="shadow-lg p-3 bg-body-tertiary rounded  mb-2">
               <div class="row">
                 <div className="col-md-3 form-group mb-2">
-                    <div>
-                      <label htmlFor="rid" className="exp-form-labels">
+                  <div>
+                    <label htmlFor="rid" className="exp-form-labels">
                       Accountant code<span className="text-danger">*</span>
-                      </label>
-                  <input
-                    id="cusad1"
-                    className="exp-input-field form-control"
-                    type="text"
-                    placeholder=""
-                    required
-                    title="Accountant code"
-                    value={account_code}
-                    maxLength={100}
-                    ref={Accountant}
-                    readOnly={mode === "update"}
-                    onKeyDown={(e) => handleKeyDown(e, User, Accountant)}
-                  />
-                </div>
+                    </label>
+                    <input
+                      id="cusad1"
+                      className="exp-input-field form-control"
+                      type="text"
+                      placeholder=""
+                      required
+                      title="Accountant code"
+                      value={account_code}
+                      maxLength={100}
+                      ref={Accountant}
+                      readOnly={mode === "update"}
+                      onKeyDown={(e) => handleKeyDown(e, User, Accountant)}
+                    />
+                  </div>
                 </div>
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
@@ -656,6 +630,7 @@ function BankAccInput({ }) {
                         onChange={handleChangeUser}
                         options={filteredOptionUser}
                         className=""
+                        isClearable
                         placeholder=""
                         ref={User}
                         onKeyDown={(e) => handleKeyDown(e, Bank, User)}
@@ -746,6 +721,7 @@ function BankAccInput({ }) {
                         options={filteredOptionAccountype}
                         className="exp-input-field"
                         placeholder=""
+                        isClearable
                         ref={Account}
                         onKeyDown={(e) => handleKeyDown(e, Branch, Account)}
                         required title="Please select the Account Type "
@@ -870,6 +846,7 @@ function BankAccInput({ }) {
                         options={filteredOptionCity}
                         className="exp-input-field"
                         placeholder=""
+                        isClearable
                         ref={City}
                         onKeyDown={(e) => handleKeyDown(e, State, City)}
                       />
@@ -885,6 +862,7 @@ function BankAccInput({ }) {
                     <div title="Select the State">
                       <Select
                         id="state"
+                        isClearable
                         value={selectedState}
                         onChange={handleChangeState}
                         options={filteredOptionState}
@@ -908,6 +886,7 @@ function BankAccInput({ }) {
                     <div title="Select the Country">
                       <Select
                         id="country"
+                        isClearable
                         value={selectedCountry}
                         onChange={handleChangeCountry}
                         options={filteredOptionCountry}
@@ -928,6 +907,7 @@ function BankAccInput({ }) {
                     <div title="Select the  Default Customer">
                       <Select
                         id="officeType"
+                        isClearable
                         value={selectedDefaultBank}
                         onChange={handleChangeDefaultBank}
                         options={filteredOptionDefaultBank}

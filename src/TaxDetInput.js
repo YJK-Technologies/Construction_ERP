@@ -87,20 +87,39 @@ function TaxDetInput({ }) {
     }
   }, [mode, selectedRow]);
 
-  useEffect(() => {
+  // useEffect(() => {
+  //   fetch(`${config.apiBaseUrl}/taxtype`, {
+  //     method: 'POST',
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //     },
+  //     body: JSON.stringify({
+  //       company_code: sessionStorage.getItem("selectedCompanyCode"),
+  //     }),
+  //   })
+  //     .then((response) => response.json())
+  //     .then(settaxtypedrop)
+  //     .catch((error) => console.error("Error fetching warehouse:", error));
+  // }, []);
+
+  const fetchHdrCode = () => {
+    const company_code = sessionStorage.getItem("selectedCompanyCode");
+
     fetch(`${config.apiBaseUrl}/taxtype`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        company_code: sessionStorage.getItem("selectedCompanyCode"),
-      }),
+      body: JSON.stringify({ company_code }),
     })
-      .then((response) => response.json())
-      .then(settaxtypedrop)
-      .catch((error) => console.error("Error fetching warehouse:", error));
+      .then((data) => data.json())
+      .then((val) => settaxtypedrop(val));
+  };
+
+  useEffect(() => {
+    fetchHdrCode();
   }, []);
+
 
 
   useEffect(() => {
@@ -132,20 +151,26 @@ function TaxDetInput({ }) {
       .then((val) => setTransactiondrop(val));
   }, []);
 
-  const filteredOptionTax = taxtypedrop.map((option) => ({
-    value: option.tax_type,
-    label: option.tax_type,
-  }));
+  const filteredOptionTax = Array.isArray(taxtypedrop)
+    ? taxtypedrop.map((option) => ({
+      value: option.tax_type,
+      label: option.tax_type,
+    }))
+    : [];
 
-  const filteredOptionStatus = statusdrop.map((option) => ({
-    value: option.attributedetails_name,
-    label: option.attributedetails_name,
-  }));
+  const filteredOptionTransaction = Array.isArray(transactiondrop)
+    ? transactiondrop.map((option) => ({
+      value: option.attributedetails_name,
+      label: option.attributedetails_name,
+    }))
+    : [];
 
-  const filteredOptionTransaction = transactiondrop.map((option) => ({
-    value: option.attributedetails_name,
-    label: option.attributedetails_name,
-  }));
+  const filteredOptionStatus = Array.isArray(statusdrop)
+    ? statusdrop.map((option) => ({
+      value: option.attributedetails_name,
+      label: option.attributedetails_name,
+    }))
+    : [];
 
   const handleChangeTax = (selectedTax) => {
     setSelectedTax(selectedTax);
@@ -163,7 +188,7 @@ function TaxDetInput({ }) {
   };
 
   const handleNavigateToForm = () => {
-    navigate("/AddTaxHeader", { selectedRows }); 
+    navigate("/AddTaxHeader", { selectedRows });
   };
 
   const handleNavigate = () => {
@@ -214,7 +239,7 @@ function TaxDetInput({ }) {
         const errorResponse = await response.json();
         console.error(errorResponse.message);
         toast.warning(errorResponse.message);
-      } 
+      }
     } catch (error) {
       console.error("Error inserting data:", error);
       toast.error('Error inserting data: ' + error.message);
@@ -226,20 +251,20 @@ function TaxDetInput({ }) {
   const handleKeyDown = async (e, nextFieldRef, value, hasValueChanged, setHasValueChanged) => {
     if (e.key === 'Enter') {
       if (hasValueChanged) {
-        await handleKeyDownStatus(e); 
-        setHasValueChanged(false); 
+        await handleKeyDownStatus(e);
+        setHasValueChanged(false);
       }
 
       if (value) {
         nextFieldRef.current.focus();
       } else {
-        e.preventDefault(); 
+        e.preventDefault();
       }
     }
   };
 
   const handleKeyDownStatus = async (e) => {
-    if (e.key === 'Enter' && hasValueChanged) { 
+    if (e.key === 'Enter' && hasValueChanged) {
       setHasValueChanged(false);
     }
   };
@@ -250,6 +275,7 @@ function TaxDetInput({ }) {
 
   const handleClose = () => {
     setOpen2(false);
+    fetchHdrCode();
   };
 
   const handleUpdate = async () => {
@@ -267,7 +293,7 @@ function TaxDetInput({ }) {
       toast.warning("Missing Required Fields");
       return;
     }
-    
+
     setError(false);
     setLoading(true);
 
@@ -340,6 +366,7 @@ function TaxDetInput({ }) {
                         options={filteredOptionTax}
                         className="srcinput exp-input-field"
                         placeholder=""
+                        isClearable
                         maxLength={18}
                         ref={taxtypehdr}
                         readOnly={mode === "update"}
@@ -445,6 +472,7 @@ function TaxDetInput({ }) {
                         options={filteredOptionTransaction}
                         className="exp-input-field"
                         placeholder=""
+                        isClearable
                         maxLength={250}
                         ref={transactiontype}
                         onKeyDown={(e) => handleKeyDown(e, StatuS, transactiontype)}
@@ -466,6 +494,7 @@ function TaxDetInput({ }) {
                         options={filteredOptionStatus}
                         className="exp-input-field"
                         placeholder=""
+                        isClearable
                         maxLength={18}
                         ref={StatuS}
                         onKeyDown={(e) => {

@@ -85,10 +85,12 @@ function WarehouseGrid() {
       .catch((error) => console.error('Error fetching data:', error));
   }, []);
 
-  const filteredOptionStatus = statusdrop.map((option) => ({
-    value: option.attributedetails_name,
-    label: option.attributedetails_name,
-  }));
+  const filteredOptionStatus = Array.isArray(statusdrop)
+    ? statusdrop.map((option) => ({
+      value: option.attributedetails_name,
+      label: option.attributedetails_name,
+    }))
+    : [];
 
   const handleChangeStatus = (selectedStatus) => {
     setSelectedStatus(selectedStatus);
@@ -461,7 +463,7 @@ function WarehouseGrid() {
 
 
   const formatDate = (dateString) => {
-    if (!dateString) return ""; 
+    if (!dateString) return "";
     const date = new Date(dateString);
 
     return new Intl.DateTimeFormat("en-GB", {
@@ -655,6 +657,7 @@ function WarehouseGrid() {
                   <Select
                     id="status"
                     value={selectedStatus}
+                    isClearable
                     onChange={handleChangeStatus}
                     onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
                     options={filteredOptionStatus}

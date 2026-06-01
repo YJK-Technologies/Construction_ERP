@@ -36,7 +36,7 @@ function TaxDetGrid() {
   const [selectedStatus, setSelectedStatus] = useState('');
   const [statusgriddrop, setStatusGriddrop] = useState([]);
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);    
+  const [loading, setLoading] = useState(false);
   const [createdBy, setCreatedBy] = useState("");
   const [modifiedBy, setModifiedBy] = useState("");
   const [createdDate, setCreatedDate] = useState("");
@@ -48,24 +48,21 @@ function TaxDetGrid() {
     .filter(permission => permission.screen_type === 'Tax')
     .map(permission => permission.permission_type.toLowerCase());
 
-
-
   const reloadGridData = () => {
     window.location.reload();
   };
 
   useEffect(() => {
     const company_code = sessionStorage.getItem('selectedCompanyCode');
-    
+
     fetch(`${config.apiBaseUrl}/status`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ company_code })
-    })      .then((response) => response.json())
+    }).then((response) => response.json())
       .then((data) => {
-        // Extract city names from the fetched data
         const statusOption = data.map(option => option.attributedetails_name);
         setStatusGriddrop(statusOption);
       })
@@ -74,7 +71,7 @@ function TaxDetGrid() {
 
   useEffect(() => {
     const company_code = sessionStorage.getItem('selectedCompanyCode');
-    
+
     fetch(`${config.apiBaseUrl}/Transaction`, {
       method: 'POST',
       headers: {
@@ -84,7 +81,6 @@ function TaxDetGrid() {
     })
       .then((response) => response.json())
       .then((data) => {
-        // Extract city names from the fetched data
         const Status = data.map(option => option.attributedetails_name);
         setTransactiondrop(Status);
       })
@@ -93,7 +89,7 @@ function TaxDetGrid() {
 
   useEffect(() => {
     const company_code = sessionStorage.getItem('selectedCompanyCode');
-    
+
     fetch(`${config.apiBaseUrl}/status`, {
       method: 'POST',
       headers: {
@@ -104,17 +100,18 @@ function TaxDetGrid() {
       .then((data) => data.json())
       .then((val) => setStatusdrop(val));
   }, []);
-  const filteredOptionStatus = statusdrop.map((option) => ({
-    value: option.attributedetails_name,
-    label: option.attributedetails_name,
-  }));
+
+  const filteredOptionStatus = Array.isArray(statusdrop)
+    ? statusdrop.map((option) => ({
+      value: option.attributedetails_name,
+      label: option.attributedetails_name,
+    }))
+    : [];
 
   const handleChangeStatus = (selectedStatus) => {
     setSelectedStatus(selectedStatus);
     setstatus(selectedStatus ? selectedStatus.value : '');
-    setError(false);
   };
-
 
   const handleSearch = async () => {
     setLoading(true);
@@ -127,7 +124,7 @@ function TaxDetGrid() {
         body: JSON.stringify({
           company_code: sessionStorage.getItem('selectedCompanyCode'), tax_type_header, tax_name_details, tax_percentage, tax_shortname,
           transaction_type, status, tax_accountcode
-        }) // Send company_no and company_name as search criteria
+        })
       });
       if (response.ok) {
         const searchData = await response.json();
@@ -145,15 +142,12 @@ function TaxDetGrid() {
     } catch (error) {
       console.error("Error saving data:", error);
       toast.error("Error updating data: " + error.message);
-    }finally {
+    } finally {
       setLoading(false);
     }
-
   };
 
-
   const columnDefs = [
-
     {
       headerCheckboxSelection: true,
       checkboxSelection: true,
@@ -180,7 +174,6 @@ function TaxDetGrid() {
       cellEditorParams: {
         maxLength: 18,
       },
-
     },
     {
       headerName: "Tax Details",
@@ -195,7 +188,6 @@ function TaxDetGrid() {
       },
     },
     {
-
       headerName: "Tax Percentage",
       field: "tax_percentage",
       editable: true,
@@ -205,7 +197,6 @@ function TaxDetGrid() {
       // minWidth: 150,
     },
     {
-
       headerName: "Short Name",
       field: "tax_shortname",
       editable: true,
@@ -221,7 +212,7 @@ function TaxDetGrid() {
       cellStyle: {
         textAlign: "center",
       },
-    //  minWidth: 150,
+      //  minWidth: 150,
     },
     {
       headerName: "Transaction Type",
@@ -236,7 +227,6 @@ function TaxDetGrid() {
         values: transactiondrop,
       },
     },
-
     {
       headerName: "Status",
       field: "status",
@@ -247,15 +237,12 @@ function TaxDetGrid() {
       cellEditorParams: {
         values: statusgriddrop
       },
-
     },
-
-
   ];
 
   const defaultColDef = {
     resizable: true,
-    wrapText: true,
+    // wrapText: true,
     // sortable: true,
     //editable: true,
     // flex: 1,
@@ -283,11 +270,6 @@ function TaxDetGrid() {
 
     const reportData = selectedRows.map((row) => {
       return {
-        /* Date: moment(row.expenses_date).format("YYYY-MM-DD"),
-        Type: row.expenses_type,
-        Expenditure: row.expenses_amount,
-        "Spent By": row.expenses_spentby,
-        Remarks: row.remarks,*/
         "Tax Type Header": row.tax_type_header,
         "Tax Name Details": row.tax_name_details,
         "Tax Percentage": row.tax_percentage,
@@ -295,16 +277,6 @@ function TaxDetGrid() {
         "Tax Account Code": row.tax_accountcode,
         "Transaction Type": row.transaction_type,
         "Status": row.status,
-        //"Founded Date": row.FoundedDate,
-        //"Website URL": row.WebsiteURL,
-        //"Company Logo": row.Company_logo,
-        //"Contact Number": row.contact_no,
-        //  "CEO Name": row.CEOName,
-        // "Annual Report URL": row.AnnualReportURL,
-        // "created by": row.created_by,
-        // "created date": row.created_date,
-        // "modfied by": row.modfied_by,
-        // "modfied date": row.modfied_date,
       };
     });
 
@@ -399,42 +371,35 @@ function TaxDetGrid() {
     reportWindow.document.close();
   };
 
-
-
-  /*const handleNavigateToForm = () => {
-    navigate("/form");
-  };*/
-
   const handleNavigatesToForm = () => {
-    navigate("/AddTaxDetails", { state: { mode: "create" } }); // Pass selectedRows as props to the Input component
+    navigate("/AddTaxDetails", { state: { mode: "create" } });
   };
+
   const handleNavigateWithRowData = (selectedRow) => {
     navigate("/addTaxDetails", { state: { mode: "update", selectedRow } });
   };
+
   const onSelectionChanged = () => {
     const selectedNodes = gridApi.getSelectedNodes();
     const selectedData = selectedNodes.map((node) => node.data);
     setSelectedRows(selectedData);
   };
 
-
-
-
   const onCellValueChanged = (params) => {
     const updatedRowData = [...rowData];
     const rowIndex = updatedRowData.findIndex(
       (row) => row.tax_type_header === params.data.tax_type_header && row.tax_name_details === params.data.tax_name_details
     );
-  
+
     if (rowIndex !== -1) {
       updatedRowData[rowIndex][params.colDef.field] = params.newValue;
       setRowData(updatedRowData);
-  
+
       setEditedData((prevData) => {
         const existingIndex = prevData.findIndex(
           (item) => item.tax_type_header === params.data.tax_type_header && item.tax_name_details === params.data.tax_name_details
         );
-  
+
         if (existingIndex !== -1) {
           const updatedEdited = [...prevData];
           updatedEdited[existingIndex] = updatedRowData[rowIndex];
@@ -448,8 +413,6 @@ function TaxDetGrid() {
 
 
   const saveEditedData = async () => {
-
-    // Filter the editedData state to include only the selected rows
     const selectedRowsData = editedData.filter(row =>
       selectedRows.some(selectedRow =>
         selectedRow.tax_type_header === row.tax_type_header && selectedRow.tax_name_details === row.tax_name_details
@@ -500,10 +463,10 @@ function TaxDetGrid() {
         } catch (error) {
           console.error("Error saving data:", error);
           toast.error("Error Updating Data: " + error.message);
-        }finally {
+        } finally {
           setLoading(false);
         }
-    
+
       },
       () => {
         toast.info("Data updated cancelled.");
@@ -564,7 +527,7 @@ function TaxDetGrid() {
         finally {
           setLoading(false);
         }
-    
+
       },
       () => {
         toast.info("Data Delete cancelled.");
@@ -573,10 +536,9 @@ function TaxDetGrid() {
   };
 
   const formatDate = (dateString) => {
-    if (!dateString) return ""; // Return 'N/A' if the date is missing
+    if (!dateString) return "";
     const date = new Date(dateString);
 
-    // Format as DD/MM/YYYY
     return new Intl.DateTimeFormat("en-GB", {
       day: "2-digit",
       month: "2-digit",
@@ -593,19 +555,16 @@ function TaxDetGrid() {
     setModifiedDate(formattedModifiedDate);
   };
 
-  // Handler for when a row is selected
   const onRowSelected = (event) => {
     if (event.node.isSelected()) {
       handleRowClick(event.data);
     }
   };
 
-
-
   return (
     <div className="container-fluid Topnav-screen">
       <div>
-      {loading && <LoadingScreen />}
+        {loading && <LoadingScreen />}
         <ToastContainer position="top-right" className="toast-design" theme="colored" />
         <div className="shadow-lg p-1 bg-body-tertiary rounded  mb-2 mt-2">
           <div className=" d-flex justify-content-between  ">
@@ -831,19 +790,20 @@ function TaxDetGrid() {
                 <label class="exp-form-labels">
                   Status
                 </label>
-                 <div title="Select the Status">
-                <Select
-                  id="status"
-                  value={selectedStatus}
-                  onChange={handleChangeStatus}
-                 // onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                  options={filteredOptionStatus}
-                  className="exp-input-field"
-                  placeholder=""
-                  maxLength={18}
-                />
+                <div title="Select the Status">
+                  <Select
+                    id="status"
+                    isClearable
+                    value={selectedStatus}
+                    onChange={handleChangeStatus}
+                    // onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                    options={filteredOptionStatus}
+                    className="exp-input-field"
+                    placeholder=""
+                    maxLength={18}
+                  />
 
-              </div>
+                </div>
               </div>
 
 

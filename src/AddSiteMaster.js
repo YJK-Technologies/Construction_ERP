@@ -249,35 +249,47 @@ const AddAddSiteMasterScreen = () => {
             .catch((error) => console.error("Error fetching data:", error));
     }, []);
 
-    const filteredOptionCustomer = customerCodeDrop.map((option) => ({
-        value: option.customer_code,
-        label: `${option.customer_code} - ${option.customer_name}`,
-    }));
+    const filteredOptionCustomer = Array.isArray(customerCodeDrop)
+        ? customerCodeDrop.map((option) => ({
+            value: option.customer_code,
+            label: `${option.customer_code} - ${option.customer_name}`,
+        }))
+        : [];
 
-    const filteredOptionProjectType = projectTypeDrop.map((option) => ({
-        value: option.attributedetails_name,
-        label: option.attributedetails_name,
-    }));
+    const filteredOptionProjectType = Array.isArray(projectTypeDrop)
+        ? projectTypeDrop.map((option) => ({
+            value: option.attributedetails_name,
+            label: option.attributedetails_name,
+        }))
+        : [];
 
-    const filteredOptionSiteStatus = siteStatusDrop.map((option) => ({
-        value: option.attributedetails_name,
-        label: option.attributedetails_name,
-    }));
+    const filteredOptionSiteStatus = Array.isArray(siteStatusDrop)
+        ? siteStatusDrop.map((option) => ({
+            value: option.attributedetails_name,
+            label: option.attributedetails_name,
+        }))
+        : [];
 
-    const filteredOptionStatus = statusDrop.map((option) => ({
-        value: option.attributedetails_name,
-        label: option.attributedetails_name,
-    }));
+    const filteredOptionStatus = Array.isArray(statusDrop)
+        ? statusDrop.map((option) => ({
+            value: option.attributedetails_name,
+            label: option.attributedetails_name,
+        }))
+        : [];
 
-    const filteredOptionToleranceType = toleranceTypeDrop.map((option) => ({
-        value: option.attributedetails_name,
-        label: option.attributedetails_name,
-    }));
+    const filteredOptionToleranceType = Array.isArray(toleranceTypeDrop)
+        ? toleranceTypeDrop.map((option) => ({
+            value: option.attributedetails_name,
+            label: option.attributedetails_name,
+        }))
+        : [];
 
-    const filteredOptionWarehouse = warehouseDrop.map((option) => ({
-        value: option.warehouse_code,
-        label: `${option.warehouse_code} - ${option.warehouse_name}`,
-    }));
+    const filteredOptionWarehouse = Array.isArray(warehouseDrop)
+        ? warehouseDrop.map((option) => ({
+            value: option.warehouse_code,
+            label: `${option.warehouse_code} - ${option.warehouse_name}`,
+        }))
+        : [];
 
     const handleChangeCustomerCode = (selectedCustomerCode) => {
         setSelectedCustomerCode(selectedCustomerCode);
@@ -534,6 +546,7 @@ const AddAddSiteMasterScreen = () => {
                                 </label>
                                 <Select
                                     value={selectedCustomerCode}
+                                    isClearable
                                     options={filteredOptionCustomer}
                                     className="exp-input-field"
                                     onChange={handleChangeCustomerCode}
@@ -548,6 +561,7 @@ const AddAddSiteMasterScreen = () => {
                                 </label>
                                 <Select
                                     value={selectedProjectType}
+                                    isClearable
                                     options={filteredOptionProjectType}
                                     className="exp-input-field"
                                     onChange={handleChangeProjectType}
@@ -594,6 +608,7 @@ const AddAddSiteMasterScreen = () => {
                                 </label>
                                 <Select
                                     value={selectedSiteStatus}
+                                    isClearable
                                     options={filteredOptionSiteStatus}
                                     className="exp-input-field"
                                     onChange={handleChangeSiteStatus}
@@ -623,6 +638,7 @@ const AddAddSiteMasterScreen = () => {
                                 </label>
                                 <Select
                                     value={selectedToleranceType}
+                                    isClearable
                                     options={filteredOptionToleranceType}
                                     className="exp-input-field"
                                     onChange={handleChangeToleranceType}
@@ -667,6 +683,7 @@ const AddAddSiteMasterScreen = () => {
                                 </label>
                                 <Select
                                     value={selectedStatus}
+                                    isClearable
                                     options={filteredOptionStatus}
                                     className="exp-input-field"
                                     onChange={handleChangeStatus}

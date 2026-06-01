@@ -78,15 +78,19 @@ function VenHdrInput({ open, handleClose }) {
       .catch((error) => console.error("Error fetching data:", error));
   }, []);
 
-  const filteredOptionStatus = statusdrop.map((option) => ({
-    value: option.attributedetails_name,
-    label: option.attributedetails_name,
-  }));
+  const filteredOptionStatus = Array.isArray(statusdrop)
+    ? statusdrop.map((option) => ({
+      value: option.attributedetails_name,
+      label: option.attributedetails_name,
+    }))
+    : [];
 
-  const filteredOptionVendorType = vendorTypeDrop.map((option) => ({
-    value: option.attributedetails_name,
-    label: option.attributedetails_name,
-  }));
+  const filteredOptionVendorType = Array.isArray(vendorTypeDrop)
+    ? vendorTypeDrop.map((option) => ({
+      value: option.attributedetails_name,
+      label: option.attributedetails_name,
+    }))
+    : [];
 
   const handleChangeStatus = (selectedStatus) => {
     setSelectedStatus(selectedStatus);
@@ -246,6 +250,7 @@ function VenHdrInput({ open, handleClose }) {
                             </label>
                             <Select
                               id="status"
+                              isClearable
                               value={selectedStatus}
                               onChange={handleChangeStatus}
                               options={filteredOptionStatus}
@@ -304,6 +309,7 @@ function VenHdrInput({ open, handleClose }) {
                             <div title="Select the Office Type ">
                               <Select
                                 id="officeType"
+                                isClearable
                                 value={selectedVendorType}
                                 onChange={handleChangeVendorType}
                                 options={filteredOptionVendorType}
@@ -395,6 +401,7 @@ function VenHdrInput({ open, handleClose }) {
                             <div title="Select the Status">
                               <Select
                                 id="status"
+                                isClearable
                                 value={selectedStatus}
                                 onChange={handleChangeStatus}
                                 options={filteredOptionStatus}
@@ -446,6 +453,7 @@ function VenHdrInput({ open, handleClose }) {
                             <div title="Select the Vendor Type ">
                               <Select
                                 id="officeType"
+                                isClearable
                                 value={selectedVendorType}
                                 onChange={handleChangeVendorType}
                                 options={filteredOptionVendorType}

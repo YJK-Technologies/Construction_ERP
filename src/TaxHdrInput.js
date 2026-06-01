@@ -97,18 +97,19 @@ function TaxHdrInput({ open, handleClose }) {
       .then((val) => setTransactiondrop(val));
   }, []);
 
+  const filteredOptionTransaction = Array.isArray(transactiondrop)
+    ? transactiondrop.map((option) => ({
+      value: option.attributedetails_name,
+      label: option.attributedetails_name,
+    }))
+    : [];
 
-  const filteredOptionTransaction = transactiondrop.map((option) => ({
-    value: option.attributedetails_name,
-    label: option.attributedetails_name,
-  }));
-
-  const filteredOptionStatus = statusdrop.map((option) => ({
-    value: option.attributedetails_name,
-    label: option.attributedetails_name,
-  }));
-
-
+  const filteredOptionStatus = Array.isArray(statusdrop)
+    ? statusdrop.map((option) => ({
+      value: option.attributedetails_name,
+      label: option.attributedetails_name,
+    }))
+    : [];
 
   const filteredOptionTaxtype = Array.isArray(taxtypedrop)
     ? taxtypedrop.map((option) => ({
@@ -354,6 +355,7 @@ function TaxHdrInput({ open, handleClose }) {
                           </label>
                           <Select
                             id="taxtransaction"
+                            isClearable
                             value={selectedTransaction}
                             onChange={handleChangeTransaction}
                             options={filteredOptionTransaction}
@@ -374,6 +376,7 @@ function TaxHdrInput({ open, handleClose }) {
                         </div>
                         <Select
                           id="status"
+                          isClearable
                           value={selectedtaxtype}
                           onChange={handleChangeTaxtype}
                           options={filteredOptionTaxtype}
@@ -392,6 +395,7 @@ function TaxHdrInput({ open, handleClose }) {
                           </label>
                           <Select
                             id="status"
+                            isClearable
                             value={selectedStatus}
                             onChange={handleChangeStatus}
                             options={filteredOptionStatus}
@@ -555,6 +559,7 @@ function TaxHdrInput({ open, handleClose }) {
                             options={filteredOptionTransaction}
                             className="exp-input-field"
                             placeholder=""
+                            isClearable
                             maxLength={250}
                             ref={transactionType}
                             onKeyDown={(e) => handleKeyDown(e, taxOfType, transactionType)}
@@ -570,6 +575,7 @@ function TaxHdrInput({ open, handleClose }) {
                         </div>
                         <Select
                           id="status"
+                          isClearable
                           value={selectedtaxtype}
                           onChange={handleChangeTaxtype}
                           options={filteredOptionTaxtype}
@@ -588,6 +594,7 @@ function TaxHdrInput({ open, handleClose }) {
                           </label>
                           <Select
                             id="status"
+                            isClearable
                             value={selectedStatus}
                             onChange={handleChangeStatus}
                             options={filteredOptionStatus}

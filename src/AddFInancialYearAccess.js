@@ -77,7 +77,7 @@ function StdAccInput({ }) {
   const getFinancialYearDates = () => {
     const now = new Date();
     const currentYear = now.getFullYear();
-    const currentMonth = now.getMonth() + 1; 
+    const currentMonth = now.getMonth() + 1;
     console.log(currentMonth)
     let startYear, endYear;
 
@@ -103,10 +103,12 @@ function StdAccInput({ }) {
     setTransactionType(selectedTransaction ? selectedTransaction.value : '');
   };
 
-  const filteredOptionTransaction = transactiondrop.map((option) => ({
-    value: option.attributedetails_name,
-    label: option.attributedetails_name,
-  }));
+  const filteredOptionTransaction = Array.isArray(transactiondrop)
+    ? transactiondrop.map((option) => ({
+      value: option.attributedetails_name,
+      label: option.attributedetails_name,
+    }))
+    : [];
 
   useEffect(() => {
     const company_code = sessionStorage.getItem('selectedCompanyCode');
@@ -127,10 +129,12 @@ function StdAccInput({ }) {
     setLockType(selectedLockType ? selectedLockType.value : '');
   };
 
-  const filteredOptionLockType = Lockdrop.map((option) => ({
-    value: option.attributedetails_name,
-    label: option.attributedetails_name,
-  }));
+  const filteredOptionLockType = Array.isArray(Lockdrop)
+    ? Lockdrop.map((option) => ({
+      value: option.attributedetails_name,
+      label: option.attributedetails_name,
+    }))
+    : [];
 
   useEffect(() => {
     const company_code = sessionStorage.getItem('selectedCompanyCode');
@@ -260,21 +264,21 @@ function StdAccInput({ }) {
   const handleKeyDown = async (e, nextFieldRef, value, hasValueChanged, setHasValueChanged) => {
     if (e.key === 'Enter') {
       if (hasValueChanged) {
-        await handleKeyDownStatus(e); 
-        setHasValueChanged(false); 
+        await handleKeyDownStatus(e);
+        setHasValueChanged(false);
       }
 
       if (value) {
         nextFieldRef.current.focus();
       } else {
-        e.preventDefault(); 
+        e.preventDefault();
       }
     }
   };
 
   const handleKeyDownStatus = async (e) => {
     if (e.key === 'Enter' && hasValueChanged) {
-      setHasValueChanged(false); 
+      setHasValueChanged(false);
     }
   };
 
@@ -345,6 +349,7 @@ function StdAccInput({ }) {
                     type="text"
                     className="exp-input-field"
                     value={selectedTransaction}
+                    isClearable
                     onChange={handleChangeTransaction}
                     options={filteredOptionTransaction}
                     ref={transactionType}
@@ -360,6 +365,7 @@ function StdAccInput({ }) {
                   <div title="Select the Locked Status">
                     <Select
                       className="exp-input-field"
+                      isClearable
                       value={selectedLockType}
                       onChange={handleChangeLockType}
                       options={filteredOptionLockType}

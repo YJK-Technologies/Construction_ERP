@@ -121,25 +121,33 @@ function UserComMap_input({ }) {
       .catch((error) => console.error('Error fetching data:', error));
   }, []);
 
-  const filteredOptionStatus = statusdrop.map((option) => ({
-    value: option.attributedetails_name,
-    label: option.attributedetails_name,
-  }));
+  const filteredOptionStatus = Array.isArray(statusdrop)
+    ? statusdrop.map((option) => ({
+      value: option.attributedetails_name,
+      label: option.attributedetails_name,
+    }))
+    : [];
 
-  const filteredOptionUser = usercodedrop.map((option) => ({
-    value: option.user_code,
-    label: `${option.user_code} - ${option.user_name}`,
-  }));
+  const filteredOptionUser = Array.isArray(usercodedrop)
+    ? usercodedrop.map((option) => ({
+      value: option.user_code,
+      label: `${option.user_code} - ${option.user_name}`,
+    }))
+    : [];
 
-  const filteredOptionCompany = companynodrop.map((option) => ({
-    value: option.company_no,
-    label: `${option.company_no} - ${option.company_name}`,
-  }));
+  const filteredOptionCompany = Array.isArray(companynodrop)
+    ? companynodrop.map((option) => ({
+      value: option.company_no,
+      label: `${option.company_no} - ${option.company_name}`,
+    }))
+    : [];
 
-  const filteredOptionLocation = locationnodrop.map((option) => ({
-    value: option.location_no,
-    label: `${option.location_no} - ${option.location_name}`,
-  }));
+  const filteredOptionLocation = Array.isArray(locationnodrop)
+    ? locationnodrop.map((option) => ({
+      value: option.location_no,
+      label: `${option.location_no} - ${option.location_name}`,
+    }))
+    : [];
 
   const handleChangeStatus = (selectedStatus) => {
     setSelectedStatus(selectedStatus);
@@ -323,6 +331,7 @@ function UserComMap_input({ }) {
                             className="exp-input-field"
                             placeholder=""
                             ref={usercode}
+                            isClearable
                             onKeyDown={(e) =>
                               handleKeyDown(e, companycode, usercode)
                             }
@@ -348,6 +357,7 @@ function UserComMap_input({ }) {
                             className="exp-input-field"
                             placeholder=""
                             ref={companycode}
+                            isClearable
                             onKeyDown={(e) =>
                               handleKeyDown(e, locno, companycode)
                             }
@@ -373,6 +383,7 @@ function UserComMap_input({ }) {
                             className="exp-input-field"
                             placeholder=""
                             ref={locno}
+                            isClearable
                             onKeyDown={(e) => handleKeyDown(e, Status, locno)}
                           />
                         </div>
@@ -396,6 +407,7 @@ function UserComMap_input({ }) {
                             className="exp-input-field"
                             placeholder=""
                             ref={Status}
+                            isClearable
                             onKeyDown={(e) => handleKeyDown(e, Orderno, Status)}
                           />
                         </div>
@@ -434,47 +446,6 @@ function UserComMap_input({ }) {
                         />
                       </div>
                     </div>
-                    {/* <div className="col-md-3 form-group  mb-2">
-                      {mode === "create" ? (
-                        <div class="exp-form-floating">
-                          <div class="d-flex justify-content-start">
-                            <div>
-                              <label for="state" class="exp-form-labels">
-                                Created By
-                              </label>
-                            </div>
-                          </div>
-                          <input
-                            id="emailid"
-                            class="exp-input-field form-control"
-                            type="text"
-                            placeholder=""
-                            required
-                            title="Please enter the email ID"
-                            value={created_by}
-                          />
-                        </div>
-                      ) : (
-                        <div class="exp-form-floating">
-                          <div class="d-flex justify-content-start">
-                            <div>
-                              <label for="state" class="exp-form-labels">
-                                Modified By
-                              </label>
-                            </div>
-                          </div>
-                          <input
-                            id="emailid"
-                            class="exp-input-field form-control"
-                            type="text"
-                            placeholder=""
-                            required
-                            title="Please enter the email ID"
-                            value={modified_by}
-                          />
-                        </div>
-                      )}
-                    </div> */}
                     <div class="col-md-3 form-group d-flex justify-content-start mb-4">
                       {mode === "create" ? (
                         <button onClick={handleInsert} className="mt-4" title="Save">

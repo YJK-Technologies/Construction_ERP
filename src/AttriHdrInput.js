@@ -48,10 +48,12 @@ function AttriHdrInput({ open, handleClose }) {
       .catch((error) => console.error("Error fetching data:", error));
   }, []);
 
-  const filteredOptionStatus = statusdrop.map((option) => ({
-    value: option.attributedetails_name,
-    label: option.attributedetails_name,
-  }));
+  const filteredOptionStatus = Array.isArray(statusdrop)
+    ? statusdrop.map((option) => ({
+      value: option.attributedetails_name,
+      label: option.attributedetails_name,
+    }))
+    : [];
 
   const handleChangeStatus = (selectedStatus) => {
     setSelectedStatus(selectedStatus);
@@ -100,7 +102,7 @@ function AttriHdrInput({ open, handleClose }) {
   };
 
   const handleNavigate = () => {
-    navigate("/AddAttributeDetail"); 
+    navigate("/AddAttributeDetail");
   };
 
   const handleKeyDown = async (
@@ -244,6 +246,7 @@ function AttriHdrInput({ open, handleClose }) {
                               value={selectedStatus}
                               onChange={handleChangeStatus}
                               options={filteredOptionStatus}
+                              isClearable
                               className="exp-input-field"
                               placeholder=""
                               required
@@ -363,6 +366,7 @@ function AttriHdrInput({ open, handleClose }) {
                             onChange={handleChangeStatus}
                             options={filteredOptionStatus}
                             className="exp-input-field"
+                            isClearable
                             placeholder=""
                             required
                             data-tip="Please select a payment type"
