@@ -52,7 +52,6 @@ function BankAccGrid() {
   const [createdDate, setCreatedDate] = useState("");
   const [modifiedDate, setModifiedDate] = useState("");
 
-
   //code added by Harish purpose of set user permisssion
   const permissions = JSON.parse(sessionStorage.getItem('permissions')) || {};
   const AccNamePermission = permissions
@@ -70,14 +69,11 @@ function BankAccGrid() {
       body: JSON.stringify({ company_code })
     }).then((response) => response.json())
       .then((data) => {
-        // Extract city names from the fetched data
         const Accounts = data.map(option => option.attributedetails_name);
         setaccGriddrop(Accounts);
       })
       .catch((error) => console.error('Error fetching data:', error));
   }, []);
-
-
 
   useEffect(() => {
     const company_code = sessionStorage.getItem('selectedCompanyCode');
@@ -91,7 +87,6 @@ function BankAccGrid() {
     })
       .then((response) => response.json())
       .then((data) => {
-        // Extract city names from the fetched data
         const cityNames = data.map(option => option.attributedetails_name);
         setDrop(cityNames);
       })
@@ -110,7 +105,6 @@ function BankAccGrid() {
     })
       .then((response) => response.json())
       .then((data) => {
-        // Extract city names from the fetched data
         const countries = data.map(option => option.attributedetails_name);
         setCondrop(countries);
       })
@@ -129,14 +123,11 @@ function BankAccGrid() {
     })
       .then((response) => response.json())
       .then((data) => {
-        // Extract city names from the fetched data
         const States = data.map(option => option.attributedetails_name);
         setStatedrop(States);
       })
       .catch((error) => console.error('Error fetching data:', error));
   }, []);
-
-
 
   useEffect(() => {
     const company_code = sessionStorage.getItem('selectedCompanyCode');
@@ -153,21 +144,17 @@ function BankAccGrid() {
       .catch((error) => console.error('Error fetching data:', error));
   }, []);
 
-
-
-  const filteredOptionAccountype = accdrop.map((option) => ({
-    value: option.attributedetails_name,
-    label: option.attributedetails_name,
-  }));
-
+  const filteredOptionAccountype = Array.isArray(accdrop)
+    ? accdrop.map((option) => ({
+      value: option.attributedetails_name,
+      label: option.attributedetails_name,
+    }))
+    : [];
 
   const handleChangeacc = (selectedAcctype) => {
     setselectedAcctype(selectedAcctype);
     setaccount_type(selectedAcctype ? selectedAcctype.value : '');
-    setError(false);
   };
-
-
 
   const reloadGridData = () => {
     try {
@@ -977,6 +964,7 @@ function BankAccGrid() {
                     id="acctype"
                     value={selectedAcctype}
                     onChange={handleChangeacc}
+                    isClearable
                     onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
                     options={filteredOptionAccountype}
                     className="exp-input-field"

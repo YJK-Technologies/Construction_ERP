@@ -321,30 +321,40 @@ function Input({ }) {
       .then((val) => setLocationdrop(val));
   }, []);
 
-  const filteredOptionCity = drop.map((option) => ({
-    value: option.attributedetails_name,
-    label: option.attributedetails_name,
-  }));
+  const filteredOptionCity = Array.isArray(drop)
+    ? drop.map((option) => ({
+      value: option.attributedetails_name,
+      label: option.attributedetails_name,
+    }))
+    : [];
 
-  const filteredOptionState = statedrop.map((option) => ({
-    value: option.attributedetails_name,
-    label: option.attributedetails_name,
-  }));
+  const filteredOptionState = Array.isArray(statedrop)
+    ? statedrop.map((option) => ({
+      value: option.attributedetails_name,
+      label: option.attributedetails_name,
+    }))
+    : [];
 
-  const filteredOptionCountry = condrop.map((option) => ({
-    value: option.attributedetails_name,
-    label: option.attributedetails_name,
-  }));
+  const filteredOptionStatus = Array.isArray(statusdrop)
+    ? statusdrop.map((option) => ({
+      value: option.attributedetails_name,
+      label: option.attributedetails_name,
+    }))
+    : [];
 
-  const filteredOptionStatus = statusdrop.map((option) => ({
-    value: option.attributedetails_name,
-    label: option.attributedetails_name,
-  }));
+  const filteredOptionCountry = Array.isArray(condrop)
+    ? condrop.map((option) => ({
+      value: option.attributedetails_name,
+      label: option.attributedetails_name,
+    }))
+    : [];
 
-  const filteredOptionLocation = locationnodrop.map((option) => ({
-    value: option.location_no,
-    label: `${option.location_no} - ${option.location_name}`,
-  }));
+  const filteredOptionLocation = Array.isArray(locationnodrop)
+    ? locationnodrop.map((option) => ({
+      value: option.location_no,
+      label: `${option.location_no} - ${option.location_name}`,
+    }))
+    : [];
 
   const handleChangeCity = (selectedCity) => {
     setSelectedCity(selectedCity);
@@ -602,8 +612,6 @@ function Input({ }) {
                       onKeyDown={(e) => handleKeyDown(e, companyname, companycode)}
                       readOnly={mode === "update"}
                     />
-                    {/* {error && !company_no && <div className="text-danger">Company Code should not be blank</div>} */}
-                    {/* {error && <div className="text-danger">{error}</div>} */}
                   </div>
                 </div>
                 <div className="col-md-3 form-group mb-2">
@@ -627,7 +635,6 @@ function Input({ }) {
                       maxLength={250}
                       ref={companyname}
                     />
-                    {/* {error && !company_name && <div className="text-danger">Company Name should not be blank</div>} */}
                   </div>
                 </div>
                 <div className="col-md-3 form-group mb-2">
@@ -674,7 +681,6 @@ function Input({ }) {
                       ref={Address1}
                       onKeyDown={(e) => handleKeyDown(e, Address2, Address1)}
                     />
-                    {/* {error && !address1 && <div className="text-danger">Address should not be blank</div>} */}
                   </div>
                 </div>
                 <div className="col-md-3 form-group mb-2">
@@ -698,7 +704,6 @@ function Input({ }) {
                       ref={Address2}
                       onKeyDown={(e) => handleKeyDown(e, Address3, Address2)}
                     />
-                    {/* {error && !address2 && <div className="text-danger">Address should not be blank</div>} */}
                   </div>
                 </div>
                 <div className="col-md-3 form-group mb-2">
@@ -736,10 +741,11 @@ function Input({ }) {
                         className="exp-input-field"
                         placeholder=""
                         ref={City}
+                        isClearable
                         onKeyDown={(e) => handleKeyDown(e, State, City)}
                       />
-                      {/* {error && !city && <div className="text-danger">City should not be blank</div>} */}
-                    </div></div>
+                    </div>
+                  </div>
                 </div>
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
@@ -757,10 +763,11 @@ function Input({ }) {
                         className="exp-input-field"
                         placeholder=""
                         ref={State}
+                        isClearable
                         onKeyDown={(e) => handleKeyDown(e, Pincode, State)}
                       />
-                      {/* {error && !state && <div className="text-danger">State should not be blank</div>} */}
-                    </div></div>
+                    </div>
+                  </div>
                 </div>
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
@@ -781,7 +788,6 @@ function Input({ }) {
                       ref={Pincode}
                       onKeyDown={(e) => handleKeyDown(e, Country, Pincode)}
                     />
-                    {/* {error && !pincode && <div className="text-danger">Pin Code should not be blank</div>} */}
                   </div>
                 </div>
                 <div className="col-md-3 form-group mb-2">
@@ -800,10 +806,11 @@ function Input({ }) {
                         className="exp-input-field"
                         placeholder=""
                         ref={Country}
+                        isClearable
                         onKeyDown={(e) => handleKeyDown(e, Email, Country)}
                       />
-                      {/* {error && !country && <div className="text-danger">Country should not be blank</div>} */}
-                    </div></div>
+                    </div>
+                  </div>
                 </div>
                 <div className="col-md-3 form-group mb-2">
                   <div className="exp-form-floating">
@@ -824,7 +831,6 @@ function Input({ }) {
                       ref={Email}
                       onKeyDown={(e) => handleKeyDown(e, Status, Email)}
                     />
-                    {/* {error && !validateEmail(email_id) && <div className="text-danger">Please Enter Valid Email Id</div>} */}
                   </div>
                 </div>
                 <div className="col-md-3 form-group mb-2">
@@ -843,9 +849,9 @@ function Input({ }) {
                         className="exp-input-field"
                         placeholder=""
                         ref={Status}
+                        isClearable
                         onKeyDown={(e) => handleKeyDown(e, found, Status)}
                       />
-                      {/* {error && !status && <div className="text-danger">Status should not be blank</div>} */}
                     </div>
                   </div>
                 </div>
@@ -904,7 +910,6 @@ function Input({ }) {
                       ref={ContactNo}
                       onKeyDown={(e) => handleKeyDown(e, annaual, ContactNo)}
                     />
-                    {/* {error && !contact_no && <div className="text-danger">Contact No should not be Blank</div>} */}
                   </div>
                 </div>
                 <div className="col-md-3 form-group mb-2">
@@ -955,9 +960,9 @@ function Input({ }) {
                         className="exp-input-field"
                         placeholder=""
                         ref={locatioN}
+                        isClearable
                         onKeyDown={(e) => handleKeyDown(e, logo, locatioN)}
                       />
-                      {/* {error && !location_no && <div className="text-danger">Location No should not be blank</div>} */}
                     </div>
                   </div>
                 </div>
@@ -1022,47 +1027,6 @@ function Input({ }) {
                     </div>
                   </div>
                 )}
-                {/* <div className="col-md-3 form-group  mb-2">
-                  {mode === "create" ? (
-                    <div class="exp-form-floating">
-                      <div class="d-flex justify-content-start">
-                        <div>
-                          <label for="state" class="exp-form-labels">
-                            Created By
-                          </label>
-                        </div>
-                      </div>
-                      <input
-                        id="emailid"
-                        class="exp-input-field form-control"
-                        type="text"
-                        placeholder=""
-                        required
-                        title="Please enter the email ID"
-                        value={created_by}
-                      />
-                    </div>
-                  ) : (
-                    <div class="exp-form-floating">
-                      <div class="d-flex justify-content-start">
-                        <div>
-                          <label for="state" class="exp-form-labels">
-                            Modified By
-                          </label>
-                        </div>
-                      </div>
-                      <input
-                        id="emailid"
-                        class="exp-input-field form-control"
-                        type="text"
-                        placeholder=""
-                        required
-                        title="Please enter the email ID"
-                        value={modified_by}
-                      />
-                    </div>
-                  )}
-                </div> */}
                 <div class="col-md-3 form-group d-flex justify-content-start mb-4">
                   {mode === "create" ? (
                     <button onClick={handleInsert} className="mt-4" title="Save">

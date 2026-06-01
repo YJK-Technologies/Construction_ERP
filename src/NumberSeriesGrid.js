@@ -29,7 +29,7 @@ function NumberSeriesGrid() {
   const [screentypedrop, setscreentypedrop] = useState([]);
   const [statusgriddrop, setStatusGriddrop] = useState([]);
   const [booleangriddrop, setBooleangriddrop] = useState([]);
-  const [loading, setLoading] = useState(false);    
+  const [loading, setLoading] = useState(false);
   const [createdBy, setCreatedBy] = useState("");
   const [modifiedBy, setModifiedBy] = useState("");
   const [createdDate, setCreatedDate] = useState("");
@@ -44,10 +44,10 @@ function NumberSeriesGrid() {
   console.log(numberSeriesPermission);
 
 
-  
+
   useEffect(() => {
     const company_code = sessionStorage.getItem('selectedCompanyCode');
-    
+
     fetch(`${config.apiBaseUrl}/screentype`, {
       method: 'POST',
       headers: {
@@ -61,15 +61,15 @@ function NumberSeriesGrid() {
 
   useEffect(() => {
     const company_code = sessionStorage.getItem('selectedCompanyCode');
-    
+
     fetch(`${config.apiBaseUrl}/status`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ company_code })
-    })     
-     .then((response) => response.json())
+    })
+      .then((response) => response.json())
       .then((data) => {
         // Extract city names from the fetched data
         const statusOption = data.map(option => option.attributedetails_name);
@@ -80,15 +80,15 @@ function NumberSeriesGrid() {
 
   useEffect(() => {
     const company_code = sessionStorage.getItem('selectedCompanyCode');
-    
+
     fetch(`${config.apiBaseUrl}/getboolean`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ company_code })
-    })     
-     .then((response) => response.json())
+    })
+      .then((response) => response.json())
       .then((data) => {
         // Extract city names from the fetched data
         const booleanOption = data.map(option => option.attributedetails_name);
@@ -97,24 +97,17 @@ function NumberSeriesGrid() {
       .catch((error) => console.error('Error fetching data:', error));
   }, []);
 
-
-
-  const filteredOptionscreentype = screentypedrop.map((option) => ({
-    value: option.attributedetails_name,
-    label: option.attributedetails_name,
-  }));
-
-
-
-
-
-
+  const filteredOptionscreentype = Array.isArray(screentypedrop)
+    ? screentypedrop.map((option) => ({
+      value: option.attributedetails_name,
+      label: option.attributedetails_name,
+    }))
+    : [];
 
   const handleChangescreentype = (selectedscreentype) => {
     setselectedscreentype(selectedscreentype);
     setScreen_Type(selectedscreentype ? selectedscreentype.value : "");
   };
-
 
   const reloadGridData = () => {
     window.location.reload();
@@ -132,7 +125,7 @@ function NumberSeriesGrid() {
             company_code: company_code,
             Screen_Type: Screen_Type,
           },
-          body: JSON.stringify({ company_code: company_code, Screen_Type:Screen_Type }), // Send company_no and company_name as search criteria
+          body: JSON.stringify({ company_code: company_code, Screen_Type: Screen_Type }), // Send company_no and company_name as search criteria
         }
       );
       if (response.ok) {
@@ -150,7 +143,7 @@ function NumberSeriesGrid() {
     } catch (error) {
       console.error("Error saving data:", error);
       toast.error("Error updating data: " + error.message);
-    }finally {
+    } finally {
       setLoading(false);
     }
 
@@ -449,16 +442,16 @@ function NumberSeriesGrid() {
     const rowIndex = updatedRowData.findIndex(
       (row) => row.Screen_Type === params.data.Screen_Type
     );
-  
+
     if (rowIndex !== -1) {
       updatedRowData[rowIndex][params.colDef.field] = params.newValue;
       setRowData(updatedRowData);
-  
+
       setEditedData((prevData) => {
         const existingIndex = prevData.findIndex(
           (item) => item.Screen_Type === params.data.Screen_Type
         );
-  
+
         if (existingIndex !== -1) {
           const updatedEdited = [...prevData];
           updatedEdited[existingIndex] = updatedRowData[rowIndex];
@@ -513,10 +506,10 @@ function NumberSeriesGrid() {
         } catch (error) {
           console.error("Error saving data:", error);
           toast.error("Error Updating Data: " + error.message);
-        }finally {
+        } finally {
           setLoading(false);
         }
-    
+
       },
       () => {
         toast.info("Data updated cancelled.");
@@ -535,7 +528,7 @@ function NumberSeriesGrid() {
     const company_code = sessionStorage.getItem("selectedCompanyCode");
     // const ScreenTypdeDelete  =  {Screen_TypesToDelete:Array.isArray(rowData) ? rowData : [rowData] };
     const ScreenTypdeDelete = { Screen_TypesToDelete: selectedRows };
-    
+
     showConfirmationToast(
       "Are you sure you want to Delete the data in the selected rows?",
       async () => {
@@ -568,7 +561,7 @@ function NumberSeriesGrid() {
         } catch (error) {
           console.error("Error deleting rows:", error);
           toast.error('Error Deleting Data: ' + error.message);
-        }finally {
+        } finally {
           setLoading(false);
         }
       },
@@ -609,7 +602,7 @@ function NumberSeriesGrid() {
   return (
     <div className="container-fluid Topnav-screen">
       <div>
-      {loading && <LoadingScreen />}
+        {loading && <LoadingScreen />}
         <ToastContainer position="top-right" className="toast-design" theme="colored" />
         <div className="shadow-lg p-1 bg-body-tertiary rounded  mb-2 mt-2">
           <div className=" d-flex justify-content-between  ">
@@ -741,19 +734,20 @@ function NumberSeriesGrid() {
                   Screen Type
                 </label>
                 <div title="Select the Screen Type">
-                <Select
-                  id="wcode"
-                  value={selectedscreentype}
-                  onChange={handleChangescreentype}
-                  // onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-                  options={filteredOptionscreentype}
-                  className="exp-input-field"
-                  placeholder=""
-                  required
-                  title="Please select a screen type"
-                  maxLength={50}
-                />
-              </div>
+                  <Select
+                    id="wcode"
+                    value={selectedscreentype}
+                    onChange={handleChangescreentype}
+                    // onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+                    options={filteredOptionscreentype}
+                    className="exp-input-field"
+                    placeholder=""
+                    required
+                    isClearable
+                    title="Please select a screen type"
+                    maxLength={50}
+                  />
+                </div>
               </div>
             </div>
             <div className="col-md-3 form-group mt-4">
