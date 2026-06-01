@@ -37246,6 +37246,43 @@ const inventoryIssueCalculation = async (req, res) => {
 };
 //Code Ended by pavum on 28-05-2026
 
+//Code added by Dinesh Gokul on 01-06-2026
+const getExpensesReport = async (req, res) => {
+  const { mode, company_code, Location_Code, StartDate, EndDate, expense_no, expense_date, 
+    expense_type, reference_type, reference_code, reference_name, payment_mode, amountFrom, amountTo} = req.body;
+  let pool;
+  try {
+    const pool = await connection.connectToDatabase();
+    const result = await pool
+      .request()
+      .input("mode", sql.NVarChar, mode)
+      .input("company_code", sql.NVarChar, company_code)
+      .input("Location_Code", sql.NVarChar, Location_Code)
+      .input("StartDate", sql.NVarChar, StartDate)
+      .input("EndDate", sql.NVarChar, EndDate)
+      .input("expense_no", sql.NVarChar, expense_no)
+      .input("expense_date", sql.Date, expense_date)
+      .input("expense_type", sql.NVarChar, expense_type)
+      .input("reference_type", sql.NVarChar, reference_type)
+      .input("reference_code", sql.NVarChar, reference_code)
+      .input("reference_name", sql.NVarChar, reference_name)
+      .input("payment_mode", sql.NVarChar, payment_mode)
+      .input("amountFrom", sql.Int, amountFrom)
+      .input("amountTo", sql.Int, amountTo)
+      .query(`EXEC sp_Expenses_Report @mode,@company_code, @Location_Code, @StartDate,@EndDate,@expense_no,
+        @expense_date,@expense_type,@reference_type, @reference_code, @reference_name, @payment_mode, @amountFrom, @amountTo`);
+    if (result.recordset.length > 0) {
+      res.status(200).json(result.recordset);
+    } else {
+      res.status(404).json('No data found');
+    }
+  } catch (err) {
+    console.error("Error", err);
+    res.status(500).json({ message: err.message || 'Internal Server Error' });
+  }
+};
+//Code ended by Dinesh Gokul on 01-06-2026
+
 module.exports = {
   login,
   forgetPassword,
@@ -38464,7 +38501,8 @@ module.exports = {
   getCostingMethods,
   getOB_data,
   get_GOB,
-  inventoryIssueCalculation
+  inventoryIssueCalculation,
+  getExpensesReport
 
 
 };

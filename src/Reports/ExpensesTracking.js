@@ -12,6 +12,11 @@ import LoadingScreen from '../Loading';
 import LZString from "lz-string";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
+import SalesCustomerPopup from '../SalesVendorPopup';
+import PurchaseVendorPopup from '../ExpensesVendorPopUp';
+import SitePopUp from '../SitePopUp';
+
+
 const ExpensesTracking = () => {
 
     const [rowData, setRowData] = useState([]);
@@ -35,18 +40,73 @@ const ExpensesTracking = () => {
     const companyName = sessionStorage.getItem('selectedCompanyName');
     const [loading, setLoading] = useState(false);
 
-    const [siteID, setSiteID] = useState("");
+    const [SiteID, setSiteID] = useState("");
     const [customer, setCustomer] = useState("");
+    const [vendor, setVendor] = useState("");
     const [referenceCode, setReferenceCode] = useState("");
+    const [referenceType, setReferenceType] = useState("");
     const [expenseType, setExpenseType] = useState("");
     const [paymentMode, setPaymentMode] = useState("");
     const [amountFrom, setAmountFrom] = useState("");
     const [amountTo, setAmountTo] = useState("");
 
+    const [open1, setOpen1] = React.useState(false);
+    const [open2, setOpen2] = React.useState(false);
+    const [open3, setOpen3] = React.useState(false);
+    const [customerCode, setCustomerCode] = useState("");
+    const [customerName, setCustomerName] = useState("");
+
     const permissions = JSON.parse(sessionStorage.getItem('permissions')) || {};
     const companyPermissions = permissions
         .filter(permission => permission.screen_type === 'IEanalysis')
         .map(permission => permission.permission_type.toLowerCase());
+
+    // For pop up
+    const handleClose = () => {
+    setOpen1(false);
+    setOpen2(false);
+    setOpen3(false);
+  };
+
+    const handleShowModal1 = () => {
+    setOpen3(true);
+  };
+    const handleShowModal2 = () => {
+    setOpen1(true);
+  };
+    const handleShowModal3 = () => {
+    setOpen2(true);
+  };
+
+  const handleCustomer = async (data) => {
+    console.log(data)
+    if (data && data.length > 0) {
+      const [{ CustomerCode, CustomerName }] = data;
+      setCustomer(CustomerCode);
+    //   setCustomerName(CustomerName)
+    } else {
+      console.error('Data is empty or undefined');
+    }
+  };
+
+  const handleVendorCode = async (data) => {
+      if (data && data.length > 0) {
+        const [{ VendorCode, VendorName }] = data;
+        setVendor(VendorCode);
+        // setVendorName(VendorName);
+      } else {
+        console.error('Data is empty or undefined');
+      }
+    };
+
+    const handleSiteCode = async (data) => {
+        if (data && data.length > 0) {
+          const [{ SiteID, SiteName }] = data;
+          setSiteID(SiteID);
+        } else {
+          console.error('Data is empty or undefined');
+        }
+      };
 
 
     useEffect(() => {
@@ -190,13 +250,13 @@ const ExpensesTracking = () => {
             editable: false,
         },
         {
-            headerName: "Expense No",
-            field: "expense_no",
+            headerName: "Expense Date",
+            field: "expense_date",
             editable: true,
         },
         {
-            headerName: "Expense Date",
-            field: "expense_date",
+            headerName: "Expense No",
+            field: "expense_no",
             editable: true,
         },
         {
@@ -205,13 +265,13 @@ const ExpensesTracking = () => {
             editable: true,
         },
         {
-            headerName: "Site ID",
-            field: "site_id",
+            headerName: "Reference Code",
+            field: "reference_code",
             editable: true,
         },
         {
-            headerName: "Reference Code",
-            field: "reference_code",
+            headerName: "Reference Name",
+            field: "reference_name",
             editable: true,
         },
         {
@@ -563,7 +623,7 @@ const ExpensesTracking = () => {
 
                     <div className="col-md-3 form-group mb-2">
                         <div className="exp-form-floating">
-                            <label for="city" class="">Date Range</label>
+                            <label for="city" class="">Select Period</label>
                             <Select
                                 id="status"
                                 value={selectedPeriod}
@@ -584,15 +644,16 @@ const ExpensesTracking = () => {
                                     className="exp-input-field form-control justify-content-start"
                                     placeholder=""
                                     title='Please Enter the Site ID'
-                                    value={siteID}
+                                    value={SiteID}
                                     //   onKeyDown={(e) => e.key === "Enter" && fetchGstReport()}
                                     onChange={(e) => setSiteID(e.target.value)}
                                 />
-                                {/* <div className='position-absolute mt-1 me-2'>
-                                    <span className="icon searchIcon">
-                                        <i class="fa fa-search"></i>
-                                    </span>
-                                </div> */}
+                                <div className='position-absolute mt-1 me-2'>
+                        <span className="icon searchIcon"
+                          onClick={handleShowModal1}>
+                          <i class="fa fa-search"></i>
+                        </span>
+                      </div>
                             </div>
                         </div>
                     </div>
@@ -610,6 +671,35 @@ const ExpensesTracking = () => {
                                     //   onKeyDown={(e) => e.key === "Enter" && fetchGstReport()}
                                     onChange={(e) => setCustomer(e.target.value)}
                                 />
+                                <div className='position-absolute mt-1 me-2'>
+                        <span className="icon searchIcon"
+                          onClick={handleShowModal2}>
+                          <i class="fa fa-search"></i>
+                        </span>
+                      </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="col-md-3 form-group mb-2">
+                        <label className="">Vendor</label>
+                        <div className="exp-form-floating">
+                            <div className="d-flex justify-content-end">
+                                <input
+                                    id="wcode"
+                                    className="exp-input-field form-control justify-content-start"
+                                    placeholder=""
+                                    title='Please Enter the Vendor'
+                                    value={vendor}
+                                    //   onKeyDown={(e) => e.key === "Enter" && fetchGstReport()}
+                                    onChange={(e) => setVendor(e.target.value)}
+                                />
+                                <div className='position-absolute mt-1 me-2'>
+                        <span className="icon searchIcon"
+                          onClick={handleShowModal3}>
+                          <i class="fa fa-search"></i>
+                        </span>
+                      </div>
                             </div>
                         </div>
                     </div>
@@ -626,6 +716,23 @@ const ExpensesTracking = () => {
                                     value={referenceCode}
                                     //   onKeyDown={(e) => e.key === "Enter" && fetchGstReport()}
                                     onChange={(e) => setReferenceCode(e.target.value)}
+                                />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="col-md-3 form-group mb-2">
+                        <label className="">Reference Type</label>
+                        <div className="exp-form-floating">
+                            <div className="d-flex justify-content-end">
+                                <input
+                                    id="wcode"
+                                    className="exp-input-field form-control justify-content-start"
+                                    placeholder=""
+                                    title='Please Enter the Reference Type'
+                                    value={referenceType}
+                                    //   onKeyDown={(e) => e.key === "Enter" && fetchGstReport()}
+                                    onChange={(e) => setReferenceType(e.target.value)}
                                 />
                             </div>
                         </div>
@@ -728,6 +835,12 @@ const ExpensesTracking = () => {
                         rowSelection="multiple"
                     />
                 </div>
+
+                <div>
+                            <SalesCustomerPopup open={open1} handleClose={handleClose} handleVendor={handleCustomer} />
+                            <PurchaseVendorPopup open={open2} handleClose={handleClose} handleVendorCode={handleVendorCode} />
+                            <SitePopUp open={open3} handleClose={handleClose} handleSiteCode={handleSiteCode} />
+                          </div>
 
             </div>
         </div>
