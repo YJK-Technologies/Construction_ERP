@@ -91,15 +91,19 @@ function VenDetGrid() {
     setVendorType(selectedVendorType ? selectedVendorType.value : "");
   };
 
-  const filteredOptionBT = balance_typeDrop.map((option) => ({
-    value: option.attributedetails_code,
-    label: `${option.attributedetails_code} - ${option.attributedetails_name}`,
-  }));
+  const filteredOptionBT = Array.isArray(balance_typeDrop)
+    ? balance_typeDrop.map((option) => ({
+      value: option.attributedetails_code,
+      label: `${option.attributedetails_code} - ${option.attributedetails_name}`,
+    }))
+    : [];
 
-  const filteredOptionVendorType = vendorTypeDrop.map((option) => ({
-    value: option.attributedetails_name,
-    label: option.attributedetails_name,
-  }));
+  const filteredOptionVendorType = Array.isArray(vendorTypeDrop)
+    ? vendorTypeDrop.map((option) => ({
+      value: option.attributedetails_name,
+      label: option.attributedetails_name,
+    }))
+    : [];
 
   useEffect(() => {
     const company_code = sessionStorage.getItem("selectedCompanyCode");
@@ -270,10 +274,12 @@ function VenDetGrid() {
       .catch((error) => console.error("Error fetching data:", error));
   }, []);
 
-  const filteredOptionStatus = statusdrop.map((option) => ({
-    value: option.attributedetails_name,
-    label: option.attributedetails_name,
-  }));
+  const filteredOptionStatus = Array.isArray(statusdrop)
+    ? statusdrop.map((option) => ({
+      value: option.attributedetails_name,
+      label: option.attributedetails_name,
+    }))
+    : [];
 
   const handleChangeStatus = (selectedStatus) => {
     setSelectedStatus(selectedStatus);
@@ -1370,6 +1376,7 @@ function VenDetGrid() {
                   <Select
                     id="status"
                     value={selectedBT}
+                    isClearable
                     onChange={handleChangeBT}
                     onKeyDown={(e) => e.key === "Enter" && handleSearch()}
                     options={filteredOptionBT}
@@ -1385,6 +1392,7 @@ function VenDetGrid() {
                 <div title="Select the Status">
                   <Select
                     id="status"
+                    isClearable
                     value={selectedStatus}
                     onChange={handleChangeStatus}
                     onKeyDown={(e) => e.key === "Enter" && handleSearch()}
@@ -1403,6 +1411,7 @@ function VenDetGrid() {
                 <div title="Select the Office Type ">
                   <Select
                     id="officeType"
+                    isClearable
                     value={selectedVendorType}
                     onChange={handleChangeVendorType}
                     options={filteredOptionVendorType}

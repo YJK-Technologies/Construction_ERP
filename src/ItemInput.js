@@ -220,7 +220,6 @@ function ItemInput({ }) {
         label: selectedRow.Item_purch_tax_type,
         value: selectedRow.Item_purch_tax_type,
       });
-
       setselectedOtherpurtax({
         label: selectedRow.Item_other_purch_taxtype,
         value: selectedRow.Item_other_purch_taxtype,
@@ -293,9 +292,6 @@ function ItemInput({ }) {
       setItem_image(file);
     }
   };
-
-
-
 
   useEffect(() => {
     const company_code = sessionStorage.getItem('selectedCompanyCode');
@@ -517,64 +513,82 @@ function ItemInput({ }) {
     }
   }, []);
 
-
-
-  const filteredOptionRegister = regbranddrop.map((option) => ({
-    value: option.attributedetails_name,
-    label: option.attributedetails_name,
-  }));
-
-  const filteredOptionBrand = ourbranddrop.map((option) => ({
-    value: option.attributedetails_name,
-    label: option.attributedetails_name,
-  }));
-
-  const filteredOptionStatus = statusdrop.map((option) => ({
-    value: option.attributedetails_name,
-    label: option.attributedetails_name,
-  }));
-
-  const filteredOptionuom = uomdrop.map((option) => ({
-    value: option.attributedetails_name,
-    label: option.attributedetails_name,
-  }));
-
-  const filteredOptionSuom = suomdrop.map((option) => ({
-    value: option.attributedetails_name,
-    label: option.attributedetails_name,
-  }));
-
-  const filteredOptionVariant = variantdrop.map((option) => ({
-    value: option.attributedetails_name,
-    label: option.attributedetails_name,
-  }));
-
-  const filteredOptiontaxitemsales = saltaxdrop.map((option) => ({
-    value: option.tax_type,
-    label: option.tax_type,
-  }));
-
   const filteredOptionOthertaxitemsales = Array.isArray(Othersaltaxdrop)
     ? Othersaltaxdrop.map((option) => ({
       value: option.Other_Sales_tax_type,
-      label: option.Other_Sales_tax_type,  // Concatenate ApprovedBy and EmployeeId with ' - '
+      label: option.Other_Sales_tax_type,
     }))
     : [];
 
-  const filteredOptiontaxitempur = purtaxdrop.map((option) => ({
-    value: option.tax_type,
-    label: option.tax_type,
-  }));
+  const filteredOptionRegister = Array.isArray(regbranddrop)
+    ? regbranddrop.map((option) => ({
+      value: option.attributedetails_name,
+      label: option.attributedetails_name,
+    }))
+    : [];
 
-  const filteredOptionothertaxitempur = otherpurtaxdrop.map((option) => ({
-    value: option.Other_purch_tax_type,
-    label: option.Other_purch_tax_type,
-  }));
+  const filteredOptionBrand = Array.isArray(ourbranddrop)
+    ? ourbranddrop.map((option) => ({
+      value: option.attributedetails_name,
+      label: option.attributedetails_name,
+    }))
+    : [];
 
-  const filteredOptionCostingMethod = costingMethodDrop.map((option) => ({
-    value: option.attributedetails_name,
-    label: option.attributedetails_name,
-  }));
+  const filteredOptionStatus = Array.isArray(statusdrop)
+    ? statusdrop.map((option) => ({
+      value: option.attributedetails_name,
+      label: option.attributedetails_name,
+    }))
+    : [];
+
+  const filteredOptionuom = Array.isArray(uomdrop)
+    ? uomdrop.map((option) => ({
+      value: option.attributedetails_name,
+      label: option.attributedetails_name,
+    }))
+    : [];
+
+  const filteredOptionSuom = Array.isArray(suomdrop)
+    ? suomdrop.map((option) => ({
+      value: option.attributedetails_name,
+      label: option.attributedetails_name,
+    }))
+    : [];
+
+  const filteredOptionVariant = Array.isArray(variantdrop)
+    ? variantdrop.map((option) => ({
+      value: option.attributedetails_name,
+      label: option.attributedetails_name,
+    }))
+    : [];
+
+  const filteredOptiontaxitemsales = Array.isArray(saltaxdrop)
+    ? saltaxdrop.map((option) => ({
+      value: option.tax_type,
+      label: option.tax_type,
+    }))
+    : [];
+
+  const filteredOptiontaxitempur = Array.isArray(purtaxdrop)
+    ? purtaxdrop.map((option) => ({
+      value: option.tax_type,
+      label: option.tax_type,
+    }))
+    : [];
+
+  const filteredOptionothertaxitempur = Array.isArray(otherpurtaxdrop)
+    ? otherpurtaxdrop.map((option) => ({
+      value: option.Other_purch_tax_type,
+      label: option.Other_purch_tax_type,
+    }))
+    : [];
+
+  const filteredOptionCostingMethod = Array.isArray(costingMethodDrop)
+    ? costingMethodDrop.map((option) => ({
+      value: option.attributedetails_name,
+      label: option.attributedetails_name,
+    }))
+    : [];
 
   const handleChangeRegister = (selectedRegister) => {
     setSelectedRegister(selectedRegister);
@@ -848,9 +862,17 @@ function ItemInput({ }) {
 
   const handlePrint = useReactToPrint({
     content: () => componentRef.current,
-    documentTitle: 'Item Barcode data'
+    documentTitle: "Item Barcode Data",
   });
 
+  const handleBarcodePrint = () => {
+    if (!barcode || barcode.trim() === "") {
+      toast.warning("Barcode is not available to print.");
+      return;
+    }
+
+    handlePrint();
+  };
 
   useEffect(() => {
     const handleScan = (e) => {
@@ -935,6 +957,7 @@ function ItemInput({ }) {
                     <div title="Select the Variant">
                       <Select
                         id="SUOM"
+                        isClearable
                         value={selectedvarient}
                         onChange={handleChangeVariant}
                         options={filteredOptionVariant}
@@ -999,6 +1022,7 @@ function ItemInput({ }) {
                     <div title="Select the Base UOM">
                       <Select
                         id="BUOM"
+                        isClearable
                         value={selectedUom}
                         onChange={handleChangeUom}
                         options={filteredOptionuom}
@@ -1020,6 +1044,7 @@ function ItemInput({ }) {
                     <div title="Select the Secondary UOM">
                       <Select
                         id="SUOM"
+                        isClearable
                         value={selectedSuom}
                         onChange={handleChangeSuom}
                         options={filteredOptionSuom}
@@ -1180,6 +1205,7 @@ function ItemInput({ }) {
                     <div title="Select the Local Purchase Tax Type ">
                       <Select
                         id="SUOM"
+                        isClearable
                         value={selectedpurtax}
                         onChange={handleChangepurtax}
                         options={filteredOptiontaxitempur}
@@ -1201,6 +1227,7 @@ function ItemInput({ }) {
                     <div title="Select the Other Purchase Tax Type ">
                       <Select
                         id="SUOM"
+                        isClearable
                         value={selectedOtherpurtax}
                         onChange={handleChangeotherpurtax}
                         options={filteredOptionothertaxitempur}
@@ -1222,6 +1249,7 @@ function ItemInput({ }) {
                     <div title="Select the Local Sales Tax Type ">
                       <Select
                         id="SUOM"
+                        isClearable
                         value={selectedOthersaltax}
                         onChange={handleChangeOthersaltax}
                         options={filteredOptiontaxitemsales}
@@ -1243,6 +1271,7 @@ function ItemInput({ }) {
                     <div title="Select the Other Sales Tax Type ">
                       <Select
                         id="SUOM"
+                        isClearable
                         value={selectedsaltax}
                         onChange={handleChangesaltax}
                         options={filteredOptionOthertaxitemsales}
@@ -1324,6 +1353,7 @@ function ItemInput({ }) {
                     <div title="Select the Register Brand ">
                       <Select
                         id="regbrand"
+                        isClearable
                         value={selectedRegister}
                         onChange={handleChangeRegister}
                         options={filteredOptionRegister}
@@ -1345,6 +1375,7 @@ function ItemInput({ }) {
                     <div title="Select the Our Brand ">
                       <Select
                         id="ahsts"
+                        isClearable
                         value={selectedBrand}
                         onChange={handleChangeBrand}
                         options={filteredOptionBrand}
@@ -1366,6 +1397,7 @@ function ItemInput({ }) {
                     <div title="Select the Our Brand ">
                       <Select
                         id="ahsts"
+                        isClearable
                         value={selectedStatus}
                         onChange={handleChangeStatus}
                         options={filteredOptionStatus}
@@ -1480,6 +1512,7 @@ function ItemInput({ }) {
                         options={filteredOptionCostingMethod}
                         className="exp-input-field"
                         placeholder=""
+                        isClearable
                         maxLength={30}
                         ref={CostingMethod}
                         onKeyDown={(e) => {
@@ -1511,14 +1544,13 @@ function ItemInput({ }) {
 
                     <div className="mt-4 form-group">
                       <button
-                        onClick={handlePrint}
+                        onClick={handleBarcodePrint}
                         class=" "
                         required
-                        title="Generate Report"
+                        title="Print Barcode"
                       >
                         <i class="fa-solid fa-print"></i>
                       </button>
-
                     </div>
                   </div>
                 </div>

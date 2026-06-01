@@ -121,7 +121,7 @@ function LocInfoGrid() {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ company_code })
-    })      .then((response) => response.json())
+    }).then((response) => response.json())
       .then((data) => {
         const statusOption = data.map(option => option.attributedetails_name);
         setStatusGriddrop(statusOption);
@@ -131,7 +131,7 @@ function LocInfoGrid() {
 
   useEffect(() => {
     const company_code = sessionStorage.getItem('selectedCompanyCode');
-    
+
     fetch(`${config.apiBaseUrl}/status`, {
       method: 'POST',
       headers: {
@@ -144,10 +144,12 @@ function LocInfoGrid() {
       .catch((error) => console.error('Error fetching data:', error));
   }, []);
 
-  const filteredOptionStatus = statusdrop.map((option) => ({
-    value: option.attributedetails_name,
-    label: option.attributedetails_name,
-  }));
+  const filteredOptionStatus = Array.isArray(statusdrop)
+    ? statusdrop.map((option) => ({
+      value: option.attributedetails_name,
+      label: option.attributedetails_name,
+    }))
+    : [];
 
   const handleChangeStatus = (selectedStatus) => {
     setSelectedStatus(selectedStatus);
@@ -342,7 +344,7 @@ function LocInfoGrid() {
           params.data.contact_no = newValue;
           return true;
         }
-        return false; 
+        return false;
       },
     },
   ];
@@ -364,7 +366,7 @@ function LocInfoGrid() {
     }
   };
 
- const generateReport = () => {
+  const generateReport = () => {
     if (selectedRows.length === 0) {
       toast.warning("Please select at least one row to generate a report");
       return
@@ -534,16 +536,16 @@ function LocInfoGrid() {
     const rowIndex = updatedRowData.findIndex(
       (row) => row.location_no === params.data.location_no
     );
-  
+
     if (rowIndex !== -1) {
       updatedRowData[rowIndex][params.colDef.field] = params.newValue;
       setRowData(updatedRowData);
-  
+
       setEditedData((prevData) => {
         const existingIndex = prevData.findIndex(
           (item) => item.location_no === params.data.location_no
         );
-  
+
         if (existingIndex !== -1) {
           const updatedEdited = [...prevData];
           updatedEdited[existingIndex] = updatedRowData[rowIndex];
@@ -699,7 +701,7 @@ function LocInfoGrid() {
 
     <div className="container-fluid Topnav-screen">
       <div>
-      {loading && <LoadingScreen />}
+        {loading && <LoadingScreen />}
         <ToastContainer position="top-right" className="toast-design" theme="colored" />
         <div className="shadow-lg p-1 bg-body-tertiary rounded  mb-2 mt-2">
           <div className=" d-flex justify-content-between  ">
@@ -722,12 +724,12 @@ function LocInfoGrid() {
               {['update', 'all permission'].some(permission => LocationPermissions.includes(permission)) && (
                 <savebutton className="purbut" onClick={saveEditedData} required title="Update" >
                   <i class="fa-solid fa-floppy-disk"></i>
-                  </savebutton>
+                </savebutton>
               )}
               {['all permission', 'view'].some(permission => LocationPermissions.includes(permission)) && (
                 <printbutton className="purbut" onClick={generateReport} required title="Generate Report">
                   <i class="fa-solid fa-print"></i>
-                  </printbutton>
+                </printbutton>
               )}
             </div>
             <div class="mobileview">
@@ -754,8 +756,8 @@ function LocInfoGrid() {
                     </li>
                     <li class="iconbutton  d-flex justify-content-center text-danger">
                       {['delete', 'all permission'].some(permission => LocationPermissions.includes(permission)) && (
-                        <icon class="icon" onClick={deleteSelectedRows} >            
-                        <i class="fa-solid fa-user-minus"></i>
+                        <icon class="icon" onClick={deleteSelectedRows} >
+                          <i class="fa-solid fa-user-minus"></i>
                         </icon>
                       )}
                     </li>
@@ -769,7 +771,7 @@ function LocInfoGrid() {
                     <li class="iconbutton  d-flex justify-content-center ">
                       {['all permission', 'view'].some(permission => LocationPermissions.includes(permission)) && (
                         <icon class="icon" onClick={generateReport}>
-                            <i class="fa-solid fa-print"></i>
+                          <i class="fa-solid fa-print"></i>
                         </icon>
                       )}
                     </li>
@@ -900,18 +902,20 @@ function LocInfoGrid() {
                 <label class="exp-form-labels">
                   Status
                 </label>
-                  <div title="Select the Status ">
-                <Select
-                  id="status"
-                  value={selectedStatus}
-                  onChange={handleChangeStatus}
-                  options={filteredOptionStatus}
-                  className="exp-input-field"
-                  placeholder=""
-                  onKeyDown={handleKeyDownStatus}
-                  ref={Status}
-                />
-              </div></div>
+                <div title="Select the Status ">
+                  <Select
+                    id="status"
+                    value={selectedStatus}
+                    onChange={handleChangeStatus}
+                    options={filteredOptionStatus}
+                    className="exp-input-field"
+                    placeholder=""
+                    onKeyDown={handleKeyDownStatus}
+                    ref={Status}
+                    isClearable
+                  />
+                </div>
+              </div>
             </div>
             <div className="col-md-3 form-group mt-4">
               <div class="exp-form-floating">
@@ -919,15 +923,15 @@ function LocInfoGrid() {
                   <div class=''>
                     <icon className="popups-btn fs-6 p-3" onClick={handleSearch} required title="Search">
                       <i className="fas fa-search"></i>
-                      </icon>
-                      </div>
+                    </icon>
+                  </div>
                   <div>
                     <icon className="popups-btn fs-6 p-3" onClick={reloadGridData} required title="Reload">
-                    <FontAwesomeIcon icon="fa-solid fa-arrow-rotate-right" /></icon>
-                    </div>
+                      <FontAwesomeIcon icon="fa-solid fa-arrow-rotate-right" /></icon>
+                  </div>
                 </div>
-                 </div>
-                 </div>
+              </div>
+            </div>
           </div>
           <div class="ag-theme-alpine" style={{ height: 455, width: "100%" }}>
             <AgGridReact

@@ -58,9 +58,9 @@ function AttriDetInput({ }) {
   }, [mode, selectedRow]);
 
   const fetchHdrCode = () => {
-        const company_code = sessionStorage.getItem("selectedCompanyCode");
+    const company_code = sessionStorage.getItem("selectedCompanyCode");
 
-   fetch(`${config.apiBaseUrl}/hdrcode`, {
+    fetch(`${config.apiBaseUrl}/hdrcode`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -75,10 +75,12 @@ function AttriDetInput({ }) {
     fetchHdrCode();
   }, []);
 
-  const filteredOptionHeader = statusdrop.map((option) => ({
-    value: option.attributeheader_code,
-    label: option.attributeheader_code,
-  }));
+  const filteredOptionHeader = Array.isArray(statusdrop)
+    ? statusdrop.map((option) => ({
+      value: option.attributeheader_code,
+      label: option.attributeheader_code,
+    }))
+    : [];
 
   const handleChangeHeader = (selectedHeader) => {
     setSelectedHeader(selectedHeader);
@@ -248,6 +250,7 @@ function AttriDetInput({ }) {
                           className=" exp-input-field position-relative "
                           placeholder=""
                           ref={code}
+                          isClearable
                           readOnly={mode === "update"}
                           isDisabled={mode === "update"}
                           onKeyDown={(e) => handleKeyDown(e, subcode, code)}

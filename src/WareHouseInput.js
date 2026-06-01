@@ -87,15 +87,19 @@ function WareHouseInput({ }) {
       .then((val) => setLocationdrop(val));
   }, []);
 
-  const filteredOptionStatus = statusdrop.map((option) => ({
-    value: option.attributedetails_name,
-    label: option.attributedetails_name,
-  }));
+  const filteredOptionStatus = Array.isArray(statusdrop)
+    ? statusdrop.map((option) => ({
+      value: option.attributedetails_name,
+      label: option.attributedetails_name,
+    }))
+    : [];
 
-  const filteredOptionLocation = locationnodrop.map((option) => ({
-    value: option.location_no,
-    label: option.location_no,
-  }));
+  const filteredOptionLocation = Array.isArray(locationnodrop)
+    ? locationnodrop.map((option) => ({
+      value: option.location_no,
+      label: option.location_no,
+    }))
+    : [];
 
   const handleChangeStatus = (selectedStatus) => {
     setSelectedStatus(selectedStatus);
@@ -295,6 +299,7 @@ function WareHouseInput({ }) {
                     <div title="Select the Status">
                       <Select
                         id="status"
+                        isClearable
                         value={selectedStatus}
                         onChange={handleChangeStatus}
                         options={filteredOptionStatus}
@@ -315,6 +320,7 @@ function WareHouseInput({ }) {
                     <div title="Select the Location No">
                       <Select
                         id="status"
+                        isClearable
                         value={selectedLocation}
                         onChange={handleChangeLocation}
                         options={filteredOptionLocation}

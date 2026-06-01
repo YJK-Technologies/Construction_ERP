@@ -29,7 +29,7 @@ function UserScreenInput({ }) {
   const [hasValueChanged, setHasValueChanged] = useState(false);
   const [roleiddrop, setroleiddrop] = useState([]);
   const created_by = sessionStorage.getItem('selectedUserCode');
-  const [loading, setLoading] = useState(false);  
+  const [loading, setLoading] = useState(false);
   const [keyfield, setKeyfield] = useState('');
   const [isUpdated, setIsUpdated] = useState(false);
 
@@ -181,14 +181,14 @@ function UserScreenInput({ }) {
       });
       if (response.ok) {
         console.log("Data inserted successfully");
-          toast.success("Data inserted successfully!", {
-            onClose: () => clearInputFields(),
-          });
+        toast.success("Data inserted successfully!", {
+          onClose: () => clearInputFields(),
+        });
       } else {
         const errorResponse = await response.json();
         console.error(errorResponse.message);
         toast.warning(errorResponse.message);
-      } 
+      }
     } catch (error) {
       console.error("Error inserting data:", error);
       toast.error('Error inserting data: ' + error.message);
@@ -227,9 +227,9 @@ function UserScreenInput({ }) {
       });
       if (response.ok) {
         console.log("Data updated successfully");
-          toast.success("Data updated successfully!", {
-            onClose: () => clearInputFields(),
-          });
+        toast.success("Data updated successfully!", {
+          onClose: () => clearInputFields(),
+        });
       } else {
         const errorResponse = await response.json();
         console.error(errorResponse.message);
@@ -244,27 +244,27 @@ function UserScreenInput({ }) {
   };
 
   const handleNavigate = () => {
-    navigate("/UserRights"); 
+    navigate("/UserRights");
   };
 
   const handleKeyDown = async (e, nextFieldRef, value, hasValueChanged, setHasValueChanged) => {
     if (e.key === 'Enter') {
       if (hasValueChanged) {
-        await handleKeyDownStatus(e); 
-        setHasValueChanged(false); 
+        await handleKeyDownStatus(e);
+        setHasValueChanged(false);
       }
 
       if (value) {
         nextFieldRef.current.focus();
       } else {
-        e.preventDefault(); 
+        e.preventDefault();
       }
     }
   };
 
   const handleKeyDownStatus = async (e) => {
-    if (e.key === 'Enter' && hasValueChanged) { 
-      setHasValueChanged(false); 
+    if (e.key === 'Enter' && hasValueChanged) {
+      setHasValueChanged(false);
     }
   };
 
@@ -272,8 +272,8 @@ function UserScreenInput({ }) {
     <div class="container-fluid Topnav-screen ">
       <div className="">
         <div class=""  >
-        {loading && <LoadingScreen />}
-          <ToastContainer position="top-right" className="toast-design" theme="colored"/>
+          {loading && <LoadingScreen />}
+          <ToastContainer position="top-right" className="toast-design" theme="colored" />
           <div class="row ">
             <div class="col-md-12 text-center" >
               <div >
@@ -290,135 +290,83 @@ function UserScreenInput({ }) {
                     </div>
                   </div>
                 </div>
-                </div>
-                </div>
+              </div>
+            </div>
             <div class="pt-2 mb-4">
               <div className="shadow-lg p-3 bg-body-tertiary rounded  mb-2">
                 <div class="row">
                   <div className="col-md-3 form-group mb-2">
                     <div class="exp-form-floating">
-                      <div class="d-flex justify-content-start">
-                        <div>
-                          <label for="state" class="exp-form-labels" className={`${error && !role_id ? 'text-danger' : ''}`}>
-                            Role ID<span className="text-danger">*</span>
-                          </label>
-                        </div>
-                      </div>
+                      <label for="state" class="exp-form-labels" className={`${error && !role_id ? 'text-danger' : ''}`}>
+                        Role ID<span className="text-danger">*</span>
+                      </label>
                       <div title="Select the Role ID">
-                      <Select
-                        id="roleid"
-                        value={selectedRole}
-                        onChange={handleChangeRole}
-                        options={filteredOptionRole}
-                        className="exp-input-field"
-                        placeholder=""
-                        maxLength={18}
-                        ref={roleId}
-                        onKeyDown={(e) => handleKeyDown(e, screentype, roleId)}
-                      />
-                      {/* {error && !role_id && <div className="text-danger">User Code should not be blank</div>} */}
-                    </div>
+                        <Select
+                          id="roleid"
+                          value={selectedRole}
+                          onChange={handleChangeRole}
+                          options={filteredOptionRole}
+                          className="exp-input-field"
+                          placeholder=""
+                          maxLength={18}
+                          ref={roleId}
+                          isClearable
+                          onKeyDown={(e) => handleKeyDown(e, screentype, roleId)}
+                        />
+                      </div>
                     </div>
                   </div>
                   <div className="col-md-3 form-group">
                     <div class="exp-form-floating">
-                      <div class="d-flex justify-content-start">
-                        <div>
-                          <label for="state" class="exp-form-labels" className={`${error && !screen_type ? 'text-danger' : ''}`}>
-                            Screen Type<span className="text-danger">*</span>
-                          </label>
-                        </div>
-                      </div>
+                      <label for="state" class="exp-form-labels" className={`${error && !screen_type ? 'text-danger' : ''}`}>
+                        Screen Type<span className="text-danger">*</span>
+                      </label>
                       <div title="Select the Screen Type">
-                      <Select
-                        id="status"
-                        value={selectedscreens}
-                        onChange={handleChangescreens}
-                        options={filteredOptionscreens}
-                        className="exp-input-field"
-                        placeholder=""
-                        ref={screentype}
-                        onKeyDown={(e) => handleKeyDown(e, permissiontype, screentype)}
-                        required title="Please select a screen type here"
-                      />
-                      {/* {error && !screen_type && <div className="text-danger">Screen Type should not be blank</div>} */}
-                    </div>
+                        <Select
+                          id="status"
+                          value={selectedscreens}
+                          onChange={handleChangescreens}
+                          options={filteredOptionscreens}
+                          className="exp-input-field"
+                          placeholder=""
+                          ref={screentype}
+                          isClearable
+                          onKeyDown={(e) => handleKeyDown(e, permissiontype, screentype)}
+                          required title="Please select a screen type here"
+                        />
+                      </div>
                     </div>
                   </div>
                   <div className="col-md-3 form-group">
                     <div class="exp-form-floating">
-                      <div class="d-flex justify-content-start">
-                        <div>
-                          <label for="state" className={`${error && !permission_type ? 'text-danger' : ''}`}>
-                            Permission Type<span className="text-danger">*</span>
-                          </label>
-                        </div>
-                      </div>
+                      <label for="state" className={`${error && !permission_type ? 'text-danger' : ''}`}>
+                        Permission Type<span className="text-danger">*</span>
+                      </label>
                       <div title="Select the Permission Type">
-                      <Select
-                        id="status"
-                        value={selectedpermissions}
-                        onChange={handleChangePermissions}
-                        options={filteredOptionPermissions}
-                        className="exp-input-field"
-                        placeholder=""
-                        ref={permissiontype}
-                        // onKeyDown={(e) => handleKeyDown(e, permissiontype)}
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter') {
-                            if (mode === "create") {
-                              handleInsert();
-                            } else {
-                              handleUpdate();
+                        <Select
+                          id="status"
+                          value={selectedpermissions}
+                          onChange={handleChangePermissions}
+                          options={filteredOptionPermissions}
+                          className="exp-input-field"
+                          placeholder=""
+                          ref={permissiontype}
+                          isClearable
+                          // onKeyDown={(e) => handleKeyDown(e, permissiontype)}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                              if (mode === "create") {
+                                handleInsert();
+                              } else {
+                                handleUpdate();
+                              }
                             }
-                          }
-                        }}
-                        required title="Please select a permission type here"
-                      />
-                      {/* {error && !permission_type && <div className="text-danger">Permission Type should not be blank</div>} */}
-                    </div></div>
+                          }}
+                          required title="Please select a permission type here"
+                        />
+                      </div>
+                      </div>
                   </div>
-                  {/* <div className="col-md-3 form-group">
-                    {mode === "create" ? (
-                      <div class="exp-form-floating">
-                        <div class="d-flex justify-content-start">
-                          <div>
-                            <label for="state" class="exp-form-labels">
-                              Created By
-                            </label>
-                          </div>
-                        </div>
-                        <input
-                          id="emailid"
-                          class="exp-input-field form-control"
-                          type="text"
-                          placeholder=""
-                          required
-                          title="Please enter the email ID"
-                          value={created_by}
-                        />
-                      </div>
-                    ) : (
-                      <div class="exp-form-floating">
-                        <div class="d-flex justify-content-start">
-                          <div>
-                            <label for="state" class="exp-form-labels">
-                              Modified By
-                            </label>
-                          </div>
-                        </div>
-                        <input
-                          id="emailid"
-                          class="exp-input-field form-control"
-                          type="text"
-                          placeholder=""
-                          required
-                          title="Please enter the email ID"
-                          value={modified_by}
-                        />
-                      </div>
-                    )}
-                  </div> */}
                   <div class="col-md-3 form-group d-flex justify-content-start">
                     {mode === "create" ? (
                       <button onClick={handleInsert} className="mt-4" title="Save">
@@ -433,7 +381,7 @@ function UserScreenInput({ }) {
                 </div>
               </div>
             </div>
-            </div>
+          </div>
         </div>
       </div>
     </div>

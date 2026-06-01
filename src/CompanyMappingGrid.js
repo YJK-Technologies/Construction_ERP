@@ -110,11 +110,12 @@ function CompanyMappingGrid() {
       .catch((error) => console.error('Error fetching data:', error));
   }, []);
 
-
-  const filteredOptionStatus = statusdrop.map((option) => ({
-    value: option.attributedetails_name,
-    label: option.attributedetails_name,
-  }));
+  const filteredOptionStatus = Array.isArray(statusdrop)
+    ? statusdrop.map((option) => ({
+      value: option.attributedetails_name,
+      label: option.attributedetails_name,
+    }))
+    : [];
 
   const handleChangeStatus = (selectedStatus) => {
     setSelectedStatus(selectedStatus);
@@ -737,16 +738,17 @@ function CompanyMappingGrid() {
                   Status
                 </label>
                 <div title="Select the Status ">
-                <Select
-                  id="status"
-                  value={selectedStatus}
-                  onChange={handleChangeStatus}
-                  options={filteredOptionStatus}
-                  className="exp-input-field"
-                  placeholder=""
-                  onKeyDown={handleKeyDownStatus}
-                />
-              </div>
+                  <Select
+                    id="status"
+                    value={selectedStatus}
+                    onChange={handleChangeStatus}
+                    options={filteredOptionStatus}
+                    className="exp-input-field"
+                    placeholder=""
+                    onKeyDown={handleKeyDownStatus}
+                    isClearable
+                  />
+                </div>
               </div>
             </div>
             <div className="col-md-3 form-group mt-4">

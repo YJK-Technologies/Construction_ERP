@@ -81,15 +81,19 @@ function UserRoleInput({ }) {
       .catch((error) => console.error('Error fetching data:', error));
   }, []);
 
-  const filteredOptionUser = usercodedrop.map((option) => ({
-    value: option.user_code,
-    label: `${option.user_code} - ${option.user_name}`,
-  }));
+  const filteredOptionUser = Array.isArray(usercodedrop)
+    ? usercodedrop.map((option) => ({
+      value: option.user_code,
+      label: `${option.user_code} - ${option.user_name}`,
+    }))
+    : [];
 
-  const filteredOptionRole = roleiddrop.map((option) => ({
-    value: option.role_id,
-    label: `${option.role_id} - ${option.role_name}`,
-  }));
+  const filteredOptionRole = Array.isArray(roleiddrop)
+    ? roleiddrop.map((option) => ({
+      value: option.role_id,
+      label: `${option.role_id} - ${option.role_name}`,
+    }))
+    : [];
 
   const handleChangeUser = (selectedUser) => {
     setSelectedUser(selectedUser);
@@ -259,9 +263,9 @@ function UserRoleInput({ }) {
                           placeholder=""
                           maxLength={18}
                           ref={usercode}
+                          isClearable
                           onKeyDown={(e) => handleKeyDown(e, roleid, usercode)}
                         />
-                        {/* {error && !user_code && <div className="text-danger">User Code should not be blank</div>} */}
                       </div>
                     </div>
                   </div>
@@ -284,6 +288,7 @@ function UserRoleInput({ }) {
                           placeholder=""
                           maxLength={18}
                           ref={roleid}
+                          isClearable
                           // onKeyDown={(e) => handleKeyDown(e, roleid)}
                           onKeyDown={(e) => {
                             if (e.key === 'Enter') {
@@ -295,51 +300,9 @@ function UserRoleInput({ }) {
                             }
                           }}
                         />
-                        {/* {error && !role_id && <div className="text-danger">Role Id should not be blank</div>} */}
                       </div>
                     </div>
                   </div>
-                  {/* <div className="col-md-3 form-group  mb-2">
-                    {mode === "create" ? (
-                      <div class="exp-form-floating">
-                        <div class="d-flex justify-content-start">
-                          <div>
-                            <label for="state" class="exp-form-labels">
-                              Created By
-                            </label>
-                          </div>
-                        </div>
-                        <input
-                          id="emailid"
-                          class="exp-input-field form-control"
-                          type="text"
-                          placeholder=""
-                          required
-                          title="Please enter the email ID"
-                          value={created_by}
-                        />
-                      </div>
-                    ) : (
-                      <div class="exp-form-floating">
-                        <div class="d-flex justify-content-start">
-                          <div>
-                            <label for="state" class="exp-form-labels">
-                              Modified By
-                            </label>
-                          </div>
-                        </div>
-                        <input
-                          id="emailid"
-                          class="exp-input-field form-control"
-                          type="text"
-                          placeholder=""
-                          required
-                          title="Please enter the email ID"
-                          value={modified_by}
-                        />
-                      </div>
-                    )}
-                  </div> */}
                   <div class="col-md-3 form-group d-flex justify-content-start mt-4 mb-4">
                     {mode === "create" ? (
                       <button onClick={handleInsert} className="" title="Save">

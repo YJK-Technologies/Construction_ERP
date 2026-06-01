@@ -180,21 +180,24 @@ function UserGrid() {
       .catch((error) => console.error('Error fetching data:', error));
   }, []);
 
-
-  const filteredOptionStatus = statusdrop.map((option) => ({
-    value: option.attributedetails_name,
-    label: option.attributedetails_name,
-  }));
+  const filteredOptionStatus = Array.isArray(statusdrop)
+    ? statusdrop.map((option) => ({
+      value: option.attributedetails_name,
+      label: option.attributedetails_name,
+    }))
+    : [];
 
   const filteredOptionUser = Usertypedrop.map((option) => ({
     value: option.attributedetails_name,
     label: option.attributedetails_name,
   }));
 
-  const filteredOptionGender = Genderdrop.map((option) => ({
-    value: option.attributedetails_name,
-    label: option.attributedetails_name,
-  }));
+  const filteredOptionGender = Array.isArray(Genderdrop)
+    ? Genderdrop.map((option) => ({
+      value: option.attributedetails_name,
+      label: option.attributedetails_name,
+    }))
+    : [];
 
   const handleChangeStatus = (selectedStatus) => {
     setSelectedStatus(selectedStatus);
@@ -938,28 +941,11 @@ function UserGrid() {
                     options={filteredOptionStatus}
                     className="exp-input-field"
                     placeholder=""
+                    isClearable
                   />
                 </div>
               </div>
             </div>
-            {/* <div className="col-md-3 form-group">
-              <div class="exp-form-floating">
-                <label for="utype" class="exp-form-labels">
-                  User Type
-                </label>
-                <div title="Select the User Type">
-                  <Select
-                    id="usertype"
-                    value={selectedUser}
-                    onChange={handleChangeUser}
-                    onKeyDown={handleKeyDownStatus}
-                    options={filteredOptionUser}
-                    className="exp-input-field"
-                    placeholder=""
-                  />
-                </div>
-              </div>
-            </div> */}
             <div className="col-md-3 form-group">
               <div class="exp-form-floating">
                 <label for="dob" class="exp-form-labels">
@@ -992,6 +978,7 @@ function UserGrid() {
                     options={filteredOptionGender}
                     className="exp-input-field"
                     placeholder=""
+                    isClearable
                   />
                 </div>
               </div>
