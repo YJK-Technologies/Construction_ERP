@@ -91,7 +91,7 @@ function OpeningbalanceGrid() {
   const [transaction_date, settransaction_date] = useState("");
   const [transaction_no, settransaction_no] = useState("");
 
-    const getTodayDate = () => {
+  const getTodayDate = () => {
     const today = new Date();
     return today.toISOString().split('T')[0]; // 'YYYY-MM-DD'
   };
@@ -402,27 +402,26 @@ function OpeningbalanceGrid() {
 
       valueSetter: (params) => {
 
-  const selectedValue = params.newValue;
+        const selectedValue = params.newValue;
 
-  const referenceType = params?.data?.reference_type;
+        const referenceType = params?.data?.reference_type;
 
-  const options = getReferenceOptions(referenceType);
+        const options = getReferenceOptions(referenceType);
 
-  const item = options.find(
-    d => d.value === selectedValue
-  );
+        const item = options.find(
+          d => d.value === selectedValue
+        );
 
-  if (item) {
+        if (item) {
 
-    params.data.reference_code = item.value;
+          params.data.reference_code = item.value;
 
-    params.data.reference_name = item.label;
+          params.data.reference_name = item.label.split(" - ").slice(1).join(" - ");
+          return true;
+        }
 
-    return true;
-  }
-
-  return false;
-}
+        return false;
+      }
     },
     {
       headerName: "Payment Mode",
@@ -441,9 +440,11 @@ function OpeningbalanceGrid() {
       editable: !showAsterisk,
       filter: true,
       sortable: false,
+      // cellEditor: "agNumberCellEditor",
       cellEditorParams: {
-        maxLength: 10,
-      },
+        min: 0,
+        precision: 2
+      }
     },
     {
       headerName: "Description",
@@ -1287,18 +1288,18 @@ function OpeningbalanceGrid() {
         <div className="row ms-2">
           <div className="d-flex justify-content-start">
             <p className="col-md-6">
-              Created_by: {additionalData.created_by}
+              Created By: {additionalData.created_by}
             </p>
             <p className="col-md-">
-              Created_date: {additionalData.created_date}
+              Created Date: {additionalData.created_date}
             </p>
           </div>
           <div className="d-flex justify-content-start">
             <p className="col-md-6">
-              modified_by: {additionalData.modified_by}
+              modified By: {additionalData.modified_by}
             </p>
             <p className="col-md-6">
-              modified_date: {additionalData.modified_date}
+              modified Date: {additionalData.modified_date}
             </p>
           </div>
         </div>
