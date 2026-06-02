@@ -1251,7 +1251,6 @@ router.post("/getOB_data", dataController.getOB_data)
 router.post("/get_GOB", dataController.get_GOB)
 router.post("/inventoryIssueCalculation", dataController.inventoryIssueCalculation)
 router.post("/getExpensesReport", dataController.getExpensesReport)
-router.post("/getExpensesReportPDF", dataController.getExpensesReportPDF)
 
 
 module.exports = router;
