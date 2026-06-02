@@ -71,50 +71,50 @@ const ExpensesTracking = () => {
 
     // For pop up
     const handleClose = () => {
-    setOpen1(false);
-    setOpen2(false);
-    setOpen3(false);
-  };
+        setOpen1(false);
+        setOpen2(false);
+        setOpen3(false);
+    };
 
     const handleShowModal1 = () => {
-    setOpen3(true);
-  };
+        setOpen3(true);
+    };
     const handleShowModal2 = () => {
-    setOpen1(true);
-  };
+        setOpen1(true);
+    };
     const handleShowModal3 = () => {
-    setOpen2(true);
-  };
+        setOpen2(true);
+    };
 
-  const handleCustomer = async (data) => {
-    console.log(data)
-    if (data && data.length > 0) {
-      const [{ CustomerCode, CustomerName }] = data;
-      setCustomer(CustomerCode);
-    //   setCustomerName(CustomerName)
-    } else {
-      console.error('Data is empty or undefined');
-    }
-  };
+    const handleCustomer = async (data) => {
+        console.log(data)
+        if (data && data.length > 0) {
+            const [{ CustomerCode, CustomerName }] = data;
+            setCustomer(CustomerCode);
+            //   setCustomerName(CustomerName)
+        } else {
+            console.error('Data is empty or undefined');
+        }
+    };
 
-  const handleVendorCode = async (data) => {
-      if (data && data.length > 0) {
-        const [{ VendorCode, VendorName }] = data;
-        setVendor(VendorCode);
-        // setVendorName(VendorName);
-      } else {
-        console.error('Data is empty or undefined');
-      }
+    const handleVendorCode = async (data) => {
+        if (data && data.length > 0) {
+            const [{ VendorCode, VendorName }] = data;
+            setVendor(VendorCode);
+            // setVendorName(VendorName);
+        } else {
+            console.error('Data is empty or undefined');
+        }
     };
 
     const handleSiteCode = async (data) => {
         if (data && data.length > 0) {
-          const [{ SiteID, SiteName }] = data;
-          setSiteID(SiteID);
+            const [{ SiteID, SiteName }] = data;
+            setSiteID(SiteID);
         } else {
-          console.error('Data is empty or undefined');
+            console.error('Data is empty or undefined');
         }
-      };
+    };
 
 
     useEffect(() => {
@@ -135,99 +135,96 @@ const ExpensesTracking = () => {
     }, []);
 
     const fetchExpensesData = async () => {
-    setLoading(true);
-    try {
-      const body = {
-        mode: period.toString(),
-        company_code: sessionStorage.getItem('selectedCompanyCode'),
-        Location_Code: sessionStorage.getItem("selectedLocationCode"),
-        expense_no: expense_no,
-        expense_date: expense_date,
-        expense_type: expenseType,
-        reference_type: referenceType,
-        reference_code: referenceCode,
-        reference_name: reference_name,
-        payment_mode: paymentMode,
-        amountFrom: amountFrom,
-        amountTo: amountTo,
-        StartDate: selectedPeriod?.label === "Custom Date" ? startDate : undefined,
-        EndDate: selectedPeriod?.label === "Custom Date" ? endDate : undefined,
-      };
+        setLoading(true);
+        try {
+            const body = {
+                mode: period.toString(),
+                company_code: sessionStorage.getItem('selectedCompanyCode'),
+                Location_Code: sessionStorage.getItem("selectedLocationCode"),
+                SiteID: SiteID,
+                customer: customer,
+                vendor: vendor,
+                expense_no: expense_no,
+                expense_date: expense_date,
+                expense_type: expenseType,
+                reference_type: referenceType,
+                reference_code: referenceCode,
+                reference_name: reference_name,
+                payment_mode: paymentMode,
+                amountFrom: amountFrom,
+                amountTo: amountTo,
+                StartDate: selectedPeriod?.label === "Custom Date" ? startDate : undefined,
+                EndDate: selectedPeriod?.label === "Custom Date" ? endDate : undefined,
+            };
 
-      const response = await fetch(`${config.apiBaseUrl}/getExpensesReport`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(body),
-      });
+            const response = await fetch(`${config.apiBaseUrl}/getExpensesReport`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(body),
+            });
 
-      if (response.ok) {
-        const fetchedData = await response.json();
-        if (fetchedData.length > 0) {
-          const firstItem = fetchedData[0];
-          setStart_Date(formatDate(firstItem.DateRange_Start) || "");
-          setEnd_Date(formatDate(firstItem.DateRange_End) || "");
+            if (response.ok) {
+                const fetchedData = await response.json();
+                if (fetchedData.length > 0) {
+                    const firstItem = fetchedData[0];
+                    setStart_Date(formatDate(firstItem.DateRange_Start) || "");
+                    setEnd_Date(formatDate(firstItem.DateRange_End) || "");
+                }
+
+                const newRows = fetchedData.map((matchedItem) => ({
+                    Entry_date: formatDate(matchedItem.Entry_date),
+                    expense_no: matchedItem.expense_no,
+                    expense_date: formatDate(matchedItem.expense_date),
+                    expense_type: matchedItem.expense_type,
+                    reference_type: matchedItem.reference_type,
+                    reference_code: matchedItem.reference_code,
+                    reference_name: matchedItem.reference_name,
+                    amount: matchedItem.amount,
+                    payment_mode: matchedItem.payment_mode,
+                    //   customer_country: matchedItem.customer_country,
+                    //   customer_mobile_no: matchedItem.customer_mobile_no,
+                    //   contact_person: matchedItem.contact_person,
+                    //   purchase_amount: matchedItem.purchase_amount,
+                    //   tax_amount: matchedItem.tax_amount,
+                    //   rounded_off: matchedItem.rounded_off,
+                    //   total_amount: matchedItem.total_amount,
+                }));
+
+                const totalAmount = newRows.reduce(
+                    (sum, row) => sum + (Number(row.amount) || 0),
+                    0
+                );
+
+                const totalRow = {
+                    Entry_date: "",
+                    expense_date: "",
+                    expense_no: "",
+                    expense_type: "",
+                    reference_type: "",
+                    reference_code: "",
+                    reference_name: "",
+                    payment_mode: "Total",
+                    amount: totalAmount,
+                };
+
+                setRowData([...newRows, totalRow]);
+            } else if (response.status === 404) {
+                console.log("Data Not found");
+                toast.warning("Data Not found");
+                setRowData([])
+            } else {
+                const errorResponse = await response.json();
+                toast.warning(errorResponse.message || "Failed to insert sales data");
+                console.error(errorResponse.details || errorResponse.message);
+            }
+        } catch (error) {
+            console.error("Error fetching search data:", error);
+        } finally {
+            setLoading(false);
         }
-
-        const newRows = fetchedData.map((matchedItem) => ({
-          Entry_date: formatDate(matchedItem.Entry_date),
-          expense_no: matchedItem.expense_no,
-          expense_date: matchedItem.expense_date,
-          expense_type: matchedItem.expense_type,
-          reference_type: matchedItem.reference_type,
-          reference_code: matchedItem.reference_code,
-          reference_name: matchedItem.reference_name,
-          amount: matchedItem.amount,
-          payment_mode: matchedItem.payment_mode,
-        //   customer_country: matchedItem.customer_country,
-        //   customer_mobile_no: matchedItem.customer_mobile_no,
-        //   contact_person: matchedItem.contact_person,
-        //   purchase_amount: matchedItem.purchase_amount,
-        //   tax_amount: matchedItem.tax_amount,
-        //   rounded_off: matchedItem.rounded_off,
-        //   total_amount: matchedItem.total_amount,
-        }));
-
-        const totalAmount = newRows.reduce((sum, row) => sum + row.total_amount, 0);
-        const totalPurchase = newRows.reduce((sum, row) => sum + row.purchase_amount, 0);
-        const totalTax = newRows.reduce((sum, row) => sum + row.tax_amount, 0);
-        const totalRoundOff = newRows.reduce((sum, row) => sum + row.rounded_off, 0);
-
-        const totalRow = {
-          Entry_date: "",
-          expense_date: "",
-          expense_no: "",
-          expense_type: "",
-          reference_code: "",
-          reference_name: "",
-          amount: "",
-          payment_mode: "",
-          customer_country: "",
-          customer_mobile_no: "",
-          contact_person: "Total",
-          purchase_amount: totalPurchase,
-          tax_amount: totalTax,
-          rounded_off: totalRoundOff,
-          total_amount: totalAmount
-        };
-
-        setRowData([...newRows, totalRow]);
-      } else if (response.status === 404) {
-        console.log("Data Not found");
-        toast.warning("Data Not found");
-        setRowData([])
-      } else {
-        const errorResponse = await response.json();
-        toast.warning(errorResponse.message || "Failed to insert sales data");
-        console.error(errorResponse.details || errorResponse.message);
-      }
-    } catch (error) {
-      console.error("Error fetching search data:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
 
     const filteredOptionPeriod = Array.isArray(periodDrop)
         ? periodDrop.map((option) => ({
@@ -335,57 +332,62 @@ const ExpensesTracking = () => {
         window.location.reload();
     };
 
-    const formatDate = (isoDateString) => {
-        const date = new Date(isoDateString);
+    const formatDate = (dateString) => {
+        if (!dateString) return "";
+
+        const date = new Date(dateString);
+
+        if (isNaN(date.getTime())) return "";
+
+        const day = String(date.getDate()).padStart(2, "0");
+        const month = String(date.getMonth() + 1).padStart(2, "0");
         const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const day = String(date.getDate()).padStart(2, '0');
+
         return `${day}-${month}-${year}`;
     };
 
-
     const columnDefs = [
         {
-            headerCheckboxSelection: true,
-            checkboxSelection: true,
             headerName: "S.No",
-            field: "Sno",
-            editable: false,
+            width: 90,
+            valueGetter: (params) => params.node.rowIndex + 1,
+            checkboxSelection: true,
+            headerCheckboxSelection: true,
         },
         {
             headerName: "Expense Date",
             field: "expense_date",
-            editable: true,
+            editable: false,
         },
         {
             headerName: "Expense No",
             field: "expense_no",
-            editable: true,
+            editable: false,
         },
         {
             headerName: "Expense Type",
             field: "expense_type",
-            editable: true,
+            editable: false,
         },
         {
             headerName: "Reference Code",
             field: "reference_code",
-            editable: true,
+            editable: false,
         },
         {
             headerName: "Reference Name",
             field: "reference_name",
-            editable: true,
-        },
-        {
-            headerName: "Amount",
-            field: "amount",
-            editable: true,
+            editable: false,
         },
         {
             headerName: "Payment Mode",
             field: "payment_mode",
-            editable: true,
+            editable: false,
+        },
+        {
+            headerName: "Amount",
+            field: "amount",
+            editable: false,
         },
     ];
 
@@ -415,20 +417,18 @@ const ExpensesTracking = () => {
 
         const reportData = selectedRows.map((row) => {
             return {
-                "Date": formatDate(row.Date),
-                "Bill No": row.BillNo,
-                "Party Name": row.PartyName,
-                "GST No": row.GSTNo,
-                "Percentage %": row.Percentage,
-                "CGST": row.CGST,
-                "SGST": row.SGST,
-                "IGST": row.IGST,
-                "Bill Rate": row.BillRate,
+                "Expense Date": row.expense_date,
+                "Expense No": row.expense_no,
+                "Expense Type": row.expense_type,
+                "Reference Code": row.reference_code,
+                "Reference Name": row.reference_name,
+                "Payment Mode": row.payment_mode,
+                "Amount": row.amount,
             };
         });
 
         const reportWindow = window.open("", "_blank");
-        reportWindow.document.write("<html><head><title>GST Report</title>");
+        reportWindow.document.write("<html><head><title>Expenses Tracking Report</title>");
         reportWindow.document.write("<style>");
         reportWindow.document.write(`
         body {
@@ -491,7 +491,7 @@ const ExpensesTracking = () => {
         }
       `);
         reportWindow.document.write("</style></head><body>");
-        reportWindow.document.write("<h1><u>GST Report</u></h1>");
+        reportWindow.document.write("<h1><u>Expenses Tracking Report</u></h1>");
 
         reportWindow.document.write("<table><thead><tr>");
         Object.keys(reportData[0]).forEach((key) => {
@@ -637,15 +637,13 @@ const ExpensesTracking = () => {
 
     const transformRowData = (data) => {
         return data.map(row => ({
-            "Date": row.Date,
-            "Bill No": row.BillNo,
-            "Party Name": row.PartyName,
-            "GST No": row.GSTNo,
-            "Percentage %": row.Percentage,
-            "CGST": row.CGST,
-            "SGST": row.SGST,
-            "IGST": row.IGST,
-            "Bill Rate": row.BillRate,
+            "Expense Date": row.expense_date,
+            "Expense No": row.expense_no,
+            "Expense Type": row.expense_type,
+            "Reference Code": row.reference_code,
+            "Reference Name": row.reference_name,
+            "Payment Mode": row.payment_mode,
+            "Amount": row.amount,
         }));
     };
 
@@ -656,7 +654,7 @@ const ExpensesTracking = () => {
         }
 
         const headerData = [
-            ['GST Report Analysis'],
+            ['Expenses Tracking Report'],
             [`Company Name: ${companyName}`],
             [`Date Range: ${start_Date} to ${end_Date}`],
             []
@@ -669,9 +667,10 @@ const ExpensesTracking = () => {
         XLSX.utils.sheet_add_json(worksheet, transformedData, { origin: 'A5' });
 
         const workbook = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(workbook, worksheet, 'GST Report');
-        XLSX.writeFile(workbook, 'Gst_Report.xlsx');
+        XLSX.utils.book_append_sheet(workbook, worksheet, 'Expenses Tracking Report');
+        XLSX.writeFile(workbook, 'Expenses_Tracking_Report.xlsx');
     };
+
 
     return (
         <div className="container-fluid Topnav-screen">
@@ -693,12 +692,12 @@ const ExpensesTracking = () => {
                                         </button>
                                         <ul className="dropdown-menu ">
                                             <li>
-                                                <icon class="iconbutton d-flex justify-content-center">
+                                                <icon class="iconbutton d-flex justify-content-center" onClick={generateReport} required title="Generate Report">
                                                     <i className="fa-solid fa-print"></i>
                                                 </icon>
                                             </li>
                                             <li>
-                                                <icon class="iconbutton d-flex justify-content-center">
+                                                <icon class="iconbutton d-flex justify-content-center" onClick={handleExportToExcel}>
                                                     <i class="fa-solid fa-file-excel"></i>
                                                 </icon>
                                             </li>
@@ -709,10 +708,10 @@ const ExpensesTracking = () => {
                         </div>
                         <div className="purbut">
                             <div className="d-flex justify-content-end me-5">
-                                <button className="btn btn-dark mt-3 mb-3 rounded-3">
+                                <button className="btn btn-dark mt-3 mb-3 rounded-3" onClick={generateReport} required title="Generate Report">
                                     <i className="fa-solid fa-print"></i>
                                 </button>
-                                <button class="btn btn-dark mt-3 mb-3 rounded-3">
+                                <button class="btn btn-dark mt-3 mb-3 rounded-3" onClick={handleExportToExcel} title='Excel'>
                                     <i class="fa-solid fa-file-excel"></i>
                                 </button>
                             </div>
@@ -752,11 +751,11 @@ const ExpensesTracking = () => {
                                     onChange={(e) => setSiteID(e.target.value)}
                                 />
                                 <div className='position-absolute mt-1 me-2'>
-                        <span className="icon searchIcon"
-                          onClick={handleShowModal1}>
-                          <i class="fa fa-search"></i>
-                        </span>
-                      </div>
+                                    <span className="icon searchIcon"
+                                        onClick={handleShowModal1}>
+                                        <i class="fa fa-search"></i>
+                                    </span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -775,11 +774,11 @@ const ExpensesTracking = () => {
                                     onChange={(e) => setCustomer(e.target.value)}
                                 />
                                 <div className='position-absolute mt-1 me-2'>
-                        <span className="icon searchIcon"
-                          onClick={handleShowModal2}>
-                          <i class="fa fa-search"></i>
-                        </span>
-                      </div>
+                                    <span className="icon searchIcon"
+                                        onClick={handleShowModal2}>
+                                        <i class="fa fa-search"></i>
+                                    </span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -798,11 +797,11 @@ const ExpensesTracking = () => {
                                     onChange={(e) => setVendor(e.target.value)}
                                 />
                                 <div className='position-absolute mt-1 me-2'>
-                        <span className="icon searchIcon"
-                          onClick={handleShowModal3}>
-                          <i class="fa fa-search"></i>
-                        </span>
-                      </div>
+                                    <span className="icon searchIcon"
+                                        onClick={handleShowModal3}>
+                                        <i class="fa fa-search"></i>
+                                    </span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -940,10 +939,10 @@ const ExpensesTracking = () => {
                 </div>
 
                 <div>
-                            <SalesCustomerPopup open={open1} handleClose={handleClose} handleVendor={handleCustomer} />
-                            <PurchaseVendorPopup open={open2} handleClose={handleClose} handleVendorCode={handleVendorCode} />
-                            <SitePopUp open={open3} handleClose={handleClose} handleSiteCode={handleSiteCode} />
-                          </div>
+                    <SalesCustomerPopup open={open1} handleClose={handleClose} handleVendor={handleCustomer} />
+                    <PurchaseVendorPopup open={open2} handleClose={handleClose} handleVendorCode={handleVendorCode} />
+                    <SitePopUp open={open3} handleClose={handleClose} handleSiteCode={handleSiteCode} />
+                </div>
 
             </div>
         </div>
