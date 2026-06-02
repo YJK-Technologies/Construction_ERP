@@ -14406,7 +14406,7 @@ const InventoryIssuedSearchData = async (req, res) => {
       .input("DateIssued", sql.NVarChar, DateIssued)
       .input("Issued_Type", sql.NVarChar, Issued_Type)
       .input("Location_Code", sql.NVarChar, Location_Code)
-      .query(`EXEC sp_opening_item_details @mode,@company_code,@Location_Code,@IssuanceID,@DateIssued,@Issued_Type,'','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
+      .query(`EXEC sp_InventoryIssuance_hdr @mode,@company_code,@Location_Code,@IssuanceID,@DateIssued,@Issued_Type,'','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
     if (result.recordset.length > 0) {
       res.status(200).json(result.recordset);
     } else {
@@ -37248,7 +37248,7 @@ const inventoryIssueCalculation = async (req, res) => {
 
 //Code added by Dinesh Gokul on 01-06-2026
 const getExpensesReport = async (req, res) => {
-  const { mode, company_code, Location_Code, StartDate, EndDate, expense_no, expense_date, 
+  const { mode, company_code, Location_Code, SiteID, customer, vendor,StartDate, EndDate, expense_no, expense_date, 
     expense_type, reference_type, reference_code, reference_name, payment_mode, amountFrom, amountTo} = req.body;
   let pool;
   try {
@@ -37258,10 +37258,13 @@ const getExpensesReport = async (req, res) => {
       .input("mode", sql.NVarChar, mode)
       .input("company_code", sql.NVarChar, company_code)
       .input("Location_Code", sql.NVarChar, Location_Code)
+      .input("SiteID", sql.NVarChar, SiteID)
+      .input("customer", sql.NVarChar, customer)
+      .input("vendor", sql.NVarChar, vendor)
       .input("StartDate", sql.NVarChar, StartDate)
       .input("EndDate", sql.NVarChar, EndDate)
       .input("expense_no", sql.NVarChar, expense_no)
-      .input("expense_date", sql.Date, expense_date)
+      .input("expense_date", sql.Date, expense_date && expense_date.trim() !== ""? new Date(expense_date): null)  
       .input("expense_type", sql.NVarChar, expense_type)
       .input("reference_type", sql.NVarChar, reference_type)
       .input("reference_code", sql.NVarChar, reference_code)
@@ -37269,8 +37272,30 @@ const getExpensesReport = async (req, res) => {
       .input("payment_mode", sql.NVarChar, payment_mode)
       .input("amountFrom", sql.Int, amountFrom)
       .input("amountTo", sql.Int, amountTo)
-      .query(`EXEC sp_Expenses_Report @mode,@company_code, @Location_Code, @StartDate,@EndDate,@expense_no,
+      .query(`EXEC sp_Expenses_Report @mode,@company_code, @Location_Code, @SiteID, @customer, @vendor,@StartDate,@EndDate,@expense_no,
         @expense_date,@expense_type,@reference_type, @reference_code, @reference_name, @payment_mode, @amountFrom, @amountTo`);
+    if (result.recordset.length > 0) {
+      res.status(200).json(result.recordset);
+    } else {
+      res.status(404).json('No data found');
+    }
+  } catch (err) {
+    console.error("Error", err);
+    res.status(500).json({ message: err.message || 'Internal Server Error' });
+  }
+};
+
+const getExpensesReportPDF = async (req, res) => {
+  const { company_code, expense_no} = req.body;
+  let pool;
+  try {
+    const pool = await connection.connectToDatabase();
+    const result = await pool
+      .request()
+      .input("mode", sql.NVarChar, "ETR")
+      .input("company_code", sql.NVarChar, company_code)
+      .input("transaction_no", sql.NVarChar, expense_no)
+      .query(`EXEC sp_print @mode,@transaction_no,@company_code,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
     if (result.recordset.length > 0) {
       res.status(200).json(result.recordset);
     } else {
@@ -38502,7 +38527,8 @@ module.exports = {
   getOB_data,
   get_GOB,
   inventoryIssueCalculation,
-  getExpensesReport
+  getExpensesReport,
+  getExpensesReportPDF
 
 
 };
