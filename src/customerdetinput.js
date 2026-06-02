@@ -90,7 +90,7 @@ function CustomerDetInput({ }) {
   const Contact = useRef(null);
   const openingbalance = useRef(null);
   const BalanceType = useRef(null);
-  
+
   const [hasValueChanged, setHasValueChanged] = useState(false);
   const created_by = sessionStorage.getItem('selectedUserCode')
 
@@ -359,49 +359,68 @@ function CustomerDetInput({ }) {
     }))
     : [];
 
-  const filteredOptionTransaction = TRcodedrop.map((option) => ({
-    value: option.keyfield,
-    label: option.keyfield,
-  }));
+  const filteredOptionTransaction = Array.isArray(TRcodedrop)
+    ? TRcodedrop.map((option) => ({
+      value: option.keyfield,
+      label: option.keyfield,
+    }))
+    : [];
 
-  const filteredOptionSales = SMcodedrop.map((option) => ({
-    value: option.keyfield,
-    label: option.keyfield,
-  }));
+  const filteredOptionSales = Array.isArray(SMcodedrop)
+    ? SMcodedrop.map((option) => ({
+      value: option.keyfield,
+      label: option.keyfield,
+    }))
+    : [];
 
-  const filteredOptionBroker = BRcodedrop.map((option) => ({
-    value: option.keyfield,
-    label: option.keyfield,
-  }));
+  const filteredOptionBroker = Array.isArray(BRcodedrop)
+    ? BRcodedrop.map((option) => ({
+      value: option.keyfield,
+      label: option.keyfield,
+    }))
+    : [];
 
-  const filteredOptionCity = drop.map((option) => ({
-    value: option.attributedetails_name,
-    label: option.attributedetails_name,
-  }));
+  const filteredOptionCity = Array.isArray(drop)
+    ? drop.map((option) => ({
+      value: option.attributedetails_name,
+      label: option.attributedetails_name,
+    }))
+    : [];
 
-  const filteredOptionState = statedrop.map((option) => ({
-    value: option.attributedetails_name,
-    label: option.attributedetails_name,
-  }));
+  const filteredOptionState = Array.isArray(statedrop)
+    ? statedrop.map((option) => ({
+      value: option.attributedetails_name,
+      label: option.attributedetails_name,
+    }))
+    : [];
 
-  const filteredOptionCountry = condrop.map((option) => ({
-    value: option.attributedetails_name,
-    label: option.attributedetails_name,
-  }));
-  const filteredOptionOffice = officedrop.map((option) => ({
-    value: option.attributedetails_name,
-    label: option.attributedetails_name,
-  }));
+  const filteredOptionCountry = Array.isArray(condrop)
+    ? condrop.map((option) => ({
+      value: option.attributedetails_name,
+      label: option.attributedetails_name,
+    }))
+    : [];
 
-  const filteredOptioncustomer = customerdrop.map((option) => ({
-    value: option.attributedetails_name,
-    label: option.attributedetails_name,
-  }));
+  const filteredOptionOffice = Array.isArray(officedrop)
+    ? officedrop.map((option) => ({
+      value: option.attributedetails_name,
+      label: option.attributedetails_name,
+    }))
+    : [];
 
-    const filteredOptionBT = balance_typeDrop.map((option) => ({
-    value: option.attributedetails_code,
-    label: `${option.attributedetails_code} - ${option.attributedetails_name}`,
-  }));
+  const filteredOptioncustomer = Array.isArray(customerdrop)
+    ? customerdrop.map((option) => ({
+      value: option.attributedetails_name,
+      label: option.attributedetails_name,
+    }))
+    : [];
+
+  const filteredOptionBT = Array.isArray(balance_typeDrop)
+    ? balance_typeDrop.map((option) => ({
+      value: option.attributedetails_code,
+      label: `${option.attributedetails_code} - ${option.attributedetails_name}`,
+    }))
+    : [];
 
   const handleChangeCode = (selectedOption) => {
     setSelectedCode(selectedOption);
@@ -518,24 +537,19 @@ function CustomerDetInput({ }) {
           created_by: sessionStorage.getItem('selectedUserCode')
         }),
       });
-       if (response.ok) {
-                    toast.success("Data inserted Successfully", {
-                      onClose: () => clearInputFields()
-                    });
+      if (response.ok) {
+        toast.success("Data inserted Successfully", {
+          onClose: () => clearInputFields()
+        });
       } else {
         const errorResponse = await response.json();
         console.error(errorResponse.message);
-        toast.warning(errorResponse.message, {
-
-        });
+        toast.warning(errorResponse.message);
       }
     } catch (error) {
       console.error("Error inserting data:", error);
-      toast.error('Error inserting data: ' + error.message, {
-
-      });
-    }
-    finally {
+      toast.error('Error inserting data: ' + error.message);
+    } finally {
       setLoading(false);
     }
   };
@@ -597,33 +611,22 @@ function CustomerDetInput({ }) {
           modified_by: sessionStorage.getItem('selectedUserCode')
         }),
       });
-       if (response.ok) {
-                    toast.success("Data updated successfully", {
-                      onClose: () => clearInputFields()
-                    });
-      } else if (response.status === 400) {
-        const errorResponse = await response.json();
-        console.error(errorResponse.message);
-        toast.warning(errorResponse.message, {
-
+      if (response.ok) {
+        toast.success("Data updated successfully", {
+          onClose: () => clearInputFields()
         });
       } else {
-        console.error("Failed to insert data");
-        toast.error('Failed to insert data', {
-
-        });
+        const errorResponse = await response.json();
+        console.error(errorResponse.message);
+        toast.warning(errorResponse.message);
       }
     } catch (error) {
       console.error("Error inserting data:", error);
-      toast.error('Error inserting data: ' + error.message, {
-
-      });
-    }
-    finally {
+      toast.error('Error inserting data: ' + error.message);
+    } finally {
       setLoading(false);
     }
   };
-
 
   function validateEmail(email) {
     const emailRegex = /^[A-Za-z\._\-0-9]*[@][A-Za-z]*[\.][a-z]{2,4}$/;
@@ -632,27 +635,22 @@ function CustomerDetInput({ }) {
 
   const handleKeyDown = async (e, nextFieldRef, value, hasValueChanged, setHasValueChanged) => {
     if (e.key === 'Enter') {
-      // Check if the value has changed and handle the search logic
       if (hasValueChanged) {
-        await handleKeyDownStatus(e); // Trigger the search function
-        setHasValueChanged(false); // Reset the flag after the search
+        await handleKeyDownStatus(e);
+        setHasValueChanged(false);
       }
 
-      // Move to the next field if the current field has a valid value
       if (value) {
         nextFieldRef.current.focus();
       } else {
-        e.preventDefault(); // Prevent moving to the next field if the value is empty
+        e.preventDefault();
       }
     }
   };
 
-
-
   const handleKeyDownStatus = async (e) => {
-    if (e.key === 'Enter' && hasValueChanged) { // Only trigger search if the value has changed
-      // Trigger the search function
-      setHasValueChanged(false); // Reset the flag after search
+    if (e.key === 'Enter' && hasValueChanged) {
+      setHasValueChanged(false);
     }
   };
 
@@ -660,10 +658,10 @@ function CustomerDetInput({ }) {
     setOpen2(true);
     console.log("Opening popup...");
   };
+
   const handleClose = () => {
     setOpen2(false);
   };
-
 
   return (
     <div class="container-fluid Topnav-screen ">
@@ -709,6 +707,7 @@ function CustomerDetInput({ }) {
                         className="exp-input-field position-relative"
                         placeholder=""
                         maxLength={18}
+                        isClearable
                         ref={code}
                         onKeyDown={(e) => handleKeyDown(e, Address1, code)}
                       /><button onClick={handleClickOpen} class="cushdrcode position-absolute me-5 pb-2" required title="Add Header"><i class="fa-solid fa-plus"></i></button>
@@ -829,6 +828,7 @@ function CustomerDetInput({ }) {
                     <div title="Select the State">
                       <Select
                         id="state"
+                        isClearable
                         value={selectedState}
                         onChange={handleChangeState}
                         options={filteredOptionState}
@@ -852,6 +852,7 @@ function CustomerDetInput({ }) {
                     <div title="Select the Country">
                       <Select
                         id="country"
+                        isClearable
                         value={selectedCountry}
                         onChange={handleChangeCountry}
                         options={filteredOptionCountry}
@@ -900,7 +901,7 @@ function CustomerDetInput({ }) {
                       ref={OfficeNo}
                       onKeyDown={(e) => handleKeyDown(e, Residential, OfficeNo)}
                     />
-                      {error && !customer_office_no && <div className="text-danger">Office no should not be blank</div>}
+                    {error && !customer_office_no && <div className="text-danger">Office no should not be blank</div>}
                   </div>
                 </div>
                 <div className="col-md-3 form-group mb-2">
@@ -1042,7 +1043,7 @@ function CustomerDetInput({ }) {
                       </div>
                     )}
                   </div>
-                </div>                
+                </div>
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
                     <label for="custrans" class="exp-form-labels">
@@ -1052,6 +1053,7 @@ function CustomerDetInput({ }) {
                       <Select
                         id="custrans"
                         value={selectedTransport}
+                        isClearable
                         onChange={handleChangeTransport}
                         options={filteredOptionTransaction}
                         className="exp-input-field"
@@ -1103,6 +1105,7 @@ function CustomerDetInput({ }) {
                       <Select
                         id="cussales"
                         value={selectedSales}
+                        isClearable
                         onChange={handleChangeSales}
                         options={filteredOptionSales}
                         className="exp-input-field"
@@ -1123,6 +1126,7 @@ function CustomerDetInput({ }) {
                       <Select
                         id="cusbro"
                         value={selectedBroker}
+                        isClearable
                         onChange={handleChangeBroker}
                         options={filteredOptionBroker}
                         className="exp-input-field"
@@ -1160,6 +1164,7 @@ function CustomerDetInput({ }) {
                       <Select
                         id="officeType"
                         value={selectedOffice}
+                        isClearable
                         onChange={handleChangeOffice}
                         options={filteredOptionOffice}
                         className="exp-input-field"
@@ -1180,6 +1185,7 @@ function CustomerDetInput({ }) {
                         id="officeType"
                         value={selectedCustomer}
                         onChange={handleChangeCustomer}
+                        isClearable
                         options={filteredOptioncustomer}
                         className="exp-input-field"
                         placeholder=""
@@ -1215,47 +1221,6 @@ function CustomerDetInput({ }) {
 
                   </div>
                 </div>
-                {/* <div className="col-md-3 form-group  mb-2">
-              {mode === "create" ? (
-                <div class="exp-form-floating">
-                  <div class="d-flex justify-content-start">
-                    <div>
-                      <label for="state" class="exp-form-labels">
-                        Created By
-                      </label>
-                    </div>
-                  </div>
-                  <input
-                    id="emailid"
-                    class="exp-input-field form-control"
-                    type="text"
-                    placeholder=""
-                    required
-                    title="Please enter the email ID"
-                    value={created_by}
-                  />
-                </div>
-                ) : (
-                <div class="exp-form-floating">
-                  <div class="d-flex justify-content-start">
-                    <div>
-                      <label for="state" class="exp-form-labels">
-                        Modified By
-                      </label>
-                    </div>
-                  </div>
-                  <input
-                    id="emailid"
-                    class="exp-input-field form-control"
-                    type="text"
-                    placeholder=""
-                    required
-                    title="Please enter the email ID"
-                    value={modified_by}
-                  />
-                </div>
-                )}
-              </div> */}
                 <div class="col-md-3 form-group d-flex justify-content-start p-2">
                   {mode === "create" ? (
                     <button onClick={handleInsert} className="mt-3" title="Save">

@@ -48,7 +48,7 @@ const Product = () => {
   const [selectedStatus, setSelectedStatus] = useState('');
   const [selectedTax, setselectedTax] = useState('');
   const [status, setStatus] = useState("");
-  const [taxType, setTaxType] = useState(" ");
+  const [taxType, setTaxType] = useState("");
   const [productCode, setProductCode] = useState('');
   const [productName, setProductName] = useState('');
   const [description, setDescription] = useState('');
@@ -61,7 +61,7 @@ const Product = () => {
   const [Othersaltaxdrop, setOthersaltaxdrop] = useState('');
   const [selectedImage, setSelectedImage] = useState('default-placeholder.png');
   const [updateButtonVisible, setUpdateButtonVisible] = useState(false);
-    const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [additionalData, setAdditionalData] = useState({
     modified_by: "",
     created_by: "",
@@ -108,7 +108,7 @@ const Product = () => {
 
   useEffect(() => {
     const company_code = sessionStorage.getItem('selectedCompanyCode');
-    
+
     fetch(`${config.apiBaseUrl}/status`, {
       method: 'POST',
       headers: {
@@ -136,45 +136,45 @@ const Product = () => {
       .catch((error) => console.error("Error fetching warehouse:", error));
   }, []);
 
+  const filteredOptionStatus = Array.isArray(statusdrop)
+    ? statusdrop.map((option) => ({
+      value: option.attributedetails_name,
+      label: option.attributedetails_name,
+    }))
+    : [];
 
-  const filteredOptionStatus = statusdrop.map((option) => ({
-    value: option.attributedetails_name,
-    label: option.attributedetails_name,
-  }));
-  const filteredOptionTax = saltaxdrop.map((option) => ({
-    value: option.tax_type,
-    label: option.tax_type,
-  }));
+  const filteredOptionTax = Array.isArray(saltaxdrop)
+    ? saltaxdrop.map((option) => ({
+      value: option.tax_type,
+      label: option.tax_type,
+    }))
+    : [];
 
   const filteredOptionOthertaxitemsales = Array.isArray(Othersaltaxdrop)
     ? Othersaltaxdrop.map((option) => ({
       value: option.Other_Sales_tax_type,
-      label: option.Other_Sales_tax_type,  // Concatenate ApprovedBy and EmployeeId with ' - '
+      label: option.Other_Sales_tax_type,
     }))
     : [];
 
   const handleChangeStatus = (selectedStatus) => {
     setSelectedStatus(selectedStatus);
     setStatus(selectedStatus ? selectedStatus.value : '');
-    setError(false);
   };
+
   const handleChangeTax = (selectedsaltax) => {
     setselectedTax(selectedsaltax);
     setTaxType(selectedsaltax ? selectedsaltax.value : '');
-    setError(false);
   };
 
   const handleChangesaltax = (selectedsaltax) => {
     setselectedsaltax(selectedsaltax);
     setItem_sales_Othertax_type(selectedsaltax ? selectedsaltax.value : '');
-    setError(false);
   };
-
 
   const handleToggleTable = (table) => {
     setActiveTable(table);
   };
-
 
   const handleDelete = (params) => {
     const ItemSno = params.data.ItemSno;
@@ -271,24 +271,24 @@ const Product = () => {
         console.log(updatedRow);
       } else if (response.status === 404) {
         toast.warning("Data Not Found")
-        
-          // Remove text from the field
-          const updatedRowData = rowData.map(row => {
-            if (row.itemCode === params.data.itemCode) {
-              return {
-                ...row,
-                itemCode: '', // Clear the itemCode field
-                itemName: '',
-                unitWeight: 0,
-                purchaseAmt: 0,
-                taxType: '',
-                taxDetails: '',
-                taxPer: '',
-              };
-            }
-            return row;
-          });
-          setRowData(updatedRowData);
+
+        // Remove text from the field
+        const updatedRowData = rowData.map(row => {
+          if (row.itemCode === params.data.itemCode) {
+            return {
+              ...row,
+              itemCode: '', // Clear the itemCode field
+              itemName: '',
+              unitWeight: 0,
+              purchaseAmt: 0,
+              taxType: '',
+              taxDetails: '',
+              taxPer: '',
+            };
+          }
+          return row;
+        });
+        setRowData(updatedRowData);
       } else {
         console.log("Bad request");
       }
@@ -495,7 +495,7 @@ const Product = () => {
     const filteredRowData = rowData.filter((row) => {
       return row.itemCode && row.itemCode.trim() !== '' && row.quantity > 0;
     });
-    
+
     if (filteredRowData.length === 0) {
       toast.warning("Please check Item Code and Quantity");
       return;
@@ -532,33 +532,33 @@ const Product = () => {
 
         await productDetails(Datastatus);  // Ensure Datastatus is correctly passed here
 
-                toast.success("Data Inserted Successfully");
+        toast.success("Data Inserted Successfully");
 
         console.log("Product Data inserted successfully");
       } else {
-              const errorResponse = await response.json();
-              toast.warning(errorResponse.message || "Failed to insert Purchase data");
-              console.error(errorResponse.details || errorResponse.message);
-            }
-          } catch (error) {
-            console.error("Error inserting data:", error);
-            toast.error('Error inserting data: ' + error.message);
-          }
-          finally {
-            setLoading(false);
-          }
-        };
-      
+        const errorResponse = await response.json();
+        toast.warning(errorResponse.message || "Failed to insert Purchase data");
+        console.error(errorResponse.details || errorResponse.message);
+      }
+    } catch (error) {
+      console.error("Error inserting data:", error);
+      toast.error('Error inserting data: ' + error.message);
+    }
+    finally {
+      setLoading(false);
+    }
+  };
 
- 
+
+
 
   const productDetails = async (Datastatus) => {
- 
+
     try {
       const validRows = rowData.filter(row =>
         row.itemCode && row.itemName && row.quantity > 0
       );
-  
+
       for (const row of validRows) {
         const Details = {
           company_code: sessionStorage.getItem('selectedCompanyCode'),
@@ -572,7 +572,7 @@ const Product = () => {
           status: status,
           Item_SNo: row.ItemSno
         };
-  
+
         const response = await fetch(`${config.apiBaseUrl}/addProductDetail`, {
           method: "POST",
           headers: {
@@ -580,20 +580,20 @@ const Product = () => {
           },
           body: JSON.stringify(Details),
         });
-  
-          if (response.ok) {
-               console.log("Product Detail Data inserted successfully");
-             } else {
-               const errorResponse = await response.json();
-               toast.warning(errorResponse.message || "Failed to insert data");
-               console.error(errorResponse.details || errorResponse.message);
-             }
-           }
-         } catch (error) {
-           console.error("Error inserting data:", error);
-           toast.error('Error inserting data: ' + error.message);
-         }
-       };
+
+        if (response.ok) {
+          console.log("Product Detail Data inserted successfully");
+        } else {
+          const errorResponse = await response.json();
+          toast.warning(errorResponse.message || "Failed to insert data");
+          console.error(errorResponse.details || errorResponse.message);
+        }
+      }
+    } catch (error) {
+      console.error("Error inserting data:", error);
+      toast.error('Error inserting data: ' + error.message);
+    }
+  };
 
 
   const handleDeleteButtonClick = async () => {
@@ -692,7 +692,7 @@ const Product = () => {
   const handleProductCode = async (code) => {
     try {
       const companyCode = sessionStorage.getItem('selectedCompanyCode');
-  
+
       const response = await fetch(`${config.apiBaseUrl}/ProductData`, {
         method: "POST",
         headers: {
@@ -700,37 +700,37 @@ const Product = () => {
         },
         body: JSON.stringify({ transaction_no: code, company_code: companyCode }),
       });
-  
+
       if (!response.ok) {
         if (response.status === 404) {
           toast.warning("Data Not Found");
         } else {
           console.error("Error: Bad request or server issue");
         }
-        resetFormData(); 
+        resetFormData();
         return;
       }
-  
+
       const searchData = await response.json();
       console.log("Fetched Data:", searchData);
-  
+
       if (searchData?.Header?.length > 0) {
         const item = searchData.Header[0];
-  
+
         setProductCode(item?.Product_Code || "");
         setProductName(item?.Product_name || "");
         setDescription(item?.description || "");
         setHSNcode(item?.HSN_code || "");
         setUnitPrice(item?.Product_price || "");
-  
+
         if (item?.Product_img?.data) {
           const imageBlob = new Blob([new Uint8Array(item.Product_img.data)], { type: "image/jpeg" });
           const imageUrl = URL.createObjectURL(imageBlob);
-          
+
           if (selectedImage) {
             URL.revokeObjectURL(selectedImage);
           }
-  
+
           setuser_image(imageBlob);
           setSelectedImage(imageUrl);
         } else {
@@ -738,15 +738,15 @@ const Product = () => {
           setuser_image(null);
           setSelectedImage(null);
         }
-  
+
         const selectedStatus = filteredOptionStatus.find((option) => option.value === item.status) || null;
         setSelectedStatus(selectedStatus);
         setStatus(selectedStatus?.value || "");
-  
+
         const selectedSaltax = filteredOptionOthertaxitemsales.find((option) => option.value === item.Other_sales_taxtype) || null;
         setselectedsaltax(selectedSaltax);
         setItem_sales_Othertax_type(selectedSaltax?.value || "");
-  
+
         const selectedTax = filteredOptionTax.find((option) => option.value === item.tax_type) || null;
         setselectedTax(selectedTax);
         setTaxType(selectedTax?.value || "");
@@ -754,7 +754,7 @@ const Product = () => {
         console.log("Header Data is empty or not found");
         resetFormData();
       }
-  
+
       if (searchData?.Detail?.length > 0) {
         const updatedRowData = searchData.Detail.map((item, index) => ({
           ItemSno: index + 1,
@@ -762,25 +762,25 @@ const Product = () => {
           itemName: item?.item_name || "",
           quantity: item?.quantity || 0,
         }));
-  
+
         setRowData(updatedRowData);
       } else {
         console.log("Detail Data is empty or not found");
         setRowData([{ ItemSno: 1, itemCode: "", itemName: "" }]);
       }
-  
+
       // Show relevant buttons
       setUpdateButtonVisible(true);
       setSaveButtonVisible(false);
       setShowExcelButton(true);
-      
+
       console.log("Data fetched successfully");
     } catch (error) {
       console.error("Error fetching product data:", error);
       toast.error("An error occurred while fetching data.");
     }
   };
-  
+
   // Function to Reset Form Data
   const resetFormData = () => {
     setProductCode("");
@@ -799,9 +799,9 @@ const Product = () => {
     setTaxType("");
     setRowData([{ ItemSno: 1, itemCode: "", itemName: "" }]);
   };
-  
 
- 
+
+
 
   const PrintHeaderData = async () => {
     try {
@@ -1144,15 +1144,14 @@ const Product = () => {
     XLSX.writeFile(workbook, "Product.xlsx");
   };
 
-  
+
   const handleInputChange = (e) => {
     const inputValue = e.target.value;
 
-    // Regular expression: up to 12 digits before the decimal, optional decimal, up to 2 digits after the decimal
     const regex = /^\d{0,12}(\.\d{0,2})?$/;
 
     if (regex.test(inputValue) || inputValue === "") {
-      setHSNcode(inputValue); // Update state if valid
+      setHSNcode(inputValue);
     }
   };
 
@@ -1192,7 +1191,7 @@ const Product = () => {
   return (
     <div className='container-fluid Topnav-screen'>
       <ToastContainer position="top-right" className="toast-design" theme="colored" />
-                    {loading && <LoadingScreen />}
+      {loading && <LoadingScreen />}
       <div>
         <div className="shadow-lg p-1 bg-body-tertiary rounded  mb-2 mt-2">
           <div class="d-flex justify-content-between">
@@ -1232,7 +1231,7 @@ const Product = () => {
                   </icon>
                 </div>
                 <div>
-                  <icon className="icon px-4" onClick={handleReload} title="Reload" style={{cursor:"pointer"}}>
+                  <icon className="icon px-4" onClick={handleReload} title="Reload" style={{ cursor: "pointer" }}>
                     <i className="fa-solid fa-arrow-rotate-right"></i>
                   </icon>
                 </div>
@@ -1251,14 +1250,14 @@ const Product = () => {
                   </button>
                   <ul class="dropdown-menu menu" >
 
-                    <li class="iconbutton  d-flex justify-content-center text-success " style={{padding:"8px"}}>
+                    <li class="iconbutton  d-flex justify-content-center text-success " style={{ padding: "8px" }}>
                       {saveButtonVisible && ['add', 'all permission'].some(permission => returnPermission.includes(permission)) && (
                         <icon class="icon" onClick={handleSaveButtonClick}>
                           <i class="fa-regular fa-floppy-disk"></i>
                         </icon>
                       )}
                     </li>
-                    
+
                     {/* <li class="iconbutton d-flex justify-content-center text-success">
                 {['update', 'all permission'].some(permission => returnPermission.includes(permission)) && (
               <icon title='update' onClick={handleUpdateButtonClick} >
@@ -1266,8 +1265,8 @@ const Product = () => {
                   </icon>
               )}
                </li> */}
-              
-                    <li class="iconbutton  d-flex justify-content-center text-danger ms-1" style={{padding:"8px"}}>
+
+                    <li class="iconbutton  d-flex justify-content-center text-danger ms-1" style={{ padding: "8px" }}>
                       {['delete', 'all permission'].some(permission => returnPermission.includes(permission)) && (
                         <icon class="icon" onClick={handleDeleteButtonClick}>
                           <i class="fa-solid fa-trash"></i>
@@ -1281,10 +1280,10 @@ const Product = () => {
                         </icon>
                       )}
                     </li> */}
-                    <li class="iconbutton  d-flex justify-content-center  mb-0 " style={{padding:"8px"}}>
+                    <li class="iconbutton  d-flex justify-content-center  mb-0 " style={{ padding: "8px" }}>
                       <icon class=" icon" onClick={handleExcelDownload} style={{ display: showExcelButton ? 'block' : 'none' }}><i class="fa-solid fa-file-excel"></i></icon>
                     </li>
-                    <li class="iconbutton  d-flex justify-content-center mt-0 pt-0" style={{padding:"8px"}}>
+                    <li class="iconbutton  d-flex justify-content-center mt-0 pt-0" style={{ padding: "8px" }}>
                       <icon class="icon" onClick={handleReload} ><i className="fa-solid fa-arrow-rotate-right"></i></icon>
                     </li>
                   </ul>
@@ -1300,7 +1299,7 @@ const Product = () => {
         <div className="shadow-lg p-1 bg-body-tertiary rounded  mb-2 pb-4 mt-2">
           <div className="row ms-4 mt-3 me-4">
             <div className="col-md-3 form-group mb-2">
-              <label htmlFor="party_code" className={`${error && !productCode ? 'red' : ''}`}>Product Code <span className="text-danger">*</span></label>
+              <label htmlFor="party_code" className={`${error && !productCode ? 'red' : ''}`}>Product Code<span className="text-danger">*</span></label>
               <div className="exp-form-floating">
                 <div class="d-flex justify-content-end">
                   <input
@@ -1368,67 +1367,55 @@ const Product = () => {
                 <input
                   id="Productprice"
                   className="exp-input-field form-control"
-                  type="text" // Use 'text' to enable better control
+                  type="text"
                   placeholder=""
                   required
                   title="Please enter the sales price"
                   value={unitPrice}
                   onChange={(e) => setUnitPrice(e.target.value)}
                   onInput={(e) => {
-                    // Allow only numbers and one decimal point
                     e.target.value = e.target.value
-                      .replace(/[^0-9.]/g, '') // Remove non-numeric characters except .
-                      .replace(/(\..*?)\..*/g, '$1') // Allow only one decimal point
-                      .slice(0, 12); // Restrict input length to 12
+                      .replace(/[^0-9.]/g, '')
+                      .replace(/(\..*?)\..*/g, '$1')
+                      .slice(0, 12);
                   }}
-                  maxLength={12} // Ensure no more than 12 characters
+                  maxLength={12}
                 />
               </div>
             </div>
             <div className="col-md-3 form-group mb-2">
               <div class="exp-form-floating">
-                <div class="d-flex justify-content-start">
-                  <div>
-                    <label for="state" className={`${error && !taxType ? 'red' : ''}`}> Local Tax Type<span className="text-danger">*</span> </label>
-                  </div>
-                  <div>
-                  </div>
-                </div>
+                <label for="state" className={`${error && !taxType ? 'red' : ''}`}> Local Tax Type<span className="text-danger">*</span> </label>
                 <div title="Select the Local Tax Type">
-                <Select
-                  id="taxType"
-                  value={selectedTax}
-                  onChange={handleChangeTax}
-                  options={filteredOptionTax}
-                  className="exp-input-field"
-                  placeholder=""
-                  maxLength={50}
+                  <Select
+                    id="taxType"
+                    isClearable
+                    value={selectedTax}
+                    onChange={handleChangeTax}
+                    options={filteredOptionTax}
+                    className="exp-input-field"
+                    placeholder=""
+                    maxLength={50}
 
-                />
-              </div>
+                  />
+                </div>
               </div>
             </div>
             <div className="col-md-3 form-group mb-2">
               <div class="exp-form-floating">
-                <div class="d-flex justify-content-start">
-                  <div>
-                    <label for="state" className={`${error && !taxType ? 'red' : ''}`}> Other Tax Type<span className="text-danger">*</span> </label>
-                  </div>
-                  <div>
-                  </div>
-                </div>
+                <label for="state" className={`${error && !Item_sales_Othertax_type ? 'red' : ''}`}> Other Tax Type<span className="text-danger">*</span> </label>
                 <div title="Select the Other Tax Type">
-                <Select
-                  id="OthertaxType"
-                  value={selectedsaltax}
-                  onChange={handleChangesaltax}
-                  options={filteredOptionOthertaxitemsales}
-                  className="exp-input-field"
-                  placeholder=""
-                  maxLength={50}
-
-                />
-              </div>
+                  <Select
+                    id="OthertaxType"
+                    isClearable
+                    value={selectedsaltax}
+                    onChange={handleChangesaltax}
+                    options={filteredOptionOthertaxitemsales}
+                    className="exp-input-field"
+                    placeholder=""
+                    maxLength={50}
+                  />
+                </div>
               </div>
             </div>
             <div className="col-md-3 form-group mb-2" >
@@ -1451,19 +1438,20 @@ const Product = () => {
               <div class="exp-form-floating">
                 <div title="Select the Status">
 
-                <Select
-                  id="status"
-                  value={selectedStatus}
-                  onChange={handleChangeStatus}
-                  options={filteredOptionStatus}
-                  className="exp-input-field"
-                  placeholder=""
-                  required
-                  maxLength={10}
-                  data-tip="Please select a payment type"
-                />
+                  <Select
+                    id="status"
+                    isClearable
+                    value={selectedStatus}
+                    onChange={handleChangeStatus}
+                    options={filteredOptionStatus}
+                    className="exp-input-field"
+                    placeholder=""
+                    required
+                    maxLength={10}
+                    data-tip="Please select a payment type"
+                  />
+                </div>
               </div>
-            </div>
             </div>
             <div className="col-md-2 form-group ">
               <div className="exp-form-floating">
@@ -1500,7 +1488,7 @@ const Product = () => {
                               width: "120%",
                               objectFit: "fill"
                             }}
-				onClick={handleClick}
+                            onClick={handleClick}
                           />
                         </div>
                       </div>
@@ -1575,7 +1563,7 @@ const Product = () => {
         </div>
         <ProductItemPopup open={open} handleClose={handleClose} handleItem={handleItem} />
         <ProductPopup open={open1} handleClose={handleClose} ProductData={ProductData} />
-        <ProductImagePopup open={open2} handleClose={handleClose}  productCode={productCode} ProductImage={user_images}/>
+        <ProductImagePopup open={open2} handleClose={handleClose} productCode={productCode} ProductImage={user_images} />
       </div>
       <div className="shadow-lg p-2 bg-body-tertiary rounded mt-2 mb-2">
         <div className="row ms-2">

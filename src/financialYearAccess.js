@@ -62,10 +62,12 @@ function Grid() {
     setLockType(selectedLockType ? selectedLockType.value : '');
   };
 
-  const filteredOptionLockType = Lockdrop.map((option) => ({
-    value: option.attributedetails_name,
-    label: option.attributedetails_name,
-  }));
+  const filteredOptionLockType = Array.isArray(Lockdrop)
+    ? Lockdrop.map((option) => ({
+      value: option.attributedetails_name,
+      label: option.attributedetails_name,
+    }))
+    : [];
 
   useEffect(() => {
     const company_code = sessionStorage.getItem('selectedCompanyCode');
@@ -86,10 +88,12 @@ function Grid() {
     setTransactionType(selectedTransaction ? selectedTransaction.value : '');
   };
 
-  const filteredOptionTransaction = transactiondrop.map((option) => ({
-    value: option.attributedetails_name,
-    label: option.attributedetails_name,
-  }));
+  const filteredOptionTransaction = Array.isArray(transactiondrop)
+    ? transactiondrop.map((option) => ({
+      value: option.attributedetails_name,
+      label: option.attributedetails_name,
+    }))
+    : [];
 
   useEffect(() => {
     const company_code = sessionStorage.getItem('selectedCompanyCode');
@@ -456,7 +460,7 @@ function Grid() {
   const onCellValueChanged = (params) => {
     const updatedRowData = [...rowData];
     const rowIndex = updatedRowData.findIndex(
-      (row) => row.company_no === params.data.company_no 
+      (row) => row.company_no === params.data.company_no
     );
     if (rowIndex !== -1) {
       updatedRowData[rowIndex][params.colDef.field] = params.newValue;
@@ -722,6 +726,7 @@ function Grid() {
                 <Select
                   className="exp-input-field "
                   type="text"
+                  isClearable
                   value={selectedTransaction}
                   onChange={handleChangeTransaction}
                   options={filteredOptionTransaction}
@@ -740,6 +745,7 @@ function Grid() {
                 <Select
                   className="exp-input-field"
                   value={selectedLockType}
+                  isClearable
                   onChange={handleChangeLockType}
                   options={filteredOptionLockType}
                   onKeyDown={(e) => e.key === 'Enter' && handleSearch()}

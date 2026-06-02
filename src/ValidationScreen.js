@@ -62,10 +62,12 @@ function Role_input({ }) {
       .then((val) => setCompanyCodeDrop(val));
   }, []);
 
-  const filteredOptionCompany = companyCodeDrop.map((option) => ({
-    value: option.company_no,
-    label: `${option.company_no} - ${option.company_name}`,
-  }));
+  const filteredOptionCompany = Array.isArray(companyCodeDrop)
+    ? companyCodeDrop.map((option) => ({
+      value: option.company_no,
+      label: `${option.company_no} - ${option.company_name}`,
+    }))
+    : [];
 
   const handleChangeCompany = (selectedCompanyCode) => {
     setSelectedCompanyCode(selectedCompanyCode);
@@ -84,16 +86,17 @@ function Role_input({ }) {
       .then((val) => setValidationStatusDrop(val));
   }, []);
 
-  const filteredOptionValidationSatus = validationStatusDrop.map((option) => ({
-    value: option.attributedetails_name,
-    label: option.attributedetails_name,
-  }));
+  const filteredOptionValidationSatus = Array.isArray(validationStatusDrop)
+    ? validationStatusDrop.map((option) => ({
+      value: option.attributedetails_name,
+      label: option.attributedetails_name,
+    }))
+    : [];
 
   const handleValidationSatus = (selectValidationStatus) => {
     setSelectedValidationStatus(selectValidationStatus);
     setValidationStatus(selectValidationStatus ? selectValidationStatus.value : '');
   };
-
 
   const handleInsert = async () => {
     if (!companyCode || !validationStatus || !screens) {
@@ -199,60 +202,52 @@ function Role_input({ }) {
               <div class="row col-12">
                 <div className="col-md-3 col-12 form-group mb-2">
                   <div class="exp-form-floating">
-                    <div class="d-flex justify-content-start">
-                      <div>
-                        <label for="rid" class="exp-form-labels" className={`${error && !companyCode ? 'text-danger' : ''}`}>
-                          Company Code<span className="text-danger">*</span>
-                        </label>
-                      </div>
+                    <label for="rid" class="exp-form-labels" className={`${error && !companyCode ? 'text-danger' : ''}`}>
+                      Company Code<span className="text-danger">*</span>
+                    </label>
+                    <div title="Select the Company Code">
+                      <Select
+                        id="rid"
+                        class="exp-input-field form-control"
+                        type="text"
+                        placeholder=""
+                        required title="please enter the role ID"
+                        maxLength={18}
+                        readOnly={mode === "update"}
+                        value={selectedCompanyCode}
+                        onChange={handleChangeCompany}
+                        isClearable
+                        options={filteredOptionCompany}
+                      />
                     </div>
-                    <Select
-                      id="rid"
-                      class="exp-input-field form-control"
-                      type="text"
-                      placeholder=""
-                      required title="please enter the role ID"
-                      maxLength={18}
-                      readOnly={mode === "update"}
-                      value={selectedCompanyCode}
-                      onChange={handleChangeCompany}
-                      options={filteredOptionCompany}
-                    />
-                    {/* {error && !companyCode && <div className="text-danger">Company Code should not be blank</div>} */}
                   </div>
                 </div>
                 <div className="col-md-3 form-group">
                   <div class="exp-form-floating">
-                    <div class="d-flex justify-content-start">
-                      <div>
-                        <label for="rid" class="exp-form-labels" className={`${error && !validationStatus ? 'text-danger' : ''}`}>
-                          Validation Status<span className="text-danger">*</span>
-                        </label>
-                      </div>
+                    <label for="rid" class="exp-form-labels" className={`${error && !validationStatus ? 'text-danger' : ''}`}>
+                      Validation Status<span className="text-danger">*</span>
+                    </label>
+                    <div title="Select the Validation Status">
+                      <Select
+                        id="rname"
+                        class="exp-input-field form-control"
+                        type="text"
+                        placeholder=""
+                        required title="please enter the role name"
+                        maxLength={50}
+                        value={selectValidationStatus}
+                        onChange={handleValidationSatus}
+                        options={filteredOptionValidationSatus}
+                        isClearable
+                      />
                     </div>
-                    <Select
-                      id="rname"
-                      class="exp-input-field form-control"
-                      type="text"
-                      placeholder=""
-                      required title="please enter the role name"
-                      maxLength={50}
-                      value={selectValidationStatus}
-                      onChange={handleValidationSatus}
-                      options={filteredOptionValidationSatus}
-                    />
-                    {/* {error && !validationStatus && <div className="text-danger">Validation Status should not be blank</div>} */}
                   </div>
                 </div>
                 <div className="col-md-3 form-group">
                   <div class="exp-form-floating">
-                    <div class="d-flex justify-content-start">
-                      <div>
-                        <label for="rid" class="exp-form-labels" className={`${error && !screens ? 'text-danger' : ''}`}>
-                          Screens<span className="text-danger">*</span>
-                        </label>
-                      </div>
-                    </div>
+                    <label for="rid" class="exp-form-labels" className={`${error && !screens ? 'text-danger' : ''}`}>
+                      Screens<span className="text-danger">*</span>
+                    </label>
                     <input
                       id="desc"
                       class="exp-input-field form-control"
@@ -264,50 +259,8 @@ function Role_input({ }) {
                       autoComplete="off"
                       onChange={(e) => setScreens(e.target.value)}
                     />
-                    {/* {error && !screens && <div className="text-danger">Validation Status should not be blank</div>} */}
                   </div>
                 </div>
-                {/* <div className="col-md-3 form-group  mb-2">
-                  {mode === "create" ? (
-                    <div class="exp-form-floating">
-                      <div class="d-flex justify-content-start">
-                        <div>
-                          <label for="state" class="exp-form-labels">
-                            Created By
-                          </label>
-                        </div>
-                      </div>
-                      <input
-                        id="emailid"
-                        class="exp-input-field form-control"
-                        type="text"
-                        placeholder=""
-                        required
-                        title="Please enter the email ID"
-                        value={created_by}
-                      />
-                    </div>
-                  ) : (
-                    <div class="exp-form-floating">
-                      <div class="d-flex justify-content-start">
-                        <div>
-                          <label for="state" class="exp-form-labels">
-                            Modified By
-                          </label>
-                        </div>
-                      </div>
-                      <input
-                        id="emailid"
-                        class="exp-input-field form-control"
-                        type="text"
-                        placeholder=""
-                        required
-                        title="Please enter the email ID"
-                        value={modified_by}
-                      />
-                    </div>
-                  )}
-                </div> */}
                 <div class="col-md-3 form-group d-flex justify-content-start">
                   {mode === "create" ? (
                     <button onClick={handleInsert} className="mt-4" title="Save">

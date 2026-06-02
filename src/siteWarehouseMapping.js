@@ -127,21 +127,27 @@ const SiteWarehouseMappingScreen = () => {
             label: `${option.site_id} - ${option.site_name}`,
         }))
         : [];
-        
-    const filteredOptionStatus = statusDrop.map((option) => ({
-        value: option.attributedetails_name,
-        label: option.attributedetails_name,
-    }));
 
-    const filteredOptionPrimary = isPrimaryDrop.map((option) => ({
-        value: option.attributedetails_name,
-        label: option.attributedetails_name,
-    }));
+    const filteredOptionStatus = Array.isArray(statusDrop)
+        ? statusDrop.map((option) => ({
+            value: option.attributedetails_name,
+            label: option.attributedetails_name,
+        }))
+        : [];
 
-    const filteredOptionWarehouseCode = warehouseCodeDrop.map((option) => ({
-        value: option.warehouse_code,
-        label: `${option.warehouse_code} - ${option.warehouse_name}`,
-    }));
+    const filteredOptionPrimary = Array.isArray(isPrimaryDrop)
+        ? isPrimaryDrop.map((option) => ({
+            value: option.attributedetails_name,
+            label: option.attributedetails_name,
+        }))
+        : [];
+
+    const filteredOptionWarehouseCode = Array.isArray(warehouseCodeDrop)
+        ? warehouseCodeDrop.map((option) => ({
+            value: option.warehouse_code,
+            label: `${option.warehouse_code} - ${option.warehouse_name}`,
+        }))
+        : [];
 
     const handleChangeSiteId = (selectedSiteId) => {
         setSelectedSiteId(selectedSiteId);
@@ -230,20 +236,26 @@ const SiteWarehouseMappingScreen = () => {
         }))
         : [];
 
-    const filteredOptionStatusSc = statusDropSc.map((option) => ({
-        value: option.attributedetails_name,
-        label: option.attributedetails_name,
-    }));
+    const filteredOptionStatusSc = Array.isArray(statusDropSc)
+        ? statusDropSc.map((option) => ({
+            value: option.attributedetails_name,
+            label: option.attributedetails_name,
+        }))
+        : [];
 
-    const filteredOptionPrimarySc = isPrimaryDropSc.map((option) => ({
-        value: option.attributedetails_name,
-        label: option.attributedetails_name,
-    }));
+    const filteredOptionPrimarySc = Array.isArray(isPrimaryDropSc)
+        ? isPrimaryDropSc.map((option) => ({
+            value: option.attributedetails_name,
+            label: option.attributedetails_name,
+        }))
+        : [];
 
-    const filteredOptionWarehouseCodeSc = warehouseCodeDropSc.map((option) => ({
-        value: option.warehouse_code,
-        label: `${option.warehouse_code} - ${option.warehouse_name}`,
-    }));
+    const filteredOptionWarehouseCodeSc = Array.isArray(warehouseCodeDropSc)
+        ? warehouseCodeDropSc.map((option) => ({
+            value: option.warehouse_code,
+            label: `${option.warehouse_code} - ${option.warehouse_name}`,
+        }))
+        : [];
 
     const handleChangeSiteIdSc = (selectedSiteIdSc) => {
         setSelectedSiteIdSc(selectedSiteIdSc);
@@ -682,6 +694,7 @@ const SiteWarehouseMappingScreen = () => {
 
                             <Select
                                 value={selectedSiteId}
+                                isClearable
                                 options={filteredOptionSiteId}
                                 className="exp-input-field"
                                 onChange={handleChangeSiteId}
@@ -697,6 +710,7 @@ const SiteWarehouseMappingScreen = () => {
 
                             <Select
                                 value={selectedWarehouseCode}
+                                isClearable
                                 options={filteredOptionWarehouseCode}
                                 className="exp-input-field"
                                 onChange={handleChangeWarehouseCode}
@@ -712,6 +726,7 @@ const SiteWarehouseMappingScreen = () => {
 
                             <Select
                                 value={selectedStatus}
+                                isClearable
                                 options={filteredOptionStatus}
                                 className="exp-input-field"
                                 onChange={handleChangeStatus}
@@ -727,6 +742,7 @@ const SiteWarehouseMappingScreen = () => {
 
                             <Select
                                 value={selectedIsPrimary}
+                                isClearable
                                 options={filteredOptionPrimary}
                                 className="exp-input-field"
                                 onChange={handleChangePrimary}
@@ -767,6 +783,7 @@ const SiteWarehouseMappingScreen = () => {
 
                             <Select
                                 value={selectedSiteIdSc}
+                                isClearable
                                 options={filteredOptionSiteIdSc}
                                 className="exp-input-field"
                                 onChange={handleChangeSiteIdSc}
@@ -782,6 +799,7 @@ const SiteWarehouseMappingScreen = () => {
 
                             <Select
                                 value={selectedWarehouseCodeSc}
+                                isClearable
                                 options={filteredOptionWarehouseCodeSc}
                                 className="exp-input-field"
                                 onChange={handleChangeWarehouseCodeSc}
@@ -797,6 +815,7 @@ const SiteWarehouseMappingScreen = () => {
 
                             <Select
                                 value={selectedStatusSc}
+                                isClearable
                                 options={filteredOptionStatusSc}
                                 className="exp-input-field"
                                 onChange={handleChangeStatusSc}
@@ -812,6 +831,7 @@ const SiteWarehouseMappingScreen = () => {
 
                             <Select
                                 value={selectedIsPrimarySc}
+                                isClearable
                                 options={filteredOptionPrimarySc}
                                 className="exp-input-field"
                                 onChange={handleChangePrimarySc}

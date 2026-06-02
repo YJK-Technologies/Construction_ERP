@@ -58,11 +58,15 @@ function ItemBrandGrid() {
   const [costingMethod, setCostingMethod] = useState("");
   const [standardCost, setStandardCost] = useState("");
 
+  const [otherPurchseDropGrid, setOtherPurchaseDropGrid] = useState([]);
+  const [purchseDropGrid, setPurchaseDropGrid] = useState([]);
+  const [otherSalesDropGrid, setOtherSalesDropGrid] = useState([]);
+  const [salesDropGrid, setSalesDropGrid] = useState([]);
+
   const handleClose = () => {
     setOpen(false);
   };
 
-  // Handle cell click and open popup
   const handleClickOpen = (params) => {
     const itemCode = params.data.Item_code;
     const itemImage = params.data.item_images;
@@ -88,7 +92,6 @@ function ItemBrandGrid() {
       body: JSON.stringify({ company_code })
     }).then((response) => response.json())
       .then((data) => {
-        // Extract city names from the fetched data
         const UOMOption = data.map(option => option.attributedetails_name);
         setDropbaseuom(UOMOption);
       })
@@ -106,7 +109,6 @@ function ItemBrandGrid() {
       body: JSON.stringify({ company_code })
     }).then((response) => response.json())
       .then((data) => {
-        // Extract city names from the fetched data
         const UOMOption = data.map(option => option.attributedetails_name);
         setdropsecondryuom(UOMOption);
       })
@@ -156,7 +158,6 @@ function ItemBrandGrid() {
       body: JSON.stringify({ company_code })
     }).then((response) => response.json())
       .then((data) => {
-        // Extract city names from the fetched data
         const Regoption = data.map(option => option.attributedetails_name);
         setRegbrand(Regoption);
       })
@@ -174,7 +175,6 @@ function ItemBrandGrid() {
       body: JSON.stringify({ company_code })
     }).then((response) => response.json())
       .then((data) => {
-        // Extract city names from the fetched data
         const statusOption = data.map(option => option.attributedetails_name);
         setStatusGriddrop(statusOption);
       })
@@ -192,9 +192,77 @@ function ItemBrandGrid() {
       body: JSON.stringify({ company_code })
     }).then((response) => response.json())
       .then((data) => {
-        // Extract city names from the fetched data
         const brandOption = data.map(option => option.attributedetails_name);
         setBrandGriddrop(brandOption);
+      })
+      .catch((error) => console.error('Error fetching data:', error));
+  }, []);
+
+
+  useEffect(() => {
+    const company_code = sessionStorage.getItem('selectedCompanyCode');
+
+    fetch(`${config.apiBaseUrl}/getotherpurtax`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ company_code })
+    }).then((response) => response.json())
+      .then((data) => {
+        const otherPurchase = data.map(option => option.Other_purch_tax_type);
+        setOtherPurchaseDropGrid(otherPurchase);
+      })
+      .catch((error) => console.error('Error fetching data:', error));
+  }, []);
+
+  useEffect(() => {
+    const company_code = sessionStorage.getItem('selectedCompanyCode');
+
+    fetch(`${config.apiBaseUrl}/gettaxitempur`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ company_code })
+    }).then((response) => response.json())
+      .then((data) => {
+        const purchase = data.map(option => option.tax_type);
+        setPurchaseDropGrid(purchase);
+      })
+      .catch((error) => console.error('Error fetching data:', error));
+  }, []);
+
+  useEffect(() => {
+    const company_code = sessionStorage.getItem('selectedCompanyCode');
+
+    fetch(`${config.apiBaseUrl}/getothersalestax`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ company_code })
+    }).then((response) => response.json())
+      .then((data) => {
+        const otherSales = data.map(option => option.Other_Sales_tax_type);
+        setOtherSalesDropGrid(otherSales);
+      })
+      .catch((error) => console.error('Error fetching data:', error));
+  }, []);
+
+  useEffect(() => {
+    const company_code = sessionStorage.getItem('selectedCompanyCode');
+
+    fetch(`${config.apiBaseUrl}/gettaxitemsales`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ company_code })
+    }).then((response) => response.json())
+      .then((data) => {
+        const sales = data.map(option => option.tax_type);
+        setSalesDropGrid(sales);
       })
       .catch((error) => console.error('Error fetching data:', error));
   }, []);
@@ -229,27 +297,31 @@ function ItemBrandGrid() {
       .catch((error) => console.error('Error fetching data:', error));
   }, []);
 
-  const filteredOptionCostingMethod = costingMethodDrop.map((option) => ({
-    value: option.attributedetails_name,
-    label: option.attributedetails_name,
-  }));
+  const filteredOptionCostingMethod = Array.isArray(costingMethodDrop)
+    ? costingMethodDrop.map((option) => ({
+      value: option.attributedetails_name,
+      label: option.attributedetails_name,
+    }))
+    : [];
 
-  const filteredOptionBrand = ourbranddrop.map((option) => ({
-    value: option.attributedetails_name,
-    label: option.attributedetails_name,
-  }));
+  const filteredOptionBrand = Array.isArray(ourbranddrop)
+    ? ourbranddrop.map((option) => ({
+      value: option.attributedetails_name,
+      label: option.attributedetails_name,
+    }))
+    : [];
 
-  const filteredOptionStatus = statusdrop.map((option) => ({
-    value: option.attributedetails_name,
-    label: option.attributedetails_name,
-  }));
-
+  const filteredOptionStatus = Array.isArray(statusdrop)
+    ? statusdrop.map((option) => ({
+      value: option.attributedetails_name,
+      label: option.attributedetails_name,
+    }))
+    : [];
 
   const handleChangeBrand = (selectedBrand) => {
     setSelectedBrand(selectedBrand);
     setItem_Our_Brand(selectedBrand ? selectedBrand.value : '');
   };
-
 
   const handleChangeStatus = (selectedStatus) => {
     setSelectedStatus(selectedStatus);
@@ -260,7 +332,6 @@ function ItemBrandGrid() {
     setSelectedCostingMethod(selectedCostingMethod);
     setCostingMethod(selectedCostingMethod ? selectedCostingMethod.value : '');
   };
-
 
   const reloadGridData = () => {
     window.location.reload();
@@ -275,17 +346,17 @@ function ItemBrandGrid() {
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({ 
-          company_code, 
-          Item_code, 
-          Item_name, 
-          Item_variant, 
-          Item_short_name, 
-          Item_Our_Brand, 
+        body: JSON.stringify({
+          company_code,
+          Item_code,
+          Item_name,
+          Item_variant,
+          Item_short_name,
+          Item_Our_Brand,
           status,
-          standard_cost : standardCost ? standardCost: 0,
-          costing_methods : costingMethod
-         }) 
+          standard_cost: standardCost ? standardCost : 0,
+          costing_methods: costingMethod
+        })
       });
       if (response.ok) {
         const searchData = await response.json();
@@ -557,6 +628,10 @@ function ItemBrandGrid() {
       cellEditorParams: {
         maxLength: 18,
       },
+      cellEditor: "agSelectCellEditor",
+      cellEditorParams: {
+        values: otherPurchseDropGrid
+      },
     },
     {
       headerName: "Purchase Tax",
@@ -566,6 +641,10 @@ function ItemBrandGrid() {
       // minWidth: 150,
       cellEditorParams: {
         maxLength: 18,
+      },
+      cellEditor: "agSelectCellEditor",
+      cellEditorParams: {
+        values: purchseDropGrid
       },
     },
     {
@@ -577,6 +656,10 @@ function ItemBrandGrid() {
       cellEditorParams: {
         maxLength: 18,
       },
+      cellEditor: "agSelectCellEditor",
+      cellEditorParams: {
+        values: otherSalesDropGrid
+      },
     },
     {
       headerName: "Sales Tax",
@@ -586,6 +669,10 @@ function ItemBrandGrid() {
       // minWidth: 150,
       cellEditorParams: {
         maxLength: 18,
+      },
+      cellEditor: "agSelectCellEditor",
+      cellEditorParams: {
+        values: salesDropGrid
       },
     },
     {
@@ -1180,6 +1267,7 @@ function ItemBrandGrid() {
                 <div title="Select the Own Brand">
                   <Select
                     id="ahsts"
+                    isClearable
                     value={selectedBrand}
                     onChange={handleChangeBrand}
                     onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
@@ -1201,6 +1289,7 @@ function ItemBrandGrid() {
                 <div title="Select the Status">
                   <Select
                     id="ahsts"
+                    isClearable
                     value={selectedStatus}
                     onChange={handleChangeStatus}
                     // onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
@@ -1243,6 +1332,7 @@ function ItemBrandGrid() {
                     className="exp-input-field"
                     placeholder=""
                     maxLength={30}
+                    isClearable
                   />
                 </div>
               </div>

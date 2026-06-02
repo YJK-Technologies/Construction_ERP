@@ -173,7 +173,6 @@ function UserInput({ }) {
     return new File([fileBlob], fileName, { type: mime[1] });
   };
 
-
   const handleFileSelect = (event) => {
     const file = event.target.files[0];
     if (file) {
@@ -190,7 +189,6 @@ function UserInput({ }) {
       }
     }
   };
-
 
   useEffect(() => {
     const company_code = sessionStorage.getItem('selectedCompanyCode');
@@ -237,7 +235,6 @@ function UserInput({ }) {
       .catch((error) => console.error('Error fetching data:', error));
   }, []);
 
-
   useEffect(() => {
     const company_code = sessionStorage.getItem('selectedCompanyCode');
 
@@ -253,25 +250,33 @@ function UserInput({ }) {
       .catch((error) => console.error('Error fetching data:', error));
   }, []);
 
-  const filteredOptionStatus = statusdrop.map((option) => ({
-    value: option.attributedetails_name,
-    label: option.attributedetails_name,
-  }));
+  const filteredOptionStatus = Array.isArray(statusdrop)
+    ? statusdrop.map((option) => ({
+      value: option.attributedetails_name,
+      label: option.attributedetails_name,
+    }))
+    : [];
 
-  const filteredOptionRole = roleDrop.map((option) => ({
-    value: option.role_id,
-    label: option.role_name,
-  }));
+  const filteredOptionRole = Array.isArray(roleDrop)
+    ? roleDrop.map((option) => ({
+      value: option.role_id,
+      label: option.role_name,
+    }))
+    : [];
 
-  const filteredOptionLog = Loginoroutdrop.map((option) => ({
-    value: option.attributedetails_name,
-    label: option.attributedetails_name,
-  }));
+  const filteredOptionLog = Array.isArray(Loginoroutdrop)
+    ? Loginoroutdrop.map((option) => ({
+      value: option.attributedetails_name,
+      label: option.attributedetails_name,
+    }))
+    : [];
 
-  const filteredOptionGender = Genderdrop.map((option) => ({
-    value: option.attributedetails_name,
-    label: option.attributedetails_name,
-  }));
+  const filteredOptionGender = Array.isArray(Genderdrop)
+    ? Genderdrop.map((option) => ({
+      value: option.attributedetails_name,
+      label: option.attributedetails_name,
+    }))
+    : [];
 
   const handleChangeStatus = (selectedStatus) => {
     setSelectedStatus(selectedStatus);
@@ -381,8 +386,8 @@ function UserInput({ }) {
   };
 
   const handleKeyDownStatus = async (e) => {
-    if (e.key === 'Enter' && hasValueChanged) { 
-      setHasValueChanged(false); 
+    if (e.key === 'Enter' && hasValueChanged) {
+      setHasValueChanged(false);
     }
   };
 
@@ -481,13 +486,9 @@ function UserInput({ }) {
                 <div class="row">
                   <div className="col-md-3 form-group mb-2">
                     <div class="exp-form-floating">
-                      <div class="d-flex justify-content-start">
-                        <div>
-                          <label for="state" class="exp-form-labels" className={`${error && !user_code ? 'text-danger' : ''}`}>
-                            User Code<span className="text-danger">*</span>
-                          </label>
-                        </div>
-                      </div>
+                      <label for="state" class="exp-form-labels" className={`${error && !user_code ? 'text-danger' : ''}`}>
+                        User Code<span className="text-danger">*</span>
+                      </label>
                       <input
                         id="ucode"
                         class="exp-input-field form-control"
@@ -501,18 +502,13 @@ function UserInput({ }) {
                         onKeyDown={(e) => handleKeyDown(e, username, usercode)}
                         readOnly={mode === "update"}
                       />
-                      {/* {error && !user_code && <div className="text-danger">User Code should not be blank</div>} */}
                     </div>
                   </div>
                   <div className="col-md-3 form-group  mb-2">
                     <div class="exp-form-floating">
-                      <div class="d-flex justify-content-start">
-                        <div>
-                          <label for="state" class="exp-form-labels" className={`${error && !user_name ? 'text-danger' : ''}`}>
-                            User Name<span className="text-danger">*</span>
-                          </label>
-                        </div>
-                      </div>
+                      <label for="state" class="exp-form-labels" className={`${error && !user_name ? 'text-danger' : ''}`}>
+                        User Name<span className="text-danger">*</span>
+                      </label>
                       <input
                         id="uname"
                         class="exp-input-field form-control"
@@ -525,18 +521,13 @@ function UserInput({ }) {
                         ref={username}
                         onKeyDown={(e) => handleKeyDown(e, firstname, username)}
                       />
-                      {/* {error && !user_name && <div className="text-danger">User Name should not be blank</div>} */}
                     </div>
                   </div>
                   <div className="col-md-3 form-group  mb-2">
                     <div class="exp-form-floating">
-                      <div class="d-flex justify-content-start">
-                        <div>
-                          <label for="state" class="exp-form-labels" className={`${error && !first_name ? 'text-danger' : ''}`}>
-                            First Name<span className="text-danger">*</span>
-                          </label>
-                        </div>
-                      </div>
+                      <label for="state" class="exp-form-labels" className={`${error && !first_name ? 'text-danger' : ''}`}>
+                        First Name<span className="text-danger">*</span>
+                      </label>
                       <input
                         id="fname"
                         class="exp-input-field form-control"
@@ -549,18 +540,13 @@ function UserInput({ }) {
                         ref={firstname}
                         onKeyDown={(e) => handleKeyDown(e, lastname, firstname)}
                       />
-                      {/* {error && !first_name && <div className="text-danger">First Name should not be blank</div>} */}
                     </div>
                   </div>
                   <div className="col-md-3 form-group  mb-2">
                     <div class="exp-form-floating">
-                      <div class="d-flex justify-content-start">
-                        <div>
-                          <label for="state" class="exp-form-labels" className={`${error && !last_name ? 'text-danger' : ''}`}>
-                            Last Name<span className="text-danger">*</span>
-                          </label>
-                        </div>
-                      </div>
+                      <label for="state" class="exp-form-labels" className={`${error && !last_name ? 'text-danger' : ''}`}>
+                        Last Name<span className="text-danger">*</span>
+                      </label>
                       <input
                         id="lname"
                         class="exp-input-field form-control"
@@ -573,18 +559,13 @@ function UserInput({ }) {
                         ref={lastname}
                         onKeyDown={(e) => handleKeyDown(e, password, lastname)}
                       />
-                      {/* {error && !last_name && <div className="text-danger">Last Name should not be blank</div>} */}
                     </div>
                   </div>
                   <div className="col-md-3 form-group  mb-2">
                     <div class="exp-form-floating">
-                      <div class="d-flex justify-content-start">
-                        <div>
-                          <label for="state" class="exp-form-labels" className={`${error && !user_password ? 'text-danger' : ''}`}>
-                            Password<span className="text-danger">*</span>
-                          </label>
-                        </div>
-                      </div>
+                      <label for="state" class="exp-form-labels" className={`${error && !user_password ? 'text-danger' : ''}`}>
+                        Password<span className="text-danger">*</span>
+                      </label>
                       <input
                         id="upass"
                         class="exp-input-field form-control"
@@ -597,18 +578,13 @@ function UserInput({ }) {
                         ref={password}
                         onKeyDown={(e) => handleKeyDown(e, Status, password)}
                       />
-                      {/* {error && !last_name && <div className="text-danger">Password should not be blank</div>} */}
                     </div>
                   </div>
                   <div className="col-md-3 form-group  mb-2">
                     <div class="exp-form-floating">
-                      <div class="d-flex justify-content-start">
-                        <div>
-                          <label for="state" class="exp-form-labels" className={`${error && !user_status ? 'text-danger' : ''}`}>
-                            Status<span className="text-danger">*</span>
-                          </label>
-                        </div>
-                      </div>
+                      <label for="state" class="exp-form-labels" className={`${error && !user_status ? 'text-danger' : ''}`}>
+                        Status<span className="text-danger">*</span>
+                      </label>
                       <div title="Select the Status">
                         <Select
                           id="status"
@@ -617,11 +593,11 @@ function UserInput({ }) {
                           options={filteredOptionStatus}
                           className="exp-input-field"
                           placeholder=""
+                          isClearable
                           maxLength={50}
                           ref={Status}
                           onKeyDown={(e) => handleKeyDown(e, loginlogout, Status)}
                         />
-                        {/* {error && !user_status && <div className="text-danger">Status should not be blank</div>} */}
                       </div>
                     </div>
                   </div>
@@ -637,6 +613,7 @@ function UserInput({ }) {
                           className="exp-input-field"
                           placeholder=""
                           maxLength={3}
+                          isClearable
                           ref={loginlogout}
                           onKeyDown={(e) => handleKeyDown(e, usertype, loginlogout)}
                         />
@@ -646,13 +623,9 @@ function UserInput({ }) {
                   {mode !== 'update' && (
                     <div className="col-md-3 form-group  mb-2 ">
                       <div class="exp-form-floating">
-                        <div class="d-flex justify-content-start">
-                          <div>
-                            <label for="state" class="exp-form-labels" className={`${error && !user_status ? 'text-danger' : ''}`}>
-                              Role ID<span className="text-danger">*</span>
-                            </label>
-                          </div>
-                        </div>
+                        <label for="state" class="exp-form-labels" className={`${error && !user_status ? 'text-danger' : ''}`}>
+                          Role ID<span className="text-danger">*</span>
+                        </label>
                         <div title="Select the Role ID ">
                           <Select
                             id="usertype"
@@ -663,22 +636,18 @@ function UserInput({ }) {
                             placeholder=""
                             maxLength={50}
                             ref={usertype}
+                            isClearable
                             onKeyDown={(e) => handleKeyDown(e, email, usertype)}
                           />
-                          {/* {error && !user_status && <div className="text-danger">User Type should not be blank</div>} */}
                         </div>
                       </div>
                     </div>
                   )}
                   <div className="col-md-3 form-group  mb-2">
                     <div class="exp-form-floating">
-                      <div class="d-flex justify-content-start">
-                        <div>
-                          <label for="state" class="exp-form-labels" className={`${error && !email_id ? 'text-danger' : ''}`}>
-                            Email<span className="text-danger">*</span>
-                          </label>
-                        </div>
-                      </div>
+                      <label for="state" class="exp-form-labels" className={`${error && !email_id ? 'text-danger' : ''}`}>
+                        Email<span className="text-danger">*</span>
+                      </label>
                       <input
                         id="uemail"
                         class="exp-input-field form-control"
@@ -691,18 +660,13 @@ function UserInput({ }) {
                         ref={email}
                         onKeyDown={(e) => handleKeyDown(e, Dob, email)}
                       />
-                      {/* {error && !validateEmail(email_id) && <div className="text-danger">Please Enter Valid Email Id</div>} */}
                     </div>
                   </div>
                   <div className="col-md-3 form-group  mb-2">
                     <div class="exp-form-floating">
-                      <div class="d-flex justify-content-start">
-                        <div>
-                          <label for="state" class="exp-form-labels" className={`${error && !dob ? 'text-danger' : ''}`}>
-                            DOB<span className="text-danger">*</span>
-                          </label>
-                        </div>
-                      </div>
+                      <label for="state" class="exp-form-labels" className={`${error && !dob ? 'text-danger' : ''}`}>
+                        DOB<span className="text-danger">*</span>
+                      </label>
                       <input
                         id="udob"
                         class="exp-input-field form-control"
@@ -714,7 +678,6 @@ function UserInput({ }) {
                         ref={Dob}
                         onKeyDown={(e) => handleKeyDown(e, Gender, Dob)}
                       />
-                      {/* {error && !user_status && <div className="text-danger">DOB should not be blank</div>} */}
                     </div>
                   </div>
                   <div className="col-md-3 form-group mb-2 ">
@@ -731,6 +694,7 @@ function UserInput({ }) {
                           className="exp-input-field"
                           placeholder=""
                           maxLength={50}
+                          isClearable
                           ref={Gender}
                           onKeyDown={(e) => handleKeyDown(e, ImagE, Gender)}
                         />
@@ -772,49 +736,10 @@ function UserInput({ }) {
                           alt="Selected Preview"
                           className="avatar rounded sm mt-4"
                           style={{ height: '200px', width: '200px' }}
-                        /></div></div>
+                        />
+                      </div>
+                    </div>
                   )}
-                  {/* <div className="col-md-3 form-group  mb-2">
-                    {mode === "create" ? (
-                      <div class="exp-form-floating">
-                        <div class="d-flex justify-content-start">
-                          <div>
-                            <label for="state" class="exp-form-labels">
-                              Created By
-                            </label>
-                          </div>
-                        </div>
-                        <input
-                          id="emailid"
-                          class="exp-input-field form-control"
-                          type="text"
-                          placeholder=""
-                          required
-                          title="Please enter the email ID"
-                          value={created_by}
-                        />
-                      </div>
-                    ) : (
-                      <div class="exp-form-floating">
-                        <div class="d-flex justify-content-start">
-                          <div>
-                            <label for="state" class="exp-form-labels">
-                              Modified By
-                            </label>
-                          </div>
-                        </div>
-                        <input
-                          id="emailid"
-                          class="exp-input-field form-control"
-                          type="text"
-                          placeholder=""
-                          required
-                          title="Please enter the email ID"
-                          value={modified_by}
-                        />
-                      </div>
-                    )}
-                  </div> */}
                   <div class="col-md-3 form-group ">
                     {mode === "create" ? (
                       <button onClick={handleInsert} className="mt-4" title="Save">
