@@ -756,7 +756,7 @@ const getVendorcodename = async (req, res) => {
       .request()
       .input("vendor_name", sql.NVarChar, vendor_name)
       .query(
-        "EXEC sp_vendor_info_hdr_test 'AK','','',@vendor_name,'','','',null,null,null,null,null,null,null,null,null,null,null "
+        "EXEC sp_vendor_info_hdr 'AK','','',@vendor_name,'','','',null,null,null,null,null,null,null,null,null,null,null "
       );
 
     res.json(result.recordset);
