@@ -56,6 +56,14 @@ const ExpensesTracking = () => {
     const [customerCode, setCustomerCode] = useState("");
     const [customerName, setCustomerName] = useState("");
 
+    const [transactionNo, setTransactionNo] = useState("");
+    const [customerAddress, setCustomerAddress] = useState("");
+    const [customerPhoneNo, setCustomerPhoneNo] = useState("");
+
+    const [expense_no, setexpense_no] = useState("");
+    const [expense_date, setexpense_date] = useState("");
+    const [reference_name, setreference_name] = useState("");
+
     const permissions = JSON.parse(sessionStorage.getItem('permissions')) || {};
     const companyPermissions = permissions
         .filter(permission => permission.screen_type === 'IEanalysis')
@@ -125,6 +133,101 @@ const ExpensesTracking = () => {
                 }
             });
     }, []);
+
+    const fetchExpensesData = async () => {
+    setLoading(true);
+    try {
+      const body = {
+        mode: period.toString(),
+        company_code: sessionStorage.getItem('selectedCompanyCode'),
+        Location_Code: sessionStorage.getItem("selectedLocationCode"),
+        expense_no: expense_no,
+        expense_date: expense_date,
+        expense_type: expenseType,
+        reference_type: referenceType,
+        reference_code: referenceCode,
+        reference_name: reference_name,
+        payment_mode: paymentMode,
+        amountFrom: amountFrom,
+        amountTo: amountTo,
+        StartDate: selectedPeriod?.label === "Custom Date" ? startDate : undefined,
+        EndDate: selectedPeriod?.label === "Custom Date" ? endDate : undefined,
+      };
+
+      const response = await fetch(`${config.apiBaseUrl}/getExpensesReport`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
+      });
+
+      if (response.ok) {
+        const fetchedData = await response.json();
+        if (fetchedData.length > 0) {
+          const firstItem = fetchedData[0];
+          setStart_Date(formatDate(firstItem.DateRange_Start) || "");
+          setEnd_Date(formatDate(firstItem.DateRange_End) || "");
+        }
+
+        const newRows = fetchedData.map((matchedItem) => ({
+          Entry_date: formatDate(matchedItem.Entry_date),
+          expense_no: matchedItem.expense_no,
+          expense_date: matchedItem.expense_date,
+          expense_type: matchedItem.expense_type,
+          reference_type: matchedItem.reference_type,
+          reference_code: matchedItem.reference_code,
+          reference_name: matchedItem.reference_name,
+          amount: matchedItem.amount,
+          payment_mode: matchedItem.payment_mode,
+        //   customer_country: matchedItem.customer_country,
+        //   customer_mobile_no: matchedItem.customer_mobile_no,
+        //   contact_person: matchedItem.contact_person,
+        //   purchase_amount: matchedItem.purchase_amount,
+        //   tax_amount: matchedItem.tax_amount,
+        //   rounded_off: matchedItem.rounded_off,
+        //   total_amount: matchedItem.total_amount,
+        }));
+
+        const totalAmount = newRows.reduce((sum, row) => sum + row.total_amount, 0);
+        const totalPurchase = newRows.reduce((sum, row) => sum + row.purchase_amount, 0);
+        const totalTax = newRows.reduce((sum, row) => sum + row.tax_amount, 0);
+        const totalRoundOff = newRows.reduce((sum, row) => sum + row.rounded_off, 0);
+
+        const totalRow = {
+          Entry_date: "",
+          expense_date: "",
+          expense_no: "",
+          expense_type: "",
+          reference_code: "",
+          reference_name: "",
+          amount: "",
+          payment_mode: "",
+          customer_country: "",
+          customer_mobile_no: "",
+          contact_person: "Total",
+          purchase_amount: totalPurchase,
+          tax_amount: totalTax,
+          rounded_off: totalRoundOff,
+          total_amount: totalAmount
+        };
+
+        setRowData([...newRows, totalRow]);
+      } else if (response.status === 404) {
+        console.log("Data Not found");
+        toast.warning("Data Not found");
+        setRowData([])
+      } else {
+        const errorResponse = await response.json();
+        toast.warning(errorResponse.message || "Failed to insert sales data");
+        console.error(errorResponse.details || errorResponse.message);
+      }
+    } catch (error) {
+      console.error("Error fetching search data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
     const filteredOptionPeriod = Array.isArray(periodDrop)
         ? periodDrop.map((option) => ({
@@ -809,7 +912,7 @@ const ExpensesTracking = () => {
                     <div className="col-md-1">
                         <div class="exp-form-floating">
                             <div class=" d-flex justify-content-center mt-4">
-                                <icon className="popups-btn fs-6 p-3" required title="Search">
+                                <icon className="popups-btn fs-6 p-3" onClick={fetchExpensesData} required title="Search">
                                     <i className="fas fa-search"></i>
                                 </icon>
                                 <icon className="popups-btn fs-6 p-3" required title="Refresh">

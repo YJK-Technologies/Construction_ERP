@@ -37261,7 +37261,7 @@ const getExpensesReport = async (req, res) => {
       .input("StartDate", sql.NVarChar, StartDate)
       .input("EndDate", sql.NVarChar, EndDate)
       .input("expense_no", sql.NVarChar, expense_no)
-      .input("expense_date", sql.Date, expense_date)
+      .input("expense_date", sql.Date, expense_date && expense_date.trim() !== ""? new Date(expense_date): null)  
       .input("expense_type", sql.NVarChar, expense_type)
       .input("reference_type", sql.NVarChar, reference_type)
       .input("reference_code", sql.NVarChar, reference_code)
