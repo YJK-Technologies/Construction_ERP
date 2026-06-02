@@ -37240,7 +37240,7 @@ const inventoryIssueCalculation = async (req, res) => {
 
 //Code added by Dinesh Gokul on 01-06-2026
 const getExpensesReport = async (req, res) => {
-  const { mode, company_code, Location_Code, StartDate, EndDate, expense_no, expense_date, 
+  const { mode, company_code, Location_Code, SiteID, customer, vendor, StartDate, EndDate, expense_no, expense_date, 
     expense_type, reference_type, reference_code, reference_name, payment_mode, amountFrom, amountTo} = req.body;
   let pool;
   try {
@@ -37250,10 +37250,13 @@ const getExpensesReport = async (req, res) => {
       .input("mode", sql.NVarChar, mode)
       .input("company_code", sql.NVarChar, company_code)
       .input("Location_Code", sql.NVarChar, Location_Code)
+      .input("SiteID", sql.NVarChar, SiteID)
+      .input("customer", sql.NVarChar, customer)
+      .input("vendor", sql.NVarChar, vendor)
       .input("StartDate", sql.NVarChar, StartDate)
       .input("EndDate", sql.NVarChar, EndDate)
       .input("expense_no", sql.NVarChar, expense_no)
-      .input("expense_date", sql.Date, expense_date)
+      .input("expense_date", sql.Date, expense_date ? new Date(expense_date) : null)
       .input("expense_type", sql.NVarChar, expense_type)
       .input("reference_type", sql.NVarChar, reference_type)
       .input("reference_code", sql.NVarChar, reference_code)
@@ -37261,7 +37264,7 @@ const getExpensesReport = async (req, res) => {
       .input("payment_mode", sql.NVarChar, payment_mode)
       .input("amountFrom", sql.Int, amountFrom)
       .input("amountTo", sql.Int, amountTo)
-      .query(`EXEC sp_Expenses_Report @mode,@company_code, @Location_Code, @StartDate,@EndDate,@expense_no,
+      .query(`EXEC sp_Expenses_Report @mode,@company_code, @Location_Code, @SiteID, @customer, @vendor, @StartDate,@EndDate,@expense_no,
         @expense_date,@expense_type,@reference_type, @reference_code, @reference_name, @payment_mode, @amountFrom, @amountTo`);
     if (result.recordset.length > 0) {
       res.status(200).json(result.recordset);

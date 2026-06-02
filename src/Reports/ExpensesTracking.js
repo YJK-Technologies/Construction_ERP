@@ -64,7 +64,13 @@ const ExpensesTracking = () => {
     const [expense_date, setexpense_date] = useState("");
     const [reference_name, setreference_name] = useState("");
 
+    const [issuedId, setIssuedId] = useState('');
+    const [deleteError, setDeleteError] = useState("");
+
     const permissions = JSON.parse(sessionStorage.getItem('permissions')) || {};
+    const issuedPermission = permissions
+    .filter(permission => permission.screen_type === 'UnplannedIssued')
+    .map(permission => permission.permission_type.toLowerCase());
     const companyPermissions = permissions
         .filter(permission => permission.screen_type === 'IEanalysis')
         .map(permission => permission.permission_type.toLowerCase());
@@ -116,6 +122,52 @@ const ExpensesTracking = () => {
         }
     };
 
+    const PrintHeaderData = async () => {
+    try {
+      const response = await fetch(`${config.apiBaseUrl}/InventoryIssuedHeaderPrint`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ transaction_no: issuedId, company_code: sessionStorage.getItem("selectedCompanyCode") })
+      });
+
+      if (response.ok) {
+        const searchData = await response.json();
+        return searchData;
+      } else if (response.status === 404) {
+        console.log("Data not found");
+      } else {
+        console.log("Bad request");
+      }
+    } catch (error) {
+      console.error("Error fetching search data:", error);
+    }
+  };
+
+  const PrintDetailData = async () => {
+    try {
+      const response = await fetch(`${config.apiBaseUrl}/InventoryIssuedDetailPrint`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ transaction_no: issuedId, company_code: sessionStorage.getItem("selectedCompanyCode") })
+      });
+
+      if (response.ok) {
+        const searchData = await response.json();
+        return searchData;
+      } else if (response.status === 404) {
+        console.log("Data not found");
+      } else {
+        console.log("Bad request");
+      }
+    } catch (error) {
+      console.error("Error fetching search data:", error);
+    }
+  };
+
 
     useEffect(() => {
         fetch(`${config.apiBaseUrl}/getDateRange`)
@@ -145,7 +197,7 @@ const ExpensesTracking = () => {
                 customer: customer,
                 vendor: vendor,
                 expense_no: expense_no,
-                expense_date: expense_date,
+                expense_date: expense_date || null,
                 expense_type: expenseType,
                 reference_type: referenceType,
                 reference_code: referenceCode,
@@ -238,36 +290,27 @@ const ExpensesTracking = () => {
         setPeriod(selectedPeriod ? selectedPeriod.value : '');
     };
 
-    const fetchGSTReport = () => {
-        fetch(`${config.apiBaseUrl}/getGSTReport`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                company_code: sessionStorage.getItem("selectedCompanyCode"),
-            }),
-        }).then((data) => data.json())
-            .then((val) => {
-                setTaxDrop(val);
+    const fetchGSTReport = async () => {
+    try {
+        const response = await fetch(
+            `${config.apiBaseUrl}/getGSTReport`,
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    company_code: sessionStorage.getItem("selectedCompanyCode"),
+                }),
+            }
+        );
 
-                setPartyDrop(val);
-
-                if (val.length > 0) {
-                    const firstTaxOption = {
-                        value: val[0].attributedetails_name,
-                        label: val[0].attributedetails_name,
-                    };
-                    const firstPartyOption = {
-                        value: val[0].descriptions,
-                        label: val[0].descriptions,
-                    };
-
-                    setSelectedTax(firstTaxOption);
-                    setTax(firstTaxOption.value);
-                    setSelectedParty(firstPartyOption);
-                    setParty(firstPartyOption.value);
-                }
-            });
-    };
+        const data = await response.json();
+        console.log(data);
+    } catch (error) {
+        console.error("GST Report Error:", error);
+    }
+};
 
     useEffect(() => {
         fetchGSTReport();
@@ -413,7 +456,7 @@ const ExpensesTracking = () => {
             const date = new Date(dateString);
             if (isNaN(date)) return dateString;
             return date.toLocaleDateString("en-GB");
-        };
+        };    
 
         const reportData = selectedRows.map((row) => {
             return {
@@ -515,6 +558,35 @@ const ExpensesTracking = () => {
         reportWindow.document.write("</body></html>");
         reportWindow.document.close();
     };
+
+    const generateReportPDF = async () => {
+            if (!issuedId) {
+                setDeleteError(" ");
+                toast.warning('Error: Missing required fields');
+                return;
+            }
+            setLoading(true);
+            try {
+                const headerData = await PrintHeaderData();
+                const detailData = await PrintDetailData();
+
+                if (headerData && detailData) {
+                    console.log("All API calls completed successfully");
+
+                    sessionStorage.setItem('IIheaderData', JSON.stringify(headerData));
+                    sessionStorage.setItem('IIdetailData', JSON.stringify(detailData));
+
+                    window.open('/InvIssuedPrint', '_blank');
+                } else {
+                    console.log("Failed to fetch some data");
+                    toast.warning("Trasaction ID Does Not Exits");
+                }
+            } catch (error) {
+                console.error("Error executing API calls:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
 
     const onSelectionChanged = () => {
         const selectedNodes = gridApi.getSelectedNodes();
@@ -691,6 +763,11 @@ const ExpensesTracking = () => {
                                             <i className="fa-solid fa-list"></i>
                                         </button>
                                         <ul className="dropdown-menu ">
+                                            {['all permission', 'view'].some(permission => issuedPermission.includes(permission)) && (
+                                                <printbutton className="purbut" title="print" onClick={generateReportPDF}>
+                                                    <i class="fa-solid fa-file-pdf"></i>
+                                                </printbutton>
+                                            )}
                                             <li>
                                                 <icon class="iconbutton d-flex justify-content-center" onClick={generateReport} required title="Generate Report">
                                                     <i className="fa-solid fa-print"></i>
@@ -708,6 +785,11 @@ const ExpensesTracking = () => {
                         </div>
                         <div className="purbut">
                             <div className="d-flex justify-content-end me-5">
+                                {['all permission', 'view'].some(permission => issuedPermission.includes(permission)) && (
+                                                <printbutton className="purbut" title="print" onClick={generateReportPDF}>
+                                                    <i class="fa-solid fa-file-pdf"></i>
+                                                </printbutton>
+                                            )}
                                 <button className="btn btn-dark mt-3 mb-3 rounded-3" onClick={generateReport} required title="Generate Report">
                                     <i className="fa-solid fa-print"></i>
                                 </button>
