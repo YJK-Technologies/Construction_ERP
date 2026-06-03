@@ -16,15 +16,11 @@ function IntermediaryHdrInput({ open, handleClose }) {
   const [status, setStatus] = useState("");
   const [deletePermission, setDeletePermission] = useState("");
 
-  /*const [created_by, setCreated_by] = useState("");
-  const [created_date, setCreated_date] = useState("");
-  const [modfied_by, setModified_by] = useState("");
-  const [modfied_date, setModified_date] = useState("");*/
   const [loading, setLoading] = useState(false);
   const [statusdrop, setStatusdrop] = useState([]);
   const [delPerdrop, setDelperdrop] = useState([]);
   const [selectedRows, setSelectedRows] = useState([]);
-  const [error, setError] = useState("");
+  const [error, setError] = useState(false);
   const [selectedStatus, setSelectedStatus] = useState('');
   const [selectedDelete, setSelectedDelete] = useState('');
   const navigate = useNavigate();
@@ -34,8 +30,14 @@ function IntermediaryHdrInput({ open, handleClose }) {
   const Permission = useRef(null);
   const [hasValueChanged, setHasValueChanged] = useState(false);
 
-
-  console.log(selectedRows);
+  const clearInputFields = () => {
+    setCode("");
+    setDetails("");
+    setSelectedStatus("");
+    setStatus("");
+    setSelectedDelete("");
+    setDeletePermission("");
+  };
 
   useEffect(() => {
     const company_code = sessionStorage.getItem('selectedCompanyCode');
@@ -90,7 +92,6 @@ function IntermediaryHdrInput({ open, handleClose }) {
     setDeletePermission(selectedDelete ? selectedDelete.value : '');
   };
 
-
   const handleInsert = async () => {
     if (
       !Code ||
@@ -98,9 +99,12 @@ function IntermediaryHdrInput({ open, handleClose }) {
       !status ||
       !deletePermission
     ) {
-      setError(" ");
+      setError(true);
+      toast.warning("Missing require field");
       return;
     }
+
+    setError(false);
     setLoading(true);
     try {
       const response = await fetch(`${config.apiBaseUrl}/AddIntermediaryheaderData`, {
@@ -110,56 +114,32 @@ function IntermediaryHdrInput({ open, handleClose }) {
         },
         body: JSON.stringify({
           company_code: sessionStorage.getItem('selectedCompanyCode'),
-
           Code,
           Details,
           status,
           deletePermission,
           created_by: sessionStorage.getItem('selectedUserCode')
-
-
-          /* created_by,
-          created_date,
-          modfied_by,
-          modfied_date,*/
         }),
       });
-      if (response.status === 200) {
-        console.log("Data inserted successfully");
-        setTimeout(() => {
-
-          toast.success("Data inserted successfully!").then(() => {
-            window.location.reload();
-          });
-        }, 1000);
-
-
-
-      } else if (response.status === 400) {
+      if (response.ok) {
+        toast.success("Data inserted successfully!", {
+          onClose: () => clearInputFields(),
+        });
+      } else {
         const errorResponse = await response.json();
         console.error(errorResponse.message);
-        //setError(errorResponse.error);
-
         toast.error(errorResponse.message)
-      } else {
-        console.error("Failed to insert data");
-        // Show generic error message using SweetAlert
-
-        toast.error("Failed to insert data")
       }
     } catch (error) {
       console.error("Error inserting data:", error);
-      // Show error message using SweetAlert
-
       toast.error("Error inserting data: " + error.message)
     } finally {
       setLoading(false);
     }
-
   };
 
   const handleNavigate = () => {
-    navigate("/AddIntermedDetails"); // Pass selectedRows as props to the Input component
+    navigate("/AddIntermedDetails");
   };
 
   const handleKeyDown = async (
@@ -185,9 +165,7 @@ function IntermediaryHdrInput({ open, handleClose }) {
 
   const handleKeyDownStatus = async (e) => {
     if (e.key === "Enter" && hasValueChanged) {
-      // Only trigger search if the value has changed
-      // Trigger the search function
-      setHasValueChanged(false); // Reset the flag after search
+      setHasValueChanged(false);
     }
   };
 
@@ -220,16 +198,10 @@ function IntermediaryHdrInput({ open, handleClose }) {
                       <div class="row p-4">
                         <div className="col-md-3 form-group mb-2">
                           <div class="exp-form-floating">
-                            <div class="d-flex justify-content-start">
-                              <div>
-                                <label for="state" class="exp-form-labels">
-                                  Header Code
-                                </label>
-                              </div>
-                              <div>
-                                <span className="text-danger">*</span>
-                              </div>
-                            </div><input
+                            <label for="state" className={`exp-form-labels ${error && !Code ? 'text-danger' : ''}`}>
+                              Header Code<span className="text-danger">*</span>
+                            </label>
+                            <input
                               id="ihcode"
                               class="exp-input-field form-control"
                               type="text"
@@ -240,25 +212,16 @@ function IntermediaryHdrInput({ open, handleClose }) {
                               onChange={(e) => setCode(e.target.value)}
                               ref={code}
                               onKeyDown={(e) => handleKeyDown(e, Name, code)}
-                            />            {error && !Code && <div className="text-danger">Code should not be blank</div>}
-
-
+                            />
                           </div>
                         </div>
 
                         <div className="col-md-3 form-group mb-2">
                           <div class="exp-form-floating">
-                            <div class="d-flex justify-content-start">
-                              <div>
-                                <label for="state" class="exp-form-labels">
-                                  Name
-
-                                </label>
-                              </div>
-                              <div>
-                                <span className="text-danger">*</span>
-                              </div>
-                            </div><input
+                            <label for="state" className={`exp-form-labels ${error && !Details ? 'text-danger' : ''}`}>
+                              Name<span className="text-danger">*</span>
+                            </label>
+                            <input
                               id="ihdetails"
                               class="exp-input-field form-control"
                               type="text"
@@ -269,23 +232,15 @@ function IntermediaryHdrInput({ open, handleClose }) {
                               onChange={(e) => setDetails(e.target.value)}
                               ref={Name}
                               onKeyDown={(e) => handleKeyDown(e, Status, Name)}
-                            />            {error && !Details && <div className="text-danger">Name should not be blank</div>}
-
-
+                            />
                           </div>
                         </div>
+
                         <div className="col-md-3 form-group mb-2">
                           <div class="exp-form-floating">
-                            <div class="d-flex justify-content-start">
-                              <div>
-                                <label for="state" class="exp-form-labels">
-                                  Status
-                                </label>
-                              </div>
-                              <div>
-                                <span className="text-danger">*</span>
-                              </div>
-                            </div>
+                            <label for="state" className={`exp-form-labels ${error && !status ? 'text-danger' : ''}`}>
+                              Status<span className="text-danger">*</span>
+                            </label>
                             <div title="Select the Status">
                               <Select
                                 id="ahsts"
@@ -299,25 +254,15 @@ function IntermediaryHdrInput({ open, handleClose }) {
                                 ref={Status}
                                 onKeyDown={(e) => handleKeyDown(e, Permission, Status)}
                               />
-                              {error && !status && <div className="text-danger">Status should not be blank</div>}
-
                             </div>
                           </div>
                         </div>
 
                         <div className="col-md-3 form-group mb-2">
                           <div class="exp-form-floating">
-                            <div class="d-flex justify-content-start">
-                              <div>
-                                <label for="state" class="exp-form-labels">
-                                  Delete Permission
-
-                                </label>
-                              </div>
-                              <div>
-                                <span className="text-danger">*</span>
-                              </div>
-                            </div>
+                            <label for="state" className={`exp-form-labels ${error && !deletePermission ? 'text-danger' : ''}`}>
+                              Delete Permission<span className="text-danger">*</span>
+                            </label>
                             <div title="Select the Delete Permission">
                               <Select
                                 id="ahdelper"
@@ -335,11 +280,13 @@ function IntermediaryHdrInput({ open, handleClose }) {
                                   }
                                 }}
                               />
-                              {error && !deletePermission && <div className="text-danger">Delete Permission should not be blank</div>}
-                            </div></div>
+                            </div>
+                          </div>
                         </div>
+
                         <div class="col-md-3 form-group  ">
-                          <button onClick={handleInsert} class="mt-4" required title="Save">                     <i class="fa-solid fa-floppy-disk"></i>
+                          <button onClick={handleInsert} class="mt-4" required title="Save">
+                            <i class="fa-solid fa-floppy-disk"></i>
                           </button>
                         </div>
                       </div>
@@ -349,6 +296,7 @@ function IntermediaryHdrInput({ open, handleClose }) {
               </div>
             </div>
           </div>
+
           <div className="mobileview">
             <div className="modal mt-5 Topnav-screen " tabIndex="-1" role="dialog" style={{ display: 'block', backgroundColor: 'rgba(0,0,0,0.5)' }}>
               <div className="modal-dialog modal-xl ps-4 pe-4 p-1" role="document">
@@ -375,16 +323,10 @@ function IntermediaryHdrInput({ open, handleClose }) {
                       <div class="row p-4">
                         <div className="col-md-3 form-group mb-2">
                           <div class="exp-form-floating">
-                            <div class="d-flex justify-content-start">
-                              <div>
-                                <label for="state" class="exp-form-labels">
-                                  Header Code
-                                </label>
-                              </div>
-                              <div>
-                                <span className="text-danger">*</span>
-                              </div>
-                            </div><input
+                            <label for="state" className={`exp-form-labels ${error && !Code ? 'text-danger' : ''}`}>
+                              Header Code<span className="text-danger">*</span>
+                            </label>
+                            <input
                               id="ihcode"
                               class="exp-input-field form-control"
                               type="text"
@@ -393,25 +335,16 @@ function IntermediaryHdrInput({ open, handleClose }) {
                               value={Code}
                               maxLength={18}
                               onChange={(e) => setCode(e.target.value)}
-                            />            {error && !Code && <div className="text-danger">Code should not be blank</div>}
-
-
+                            />
                           </div>
                         </div>
 
                         <div className="col-md-3 form-group mb-2">
                           <div class="exp-form-floating">
-                            <div class="d-flex justify-content-start">
-                              <div>
-                                <label for="state" class="exp-form-labels">
-                                  Name
-
-                                </label>
-                              </div>
-                              <div>
-                                <span className="text-danger">*</span>
-                              </div>
-                            </div><input
+                            <label for="state" className={`exp-form-labels ${error && !Details ? 'text-danger' : ''}`}>
+                              Name<span className="text-danger">*</span>
+                            </label>
+                            <input
                               id="ihdetails"
                               class="exp-input-field form-control"
                               type="text"
@@ -420,23 +353,15 @@ function IntermediaryHdrInput({ open, handleClose }) {
                               value={Details}
                               maxLength={250}
                               onChange={(e) => setDetails(e.target.value)}
-                            />            {error && !Details && <div className="text-danger">Name should not be blank</div>}
-
-
+                            />
                           </div>
                         </div>
+
                         <div className="col-md-3 form-group mb-2">
                           <div class="exp-form-floating">
-                            <div class="d-flex justify-content-start">
-                              <div>
-                                <label for="state" class="exp-form-labels">
-                                  Status
-                                </label>
-                              </div>
-                              <div>
-                                <span className="text-danger">*</span>
-                              </div>
-                            </div>
+                            <label for="state" className={`exp-form-labels ${error && !status ? 'text-danger' : ''}`}>
+                              Status<span className="text-danger">*</span>
+                            </label>
                             <Select
                               id="ahsts"
                               value={selectedStatus}
@@ -447,25 +372,14 @@ function IntermediaryHdrInput({ open, handleClose }) {
                               required
                               isClearable
                             />
-                            {error && !status && <div className="text-danger">Status should not be blank</div>}
-
-
                           </div>
                         </div>
 
                         <div className="col-md-3 form-group mb-2">
                           <div class="exp-form-floating">
-                            <div class="d-flex justify-content-start">
-                              <div>
-                                <label for="state" class="exp-form-labels">
-                                  Delete Permission
-
-                                </label>
-                              </div>
-                              <div>
-                                <span className="text-danger">*</span>
-                              </div>
-                            </div>
+                            <label for="state" className={`exp-form-labels ${error && !deletePermission ? 'text-danger' : ''}`}>
+                              Delete Permission<span className="text-danger">*</span>
+                            </label>
                             <Select
                               id="ahdelper"
                               value={selectedDelete}
@@ -476,9 +390,9 @@ function IntermediaryHdrInput({ open, handleClose }) {
                               required
                               isClearable
                             />
-                            {error && !deletePermission && <div className="text-danger">Delete Permission should not be blank</div>}
                           </div>
                         </div>
+
                         <div class="col-md-3 form-group  d-flex justify-content-end">
                           <button onClick={handleInsert} class="mt-4" required title="Save"><i class="fa-solid fa-floppy-disk"></i>
                           </button>
@@ -488,7 +402,8 @@ function IntermediaryHdrInput({ open, handleClose }) {
                   </div>
                 </div>
               </div>
-            </div></div>
+            </div>
+          </div>
         </fieldset>
       )}
     </div>

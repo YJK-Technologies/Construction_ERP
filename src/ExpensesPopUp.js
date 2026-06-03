@@ -144,6 +144,7 @@ export default function OIPopup({ open, handleClose, handleOb }) {
                 },
                 body: JSON.stringify({
                     company_code: sessionStorage.getItem('selectedCompanyCode'),
+                    Location_Code: sessionStorage.getItem("selectedLocationCode"),
                     expense_no, expense_date, expense_type, reference_type, reference_code, reference_name,
                     payment_mode, amount, description, is_approved, Start_Date, End_Date
                 }) // Send company_no and company_name as search criteria
