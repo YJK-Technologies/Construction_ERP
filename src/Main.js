@@ -164,6 +164,7 @@ import SSmaterial from "./Reports/SupervisorSiteMaterial.js";
 import MaterialUsage from "./Reports/MaterialUsageDetails.js";
 import ExpensesTracking from "./Reports/ExpensesTracking.js";
 import ExpenseSummary from "./Reports/ExpenseSummary.js";
+import ExpensesTrackingPrint from "./InventoryPrintTemplates/ExpensesTrackingPrint.js";
 
 
 function Main() {
@@ -382,6 +383,8 @@ function Main() {
       <Route path="/PurchaseOrderTemplate2" element={<PurchaseOrderTemplate2 />} />
       <Route path="/DeliveryChallanTemplate1" element={<DeliveryChallanTemplate1 />} />
       <Route path="/DeliveryChallanTemplate2" element={<DeliveryChallanTemplate2 />} />
+      <Route path="/ExpensesTrackingPrint" element={<ExpensesTrackingPrint  />} />
+
 
       <Route
         path="/AccountInformation"

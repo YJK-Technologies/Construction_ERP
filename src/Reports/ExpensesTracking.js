@@ -15,6 +15,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import SalesCustomerPopup from '../SalesVendorPopup';
 import PurchaseVendorPopup from '../ExpensesVendorPopUp';
 import SitePopUp from '../SitePopUp';
+// import ExpensesPrint from "../InventoryPrintTemplates/ExpensesTrackingPrint.js";
 
 
 const ExpensesTracking = () => {
@@ -69,8 +70,8 @@ const ExpensesTracking = () => {
 
     const permissions = JSON.parse(sessionStorage.getItem('permissions')) || {};
     const issuedPermission = permissions
-    .filter(permission => permission.screen_type === 'UnplannedIssued')
-    .map(permission => permission.permission_type.toLowerCase());
+        .filter(permission => permission.screen_type === 'UnplannedIssued')
+        .map(permission => permission.permission_type.toLowerCase());
     const companyPermissions = permissions
         .filter(permission => permission.screen_type === 'IEanalysis')
         .map(permission => permission.permission_type.toLowerCase());
@@ -122,51 +123,51 @@ const ExpensesTracking = () => {
         }
     };
 
-    const PrintHeaderData = async () => {
-    try {
-      const response = await fetch(`${config.apiBaseUrl}/InventoryIssuedHeaderPrint`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ transaction_no: issuedId, company_code: sessionStorage.getItem("selectedCompanyCode") })
-      });
+    const PrintHeaderData = async (expense_no) => {
+        try {
+            const response = await fetch(`${config.apiBaseUrl}/ExpensesTrackingPrint`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ expense_no: expense_no, company_code: sessionStorage.getItem("selectedCompanyCode") })
+            });
 
-      if (response.ok) {
-        const searchData = await response.json();
-        return searchData;
-      } else if (response.status === 404) {
-        console.log("Data not found");
-      } else {
-        console.log("Bad request");
-      }
-    } catch (error) {
-      console.error("Error fetching search data:", error);
-    }
-  };
+            if (response.ok) {
+                const searchData = await response.json();
+                return searchData;
+            } else if (response.status === 404) {
+                console.log("Data not found");
+            } else {
+                console.log("Bad request");
+            }
+        } catch (error) {
+            console.error("Error fetching search data:", error);
+        }
+    };
 
-  const PrintDetailData = async () => {
-    try {
-      const response = await fetch(`${config.apiBaseUrl}/InventoryIssuedDetailPrint`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ transaction_no: issuedId, company_code: sessionStorage.getItem("selectedCompanyCode") })
-      });
+    const PrintDetailData = async (expense_no) => {
+        try {
+            const response = await fetch(`${config.apiBaseUrl}/ExpensesTrackingPrint`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ expense_no: expense_no, company_code: sessionStorage.getItem("selectedCompanyCode") })
+            });
 
-      if (response.ok) {
-        const searchData = await response.json();
-        return searchData;
-      } else if (response.status === 404) {
-        console.log("Data not found");
-      } else {
-        console.log("Bad request");
-      }
-    } catch (error) {
-      console.error("Error fetching search data:", error);
-    }
-  };
+            if (response.ok) {
+                const searchData = await response.json();
+                return searchData;
+            } else if (response.status === 404) {
+                console.log("Data not found");
+            } else {
+                console.log("Bad request");
+            }
+        } catch (error) {
+            console.error("Error fetching search data:", error);
+        }
+    };
 
 
     useEffect(() => {
@@ -291,26 +292,26 @@ const ExpensesTracking = () => {
     };
 
     const fetchGSTReport = async () => {
-    try {
-        const response = await fetch(
-            `${config.apiBaseUrl}/getGSTReport`,
-            {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    company_code: sessionStorage.getItem("selectedCompanyCode"),
-                }),
-            }
-        );
+        try {
+            const response = await fetch(
+                `${config.apiBaseUrl}/getGSTReport`,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        company_code: sessionStorage.getItem("selectedCompanyCode"),
+                    }),
+                }
+            );
 
-        const data = await response.json();
-        console.log(data);
-    } catch (error) {
-        console.error("GST Report Error:", error);
-    }
-};
+            const data = await response.json();
+            console.log(data);
+        } catch (error) {
+            console.error("GST Report Error:", error);
+        }
+    };
 
     useEffect(() => {
         fetchGSTReport();
@@ -456,7 +457,7 @@ const ExpensesTracking = () => {
             const date = new Date(dateString);
             if (isNaN(date)) return dateString;
             return date.toLocaleDateString("en-GB");
-        };    
+        };
 
         const reportData = selectedRows.map((row) => {
             return {
@@ -560,33 +561,36 @@ const ExpensesTracking = () => {
     };
 
     const generateReportPDF = async () => {
-            if (!issuedId) {
-                setDeleteError(" ");
-                toast.warning('Error: Missing required fields');
-                return;
-            }
-            setLoading(true);
-            try {
-                const headerData = await PrintHeaderData();
-                const detailData = await PrintDetailData();
 
-                if (headerData && detailData) {
-                    console.log("All API calls completed successfully");
+    const printableRows = rowData.filter(
+        row => row.expense_no !== ""
+    );
 
-                    sessionStorage.setItem('IIheaderData', JSON.stringify(headerData));
-                    sessionStorage.setItem('IIdetailData', JSON.stringify(detailData));
+    if (printableRows.length === 0) {
+        toast.warning("No rows available");
+        return;
+    }
 
-                    window.open('/InvIssuedPrint', '_blank');
-                } else {
-                    console.log("Failed to fetch some data");
-                    toast.warning("Trasaction ID Does Not Exits");
-                }
-            } catch (error) {
-                console.error("Error executing API calls:", error);
-            } finally {
-                setLoading(false);
-            }
-        };
+    const totalAmount = printableRows.reduce(
+        (sum, row) => sum + (Number(row.amount) || 0),
+        0
+    );
+
+    const printData = {
+        companyName,
+        start_Date,
+        end_Date,
+        totalAmount,
+        rows: printableRows,
+    };
+
+    sessionStorage.setItem(
+        "ExpensesTrackingData",
+        JSON.stringify(printData)
+    );
+
+    window.open("/ExpensesTrackingPrint", "_blank");
+};
 
     const onSelectionChanged = () => {
         const selectedNodes = gridApi.getSelectedNodes();
@@ -786,10 +790,10 @@ const ExpensesTracking = () => {
                         <div className="purbut">
                             <div className="d-flex justify-content-end me-5">
                                 {['all permission', 'view'].some(permission => issuedPermission.includes(permission)) && (
-                                                <printbutton className="purbut" title="print" onClick={generateReportPDF}>
-                                                    <i class="fa-solid fa-file-pdf"></i>
-                                                </printbutton>
-                                            )}
+                                    <printbutton className="purbut" title="print" onClick={generateReportPDF}>
+                                        <i class="fa-solid fa-file-pdf"></i>
+                                    </printbutton>
+                                )}
                                 <button className="btn btn-dark mt-3 mb-3 rounded-3" onClick={generateReport} required title="Generate Report">
                                     <i className="fa-solid fa-print"></i>
                                 </button>
