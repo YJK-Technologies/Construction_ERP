@@ -195,17 +195,18 @@ function CustomerDetGrid() {
     })
       .then((response) => response.json())
       .then((data) => {
-        // Extract city names from the fetched data
         const States = data.map((option) => option.attributedetails_name);
         setStatedrop(States);
       })
       .catch((error) => console.error("Error fetching data:", error));
   }, []);
 
-  const filteredOptionStatus = statusdrop.map((option) => ({
-    value: option.attributedetails_name,
-    label: option.attributedetails_name,
-  }));
+  const filteredOptionStatus = Array.isArray(statusdrop)
+    ? statusdrop.map((option) => ({
+      value: option.attributedetails_name,
+      label: option.attributedetails_name,
+    }))
+    : [];
 
   const handleChangeCustomer = (selectedCustomer) => {
     setselectedCust(selectedCustomer);
@@ -232,20 +233,24 @@ function CustomerDetGrid() {
     setstatus(selectedStatus ? selectedStatus.value : "");
   };
 
-  const filteredOptioncustomer = customerdrop.map((option) => ({
-    value: option.attributedetails_name,
-    label: option.attributedetails_name,
-  }));
+  const filteredOptioncustomer = Array.isArray(customerdrop)
+    ? customerdrop.map((option) => ({
+      value: option.attributedetails_name,
+      label: option.attributedetails_name,
+    }))
+    : [];
 
   const handleChangeBT = (selectedBT) => {
     setSelectedBT(selectedBT);
     setbalance_type(selectedBT ? selectedBT.value : "");
   };
 
-  const filteredOptionBT = balance_typeDrop.map((option) => ({
-    value: option.attributedetails_code,
-    label: `${option.attributedetails_code} - ${option.attributedetails_name}`,
-  }));
+  const filteredOptionBT = Array.isArray(balance_typeDrop)
+    ? balance_typeDrop.map((option) => ({
+      value: option.attributedetails_code,
+      label: `${option.attributedetails_code} - ${option.attributedetails_name}`,
+    }))
+    : [];
 
   useEffect(() => {
     const company_code = sessionStorage.getItem("selectedCompanyCode");
@@ -1368,6 +1373,7 @@ function CustomerDetGrid() {
                     options={filteredOptionBT}
                     className="exp-input-field"
                     placeholder=""
+                    isClearable
                   />
                 </div>
               </div>
@@ -1383,6 +1389,7 @@ function CustomerDetGrid() {
                   options={filteredOptionStatus}
                   className="exp-input-field"
                   placeholder=""
+                  isClearable
                 />
               </div>
             </div>
@@ -1398,6 +1405,7 @@ function CustomerDetGrid() {
                   options={filteredOptioncustomer}
                   className="exp-input-field"
                   placeholder=""
+                  isClearable
                 />
               </div>
             </div>

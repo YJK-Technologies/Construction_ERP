@@ -179,25 +179,33 @@ function LocInfoInput({ }) {
       .catch((error) => console.error('Error fetching data:', error));
   }, []);
 
-  const filteredOptionCity = drop.map((option) => ({
-    value: option.attributedetails_name,
-    label: option.attributedetails_name,
-  }));
+  const filteredOptionCity = Array.isArray(drop)
+    ? drop.map((option) => ({
+      value: option.attributedetails_name,
+      label: option.attributedetails_name,
+    }))
+    : [];
 
-  const filteredOptionState = statedrop.map((option) => ({
-    value: option.attributedetails_name,
-    label: option.attributedetails_name,
-  }));
+  const filteredOptionState = Array.isArray(statedrop)
+    ? statedrop.map((option) => ({
+      value: option.attributedetails_name,
+      label: option.attributedetails_name,
+    }))
+    : [];
 
-  const filteredOptionCountry = condrop.map((option) => ({
-    value: option.attributedetails_name,
-    label: option.attributedetails_name,
-  }));
+  const filteredOptionCountry = Array.isArray(condrop)
+    ? condrop.map((option) => ({
+      value: option.attributedetails_name,
+      label: option.attributedetails_name,
+    }))
+    : [];
 
-  const filteredOptionStatus = statusdrop.map((option) => ({
-    value: option.attributedetails_name,
-    label: option.attributedetails_name,
-  }));
+  const filteredOptionStatus = Array.isArray(statusdrop)
+    ? statusdrop.map((option) => ({
+      value: option.attributedetails_name,
+      label: option.attributedetails_name,
+    }))
+    : [];
 
   const handleChangeCity = (selectedCity) => {
     setSelectedCity(selectedCity);
@@ -586,6 +594,7 @@ function LocInfoInput({ }) {
                           placeholder=""
                           maxLength={100}
                           ref={City}
+                          isClearable
                           onKeyDown={(e) =>
                             handleKeyDown(
                               e,
@@ -618,6 +627,7 @@ function LocInfoInput({ }) {
                           placeholder=""
                           maxLength={100}
                           ref={State}
+                          isClearable
                           onKeyDown={(e) =>
                             handleKeyDown(
                               e,
@@ -678,6 +688,7 @@ function LocInfoInput({ }) {
                           placeholder=""
                           maxLength={100}
                           ref={Country}
+                          isClearable
                           onKeyDown={(e) => handleKeyDown(e, email, Status)}
                         />
                       </div>
@@ -725,6 +736,7 @@ function LocInfoInput({ }) {
                           className="exp-input-field"
                           placeholder=""
                           ref={Status}
+                          isClearable
                           onKeyDown={(e) => handleKeyDown(e, Contactno, Status)}
                         />
                       </div>
@@ -766,47 +778,6 @@ function LocInfoInput({ }) {
                       />
                     </div>
                   </div>
-                  {/* <div className="col-md-3 form-group  mb-2">
-                    {mode === "create" ? (
-                      <div class="exp-form-floating">
-                        <div class="d-flex justify-content-start">
-                          <div>
-                            <label for="state" class="exp-form-labels">
-                              Created By
-                            </label>
-                          </div>
-                        </div>
-                        <input
-                          id="emailid"
-                          class="exp-input-field form-control"
-                          type="text"
-                          placeholder=""
-                          required
-                          title="Please enter the email ID"
-                          value={created_by}
-                        />
-                      </div>
-                    ) : (
-                      <div class="exp-form-floating">
-                        <div class="d-flex justify-content-start">
-                          <div>
-                            <label for="state" class="exp-form-labels">
-                              Modified By
-                            </label>
-                          </div>
-                        </div>
-                        <input
-                          id="emailid"
-                          class="exp-input-field form-control"
-                          type="text"
-                          placeholder=""
-                          required
-                          title="Please enter the email ID"
-                          value={modified_by}
-                        />
-                      </div>
-                    )}
-                  </div> */}
                   <div class="col-md-3 form-group ">
                     {mode === "create" ? (
                       <button onClick={handleInsert} className="mt-4 me-2" title="Save">

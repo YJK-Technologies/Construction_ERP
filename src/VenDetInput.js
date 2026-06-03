@@ -229,21 +229,21 @@ function VenDetInput({ }) {
       body: JSON.stringify({ company_code }),
     })
       .then((data) => data.json())
-.then((val) => {
-  console.log("Vendor API Response:", val);
+      .then((val) => {
+        console.log("Vendor API Response:", val);
 
-  if (Array.isArray(val)) {
-    setvendorcodedrop(val);
-  } else if (Array.isArray(val.data)) {
-    setvendorcodedrop(val.data);
-  } else {
-    setvendorcodedrop([]);
-  }
-})
-.catch((error) => {
-  console.error("Error fetching Vendors:", error);
-  setvendorcodedrop([]);
-});
+        if (Array.isArray(val)) {
+          setvendorcodedrop(val);
+        } else if (Array.isArray(val.data)) {
+          setvendorcodedrop(val.data);
+        } else {
+          setvendorcodedrop([]);
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching Vendors:", error);
+        setvendorcodedrop([]);
+      });
   };
 
   useEffect(() => {
@@ -343,51 +343,67 @@ function VenDetInput({ }) {
   }, []);
 
   const filteredOptionCode = Array.isArray(vendorcodedrop)
-  ? vendorcodedrop.map((option) => ({
+    ? vendorcodedrop.map((option) => ({
       value: option.vendor_code,
       label: `${option.vendor_code} - ${option.vendor_name}`,
     }))
-  : [];
-  
-  const filteredOptionTransaction = TRcodedrop.map((option) => ({
-    value: option.keyfield,
-    label: option.keyfield,
-  }));
+    : [];
 
-  const filteredOptionBT = balance_typeDrop.map((option) => ({
-    value: option.attributedetails_code,
-    label: `${option.attributedetails_code} - ${option.attributedetails_name}`,
-  }));
+  const filteredOptionTransaction = Array.isArray(TRcodedrop)
+    ? TRcodedrop.map((option) => ({
+      value: option.keyfield,
+      label: option.keyfield,
+    }))
+    : [];
 
-  const filteredOptionSales = SMcodedrop.map((option) => ({
-    value: option.keyfield,
-    label: option.keyfield,
-  }));
+  const filteredOptionBT = Array.isArray(balance_typeDrop)
+    ? balance_typeDrop.map((option) => ({
+      value: option.attributedetails_code,
+      label: `${option.attributedetails_code} - ${option.attributedetails_name}`,
+    }))
+    : [];
 
-  const filteredOptionBroker = BRcodedrop.map((option) => ({
-    value: option.keyfield,
-    label: option.keyfield,
-  }));
+  const filteredOptionSales = Array.isArray(SMcodedrop)
+    ? SMcodedrop.map((option) => ({
+      value: option.keyfield,
+      label: option.keyfield,
+    }))
+    : [];
 
-  const filteredOptionCity = drop.map((option) => ({
-    value: option.attributedetails_name,
-    label: option.attributedetails_name,
-  }));
+  const filteredOptionBroker = Array.isArray(BRcodedrop)
+    ? BRcodedrop.map((option) => ({
+      value: option.keyfield,
+      label: option.keyfield,
+    }))
+    : [];
 
-  const filteredOptionState = statedrop.map((option) => ({
-    value: option.attributedetails_name,
-    label: option.attributedetails_name,
-  }));
+  const filteredOptionCity = Array.isArray(drop)
+    ? drop.map((option) => ({
+      value: option.attributedetails_name,
+      label: option.attributedetails_name,
+    }))
+    : [];
 
-  const filteredOptionCountry = condrop.map((option) => ({
-    value: option.attributedetails_name,
-    label: option.attributedetails_name,
-  }));
+  const filteredOptionState = Array.isArray(statedrop)
+    ? statedrop.map((option) => ({
+      value: option.attributedetails_name,
+      label: option.attributedetails_name,
+    }))
+    : [];
 
-  const filteredOptionOffice = officedrop.map((option) => ({
-    value: option.attributedetails_name,
-    label: option.attributedetails_name,
-  }));
+  const filteredOptionCountry = Array.isArray(condrop)
+    ? condrop.map((option) => ({
+      value: option.attributedetails_name,
+      label: option.attributedetails_name,
+    }))
+    : [];
+
+  const filteredOptionOffice = Array.isArray(officedrop)
+    ? officedrop.map((option) => ({
+      value: option.attributedetails_name,
+      label: option.attributedetails_name,
+    }))
+    : [];
 
   const handleChangeCode = (selectedCode) => {
     setSelectedCode(selectedCode);
@@ -669,6 +685,7 @@ function VenDetInput({ }) {
                       <Select
                         id="venco"
                         value={selectedCode}
+                        isClearable
                         onChange={handleChangeCode}
                         options={filteredOptionCode}
                         className="exp-input-field position-relative"
@@ -780,6 +797,7 @@ function VenDetInput({ }) {
                     <div title="Select the City">
                       <Select
                         id="city"
+                        isClearable
                         value={selectedCity}
                         onChange={handleChangeCity}
                         options={filteredOptionCity}
@@ -800,6 +818,7 @@ function VenDetInput({ }) {
                     <div title="Select the State">
                       <Select
                         id="state"
+                        isClearable
                         value={selectedState}
                         onChange={handleChangeState}
                         options={filteredOptionState}
@@ -820,6 +839,7 @@ function VenDetInput({ }) {
                     <div title="Select the Country">
                       <Select
                         id="country"
+                        isClearable
                         value={selectedCountry}
                         onChange={handleChangeCountry}
                         options={filteredOptionCountry}
@@ -1012,6 +1032,7 @@ function VenDetInput({ }) {
                     <div title="Select the Transport Code">
                       <Select
                         id="ventrans"
+                        isClearable
                         value={selectedTransport}
                         onChange={handleChangeTransport}
                         options={filteredOptionTransaction}
@@ -1032,6 +1053,7 @@ function VenDetInput({ }) {
                     <div title="Select the Balance Type">
                       <Select
                         id="ventrans"
+                        isClearable
                         value={selectedBT}
                         onChange={handleChangeBT}
                         options={filteredOptionBT}
@@ -1052,6 +1074,7 @@ function VenDetInput({ }) {
                     <div title="Select the Salesman Code">
                       <Select
                         id="vensales"
+                        isClearable
                         value={selectedSales}
                         onChange={handleChangeSales}
                         options={filteredOptionSales}
@@ -1072,6 +1095,7 @@ function VenDetInput({ }) {
                     <div title="Select the Broker Code">
                       <Select
                         id="venbro"
+                        isClearable
                         value={selectedBroker}
                         onChange={handleChangeBroker}
                         options={filteredOptionBroker}
@@ -1112,6 +1136,7 @@ function VenDetInput({ }) {
                     <div title="Select the Office Type">
                       <Select
                         id="officeType"
+                        isClearable
                         value={selectedOffice}
                         onChange={handleChangeOffice}
                         options={filteredOptionOffice}

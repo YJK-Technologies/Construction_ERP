@@ -45,10 +45,6 @@ function Desgination() {
     .filter(permission => permission.screen_type === 'Company')
     .map(permission => permission.permission_type.toLowerCase());
 
-
-
-
-
   useEffect(() => {
     const company_code = sessionStorage.getItem('selectedCompanyCode');
     
@@ -60,7 +56,6 @@ function Desgination() {
       body: JSON.stringify({ company_code })
     })      .then((response) => response.json())
       .then((data) => {
-        // Extract city names from the fetched data
         const statusOption = data.map(option => option.attributedetails_name);
         setStatusGriddrop(statusOption);
       })
@@ -82,23 +77,18 @@ function Desgination() {
       .catch((error) => console.error('Error fetching data:', error));
   }, []);
 
-
-  const filteredOptionStatus = statusdrop.map((option) => ({
-    value: option.attributedetails_name,
-    label: option.attributedetails_name,
-  }));
+  const filteredOptionStatus = Array.isArray(statusdrop)
+    ? statusdrop.map((option) => ({
+      value: option.attributedetails_name,
+      label: option.attributedetails_name,
+    }))
+    : [];
 
   const handleChangeStatus = (selectedStatus) => {
     setSelectedStatus(selectedStatus);
     setStatus(selectedStatus ? selectedStatus.value : '');
     setHasValueChanged(true);
   };
-
-
-
-
-
-
 
   const reloadGridDatas = async () => {
     try {
@@ -147,20 +137,16 @@ function Desgination() {
     } catch (error) {
       console.error("Error saving data:", error);
       toast.error("Error updating data: " + error.message);
-    }finally {
+    } finally {
       setLoading(false);
     }
-
   };
 
   const reloadGridData = () => {
     window.location.reload();
   };
 
-
-
   const columnDefs = [
-
     {
       headerCheckboxSelection: true,
       headerName: "Department ID",
@@ -475,8 +461,7 @@ setLoading(true);
         } catch (error) {
           console.error("Error deleting rows:", error);
           toast.error('Error Deleting Data: ' + error.message);
-        }
-        finally {
+        } finally {
           setLoading(false);
         }
     
@@ -516,13 +501,11 @@ setLoading(true);
     setModifiedDate(formattedModifiedDate);
   };
 
-  // Handler for when a row is selected
   const onRowSelected = (event) => {
     if (event.node.isSelected()) {
       handleRowClick(event.data);
     }
   };
-
 
   return (
     <div className="container-fluid Topnav-screen">
@@ -563,8 +546,6 @@ setLoading(true);
                   <i class="fa-solid fa-floppy-disk"></i>
                 </savebutton>
               )}
-
-
               {['all permission', 'view'].some(permission => companyPermissions.includes(permission)) && (
                 <printbutton
                   class="purbut"
@@ -697,6 +678,7 @@ setLoading(true);
 <div title="Select the Status">
                 <Select
                   id="status"
+                  isClearable
                   value={selectedStatus}
                   onChange={handleChangeStatus}
                   options={filteredOptionStatus}
