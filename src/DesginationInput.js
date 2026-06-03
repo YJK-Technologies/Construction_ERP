@@ -22,24 +22,49 @@ function DesginationInput({ }) {
   const [selectedStatus, setSelectedStatus] = useState('');
   const [selecteddept, setSelecteddept] = useState('');
   const [selectedRows, setSelectedRows] = useState([]);
-  const [error, setError] = useState("");
+  const [error, setError] = useState(false);
   const departmentid = useRef(null);
   const desgid = useRef(null);
   const desg = useRef(null);
   const Status = useRef(null);
   const [hasValueChanged, setHasValueChanged] = useState(false);
   const created_by = sessionStorage.getItem('selectedUserCode')
-  const [isUpdated, setIsUpdated] = useState(false);
-  const [keyfield, setkey_field] = useState(false);
+  const [keyfield, setkey_field] = useState("");
   const [loading, setLoading] = useState(false);
 
-  console.log(selectedRows);
   const modified_by = sessionStorage.getItem("selectedUserCode");
 
   const location = useLocation();
   const { mode, selectedRow } = location.state || {};
 
+  const clearInputFields = () => {
+    setdesgination_id("");
+    setdesgination("");
+    setSelecteddept("");
+    setdept_id("");
+    setSelectedStatus("");
+    setStatus("");
+  }
 
+  useEffect(() => {
+    if (mode === "update" && selectedRow) {
+      setdesgination_id(selectedRow.desgination_id || "");
+      setdesgination(selectedRow.desgination || "");
+      setkey_field(selectedRow.keyfield || "");
+      setSelecteddept({
+        label: selectedRow.dept_id,
+        value: selectedRow.dept_id,
+      });
+      setdept_id(selectedRow.dept_id || "");
+      setSelectedStatus({
+        label: selectedRow.status,
+        value: selectedRow.status,
+      });
+      setStatus(selectedRow.status || "")
+    } else if (mode === "create") {
+      clearInputFields();
+    }
+  }, [mode, selectedRow]);
 
   useEffect(() => {
     const company_code = sessionStorage.getItem('selectedCompanyCode');
@@ -71,30 +96,16 @@ function DesginationInput({ }) {
   useEffect(() => {
     const company_code = sessionStorage.getItem('selectedCompanyCode');
 
-    const fetchDept = async () => {
-      try {
-        const response = await fetch(`${config.apiBaseUrl}/getDept`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ company_code }),
-        });
-
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-
-        const val = await response.json();
-        setDeptdrop(val);
-      } catch (error) {
-        console.error('Error fetching departments:', error);
-      }
-    };
-
-    if (company_code) {
-      fetchDept();
-    }
+    fetch(`${config.apiBaseUrl}/getDept`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ company_code })
+    })
+      .then((data) => data.json())
+      .then((val) => setDeptdrop(val))
+      .catch((error) => console.error('Error fetching data:', error));
   }, []);
 
   const filteredOptionDept = Array.isArray(Deptdrop)
@@ -111,9 +122,12 @@ function DesginationInput({ }) {
 
   const handleInsert = async () => {
     if (!dept_id || !desgination_id || !desgination || !status) {
-      setError(" ");
+      setError(true);
+      toast.warning("Missing require field");
       return;
     }
+
+    setError(false)
     setLoading(true);
 
     try {
@@ -135,72 +149,27 @@ function DesginationInput({ }) {
         toast.success("Data inserted Successfully", {
           onClose: () => clearInputFields()
         });
-      } else if (response.status === 400) {
+      } else {
         const errorResponse = await response.json();
         console.error(errorResponse.message);
-        toast.warning(errorResponse.message, {
-
-        });
-      } else {
-        console.error("Failed to insert data");
-        // Show generic error message using SweetAlert
-        toast.error('Failed to insert data', {
-
-        });
+        toast.warning(errorResponse.message);
       }
     } catch (error) {
       console.error("Error inserting data:", error);
-      // Show error message using SweetAlert
-      toast.error('Error inserting data: ' + error.message, {
-
-      });
-    }
-    finally {
+      toast.error('Error inserting data: ' + error.message);
+    } finally {
       setLoading(false);
     }
   };
 
-  const clearInputFields = () => {
-    setdesgination_id("");
-    setdesgination("");
-    setSelecteddept("");
-    setSelectedStatus("");
-
-  }
-  useEffect(() => {
-    if (mode === "update" && selectedRow && !isUpdated) {
-      setdesgination_id(selectedRow.desgination_id || "");
-      setdesgination(selectedRow.desgination || "");
-      setkey_field(selectedRow.keyfield || "");
-
-
-      setSelecteddept({
-        label: selectedRow.dept_id,
-        value: selectedRow.dept_id,
-      });
-      setSelectedStatus({
-        label: selectedRow.status,
-        value: selectedRow.status,
-      });
-
-
-
-    } else if (mode === "create") {
-      clearInputFields();
-    }
-  }, [mode, selectedRow, isUpdated]);
-
   const handleUpdate = async () => {
-    if (
-      !selecteddept ||
-      !desgination ||
-      !desgination_id ||
-      !selectedStatus
-
-    ) {
-      setError(" ");
+    if (!dept_id || !desgination_id || !desgination || !status) {
+      setError(true);
+      toast.warning("Missing require field");
       return;
     }
+
+    setError(false);
     setLoading(true);
 
     try {
@@ -211,11 +180,11 @@ function DesginationInput({ }) {
         },
         body: JSON.stringify({
           company_code: sessionStorage.getItem("selectedCompanyCode"),
-          dept_id: selecteddept.value,
+          dept_id,
           desgination,
           desgination_id,
           keyfield,
-          status: selectedStatus.value,
+          status,
           modified_by,
         }),
       });
@@ -223,23 +192,18 @@ function DesginationInput({ }) {
         toast.success("Data updated successfully", {
           onClose: () => clearInputFields()
         });
-      } else if (response.status === 400) {
+      } else {
         const errorResponse = await response.json();
         console.error(errorResponse.message);
         toast.warning(errorResponse.message);
-      } else {
-        console.error("Failed to insert data");
-        toast.error("Failed to Update data");
       }
     } catch (error) {
       console.error("Error Update data:", error);
       toast.error('Error inserting data: ' + error.message);
-    }
-    finally {
+    } finally {
       setLoading(false);
     }
   };
-
 
   const handleNavigate = () => {
     navigate("/DesgiantionInfo");
@@ -265,18 +229,13 @@ function DesginationInput({ }) {
     }
   };
 
-
   return (
     <div class="container-fluid Topnav-screen ">
       <div className="">
         <div class=""  >
           {loading && <LoadingScreen />}
 
-          <ToastContainer
-            position="top-right"
-            className="toast-design" // Adjust this value as needed
-            theme="colored"
-          />
+          <ToastContainer position="top-right" className="toast-design" theme="colored" />
           <div className="shadow-lg p-0 bg-body-tertiary rounded ">
             <div className=" mb-0 d-flex justify-content-between" >
               <h1 align="left" class="purbut">{mode === "update" ? 'Update Designation Details ' : 'Add Designation Details '} </h1>
@@ -295,15 +254,10 @@ function DesginationInput({ }) {
               <div className="row ms-3 me-3">
                 <div className="col-md-3  form-group mb-2">
                   <div class="exp-form-floating">
-                    <div class="d-flex justify-content-start">
-                      <div>
-                        <label for="rid" class="exp-form-labels">
-                          Department ID
-                        </label></div>
-                      <div> <span className="text-danger">*</span></div>
-                    </div>
+                    <label for="rid" className={`exp-form-labels ${error && !dept_id ? 'text-danger' : ''}`}>
+                      Department ID<span className="text-danger">*</span>
+                    </label>
                     <div title="Select the Department ID">
-
                       <div className="d-flex justify-content-between input-group">
                         <Select
                           id="deptid"
@@ -317,22 +271,16 @@ function DesginationInput({ }) {
                           onKeyDown={(e) => handleKeyDown(e, desgid, departmentid)}
                         />
                       </div>
-
-                      {error && !dept_id && <div className="text-danger">Department ID  should not be blank</div>}
-
                     </div>
                   </div>
                 </div>
 
                 <div className="col-md-3 form-group">
                   <div class="exp-form-floating">
-
-                    <div class="d-flex justify-content-start">
-                      <div><label for="rid" class="exp-form-labels">
-                        Desgination ID
-                      </label></div>
-                      <div> <span className="text-danger">*</span></div>
-                    </div><input
+                    <label for="rid" className={`exp-form-labels ${error && !desgination_id ? 'text-danger' : ''}`}>
+                      Desgination ID<span className="text-danger">*</span>
+                    </label>
+                    <input
                       id="did"
                       class="exp-input-field form-control"
                       type="text"
@@ -343,21 +291,16 @@ function DesginationInput({ }) {
                       maxLength={10}
                       ref={desgid}
                       onKeyDown={(e) => handleKeyDown(e, desg, desgid)}
-                    /> {error && !desgination_id && <div className="text-danger">Desgination ID should not be blank</div>}
-
-
+                    />
                   </div>
                 </div>
 
                 <div className="col-md-3 form-group">
                   <div class="exp-form-floating">
-
-                    <div class="d-flex justify-content-start">
-                      <div><label for="rid" class="exp-form-labels">
-                        Desgination
-                      </label></div>
-                      <div> <span className="text-danger">*</span></div>
-                    </div><input
+                    <label for="rid" className={`exp-form-labels ${error && !desgination ? 'text-danger' : ''}`}>
+                      Desgination<span className="text-danger">*</span>
+                    </label>
+                    <input
                       id="ename"
                       class="exp-input-field form-control"
                       type="text"
@@ -368,21 +311,15 @@ function DesginationInput({ }) {
                       maxLength={50}
                       ref={desg}
                       onKeyDown={(e) => handleKeyDown(e, Status, desg)}
-                    /> {error && !desgination && <div className="text-danger">Employee Name should not be blank</div>}
-
-
+                    />
                   </div>
                 </div>
 
                 <div className="col-md-3 form-group">
                   <div class="exp-form-floating">
-                    <div class="d-flex justify-content-start">
-                      <div><label for="rid" class="exp-form-labels">
-                        Status
-                      </label></div>
-                      <div> <span className="text-danger">*</span></div>
-                    </div>
-
+                    <label for="rid" className={`exp-form-labels ${error && !status ? 'text-danger' : ''}`}>
+                      Status<span className="text-danger">*</span>
+                    </label>
                     <div title="Select the Status">
                       <Select
                         id="status"
@@ -405,14 +342,10 @@ function DesginationInput({ }) {
                           }
                         }}
                       />
-                      {error && !status && <div className="text-danger"> Status  should not be blank</div>}
-
                     </div>
-
                   </div>
-
-
                 </div>
+
                 <div class="col-md-3 form-group ">
                   {mode === "create" ? (
                     <button onClick={handleInsert} className="mt-4" title="Save">
@@ -420,10 +353,11 @@ function DesginationInput({ }) {
                     </button>
                   ) : (
                     <button onClick={handleUpdate} className="mt-4" title="Update">
-                      <i class="fa-solid fa-floppy-disk"></i>
+                      <i class="fa-solid fa-pen-to-square"></i>
                     </button>
                   )}
                 </div>
+
               </div>
             </div>
           </div>

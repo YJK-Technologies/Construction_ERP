@@ -13,12 +13,11 @@ const config = require("./Apiconfig");
 function DepartmentInput({ }) {
   const [departmentCode, setDepartmentCode] = useState("");
   const [departmenntName, setDepartmenntName] = useState("");
-  const [error, setError] = useState("");
+  const [error, setError] = useState(false);
   const Location = useRef(null);
   const navigate = useNavigate();
   const [selectedRows, setSelectedRows] = useState([]);
 
-  const [isUpdated, setIsUpdated] = useState(false);
   const [key_field, setkey_field] = useState(false);
   const modified_by = sessionStorage.getItem("selectedUserCode");
   const created_by = sessionStorage.getItem("selectedUserCode");
@@ -29,7 +28,6 @@ function DepartmentInput({ }) {
 
   const location = useLocation();
   const { mode, selectedRow } = location.state || {};
-  console.log(selectedRow);
 
   const clearInputFields = () => {
     setDepartmentCode("");
@@ -37,7 +35,7 @@ function DepartmentInput({ }) {
   };
 
   useEffect(() => {
-    if (mode === "update" && selectedRow && !isUpdated) {
+    if (mode === "update" && selectedRow) {
 
       setDepartmentCode(selectedRow.dept_id || "");
       setDepartmenntName(selectedRow.dept_name || "");
@@ -46,13 +44,15 @@ function DepartmentInput({ }) {
     } else if (mode === "create") {
       clearInputFields();
     }
-  }, [mode, selectedRow, isUpdated]);
+  }, [mode, selectedRow]);
 
   const handleInsert = async () => {
     if (!departmentCode || !departmenntName) {
-      setError(" ");
+      setError(true);
+      toast.warning("Missing require field");
       return;
     }
+    setError(false);
     setLoading(true);
 
     try {
@@ -68,29 +68,19 @@ function DepartmentInput({ }) {
           created_by: sessionStorage.getItem("selectedUserCode"),
         }),
       });
-        if (response.ok) {
-                         toast.success("Data inserted Successfully", {
-                           onClose: () => clearInputFields()
-                         });
-      } else if (response.status === 400) {
-        const errorResponse = await response.json();
-        console.error(errorResponse.message);
-        toast.warning(errorResponse.message, {
-
+      if (response.ok) {
+        toast.success("Data inserted Successfully", {
+          onClose: () => clearInputFields()
         });
       } else {
-        console.error("Failed to insert data");
-        toast.error('Failed to insert data', {
-
-        });
+        const errorResponse = await response.json();
+        console.error(errorResponse.message);
+        toast.warning(errorResponse.message);
       }
     } catch (error) {
       console.error("Error inserting data:", error);
-      toast.error('Error inserting data: ' + error.message, {
-
-      });
-    }
-    finally {
+      toast.error('Error inserting data: ' + error.message);
+    } finally {
       setLoading(false);
     }
   };
@@ -118,9 +108,7 @@ function DepartmentInput({ }) {
 
   const handleKeyDownStatus = async (e) => {
     if (e.key === "Enter" && hasValueChanged) {
-      // Only trigger search if the value has changed
-      // Trigger the search function
-      setHasValueChanged(false); // Reset the flag after search
+      setHasValueChanged(false);
     }
   };
 
@@ -130,9 +118,11 @@ function DepartmentInput({ }) {
 
   const handleUpdate = async () => {
     if (!departmentCode || !departmenntName) {
-      setError(" ");
+      setError(true);
+      toast.warning("Missing require field");
       return;
     }
+    setError(false);
     setLoading(true);
 
     try {
@@ -149,23 +139,19 @@ function DepartmentInput({ }) {
           modified_by,
         }),
       });
-        if (response.ok) {
-                          toast.success("Data updated successfully", {
-                            onClose: () => clearInputFields()
-                          });
-      } else if (response.status === 400) {
+      if (response.ok) {
+        toast.success("Data updated successfully", {
+          onClose: () => clearInputFields()
+        });
+      } else {
         const errorResponse = await response.json();
         console.error(errorResponse.message);
         toast.warning(errorResponse.message);
-      } else {
-        console.error("Failed to insert data");
-        toast.error("Failed to Update data");
       }
     } catch (error) {
       console.error("Error Update data:", error);
       toast.error('Error inserting data: ' + error.message);
-    }
-    finally {
+    } finally {
       setLoading(false);
     }
   };
@@ -175,19 +161,11 @@ function DepartmentInput({ }) {
       <div className="">
         <div class="">
           {loading && <LoadingScreen />}
-
-          <ToastContainer
-            position="top-right"
-            className="toast-design" // Adjust this value as needed
-            theme="colored"
-          />
-
+          <ToastContainer position="top-right" className="toast-design" theme="colored" />
           <div className="shadow-lg p-0 bg-body-tertiary rounded">
             <div className=" mb-0 d-flex justify-content-between" >
               <h1 align="left" class="purbut" >{mode === "update" ? 'Update Department' : 'Add Department '}</h1>
               <h1 align="left" class="mobileview fs-4" >{mode === "update" ? 'Update Department' : 'Add Department '}</h1>
-
-
               <button onClick={handleNavigatesToForm} className=" btn btn-danger shadow-none rounded-0 h-70 fs-5" required title="Close">
                 <i class="fa-solid fa-xmark"></i>
               </button>
@@ -200,17 +178,9 @@ function DepartmentInput({ }) {
               <div class="row">
                 <div className="col-md-3 form-group mb-4">
                   <div class="exp-form-floating">
-                    <div class="d-flex justify-content-start">
-                      <div>
-                        <label for="rid" class="exp-form-labels">
-                          Department Code
-                        </label>
-                      </div>
-                      <div>
-                        {" "}
-                        <span className="text-danger">*</span>
-                      </div>
-                    </div>
+                    <label for="rid" className={`exp-form-labels ${error && !departmentCode ? 'text-danger' : ''}`}>
+                      Department Code<span className="text-danger">*</span>
+                    </label>
                     <input
                       id="departmentCode"
                       class="exp-input-field form-control"
@@ -226,26 +196,14 @@ function DepartmentInput({ }) {
                       onKeyDown={(e) => handleKeyDown(e, Name, code)}
                       readOnly={mode === "update"}
                     />
-                    {error && !departmentCode && (
-                      <div className="text-danger">
-                        Department Code should not be blank
-                      </div>
-                    )}
                   </div>
                 </div>
+
                 <div className="col-md-3 form-group">
                   <div class="exp-form-floating">
-                    <div class="d-flex justify-content-start">
-                      <div>
-                        <label for="rid" class="exp-form-labels">
-                          Department Name
-                        </label>
-                      </div>
-                      <div>
-                        {" "}
-                        <span className="text-danger">*</span>
-                      </div>
-                    </div>
+                    <label for="rid" className={`exp-form-labels ${error && !departmenntName ? 'text-danger' : ''}`}>
+                      Department Name<span className="text-danger">*</span>
+                    </label>
                     <input
                       id="departmenntName"
                       class="exp-input-field form-control"
@@ -259,20 +217,15 @@ function DepartmentInput({ }) {
                       onChange={(e) => setDepartmenntName(e.target.value)}
                       ref={Name}
                       onKeyDown={(e) => {
-                          if (e.key === 'Enter') {
-                            if (mode === "create") {
-                              handleInsert();
-                            } else {
-                              handleUpdate();
-                            }
+                        if (e.key === 'Enter') {
+                          if (mode === "create") {
+                            handleInsert();
+                          } else {
+                            handleUpdate();
                           }
-                        }}
+                        }
+                      }}
                     />
-                    {error && !departmenntName && (
-                      <div className="text-danger">
-                        Department Name should not be blank
-                      </div>
-                    )}
                   </div>
                 </div>
 
@@ -291,120 +244,8 @@ function DepartmentInput({ }) {
               </div>
             </div>
           </div>
-
-
         </div>
       </div>
-      {/* <div className="mobileview">
-    <div class="">
-<ToastContainer
-      position="top-right"
-      className="toast-design" // Adjust this value as needed
-theme="colored"
-      />
-      
-          <div className="shadow-lg p-0 bg-body-tertiary rounded">
-    <div className=" mb-0 d-flex justify-content-between" >
-    <h1 align="left" class="h1" >{mode === "update"?'Update Department':'Add Department '}</h1>
-              <button onClick={handleNavigatesToForm} className=" btn btn-danger shadow-none borde-shape h-70 fs-5" required title="Close">
-              <i class="fa-solid fa-xmark"></i>
-              </button>
-            </div>
-            </div>
-        
-        <div class="pt-2 mb-4">  
-        
-        <div className="shadow-lg p-3 bg-body-tertiary rounded  mb-2">
-          <div class="row">
-            <div className="col-md-3 form-group mb-4">
-              <div class="exp-form-floating">
-                <div class="d-flex justify-content-start">
-                  <div>
-                    <label for="rid" class="exp-form-labels">
-                      Department Code
-                    </label>
-                  </div>
-                  <div>
-                    {" "}
-                    <span className="text-danger">*</span>
-                  </div>
-                </div>
-                <input
-                  id="departmentCode"
-                  class="exp-input-field form-control"
-                  type="text"
-                  placeholder=""
-                  required
-                  title="Please enter the attribute header code"
-                  value={departmentCode}
-                  onChange={(e) => setDepartmentCode(e.target.value)}
-                  maxLength={100}
-                  ref={DepartmentCode}
-                  onKeyDown={(e) =>
-                    handleKeyDown(e, DepartmenntName, DepartmentCode)
-                  }
-                  readOnly={mode === "update"}
-                />
-                {error && !departmentCode && (
-                  <div className="text-danger">
-                    Department Code should not be blank
-                  </div>
-                )}
-              </div>
-            </div>
-            <div className="col-md-3 form-group">
-              <div class="exp-form-floating">
-                <div class="d-flex justify-content-start">
-                  <div>
-                    <label for="rid" class="exp-form-labels">
-                      Department Name
-                    </label>
-                  </div>
-                  <div>
-                    {" "}
-                    <span className="text-danger">*</span>
-                  </div>
-                </div>
-                <input
-                  id="departmenntName"
-                  class="exp-input-field form-control"
-                  type="text"
-                  placeholder=""
-                  required
-                  title="Please enter the attribute header name"
-                  value={departmenntName}
-                  maxLength={250}
-                  onChange={(e) => setDepartmenntName(e.target.value)}
-                  ref={DepartmenntName}
-                  onKeyDown={(e) => handleKeyDown(e, DepartmenntName)}
-                />
-                {error && !departmenntName && (
-                  <div className="text-danger">
-                    Department Name should not be blank
-                  </div>
-                )}
-              </div>
-            </div>
-            
-            <div class="col-md-3 form-group  d-flex justify-content-end ">
-                {mode === "create" ? (
-                  <button onClick={handleInsert} className="mt-4" title="Save">
-                    Save
-                  </button>
-                ) : (
-                  <button onClick={handleUpdate} className="mt-4" title="Update">
-                    Update
-                  </button>
-                )}
-              </div>
-            
-          </div>
-        </div>
-      </div>
-
-    
-    </div>
-    </div> */}
     </div>
   );
 }

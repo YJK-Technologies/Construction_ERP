@@ -30,7 +30,7 @@ function IntermediaryDetailInput({ }) {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [selectedRows, setSelectedRows] = useState([]);
-  const [error, setError] = useState("");
+  const [error, setError] = useState(false);
   const [intcodedrop, setintCodedrop] = useState([]);
   const [selectedHeader, setSelectedHeader] = useState('');
   const [drop, setDrop] = useState([]);
@@ -42,22 +42,23 @@ function IntermediaryDetailInput({ }) {
 
 
   const modified_by = sessionStorage.getItem("selectedUserCode");
-  const [isUpdated, setIsUpdated] = useState(false);
   const location = useLocation();
   const { mode, selectedRow } = location.state || {};
-  console.log(selectedRow);
-
 
   const clearInputFields = () => {
     setSelectedHeader("");
+    setCode("");
     setCodeDetails("");
     setIntermediary_Addr_1("");
     setIntermediary_Addr_2("");
     setIntermediary_Addr_3("");
     setIntermediary_Addr_4("");
     setselectedState("");
+    setIntermediary_Stat_Code("");
     setSelectedCity("");
+    setIntermediary_Area_Code("");
     setselectedCountry("");
+    setIntermediary_Cnty_Code("");
     setIntermediary_Imex_No("");
     setIntermediary_Office_No("");
     setIntermediary_Resi_No("");
@@ -67,7 +68,7 @@ function IntermediaryDetailInput({ }) {
   };
 
   useEffect(() => {
-    if (mode === "update" && selectedRow && !isUpdated) {
+    if (mode === "update" && selectedRow) {
       setselectedState({
         label: selectedRow.intermediary_stat_code,
         value: selectedRow.intermediary_stat_code,
@@ -103,7 +104,7 @@ function IntermediaryDetailInput({ }) {
     } else if (mode === "create") {
       clearInputFields();
     }
-  }, [mode, selectedRow, isUpdated]);
+  }, [mode, selectedRow]);
 
 
   const Address3 = useRef(null);
@@ -124,10 +125,14 @@ function IntermediaryDetailInput({ }) {
   const [hasValueChanged, setHasValueChanged] = useState(false);
   const created_by = sessionStorage.getItem('selectedUserCode')
 
-  useEffect(() => {
+  const fetchHdrCode = () => {
     fetch(`${config.apiBaseUrl}/inthdrcode`)
       .then((data) => data.json())
       .then((val) => setintCodedrop(val));
+  };
+
+  useEffect(() => {
+    fetchHdrCode();
   }, []);
 
   const filteredOptionHeader = Array.isArray(intcodedrop)
@@ -239,14 +244,17 @@ function IntermediaryDetailInput({ }) {
       !intermediary_mobile_no ||
       !intermediary_email_id
     ) {
-      setError(" ");
+      setError(true);
+      toast.warning("Missing require field");
       return;
     }
     // Email validation
     if (!validateEmail(intermediary_email_id)) {
-      setError("Please enter a valid email address");
+      toast.warning("Please enter a valid email address");
       return;
     }
+
+    setError(false);
     setLoading(true);
 
     try {
@@ -257,7 +265,6 @@ function IntermediaryDetailInput({ }) {
         },
         body: JSON.stringify({
           company_code: sessionStorage.getItem('selectedCompanyCode'),
-
           Code,
           codeDetails,
           intermediary_addr_1,
@@ -281,31 +288,21 @@ function IntermediaryDetailInput({ }) {
         toast.success("Data inserted Successfully", {
           onClose: () => clearInputFields()
         });
-      } else if (response.status === 400) {
+      } else {
         const errorResponse = await response.json();
         console.error(errorResponse.message);
-        toast.warning(errorResponse.message, {
-
-        });
-      } else {
-        console.error("Failed to insert data");
-        toast.error('Failed to insert data', {
-
-        });
+        toast.warning(errorResponse.message);
       }
     } catch (error) {
       console.error("Error inserting data:", error);
-      toast.error('Error inserting data: ' + error.message, {
-
-      });
-    }
-    finally {
+      toast.error('Error inserting data: ' + error.message);
+    } finally {
       setLoading(false);
     }
   };
 
   const handleNavigateToForm = () => {
-    navigate("/AddIntermedHeader", { selectedRows }); // Pass selectedRows as props to the Input component
+    navigate("/AddIntermedHeader", { selectedRows });
   };
 
   function validateEmail(email) {
@@ -314,42 +311,39 @@ function IntermediaryDetailInput({ }) {
   }
 
   const handleNavigate = () => {
-    navigate("/Intermediary"); // Pass selectedRows as props to the Input component
+    navigate("/Intermediary");
   };
 
   const handleKeyDown = async (e, nextFieldRef, value, hasValueChanged, setHasValueChanged) => {
     if (e.key === 'Enter') {
-      // Check if the value has changed and handle the search logic
+
       if (hasValueChanged) {
-        await handleKeyDownStatus(e); // Trigger the search function
-        setHasValueChanged(false); // Reset the flag after the search
+        await handleKeyDownStatus(e);
+        setHasValueChanged(false);
       }
 
-      // Move to the next field if the current field has a valid value
       if (value) {
         nextFieldRef.current.focus();
       } else {
-        e.preventDefault(); // Prevent moving to the next field if the value is empty
+        e.preventDefault();
       }
     }
   };
 
-
   const handleKeyDownStatus = async (e) => {
-    if (e.key === 'Enter' && hasValueChanged) { // Only trigger search if the value has changed
-      // Trigger the search function
-      setHasValueChanged(false); // Reset the flag after search
+    if (e.key === 'Enter' && hasValueChanged) {
+      setHasValueChanged(false);
     }
   };
 
   const handleClickOpen = (params) => {
     setOpen2(true);
-    console.log("Opening popup...");
-  };
-  const handleClose = () => {
-    setOpen2(false);
   };
 
+  const handleClose = () => {
+    setOpen2(false);
+    fetchHdrCode();
+  };
 
   const handleUpdate = async () => {
     if (
@@ -366,10 +360,17 @@ function IntermediaryDetailInput({ }) {
       !intermediary_mobile_no ||
       !intermediary_email_id
     ) {
-      setError(" ");
+      setError(true);
+      toast.warning("Missing require field");
       return;
-
     }
+
+    if (!validateEmail(intermediary_email_id)) {
+      toast.warning("Please enter a valid email address");
+      return;
+    }
+
+    setError(false);
     setLoading(true);
 
     try {
@@ -386,9 +387,9 @@ function IntermediaryDetailInput({ }) {
           intermediary_addr_2,
           intermediary_addr_3,
           intermediary_addr_4,
-          intermediary_area_code: selectedCity.value,
-          intermediary_stat_code: selectedState.value,
-          intermediary_cnty_code: selectedCountry.value,
+          intermediary_area_code,
+          intermediary_stat_code,
+          intermediary_cnty_code,
           intermediary_imex_no,
           intermediary_office_no,
           intermediary_resi_no,
@@ -403,19 +404,15 @@ function IntermediaryDetailInput({ }) {
         toast.success("Data updated successfully", {
           onClose: () => clearInputFields()
         });
-      } else if (response.status === 400) {
+      } else {
         const errorResponse = await response.json();
         console.error(errorResponse.message);
         toast.warning(errorResponse.message);
-      } else {
-        console.error("Failed to insert data");
-        toast.error("Failed to Update data");
       }
     } catch (error) {
       console.error("Error Update data:", error);
       toast.error('Error inserting data: ' + error.message);
-    }
-    finally {
+    } finally {
       setLoading(false);
     }
   };
@@ -426,11 +423,7 @@ function IntermediaryDetailInput({ }) {
         <div class=""  >
           {loading && <LoadingScreen />}
 
-          <ToastContainer
-            position="top-right"
-            className="toast-design" // Adjust this value as needed
-            theme="colored"
-          />
+          <ToastContainer position="top-right" className="toast-design" theme="colored" />
           <div className="shadow-lg p-0 bg-body-tertiary rounded">
             <div className=" mb-0 d-flex justify-content-between" >
               <h1 align="left" class="mobileview fs-4"> {mode === "update" ? 'Update Intermediary Details ' : 'Add Intermediary Details'}</h1>
@@ -447,19 +440,10 @@ function IntermediaryDetailInput({ }) {
               <div class="row">
                 <div className="col-md-3 form-group mb-0 me-0">
                   <div class="exp-form-floating">
-                    <div class="d-flex justify-content-start">
-                      <div>
-                        <label for="state" class="exp-form-labels">
-                          Code
-
-                        </label>
-                      </div>
-                      <div>
-                        <span className="text-danger">*</span>
-                      </div>
-                    </div>
+                    <label for="state" className={`exp-form-labels ${error && !Code ? 'text-danger' : ''}`}>
+                      Code<span className="text-danger">*</span>
+                    </label>
                     <div className="input-group" title="Select the code">
-
                       <Select
                         id="ihcode"
                         value={selectedHeader}
@@ -476,27 +460,15 @@ function IntermediaryDetailInput({ }) {
                       />
                       {mode !== "update" && (<button onClick={handleClickOpen} class="inthdrcode position-absolute pb-2  me-5" required title="Add Header"><i class="fa-solid fa-plus"></i></button>)}
                     </div>
-                    {error && !Code && <div className="text-danger">Code should not be blank</div>}
-
-
                   </div>
                 </div>
 
-
-
                 <div className="col-md-3 form-group mb-2  ">
                   <div class="exp-form-floating">
-                    <div class="d-flex justify-content-start">
-                      <div>
-                        <label for="state" class="exp-form-labels">
-                          Code Detail
-
-                        </label>
-                      </div>
-                      <div>
-                        <span className="text-danger">*</span>
-                      </div>
-                    </div><input
+                    <label for="state" className={`exp-form-labels ${error && !codeDetails ? 'text-danger' : ''}`}>
+                      Code Detail<span className="text-danger">*</span>
+                    </label>
+                    <input
                       id="idcode"
                       class="exp-input-field form-control"
                       type="text"
@@ -508,24 +480,16 @@ function IntermediaryDetailInput({ }) {
                       ref={codeD}
                       readOnly={mode === "update"}
                       onKeyDown={(e) => handleKeyDown(e, Address1, codeD)}
-                    />            {error && !codeDetails && <div className="text-danger">Code Detail should not be blank</div>}
-
-
+                    />
                   </div>
                 </div>
+
                 <div className="col-md-3 form-group  mb-2 ">
                   <div class="exp-form-floating">
-                    <div class="d-flex justify-content-start">
-                      <div>
-                        <label for="state" class="exp-form-labels">
-                          Address 1
-
-                        </label>
-                      </div>
-                      <div>
-                        <span className="text-danger">*</span>
-                      </div>
-                    </div><input
+                    <label for="state" className={`exp-form-labels ${error && !intermediary_addr_1 ? 'text-danger' : ''}`}>
+                      Address 1<span className="text-danger">*</span>
+                    </label>
+                    <input
                       id="idaddr1"
                       class="exp-input-field form-control"
                       type="text"
@@ -536,26 +500,16 @@ function IntermediaryDetailInput({ }) {
                       onChange={(e) => setIntermediary_Addr_1(e.target.value)}
                       ref={Address1}
                       onKeyDown={(e) => handleKeyDown(e, Address2, Address1)}
-                    />            {error && !intermediary_addr_1 && <div className="text-danger">Address should not be blank</div>}
-
-
+                    />
                   </div>
                 </div>
 
-
                 <div className="col-md-3 form-group mb-2 ">
                   <div class="exp-form-floating">
-                    <div class="d-flex justify-content-start">
-                      <div>
-                        <label for="state" class="exp-form-labels">
-                          Address 2
-
-                        </label>
-                      </div>
-                      <div>
-                        <span className="text-danger">*</span>
-                      </div>
-                    </div><input
+                    <label for="state" className={`exp-form-labels ${error && !intermediary_addr_2 ? 'text-danger' : ''}`}>
+                      Address 2<span className="text-danger">*</span>
+                    </label>
+                    <input
                       id="idaddr2"
                       class="exp-input-field form-control"
                       type="text"
@@ -566,24 +520,16 @@ function IntermediaryDetailInput({ }) {
                       onChange={(e) => setIntermediary_Addr_2(e.target.value)}
                       ref={Address2}
                       onKeyDown={(e) => handleKeyDown(e, Address3, Address2)}
-                    />          {error && !intermediary_addr_2 && <div className="text-danger">Address should not be blank</div>}
-
-
+                    />
                   </div>
                 </div>
+
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
-                    <div class="d-flex justify-content-start">
-                      <div>
-                        <label for="state" class="exp-form-labels">
-                          Address 3
-
-                        </label>
-                      </div>
-                      <div>
-
-                      </div>
-                    </div><input
+                    <label for="state" class="exp-form-labels">
+                      Address 3
+                    </label>
+                    <input
                       id="idaddr3"
                       class="exp-input-field form-control"
                       type="text"
@@ -595,14 +541,15 @@ function IntermediaryDetailInput({ }) {
                       ref={Address3}
                       onKeyDown={(e) => handleKeyDown(e, Address4, Address3)}
                     />
-
                   </div>
                 </div>
+
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
                     <label for="idaddr4" class="exp-form-labels">
                       Address 4
-                    </label><input
+                    </label>
+                    <input
                       id="idaddr4"
                       class="exp-input-field form-control"
                       type="text"
@@ -614,20 +561,15 @@ function IntermediaryDetailInput({ }) {
                       ref={Address4}
                       onKeyDown={(e) => handleKeyDown(e, City, Address4)}
                     />
-
                   </div>
                 </div>
 
-
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
-
-                    <div>
-                      <label for="state" class="exp-form-labels">
-                        City   <div> <span className="text-danger">*</span></div>
-                      </label></div>
+                    <label for="state" className={`exp-form-labels ${error && !intermediary_area_code ? 'text-danger' : ''}`}>
+                      City<span className="text-danger">*</span>
+                    </label>
                     <div title="Select the City">
-
                       <Select
                         id="city"
                         isClearable
@@ -638,21 +580,16 @@ function IntermediaryDetailInput({ }) {
                         placeholder=""
                         ref={City}
                         onKeyDown={(e) => handleKeyDown(e, State, City)}
-                      /> {error && !intermediary_area_code && <div className="text-danger">City should not be blank</div>}
-
-
+                      />
                     </div>
                   </div>
                 </div>
+
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
-                    <div class="d-flex justify-content-start">
-                      <div>
-                        <label for="state" class="exp-form-labels">
-                          State
-                        </label></div>
-                      <div> <span className="text-danger">*</span></div>
-                    </div>
+                    <label for="state" className={`exp-form-labels ${error && !intermediary_stat_code ? 'text-danger' : ''}`}>
+                      State<span className="text-danger">*</span>
+                    </label>
                     <div title="Select the State">
                       <Select
                         id="state"
@@ -664,21 +601,16 @@ function IntermediaryDetailInput({ }) {
                         placeholder=""
                         ref={State}
                         onKeyDown={(e) => handleKeyDown(e, Country, State)}
-                      />{error && !intermediary_stat_code && <div className="text-danger">State should not be blank</div>}
-
-
+                      />
                     </div>
                   </div>
                 </div>
+
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
-                    <div class="d-flex justify-content-start">
-                      <div>
-                        <label for="state" class="exp-form-labels">
-                          Country
-                        </label></div>
-                      <div> <span className="text-danger">*</span></div>
-                    </div>
+                    <label for="state" className={`exp-form-labels ${error && !intermediary_cnty_code ? 'text-danger' : ''}`}>
+                      Country<span className="text-danger">*</span>
+                    </label>
                     <div title="Select the Country">
                       <Select
                         id="country"
@@ -690,26 +622,17 @@ function IntermediaryDetailInput({ }) {
                         placeholder=""
                         ref={Country}
                         onKeyDown={(e) => handleKeyDown(e, IMEx, Country)}
-                      />{error && !intermediary_cnty_code && <div className="text-danger">Country should not be blank</div>}
+                      />
                     </div>
-
                   </div>
                 </div>
 
-
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
-                    <div class="d-flex justify-content-start">
-                      <div>
-                        <label for="state" class="exp-form-labels">
-                          IMEX No
-
-                        </label>
-                      </div>
-                      <div>
-                        <span className="text-danger">*</span>
-                      </div>
-                    </div><input
+                    <label for="state" className={`exp-form-labels ${error && !intermediary_imex_no ? 'text-danger' : ''}`}>
+                      IMEX No<span className="text-danger">*</span>
+                    </label>
+                    <input
                       id="idimexno"
                       class="exp-input-field form-control"
                       type="text"
@@ -720,24 +643,16 @@ function IntermediaryDetailInput({ }) {
                       onChange={(e) => setIntermediary_Imex_No(e.target.value)}
                       ref={IMEx}
                       onKeyDown={(e) => handleKeyDown(e, Office, IMEx)}
-                    />            {error && !intermediary_imex_no && <div className="text-danger">IMEX No should not be blank</div>}
-
-
+                    />
                   </div>
                 </div>
+
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
-                    <div class="d-flex justify-content-start">
-                      <div>
-                        <label for="state" class="exp-form-labels">
-                          Office No
-
-                        </label>
-                      </div>
-                      <div>
-                        <span className="text-danger">*</span>
-                      </div>
-                    </div><input
+                    <label for="state" className={`exp-form-labels ${error && !intermediary_office_no ? 'text-danger' : ''}`}>
+                      Office No<span className="text-danger">*</span>
+                    </label>
+                    <input
                       id="idofficeno"
                       class="exp-input-field form-control"
                       type="Number"
@@ -748,25 +663,16 @@ function IntermediaryDetailInput({ }) {
                       ref={Office}
                       onKeyDown={(e) => handleKeyDown(e, Residential, Office)}
                       onChange={(e) => setIntermediary_Office_No(e.target.value.replace(/\D/g, '').slice(0, 50))}
-                    />            {error && !intermediary_office_no && <div className="text-danger">Office No should not be blank</div>}
-
-
+                    />
                   </div>
                 </div>
 
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
-                    <div class="d-flex justify-content-start">
-                      <div>
-                        <label for="state" class="exp-form-labels">
-                          Residential No
-
-                        </label>
-                      </div>
-                      <div>
-                        <span className="text-danger">*</span>
-                      </div>
-                    </div> <input
+                    <label for="state" className={`exp-form-labels ${error && !intermediary_resi_no ? 'text-danger' : ''}`}>
+                      Residential No<span className="text-danger">*</span>
+                    </label>
+                    <input
                       id="idresno"
                       class="exp-input-field form-control"
                       type="Number"
@@ -777,25 +683,16 @@ function IntermediaryDetailInput({ }) {
                       ref={Residential}
                       onKeyDown={(e) => handleKeyDown(e, Mobile, Residential)}
                       onChange={(e) => setIntermediary_Resi_No(e.target.value.replace(/\D/g, '').slice(0, 50))}
-                    />            {error && !intermediary_resi_no && <div className="text-danger">Resident No should not be blank</div>}
-
-
+                    />
                   </div>
                 </div>
 
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
-                    <div class="d-flex justify-content-start">
-                      <div>
-                        <label for="state" class="exp-form-labels">
-                          Mobile No
-
-                        </label>
-                      </div>
-                      <div>
-                        <span className="text-danger">*</span>
-                      </div>
-                    </div><input
+                    <label for="state" className={`exp-form-labels ${error && !intermediary_mobile_no ? 'text-danger' : ''}`}>
+                      Mobile No<span className="text-danger">*</span>
+                    </label>
+                    <input
                       id="idmobno"
                       class="exp-input-field form-control"
                       type="Number"
@@ -806,24 +703,16 @@ function IntermediaryDetailInput({ }) {
                       ref={Mobile}
                       onKeyDown={(e) => handleKeyDown(e, Fax, Mobile)}
                       onChange={(e) => setIntermediary_Mobile_No(e.target.value.replace(/\D/g, '').slice(0, 50))}
-                    />            {error && !intermediary_mobile_no && <div className="text-danger">Mobile No should not be blank</div>}
-
-
+                    />
                   </div>
                 </div>
+
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
-                    <div class="d-flex justify-content-start">
-                      <div>
-                        <label for="state" class="exp-form-labels">
-                          Fax No
-
-                        </label>
-                      </div>
-                      <div>
-                        <span className="text-danger">*</span>
-                      </div>
-                    </div> <input
+                    <label for="state" className={`exp-form-labels ${error && !intermediary_fax_no ? 'text-danger' : ''}`}>
+                      Fax No<span className="text-danger">*</span>
+                    </label>
+                    <input
                       id="idfaxno"
                       class="exp-input-field form-control"
                       type="text"
@@ -834,24 +723,16 @@ function IntermediaryDetailInput({ }) {
                       ref={Fax}
                       onKeyDown={(e) => handleKeyDown(e, Email, Fax)}
                       onChange={(e) => setIntermediary_Fax_No(e.target.value)}
-                    />{error && !intermediary_fax_no && <div className="text-danger">Fax No should not be blank</div>}
-
-
+                    />
                   </div>
                 </div>
+
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
-                    <div class="d-flex justify-content-start">
-                      <div>
-                        <label for="state" class="exp-form-labels">
-                          Email ID
-
-                        </label>
-                      </div>
-                      <div>
-                        <span className="text-danger">*</span>
-                      </div>
-                    </div> <input
+                    <label for="state" className={`exp-form-labels ${error && !intermediary_email_id ? 'text-danger' : ''}`}>
+                      Email ID<span className="text-danger">*</span>
+                    </label>
+                    <input
                       id="idemailid"
                       class="exp-input-field form-control"
                       type="Email"
@@ -871,22 +752,21 @@ function IntermediaryDetailInput({ }) {
                       }}
                       onChange={(e) => setIntermediary_Email_Id(e.target.value)}
                     />
-                    {error && !validateEmail(intermediary_email_id) && <div className="text-danger">Please Enter Valid Email Id</div>}
                   </div>
                 </div>
+
                 <div class="col-md-3 form-group  ">
                   {mode === "create" ? (
                     <button onClick={handleInsert} className="mt-4" title="Save">
                       <i class="fa-solid fa-floppy-disk"></i>
-
                     </button>
                   ) : (
                     <button onClick={handleUpdate} className="mt-4" title="Update">
-                      <i class="fa-solid fa-floppy-disk"></i>
-
+                      <i class="fa-solid fa-pen-to-square"></i>
                     </button>
                   )}
                 </div>
+
               </div>
               <div>
                 <IntermediaryHdrInputPopup open={open2} handleClose={handleClose} />
