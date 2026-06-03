@@ -6,7 +6,7 @@ import * as icons from "react-bootstrap-icons";
 import { useNavigate } from "react-router-dom";
 import Select from 'react-select'
 import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css'; 
+import 'react-toastify/dist/ReactToastify.css';
 import LoadingScreen from './Loading';
 
 const config = require('./Apiconfig');
@@ -16,13 +16,12 @@ function CustomerHdrInput({ open, handleClose }) {
   const [customer_code, setcustomer_code] = useState("");
   const [customer_name, setcustomer_name] = useState("");
   const [status, setstatus] = useState("");
-  // const [vendor_logo, setvendor_logo] = useState("");
   const [panno, setpanno] = useState("");
   const [customer_gst_no, setcustomer_gst_no] = useState("");
   const [selectedRows, setSelectedRows] = useState([]);
   const [statusdrop, setStatusdrop] = useState([]);
   const [selectedStatus, setSelectedStatus] = useState('');
-  const [error, setError] = useState("");
+  const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
   const code = useRef(null);
   const Name = useRef(null);
@@ -31,6 +30,14 @@ function CustomerHdrInput({ open, handleClose }) {
   const GSTNo = useRef(null);
   const [hasValueChanged, setHasValueChanged] = useState(false);
 
+  const clearInputFields = () => {
+    setcustomer_code("");
+    setcustomer_name("");
+    setSelectedStatus("");
+    setstatus("");
+    setpanno("");
+    setcustomer_gst_no("");
+  };
 
   useEffect(() => {
     const company_code = sessionStorage.getItem('selectedCompanyCode');
@@ -47,23 +54,25 @@ function CustomerHdrInput({ open, handleClose }) {
       .catch((error) => console.error('Error fetching data:', error));
   }, []);
 
-  const filteredOptionStatus = statusdrop.map((option) => ({
-    value: option.attributedetails_name,
-    label: option.attributedetails_name,
-  }));
+  const filteredOptionStatus = Array.isArray(statusdrop)
+    ? statusdrop.map((option) => ({
+      value: option.attributedetails_name,
+      label: option.attributedetails_name,
+    }))
+    : [];
 
   const handleChangeStatus = (selectedStatus) => {
     setSelectedStatus(selectedStatus);
     setstatus(selectedStatus ? selectedStatus.value : '');
-
   };
-
 
   const handleInsert = async () => {
     if (!customer_code || !customer_name || !status) {
-      setError(" ");
+      setError(true);
+      toast.warning("Missing Required Fields");
       return;
     }
+    setError(false);
     setLoading(true);
     try {
       const response = await fetch(`${config.apiBaseUrl}/addcustomerhdr`, {
@@ -79,38 +88,27 @@ function CustomerHdrInput({ open, handleClose }) {
           panno,
           customer_gst_no,
           created_by: sessionStorage.getItem('selectedUserCode')
-
         }),
       });
       if (response.ok) {
-
-
-        console.log("Data inserted successfully");
-        setTimeout(() => {
-          toast.success("Data inserted successfully!", {
-            onClose: () => window.location.reload(), // Reloads the page after the toast closes
-          });
-        }, 1000);
+        toast.success("Data inserted successfully!", {
+          onClose: () => clearInputFields(),
+        });
       } else {
         const errorResponse = await response.json();
         console.error(errorResponse.message);
-        toast.warning(errorResponse.message, {
-
-        });
+        toast.warning(errorResponse.message);
       }
     } catch (error) {
       console.error("Error inserting data:", error);
-      toast.error('Error inserting data: ' + error.message, {
-
-      });
+      toast.error('Error inserting data: ' + error.message);
     } finally {
       setLoading(false);
     }
-
   };
 
   const handleNavigate = () => {
-    navigate("/AddCustomerDetails"); // Pass selectedRows as props to the Input component
+    navigate("/AddCustomerDetails"); 
   };
 
   const handleKeyDown = async (
@@ -136,9 +134,7 @@ function CustomerHdrInput({ open, handleClose }) {
 
   const handleKeyDownStatus = async (e) => {
     if (e.key === "Enter" && hasValueChanged) {
-      // Only trigger search if the value has changed
-      // Trigger the search function
-      setHasValueChanged(false); // Reset the flag after search
+      setHasValueChanged(false); 
     }
   };
 
@@ -168,14 +164,13 @@ function CustomerHdrInput({ open, handleClose }) {
                     </div>
                     <div class="">
                       <div class="row p-3">
+
                         <div className="col-md-3 form-group">
                           <div class="exp-form-floating">
-                            <div class="d-flex justify-content-start">
-                              <div><label for="rid" class="exp-form-labels">
-                                Customer Code
-                              </label></div>
-                              <div> <span className="text-danger">*</span></div>
-                            </div><input
+                            <label for="rid" className={`exp-form-labels ${error && !customer_code ? 'text-danger' : ''}`}>
+                                Customer Code<span className="text-danger">*</span>
+                              </label>
+                              <input
                               id="cuscode"
                               class="exp-input-field form-control"
                               type="text"
@@ -187,21 +182,15 @@ function CustomerHdrInput({ open, handleClose }) {
                               ref={code}
                               onKeyDown={(e) => handleKeyDown(e, Name, code)}
                             />
-                            {error && !customer_code && <div className="text-danger">Customer Code should not be blank</div>}
-
-
-
                           </div>
                         </div>
-                        <div className="col-md-3 form-group">
 
+                        <div className="col-md-3 form-group">
                           <div class="exp-form-floating">
-                            <div class="d-flex justify-content-start">
-                              <div><label for="rid" class="exp-form-labels">
-                                Customer Name
-                              </label></div>
-                              <div> <span className="text-danger">*</span></div>
-                            </div><input
+                            <label for="rid" className={`exp-form-labels ${error && !customer_name ? 'text-danger' : ''}`}>
+                                Customer Name<span className="text-danger">*</span>
+                              </label>
+                              <input
                               id="cusname"
                               class="exp-input-field form-control"
                               type="text"
@@ -213,34 +202,14 @@ function CustomerHdrInput({ open, handleClose }) {
                               ref={Name}
                               onKeyDown={(e) => handleKeyDown(e, Status, Name)}
                             />
-                            {error && !customer_name && <div className="text-danger">Customer Name should not be blank</div>}
                           </div>
                         </div>
-                        <div className="col-md-3 form-group">
 
+                        <div className="col-md-3 form-group">
                           <div class="exp-form-floating">
-                            <div class="d-flex justify-content-start">
-                              <div><label for="rid" class="exp-form-labels">
-                                Status
-                              </label></div>
-                              <div> <span className="text-danger">*</span></div>
-                            </div>
-                            {/* <select
-                  name="status"
-                  id="status"
-                  className="exp-input-field form-control"
-                  placeholder="Select status"
-                   required title = " Please select a status"
-                  value={status}
-                  onChange={(e) => setstatus(e.target.value)}
-                >
-                  <option value=""></option>
-                  {statusdrop.map((option, index) => (
-                    <option key={index} value={option.attributedetails_name}>
-                      {option.attributedetails_name}
-                    </option>
-                  ))}
-                </select> */}
+                            <label for="rid" className={`exp-form-labels ${error && !status ? 'text-danger' : ''}`}>
+                                Status<span className="text-danger">*</span>
+                              </label>
                             <Select
                               id="status"
                               value={selectedStatus}
@@ -249,10 +218,8 @@ function CustomerHdrInput({ open, handleClose }) {
                               className="exp-input-field"
                               placeholder=""
                               ref={Status}
-                              // onKeyDown={(e) => handleKeyDown(e, Status)}
                               onKeyDown={(e) => handleKeyDown(e, PanNo, Status)}
                             />
-                            {error && !status && <div className="text-danger">Status should not be blank</div>}
                           </div>
                         </div>
 
@@ -272,9 +239,9 @@ function CustomerHdrInput({ open, handleClose }) {
                               ref={PanNo}
                               onKeyDown={(e) => handleKeyDown(e, GSTNo, PanNo)}
                             />
-
                           </div>
                         </div>
+
                         <div className="col-md-3  form-group">
                           <div class="exp-form-floating">
                             <label for="cusgstno" class="exp-form-labels">
@@ -290,14 +257,14 @@ function CustomerHdrInput({ open, handleClose }) {
                               maxLength={15}
                               ref={GSTNo}
                               onKeyDown={(e) => {
-                              if (e.key === 'Enter') {
-                                handleInsert();
-                              }
-                            }}
+                                if (e.key === 'Enter') {
+                                  handleInsert();
+                                }
+                              }}
                             />
-
                           </div>
                         </div>
+
                         <div class="col-md-3 form-group  ">
                           <button onClick={handleInsert} class="mt-4" required title="Save"><i class="fa-solid fa-floppy-disk"></i></button>
                         </div>
@@ -308,6 +275,7 @@ function CustomerHdrInput({ open, handleClose }) {
               </div>
             </div>
           </div>
+
           <div className="mobileview">
             <div className="modal mt-5" tabIndex="-1" role="dialog" style={{ display: 'block', backgroundColor: 'rgba(0,0,0,0.5)' }}>
               <div className="modal-dialog modal-xl ps-4 pe-4 p-1" role="document">
@@ -335,12 +303,10 @@ function CustomerHdrInput({ open, handleClose }) {
                       <div class="row p-3">
                         <div className="col-md-3 form-group">
                           <div class="exp-form-floating">
-                            <div class="d-flex justify-content-start">
-                              <div><label for="rid" class="exp-form-labels">
-                                Customer Code
-                              </label></div>
-                              <div> <span className="text-danger">*</span></div>
-                            </div><input
+                            <label for="rid" className={`exp-form-labels ${error && !customer_code ? 'text-danger' : ''}`}>
+                                Customer Code<span className="text-danger">*</span>
+                              </label>
+                              <input
                               id="cuscode"
                               class="exp-input-field form-control"
                               type="text"
@@ -352,20 +318,15 @@ function CustomerHdrInput({ open, handleClose }) {
                               onKeyDown={(e) => handleKeyDown(e, Name, code)}
                               maxLength={18}
                             />
-
-                            {error && !customer_code && <div className="text-danger">Customer Code should not be blank</div>}
-
                           </div>
                         </div>
-                        <div className="col-md-3 form-group">
 
+                        <div className="col-md-3 form-group">
                           <div class="exp-form-floating">
-                            <div class="d-flex justify-content-start">
-                              <div><label for="rid" class="exp-form-labels">
-                                Customer Name
-                              </label></div>
-                              <div> <span className="text-danger">*</span></div>
-                            </div><input
+                            <label for="rid" className={`exp-form-labels ${error && !customer_name ? 'text-danger' : ''}`}>
+                                Customer Name<span className="text-danger">*</span>
+                              </label>
+                              <input
                               id="cusname"
                               class="exp-input-field form-control"
                               type="text"
@@ -375,34 +336,14 @@ function CustomerHdrInput({ open, handleClose }) {
                               onChange={(e) => setcustomer_name(e.target.value)}
                               maxLength={250}
                             />
-                            {error && !customer_name && <div className="text-danger">Customer Name should not be blank</div>}
                           </div>
                         </div>
-                        <div className="col-md-3 form-group">
 
+                        <div className="col-md-3 form-group">
                           <div class="exp-form-floating">
-                            <div class="d-flex justify-content-start">
-                              <div><label for="rid" class="exp-form-labels">
-                                Status
-                              </label></div>
-                              <div> <span className="text-danger">*</span></div>
-                            </div>
-                            {/* <select
-                  name="status"
-                  id="status"
-                  className="exp-input-field form-control"
-                  placeholder="Select status"
-                   required title = " Please select a status"
-                  value={status}
-                  onChange={(e) => setstatus(e.target.value)}
-                >
-                  <option value=""></option>
-                  {statusdrop.map((option, index) => (
-                    <option key={index} value={option.attributedetails_name}>
-                      {option.attributedetails_name}
-                    </option>
-                  ))}
-                </select> */}
+                            <label for="rid" className={`exp-form-labels ${error && !status ? 'text-danger' : ''}`}>
+                                Status<span className="text-danger">*</span>
+                              </label>
                             <Select
                               id="status"
                               value={selectedStatus}
@@ -411,7 +352,6 @@ function CustomerHdrInput({ open, handleClose }) {
                               className="exp-input-field"
                               placeholder=""
                             />
-                            {error && !status && <div className="text-danger">Status should not be blank</div>}
                           </div>
                         </div>
 
@@ -429,9 +369,9 @@ function CustomerHdrInput({ open, handleClose }) {
                               onChange={(e) => setpanno(e.target.value)}
                               maxLength={18}
                             />
-
                           </div>
                         </div>
+
                         <div className="col-md-3  form-group">
                           <div class="exp-form-floating">
                             <label for="cusgstno" class="exp-form-labels">
@@ -446,9 +386,9 @@ function CustomerHdrInput({ open, handleClose }) {
                               onChange={(e) => setcustomer_gst_no(e.target.value)}
                               maxLength={15}
                             />
-
                           </div>
                         </div>
+
                         <div class="col-md-3 form-group  d-flex justify-content-end">
                           <button onClick={handleInsert} class="mt-4" required title="Save"> Save</button>
                         </div>

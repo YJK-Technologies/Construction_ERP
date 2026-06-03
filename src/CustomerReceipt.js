@@ -455,7 +455,7 @@ function AssetsReturn({ }) {
 
                     bal_amt: 0,
 
-                    pending: "Completed",
+                    pending: "Yes",
 
                     keyfield:
                         `${row.transactionDate}/${row.code}/ADVANCE`,

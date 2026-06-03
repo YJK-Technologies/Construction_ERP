@@ -1388,7 +1388,7 @@ function DeliveryChallan() {
 
                 headerKey = 'DcheaderData';
                 detailKey = 'DcdetailData';
-                url = '/DCPrint';
+                url = '/DeliveryChallanTemplate2';
 
                 sessionStorage.setItem(headerKey, LZString.compress(JSON.stringify(headerData)));
                 sessionStorage.setItem(detailKey, LZString.compress(JSON.stringify(detailData)));

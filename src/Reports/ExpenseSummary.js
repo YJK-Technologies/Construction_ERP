@@ -194,11 +194,6 @@ const ExpensesSummary = () => {
             editable: true,
         },
         {
-            headerName: "Total Expense",
-            field: "total_expense",
-            editable: true,
-        },
-        {
             headerName: "Coolie Expense",
             field: "coolie_expense",
             editable: true,
@@ -214,8 +209,23 @@ const ExpensesSummary = () => {
             editable: true,
         },
         {
-            headerName: "Salary Expense",
+            headerName: "Daily Expense",
             field: "other_expense",
+            editable: true,
+        },
+        {
+            headerName: "Other Expense",
+            field: "other_expense",
+            editable: true,
+        },
+        {
+            headerName: "Employee Expense",
+            field: "other_expense",
+            editable: true,
+        },
+        {
+            headerName: "Total Expense",
+            field: "total_expense",
             editable: true,
         },
     ];

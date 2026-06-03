@@ -51,7 +51,7 @@ function CustomerDetInput({ }) {
   const [selectedTransport, setSelectedTransport] = useState('');
   const [selectedSales, setSelectedSales] = useState('');
   const [selectedBroker, setSelectedBroker] = useState('');
-  const [error, setError] = useState("");
+  const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
   const [selectedUserName, setSelectedUserName] = useState('')
   const [officedrop, setOfficedrop] = useState([]);
@@ -66,7 +66,6 @@ function CustomerDetInput({ }) {
   const [selectedBT, setSelectedBT] = useState("");
   const [balance_type, setbalance_type] = useState("");
   const [balance_typeDrop, setbalance_typeDrop] = useState([]);
-
 
   const Country = useRef(null);
   const IMEx = useRef(null);
@@ -93,17 +92,12 @@ function CustomerDetInput({ }) {
 
   const [hasValueChanged, setHasValueChanged] = useState(false);
   const created_by = sessionStorage.getItem('selectedUserCode')
-
   const modified_by = sessionStorage.getItem("selectedUserCode");
-  const [isUpdated, setIsUpdated] = useState(false);
 
   const location = useLocation();
   const { mode, selectedRow } = location.state || {};
 
-  console.log(selectedRow);
-
   const clearInputFields = () => {
-    setcustomer_code("");
     setcustomer_addr_1("");
     setcustomer_addr_2("");
     setcustomer_addr_3("");
@@ -112,6 +106,7 @@ function CustomerDetInput({ }) {
     setcustomer_office_no('');
     setcustomer_resi_no('');
     setcustomer_mobile_no('');
+    setcustomer_fax_no('');
     setcustomer_email_id('');
     setcustomer_credit_limit("0");
     setopening_balance("0");
@@ -135,37 +130,28 @@ function CustomerDetInput({ }) {
     setSelectedBroker('');
     setselectedOffice('');
     setselectedCust('');
+    setSelectedBT('');
+    setbalance_type('');
+    setkeyfield('');
   };
 
+  const fetchHdrCode = () => {
+    const company_code = sessionStorage.getItem("selectedCompanyCode");
+
+    fetch(`${config.apiBaseUrl}/customercode`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ company_code }),
+    })
+      .then((data) => data.json())
+      .then((val) => setcustomercodedrop(val));
+  };
 
   useEffect(() => {
-    const company_code = sessionStorage.getItem('selectedCompanyCode');
-    const fetchCustomer = async () => {
-      try {
-        const response = await fetch(`${config.apiBaseUrl}/customercode`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ company_code }),
-        });
-
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-
-        const val = await response.json();
-        setcustomercodedrop(val);
-      } catch (error) {
-        console.error('Error fetching Vendors:', error);
-      }
-    };
-
-    if (company_code) {
-      fetchCustomer();
-    }
+    fetchHdrCode();
   }, []);
-
 
   useEffect(() => {
     fetch(`${config.apiBaseUrl}/trcode`)
@@ -182,7 +168,6 @@ function CustomerDetInput({ }) {
       .then((data) => data.json())
       .then((val) => setbrcodedrop(val));
   }, []);
-
 
   useEffect(() => {
     const company_code = sessionStorage.getItem('selectedCompanyCode');
@@ -213,7 +198,6 @@ function CustomerDetInput({ }) {
       .catch((error) => console.error('Error fetching data:', error));
   }, []);
 
-
   useEffect(() => {
     const company_code = sessionStorage.getItem('selectedCompanyCode');
 
@@ -229,8 +213,6 @@ function CustomerDetInput({ }) {
       .catch((error) => console.error('Error fetching data:', error));
   }, []);
 
-
-
   useEffect(() => {
     const company_code = sessionStorage.getItem('selectedCompanyCode');
 
@@ -245,7 +227,6 @@ function CustomerDetInput({ }) {
       .then((val) => setOfficedrop(val))
       .catch((error) => console.error('Error fetching data:', error));
   }, []);
-
 
   useEffect(() => {
     const company_code = sessionStorage.getItem('selectedCompanyCode');
@@ -280,7 +261,7 @@ function CustomerDetInput({ }) {
 
 
   useEffect(() => {
-    if (mode === "update" && selectedRow && !isUpdated) {
+    if (mode === "update" && selectedRow) {
       setcustomer_addr_1(selectedRow.customer_addr_1 || "")
       setcustomer_addr_2(selectedRow.customer_addr_2 || "");
       setcustomer_addr_3(selectedRow.customer_addr_3 || "");
@@ -346,11 +327,10 @@ function CustomerDetInput({ }) {
         value: selectedRow.default_customer,
       });
 
-
     } else if (mode === "create") {
       clearInputFields();
     }
-  }, [mode, selectedRow, isUpdated]);
+  }, [mode, selectedRow]);
 
   const filteredOptionCode = Array.isArray(customercodedrop)
     ? customercodedrop.map((option) => ({
@@ -425,7 +405,6 @@ function CustomerDetInput({ }) {
   const handleChangeCode = (selectedOption) => {
     setSelectedCode(selectedOption);
     setcustomer_code(selectedOption ? selectedOption.value : '');
-    setSelectedUserName(selectedOption ? selectedOption.label.split(' - ')[1] : '');
   };
 
   const handleChangeTransport = (selectedTransport) => {
@@ -474,17 +453,16 @@ function CustomerDetInput({ }) {
   };
 
   const handleNavigateToForm = () => {
-    navigate("/AddCustomerHeader", { selectedRows }); // Pass selectedRows as props to the Input component
+    navigate("/AddCustomerHeader", { selectedRows });
   };
 
   const handleNavigate = () => {
-    navigate("/Customer", { selectedRows }); // Pass selectedRows as props to the Input component
+    navigate("/Customer", { selectedRows });
   };
 
   const handleInsert = async () => {
     if (
       !customer_code ||
-      // !company_code ||
       !customer_addr_1 ||
       !customer_addr_2 ||
       !customer_mobile_no ||
@@ -493,15 +471,18 @@ function CustomerDetInput({ }) {
       !customer_country ||
       !customer_state
     ) {
-      setError(" ");
+      setError(true);
+      toast.warning("Missing Required Fields");
       return;
     }
 
     // Email validation
     if (!validateEmail(customer_email_id)) {
-      setError("Please enter a valid email address");
+      toast.warning("Please enter a valid email address");
       return;
     }
+
+    setError(false);
     setLoading(true);
 
     try {
@@ -554,7 +535,6 @@ function CustomerDetInput({ }) {
     }
   };
 
-
   const handleUpdate = async () => {
     if (
       !customer_code ||
@@ -566,15 +546,17 @@ function CustomerDetInput({ }) {
       !customer_country ||
       !customer_state
     ) {
-      setError(" ");
+      setError(true);
+      toast.warning("Missing Required Fields");
       return;
     }
 
     // Email validation
     if (!validateEmail(customer_email_id)) {
-      setError("Please enter a valid email address");
+      toast.warning("Please enter a valid email address");
       return;
     }
+    setError(false)
     setLoading(true);
 
     try {
@@ -656,11 +638,11 @@ function CustomerDetInput({ }) {
 
   const handleClickOpen = (params) => {
     setOpen2(true);
-    console.log("Opening popup...");
   };
 
   const handleClose = () => {
     setOpen2(false);
+    fetchHdrCode();
   };
 
   return (
@@ -669,11 +651,8 @@ function CustomerDetInput({ }) {
         <div class=""  >
           {loading && <LoadingScreen />}
 
-          <ToastContainer
-            position="top-right"
-            className="toast-design" // Adjust this value as needed
-            theme="colored"
-          />
+          <ToastContainer position="top-right" className="toast-design" theme="colored" />
+
           <div className="shadow-lg p-0 bg-body-tertiary rounded  ">
             <div className=" mb-0 d-flex justify-content-between" >
               <h1 align="left" class="purbut" > {mode === "update" ? 'Update Customer Details' : 'Add Customer Details '} </h1>
@@ -683,21 +662,16 @@ function CustomerDetInput({ }) {
               </button>
             </div>
           </div>
+
           <div class="pt-2 mb-4">
             <div className="shadow-lg p-3 bg-body-tertiary rounded  mb-2">
               <div class="row">
+
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
-                    <div class="d-flex justify-content-start">
-                      <div>
-                        <label for="state" class="exp-form-labels">
-                          Code
-                        </label></div>
-                      <div> <span className="text-danger">*</span></div>
-
-                    </div>
-
-
+                    <label for="state" className={`exp-form-labels ${error && !customer_code ? 'text-danger' : ''}`}>
+                      Code<span className="text-danger">*</span>
+                    </label>
                     <div className="input-group" title="Select the Code">
                       <Select
                         id="cusco"
@@ -710,21 +684,18 @@ function CustomerDetInput({ }) {
                         isClearable
                         ref={code}
                         onKeyDown={(e) => handleKeyDown(e, Address1, code)}
-                      /><button onClick={handleClickOpen} class="cushdrcode position-absolute me-5 pb-2" required title="Add Header"><i class="fa-solid fa-plus"></i></button>
-                      {error && !customer_code && <div className="text-danger">Code  should not be blank</div>}
-
+                      />
+                      {mode !== "update" && (<button onClick={handleClickOpen} class="atthdrcode position-absolute me-5 pb-2 " required title="Add Header"><i class="fa-solid fa-plus"></i></button>)}
                     </div>
-
                   </div>
                 </div>
+
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
-                    <div class="d-flex justify-content-start">
-                      <div><label for="rid" class="exp-form-labels">
-                        Address 1
-                      </label></div>
-                      <div> <span className="text-danger">*</span></div>
-                    </div><input
+                    <label for="rid" className={`exp-form-labels ${error && !customer_addr_1 ? 'text-danger' : ''}`}>
+                      Address 1<span className="text-danger">*</span>
+                    </label>
+                    <input
                       id="cusad1"
                       class="exp-input-field form-control"
                       type="text"
@@ -736,17 +707,15 @@ function CustomerDetInput({ }) {
                       ref={Address1}
                       onKeyDown={(e) => handleKeyDown(e, Address2, Address1)}
                     />
-                    {error && !customer_addr_1 && <div className="text-danger">Address should not be blank</div>}
                   </div>
                 </div>
+
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
-                    <div class="d-flex justify-content-start">
-                      <div><label for="rid" class="exp-form-labels">
-                        Address 2
-                      </label></div>
-                      <div> <span className="text-danger">*</span></div>
-                    </div><input
+                    <label for="rid" className={`exp-form-labels ${error && !customer_addr_2 ? 'text-danger' : ''}`}>
+                      Address 2<span className="text-danger">*</span>
+                    </label>
+                    <input
                       id="cusad2"
                       class="exp-input-field form-control"
                       type="text"
@@ -758,14 +727,15 @@ function CustomerDetInput({ }) {
                       ref={Address2}
                       onKeyDown={(e) => handleKeyDown(e, Address3, Address2)}
                     />
-                    {error && !customer_addr_2 && <div className="text-danger">Address should not be blank</div>}
                   </div>
                 </div>
+
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
                     <label for="cusad3" class="exp-form-labels">
                       Address 3
-                    </label>  <input
+                    </label>
+                    <input
                       id="cusad3"
                       class="exp-input-field form-control"
                       type="text"
@@ -779,11 +749,13 @@ function CustomerDetInput({ }) {
                     />
                   </div>
                 </div>
+
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
                     <label for="cusad4" class="exp-form-labels">
                       Address 4
-                    </label><input
+                    </label>
+                    <input
                       id="cusad4"
                       class="exp-input-field form-control"
                       type="text"
@@ -797,14 +769,12 @@ function CustomerDetInput({ }) {
                     />
                   </div>
                 </div>
+
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
-                    <div class="d-flex justify-content-start">
-                      <div><label for="rid" class="exp-form-labels">
-                        City
-                      </label></div>
-                      <div> <span className="text-danger">*</span></div>
-                    </div>
+                    <label for="rid" className={`exp-form-labels ${error && !customer_area ? 'text-danger' : ''}`}>
+                      City<span className="text-danger">*</span>
+                    </label>
                     <div title="Select the City">
                       <Select
                         id="city"
@@ -816,14 +786,14 @@ function CustomerDetInput({ }) {
                         ref={City}
                         onKeyDown={(e) => handleKeyDown(e, code, City)}
                       />
-                      {error && !customer_area && <div className="text-danger">City should not be blank</div>}
                     </div>
                   </div>
                 </div>
+
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
-                    <label for="rid" class="exp-form-labels">
-                      State<div> <span className="text-danger">*</span></div>
+                    <label for="rid" className={`exp-form-labels ${error && !customer_state ? 'text-danger' : ''}`}>
+                      State<span className="text-danger">*</span>
                     </label>
                     <div title="Select the State">
                       <Select
@@ -837,18 +807,15 @@ function CustomerDetInput({ }) {
                         ref={code}
                         onKeyDown={(e) => handleKeyDown(e, Country, code)}
                       />
-                      {error && !customer_state && <div className="text-danger">State should not be blank</div>}
                     </div>
                   </div>
                 </div>
+
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
-                    <div class="d-flex justify-content-start">
-                      <div><label for="rid" class="exp-form-labels">
-                        Country
-                      </label></div>
-                      <div> <span className="text-danger">*</span></div>
-                    </div>
+                    <label for="rid" className={`exp-form-labels ${error && !customer_country ? 'text-danger' : ''}`}>
+                      Country<span className="text-danger">*</span>
+                    </label>
                     <div title="Select the Country">
                       <Select
                         id="country"
@@ -861,17 +828,16 @@ function CustomerDetInput({ }) {
                         ref={Country}
                         onKeyDown={(e) => handleKeyDown(e, IMEx, Country)}
                       />
-                      {error && !customer_country && <div className="text-danger">Country should not be blank</div>}
                     </div>
                   </div>
                 </div>
+
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
-                    <div class="d-flex justify-content-start">
-                      <div><label for="rid" class="exp-form-labels">
-                        IMEX No
-                      </label></div>
-                    </div> <input
+                    <label for="rid" class="exp-form-labels">
+                      IMEX No
+                    </label>
+                    <input
                       id="cusimex"
                       class="exp-input-field form-control"
                       type="text"
@@ -885,11 +851,13 @@ function CustomerDetInput({ }) {
                     />
                   </div>
                 </div>
+
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
                     <label for="cusoff" class="exp-form-labels">
                       Office No
-                    </label><input
+                    </label>
+                    <input
                       id="cusoff"
                       class="exp-input-field form-control"
                       type="number"
@@ -901,14 +869,15 @@ function CustomerDetInput({ }) {
                       ref={OfficeNo}
                       onKeyDown={(e) => handleKeyDown(e, Residential, OfficeNo)}
                     />
-                    {error && !customer_office_no && <div className="text-danger">Office no should not be blank</div>}
                   </div>
                 </div>
+
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
                     <label for="cusresi" class="exp-form-labels">
                       Residential No
-                    </label> <input
+                    </label>
+                    <input
                       id="cusresi"
                       class="exp-input-field form-control"
                       type="number"
@@ -920,17 +889,15 @@ function CustomerDetInput({ }) {
                       ref={Residential}
                       onKeyDown={(e) => handleKeyDown(e, Mobile, Residential)}
                     />
-                    {error && !customer_resi_no && <div className="text-danger">Residential no should not be blank</div>}
                   </div>
                 </div>
+
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
-                    <div class="d-flex justify-content-start">
-                      <div><label for="rid" class="exp-form-labels">
-                        Mobile No
-                      </label></div>
-                      <div> <span className="text-danger">*</span></div>
-                    </div><input
+                    <label for="rid" className={`exp-form-labels ${error && !customer_mobile_no ? 'text-danger' : ''}`}>
+                      Mobile No<span className="text-danger">*</span>
+                    </label>
+                    <input
                       id="mobno"
                       class="exp-input-field form-control"
                       type="number"
@@ -942,16 +909,15 @@ function CustomerDetInput({ }) {
                       ref={Mobile}
                       onKeyDown={(e) => handleKeyDown(e, Fax, Mobile)}
                     />
-                    {error && !customer_mobile_no && <div className="text-danger">Mobile Number should not be blank</div>}
                   </div>
                 </div>
+
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
-                    <div class="d-flex justify-content-start">
-                      <div><label for="rid" class="exp-form-labels">
-                        Fax No
-                      </label></div>
-                    </div> <input
+                    <label for="rid" class="exp-form-labels">
+                      Fax No
+                    </label>
+                    <input
                       id="cusfax"
                       class="exp-input-field form-control"
                       type="number"
@@ -965,14 +931,13 @@ function CustomerDetInput({ }) {
                     />
                   </div>
                 </div>
+
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
-                    <div class="d-flex justify-content-start">
-                      <div><label for="rid" class="exp-form-labels">
-                        Email ID
-                      </label></div>
-                      <div> <span className="text-danger">*</span></div>
-                    </div><input
+                    <label for="rid" className={`exp-form-labels ${error && !customer_email_id ? 'text-danger' : ''}`}>
+                      Email ID<span className="text-danger">*</span>
+                    </label>
+                    <input
                       id="emailid"
                       class="exp-input-field form-control"
                       type="email"
@@ -984,17 +949,15 @@ function CustomerDetInput({ }) {
                       ref={Email}
                       onKeyDown={(e) => handleKeyDown(e, Credit, Email)}
                     />
-                    {error && !validateEmail(customer_email_id) && <div className="text-danger">Please Enter Valid Email Id</div>}
                   </div>
                 </div>
+
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
-                    <div class="d-flex justify-content-start">
-                      <div><label for="rid" class="exp-form-labels">
-                        Credit Limit
-                      </label></div>
-                      <div> <span className="text-danger">*</span></div>
-                    </div><input
+                    <label for="rid" className={`exp-form-labels ${error && !customer_credit_limit ? 'text-danger' : ''}`}>
+                      Credit Limit<span className="text-danger">*</span>
+                    </label>
+                    <input
                       id="cuscre"
                       class="exp-input-field form-control"
                       type="number"
@@ -1006,22 +969,14 @@ function CustomerDetInput({ }) {
                       ref={Credit}
                       onKeyDown={(e) => handleKeyDown(e, Transport, Credit)}
                     />
-                    {error && !customer_credit_limit && <div className="text-danger">Credit Limit should not be blank</div>}
                   </div>
                 </div>
+
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
-                    <div class="d-flex justify-content-start">
-                      <div>
-                        <label for="rid" class="exp-form-labels">
-                          Opening Balance
-                        </label>
-                      </div>
-                      <div>
-                        {" "}
-                        <span className="text-danger">*</span>
-                      </div>
-                    </div>
+                    <label for="rid" className={`exp-form-labels ${error && !opening_balance ? 'text-danger' : ''}`}>
+                      Opening Balance<span className="text-danger">*</span>
+                    </label>
                     <input
                       id="vencre"
                       class="exp-input-field form-control"
@@ -1037,13 +992,9 @@ function CustomerDetInput({ }) {
                         handleKeyDown(e, Transport, openingbalance)
                       }
                     />
-                    {error && !opening_balance && (
-                      <div className="text-danger">
-                        Opening Balance should not be blank
-                      </div>
-                    )}
                   </div>
                 </div>
+
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
                     <label for="custrans" class="exp-form-labels">
@@ -1064,19 +1015,12 @@ function CustomerDetInput({ }) {
                     </div>
                   </div>
                 </div>
+
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
-                    <div class="d-flex justify-content-start">
-                      <div>
-                        <label for="ventrans" class="exp-form-labels">
-                          Balance Type
-                        </label>
-                      </div>
-                      <div>
-                        {" "}
-                        <span className="text-danger">*</span>
-                      </div>
-                    </div>
+                    <label for="ventrans" className={`exp-form-labels ${error && !balance_type ? 'text-danger' : ''}`}>
+                      Balance Type<span className="text-danger">*</span>
+                    </label>
                     <div title="Select the Balance Type">
                       <Select
                         id="ventrans"
@@ -1088,14 +1032,10 @@ function CustomerDetInput({ }) {
                         ref={BalanceType}
                         onKeyDown={(e) => handleKeyDown(e, Salesman, BalanceType)}
                       />
-                      {error && !balance_type && (
-                        <div className="text-danger">
-                          Balance Type should not be blank
-                        </div>
-                      )}
                     </div>
                   </div>
                 </div>
+
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
                     <label for="cussales" class="exp-form-labels">
@@ -1137,11 +1077,13 @@ function CustomerDetInput({ }) {
                     </div>
                   </div>
                 </div>
+
                 <div className="col-md-3 form-group mb-2 ">
                   <div class="exp-form-floating">
                     <label for="cusweek" class="exp-form-labels">
                       Weekday Code
-                    </label><input
+                    </label>
+                    <input
                       id="cusweek"
                       class="exp-input-field form-control"
                       type="text"
@@ -1155,6 +1097,7 @@ function CustomerDetInput({ }) {
                     />
                   </div>
                 </div>
+
                 <div className="col-md-3 form-group mb-2 ">
                   <div class="exp-form-floating">
                     <label for="cusweek" class="exp-form-labels">
@@ -1175,6 +1118,7 @@ function CustomerDetInput({ }) {
                     </div>
                   </div>
                 </div>
+
                 <div className="col-md-3 form-group mb-2 ">
                   <div class="exp-form-floating">
                     <label for="cusweek" class="exp-form-labels">
@@ -1195,6 +1139,7 @@ function CustomerDetInput({ }) {
                     </div>
                   </div>
                 </div>
+
                 <div className="col-md-3 form-group mb-2 ">
                   <div class="exp-form-floating">
                     <label for="cusweek" class="exp-form-labels">
@@ -1207,7 +1152,6 @@ function CustomerDetInput({ }) {
                       className="exp-input-field form-control"
                       placeholder=""
                       ref={Contact}
-                      // onKeyDown={(e) => handleKeyDown}
                       onKeyDown={(e) => {
                         if (e.key === 'Enter') {
                           if (mode === "create") {
@@ -1218,9 +1162,9 @@ function CustomerDetInput({ }) {
                         }
                       }}
                     />
-
                   </div>
                 </div>
+
                 <div class="col-md-3 form-group d-flex justify-content-start p-2">
                   {mode === "create" ? (
                     <button onClick={handleInsert} className="mt-3" title="Save">
@@ -1232,6 +1176,7 @@ function CustomerDetInput({ }) {
                     </button>
                   )}
                 </div>
+
                 <div>
                   <CustomerHdrInputPopup open={open2} handleClose={handleClose} />
                 </div>
@@ -1241,7 +1186,6 @@ function CustomerDetInput({ }) {
           </div>
         </div>
       </div>
-
     </div>
   );
 }

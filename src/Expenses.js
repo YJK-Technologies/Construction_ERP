@@ -1118,28 +1118,16 @@ function OpeningbalanceGrid() {
             </div>
             <div className="d-flex justify-content-end purbut me-3">
               {saveButtonVisible &&
-                ["add", "all permission"].some((permission) =>
-                  openingItemPermission.includes(permission)
-                ) && (
-                  <savebutton
-                    className="purbut"
-                    title="Save"
-                    onClick={handleSaveButtonClick}
-                  >
+                ["add", "all permission"].some((permission) => openingItemPermission.includes(permission)) && (
+                  <savebutton className="purbut" title="Save" onClick={handleSaveButtonClick}>
                     <i class="fa-regular fa-floppy-disk"></i>
                   </savebutton>
                 )}
               <printbutton className="purbut" title='excel' onClick={handleExcelDownload}>
                 <i class="fa-solid fa-file-excel"></i>
               </printbutton>
-              {["delete", "all permission"].some((permission) =>
-                openingItemPermission.includes(permission)
-              ) && (
-                  <delbutton
-                    className="purbut"
-                    title="Delete"
-                    onClick={handleDeleteButtonClick}
-                  >
+              {["delete", "all permission"].some((permission) => openingItemPermission.includes(permission)) && (
+                  <delbutton className="purbut" title="Delete" onClick={handleDeleteButtonClick}>
                     <i class="fa-solid fa-trash"></i>
                   </delbutton>
                 )}
@@ -1166,9 +1154,7 @@ function OpeningbalanceGrid() {
                   <ul class="dropdown-menu menu">
                     {saveButtonVisible && (
                       <li class="iconbutton d-flex justify-content-center text-success">
-                        {["add", "all permission"].some((permission) =>
-                          openingItemPermission.includes(permission)
-                        ) && (
+                        {["add", "all permission"].some((permission) => openingItemPermission.includes(permission)) && (
                             <icon class="icon" onClick={handleSaveButtonClick}>
                               <i class="fa-regular fa-floppy-disk"></i>
                             </icon>
@@ -1176,9 +1162,7 @@ function OpeningbalanceGrid() {
                       </li>
                     )}
                     <li class="iconbutton  d-flex justify-content-center text-danger">
-                      {["delete", "all permission"].some((permission) =>
-                        openingItemPermission.includes(permission)
-                      ) && (
+                      {["delete", "all permission"].some((permission) => openingItemPermission.includes(permission)) && (
                           <icon class="icon" onClick={handleDeleteButtonClick}>
                             <i class="fa-solid fa-trash"></i>
                           </icon>
@@ -1271,16 +1255,8 @@ function OpeningbalanceGrid() {
             />
           </div>
           <div>
-            <ExpensesPopup
-              open={open}
-              handleClose={handleClose}
-              handleOb={handleOI}
-            />
-            <PurchaseItemPopup
-              open={open1}
-              handleClose={handleClose}
-              handleExpenses={handleExpenses}
-            />
+            <ExpensesPopup open={open} handleClose={handleClose} handleOb={handleOI}/>
+            <PurchaseItemPopup open={open1} handleClose={handleClose} handleExpenses={handleExpenses}/>
           </div>
         </div>
       </div>

@@ -937,7 +937,7 @@ const getroleid = async (req, res) => {
       .request()
       .input("company_code", sql.NVarChar, company_code)
       .query(
-        `EXEC sp_role_info 'F',@company_code,'','','','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`
+        `EXEC sp_role_info 'F',@company_code,'','','','','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`
       );
 
     res.json(result.recordset);
@@ -1573,7 +1573,7 @@ const WareHousedeleteData = async (req, res) => {
 const getAllRoleInfoData = async (req, res) => {
   try {
     await connection.connectToDatabase();
-    const result = await sql.query(`EXEC sp_role_Info 'A','','','','','','','','','','','','','',''`);
+    const result = await sql.query(`EXEC sp_role_Info 'A','','','','','','','','','','','','','','',''`);
 
     res.json(result.recordset);
   } catch (err) {
@@ -4040,7 +4040,7 @@ const getRolesearchdata = async (req, res) => {
       .input("company_code", sql.NVarChar, company_code)
       .input("role_id", sql.NVarChar, role_id)
       .input("role_name", sql.NVarChar, role_name)
-      .query(`EXEC sp_Role_Info @mode,@company_code,@role_id,@role_name,'','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
+      .query(`EXEC sp_Role_Info @mode,@company_code,@role_id,@role_name,'','','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
 
     // Send response
     if (result.recordset.length > 0) {
@@ -13026,8 +13026,7 @@ const Updtestreport = async (req, res) => {
       .input("mode", sql.NVarChar, "U") // Insert mode
       .input("QR_code", sql.NVarChar, QR_code)
       .input("suggestions", sql.NVarChar, suggestions)
-      .query(
-        `EXEC sp_testreport_uploads @mode,'','','','','',@QR_code,@suggestions,'','','','','','','','','',''`);
+      .query(`EXEC sp_testreport_uploads @mode,'','','','','',@QR_code,@suggestions,'','','','','','','','','',''`);
 
     // Return success response
     if (result.rowsAffected && result.rowsAffected[0] > 0) {
@@ -13151,7 +13150,7 @@ const getUserRole = async (req, res) => {
       .request()
       .input("company_code", sql.NVarChar, company_code)
       .query(
-        `EXEC sp_role_info 'UR',@company_code,'','','','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`
+        `EXEC sp_role_info 'UR',@company_code,'','','','','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`
       );
 
     res.json(result.recordset);
@@ -37280,6 +37279,31 @@ const getExpensesReport = async (req, res) => {
 };
 //Code ended by Dinesh Gokul on 01-06-2026
 
+//Code added by Dinesh Gokul on 03-06-2026
+const ExpensesTrackingPrint = async (req, res) => {
+  const { expense_no, company_code } = req.body;
+
+  try {
+    const pool = await connection.connectToDatabase();
+
+    const result = await pool.request()
+      .input("mode", sql.NVarChar, "ETR")
+      .input("transaction_no", sql.NVarChar, expense_no)
+      .input("company_code", sql.NVarChar, company_code)
+      .query(`EXEC sp_print @mode,@transaction_no,@company_code,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
+    // Process result sets
+    if (result.recordset.length > 0) {
+      res.status(200).json(result.recordset); // 200 OK if data is found
+    } else {
+      res.status(404).json("Data not found"); // 404 Not Found if no data is found
+    }
+  } catch (err) {
+    console.error("Error", err);
+    res.status(500).json({ message: err.message || 'Internal Server Error' });
+  }
+};
+//Code ended by Dinesh Gokul on 03-06-2026
+
 module.exports = {
   login,
   forgetPassword,
@@ -38499,7 +38523,8 @@ module.exports = {
   getOB_data,
   get_GOB,
   inventoryIssueCalculation,
-  getExpensesReport
+  getExpensesReport,
+  ExpensesTrackingPrint
 
 
 };
