@@ -31,7 +31,15 @@ const columnDefs = [
         field: "expense_date",
         editable: false,
         cellStyle: { textAlign: "center" },
-        valueFormatter: params => format(new Date(params.value), 'yyyy-MM-dd'),
+        valueFormatter: (params) => {
+            if (!params.value) return "";
+
+            const date = new Date(params.value);
+
+            return isNaN(date.getTime())
+                ? ""
+                : format(date, "yyyy-MM-dd");
+        },
     },
     {
         headerName: "Expense Type",
@@ -151,8 +159,18 @@ export default function OIPopup({ open, handleClose, handleOb }) {
             });
             if (response.ok) {
                 const searchData = await response.json();
+
+                if (
+                    searchData.length > 0 &&
+                    searchData[0].ErrorMessage
+                ) {
+                    toast.warning(searchData[0].ErrorMessage);
+                    setRowData([]);
+                    return;
+                }
+
                 setRowData(searchData);
-                console.log("data fetched successfully")
+                console.log("data fetched successfully");
             } else if (response.status === 404) {
                 toast.warning("Data Not Found")
                     .then(() => {
@@ -568,7 +586,7 @@ export default function OIPopup({ open, handleClose, handleOb }) {
                                             </div>
                                             <div className="modal-body">
                                                 <div className="row ms-3 me-3">
-                                                                                                        <div className="col-md-3 mb-2">
+                                                    <div className="col-md-3 mb-2">
                                                         <input
                                                             type="text"
                                                             id="ItemCode"
