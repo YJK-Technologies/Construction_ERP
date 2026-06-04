@@ -1252,6 +1252,7 @@ router.post("/get_GOB", dataController.get_GOB)
 router.post("/inventoryIssueCalculation", dataController.inventoryIssueCalculation)
 router.post("/getExpensesReport", dataController.getExpensesReport)
 router.post("/ExpensesTrackingPrint", dataController.ExpensesTrackingPrint)
+router.post("/getExpensesSummarySiteWise", dataController.getExpensesSummarySiteWise)
 
 
 module.exports = router;

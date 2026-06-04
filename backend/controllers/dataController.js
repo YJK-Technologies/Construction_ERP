@@ -37304,6 +37304,53 @@ const ExpensesTrackingPrint = async (req, res) => {
 };
 //Code ended by Dinesh Gokul on 03-06-2026
 
+//Code added by Dinesh Gokul on 04-06-2026
+const getExpensesSummarySiteWise = async (req, res) => {
+  const {
+    Mode,
+    company_code,
+    Location_Code,
+    SiteID,
+    StartDate,
+    EndDate
+  } = req.body;
+
+  try {
+    const pool = await connection.connectToDatabase();
+
+    const result = await pool
+      .request()
+      .input("Mode", sql.NVarChar, Mode)
+      .input("company_code", sql.NVarChar, company_code)
+      .input("Location_Code", sql.NVarChar, Location_Code)
+      .input("SiteID", sql.NVarChar, SiteID || '')
+      .input("StartDate", sql.Date, StartDate ? new Date(StartDate) : null)
+      .input("EndDate", sql.Date, EndDate ? new Date(EndDate) : null)
+      .execute("sp_Expenses_Summary_SiteWise");
+
+    if (result.recordset.length > 0) {
+      res.status(200).json({
+        success: true,
+        columns: Object.keys(result.recordset[0]),
+        data: result.recordset
+      });
+    } else {
+      res.status(200).json({
+        success: true,
+        columns: [],
+        data: []
+      });
+    }
+  } catch (err) {
+    console.error("Error:", err);
+    res.status(500).json({
+      success: false,
+      message: err.message || "Internal Server Error"
+    });
+  }
+};
+//Code ended by Dinesh Gokul on 04-06-2026
+
 module.exports = {
   login,
   forgetPassword,
@@ -38524,7 +38571,8 @@ module.exports = {
   get_GOB,
   inventoryIssueCalculation,
   getExpensesReport,
-  ExpensesTrackingPrint
+  ExpensesTrackingPrint,
+  getExpensesSummarySiteWise
 
 
 };
