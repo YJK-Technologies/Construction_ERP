@@ -767,11 +767,11 @@ const ExpensesTracking = () => {
                                             <i className="fa-solid fa-list"></i>
                                         </button>
                                         <ul className="dropdown-menu ">
-                                            {['all permission', 'view'].some(permission => issuedPermission.includes(permission)) && (
-                                                <printbutton className="purbut" title="print" onClick={generateReportPDF}>
+                                            <li>
+                                                <icon class="iconbutton d-flex justify-content-center" onClick={generateReportPDF} required title="Generate Report">
                                                     <i class="fa-solid fa-file-pdf"></i>
-                                                </printbutton>
-                                            )}
+                                                </icon>
+                                            </li>
                                             <li>
                                                 <icon class="iconbutton d-flex justify-content-center" onClick={generateReport} required title="Generate Report">
                                                     <i className="fa-solid fa-print"></i>
@@ -790,7 +790,7 @@ const ExpensesTracking = () => {
                         <div className="purbut">
                             <div className="d-flex justify-content-end me-5">
                                 {['all permission', 'view'].some(permission => issuedPermission.includes(permission)) && (
-                                    <printbutton className="purbut" title="print" onClick={generateReportPDF}>
+                                    <printbutton className="btn btn-dark mt-3 mb-3 rounded-3" title="print" onClick={generateReportPDF}>
                                         <i class="fa-solid fa-file-pdf"></i>
                                     </printbutton>
                                 )}
@@ -1000,7 +1000,7 @@ const ExpensesTracking = () => {
                                 <icon className="popups-btn fs-6 p-3" onClick={fetchExpensesData} required title="Search">
                                     <i className="fas fa-search"></i>
                                 </icon>
-                                <icon className="popups-btn fs-6 p-3" required title="Refresh">
+                                <icon className="popups-btn fs-6 p-3" onClick={reloadGridData} required title="Refresh">
                                     <FontAwesomeIcon icon="fa-solid fa-arrow-rotate-right" />
                                 </icon>
                             </div>
