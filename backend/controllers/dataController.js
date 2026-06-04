@@ -26621,6 +26621,8 @@ const updDeliveryChallanheader = async (req, res) => {
     destination, note_not_for_sale, modified_by, } = req.body;
   let pool;
   try {
+
+    console.log(transaction_date)
     pool = await sql.connect(dbConfig);
     const result = await pool
       .request()
@@ -26677,11 +26679,11 @@ const updDeliveryChallanheader = async (req, res) => {
       .input("note_not_for_sale", sql.NVarChar, note_not_for_sale)
       .input("modified_by", sql.NVarChar, modified_by)
       .query(`EXEC sp_delivery_challan_hdr_Ramya @mode,@company_code,@Location_Code,@transaction_no,@transaction_date,@transport_charges,@pay_type,@sales_type,@customer_name,@bill_to_customer_code,@customer_addr_1,
-                         @customer_addr_2,@customer_addr_3,@customer_addr_4,@customer_state,@customer_country,@customer_mobile_no,@contact_person,@ShipTo_customer_name,
-                        @Ship_to_customer_code,@ShipTo_customer_addr_1,@ShipTo_customer_addr_2,@ShipTo_customer_addr_3,@ShipTo_customer_addr_4,@ShipTo_customer_state,
-                        @ShipTo_customer_country,@ShipTo_customer_mobile_no,@ShipTocontact_person,@purchase_amount,@add_fright,@less_fright,@rounded_off,@loading_charges,
-                        @cartage_paid,@other_charges,@lorry_no,@broker_code,@transport_code,@status,@total_amount,@rounded_off_acc_code,@loading_charges_acc_code,
-                        @cartage_paid_acc_code,@other_charges_acc_code,@purchase_amount_acc_code,@customer_gst_no,@ShipTocustomer_gst_no,@delivery_note, @dispatched_through,@destination,@note_not_for_sale,'',@modified_by,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`)
+      @customer_addr_2,@customer_addr_3,@customer_addr_4,@customer_state,@customer_country,@customer_mobile_no,@contact_person,@ShipTo_customer_name,
+      @Ship_to_customer_code,@ShipTo_customer_addr_1,@ShipTo_customer_addr_2,@ShipTo_customer_addr_3,@ShipTo_customer_addr_4,@ShipTo_customer_state,
+      @ShipTo_customer_country,@ShipTo_customer_mobile_no,@ShipTocontact_person,@purchase_amount,@add_fright,@less_fright,@rounded_off,@loading_charges,
+      @cartage_paid,@other_charges,@lorry_no,@broker_code,@transport_code,@status,@total_amount,@rounded_off_acc_code,@loading_charges_acc_code,
+      @cartage_paid_acc_code,@other_charges_acc_code,@purchase_amount_acc_code,@customer_gst_no,@ShipTocustomer_gst_no,@delivery_note, @dispatched_through,@destination,@note_not_for_sale,'',@modified_by,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`)
     res.json({ success: true, message: "Data Updated successfully" });
 
   } catch (err) {
@@ -37365,6 +37367,59 @@ const ExpensesTrackingPrint = async (req, res) => {
 };
 //Code ended by Dinesh Gokul on 03-06-2026
 
+//Code added by pavun on 04-06-2026
+const SupervisorSiteMaterialReport = async (req, res) => {
+  const { customer_code, vendor_code, site_id, material, location_code, company_code } = req.body;
+
+  try {
+    const pool = await connection.connectToDatabase();
+
+    const result = await pool.request()
+      .input("mode", sql.NVarChar, "SSM")
+      .input("company_code", sql.NVarChar, company_code)
+      .input("location_code", sql.NVarChar, location_code)
+      .input("customer_code", sql.NVarChar, customer_code)
+      .input("vendor_code", sql.NVarChar, vendor_code)
+      .input("site_id", sql.NVarChar, site_id)
+      .input("material", sql.NVarChar, material)
+      .query(`EXEC sp_Internal_vendor_purchase_report @mode,@company_code,@location_code,@customer_code,@vendor_code,@site_id,@material`);
+    
+    if (result.recordset.length > 0) {
+      res.status(200).json(result.recordset); 
+    } else {
+      res.status(404).json("Data not found");
+    }
+  } catch (err) {
+    console.error("Error", err);
+    res.status(500).json({ message: err.message || 'Internal Server Error' });
+  }
+};
+
+const IncomeExpenseAnalysisReport = async (req, res) => {
+  const { customer_code, site_id, company_code } = req.body;
+
+  try {
+    const pool = await connection.connectToDatabase();
+
+    const result = await pool.request()
+      .input("mode", sql.NVarChar, "IEA")
+      .input("company_code", sql.NVarChar, company_code)
+      .input("customer_code", sql.NVarChar, customer_code)
+      .input("site_id", sql.NVarChar, site_id)
+      .query(`EXEC sp_Income_expense_analysis_report @mode,@company_code,@customer_code,@site_id`);
+
+    if (result.recordset.length > 0) {
+      res.status(200).json(result.recordset);
+    } else {
+      res.status(404).json("Data not found");
+    }
+  } catch (err) {
+    console.error("Error", err);
+    res.status(500).json({ message: err.message || 'Internal Server Error' });
+  }
+};
+//Code ended by pavun on 04-06-2026
+
 module.exports = {
   login,
   forgetPassword,
@@ -38585,7 +38640,9 @@ module.exports = {
   get_GOB,
   inventoryIssueCalculation,
   getExpensesReport,
-  ExpensesTrackingPrint
+  ExpensesTrackingPrint,
+  SupervisorSiteMaterialReport,
+  IncomeExpenseAnalysisReport
 
 
 };
