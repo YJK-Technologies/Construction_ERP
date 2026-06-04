@@ -387,6 +387,7 @@ function ReceivedGoodsRt() {
                 end_date: transaction_dateTO,
                 pending: pendingStatus,
                 company_code: sessionStorage.getItem("selectedCompanyCode"),
+                Location_Code: sessionStorage.getItem("selectedLocationCode")
             };
 
             const response = await fetch(`${config.apiBaseUrl}/getReceivedGoodsReport`, {

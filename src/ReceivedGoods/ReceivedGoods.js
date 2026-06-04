@@ -113,6 +113,7 @@ function AssetsReturn({ }) {
         try {
             const body = {
                 company_code: sessionStorage.getItem('selectedCompanyCode'),
+                Location_Code: sessionStorage.getItem('selectedLocationCode'),
                 bill_no: transactionNo || TransactionNo
             };
 
@@ -176,11 +177,13 @@ function AssetsReturn({ }) {
 
         try {
             const company_code = sessionStorage.getItem('selectedCompanyCode');
+            const Location_Code = sessionStorage.getItem('selectedLocationCode');
             const response = await fetch(`${config.apiBaseUrl}/updateReceivedGoods`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    "company_code": company_code
+                    "company_code": company_code,
+                    "Location_Code": Location_Code
                 },
                 body: JSON.stringify({ editedData: filteredRows })
             });

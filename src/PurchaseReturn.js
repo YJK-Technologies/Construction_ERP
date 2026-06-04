@@ -531,6 +531,7 @@ function PurchaseReturn() {
     try {
       const Header = {
         company_code: sessionStorage.getItem('selectedCompanyCode'),
+        Location_Code: sessionStorage.getItem('selectedLocationCode'),
         vendor_code: vendorcode,
         pay_type: payType,
         purchase_type: purchaseType,
@@ -587,6 +588,7 @@ function PurchaseReturn() {
       for (const row of rowData) {
         const Details = {
           company_code: sessionStorage.getItem('selectedCompanyCode'),
+          Location_Code: sessionStorage.getItem('selectedLocationCode'),
           transaction_date: transactionDate,
           transaction_no: purch_autono.toString(),
           return_no: Return_no,
@@ -640,6 +642,7 @@ function PurchaseReturn() {
         for (const taxRow of matchingTaxRows) {
           const Details = {
             company_code: sessionStorage.getItem('selectedCompanyCode'),
+            Location_Code: sessionStorage.getItem('selectedLocationCode'),
             TaxSNo: taxRow.TaxSNO,
             transaction_no: purch_autono.toString(),
             transaction_date: transactionDate,
@@ -1631,6 +1634,7 @@ function PurchaseReturn() {
         body: JSON.stringify({
           return_no: returnnumber,
           company_code: sessionStorage.getItem('selectedCompanyCode'),
+          Location_Code: sessionStorage.getItem('selectedLocationCode'),
           authroization_status: selectedStatus.value
         })
       });
@@ -1656,6 +1660,7 @@ function PurchaseReturn() {
         body: JSON.stringify({
           return_no: returnnumber,
           company_code: sessionStorage.getItem('selectedCompanyCode'),
+          Location_Code: sessionStorage.getItem('selectedLocationCode'),
           authroization_status: selectedStatus.value
         })
       });
@@ -1679,6 +1684,7 @@ function PurchaseReturn() {
         body: JSON.stringify({
           return_no: returnnumber,
           company_code: sessionStorage.getItem('selectedCompanyCode'),
+          Location_Code: sessionStorage.getItem('selectedLocationCode'),
           authroization_status: selectedStatus.value
         })
       });

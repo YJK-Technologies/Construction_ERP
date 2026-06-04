@@ -11,6 +11,12 @@ import { ToastContainer, toast } from "react-toastify";
 import LoadingScreen from '../Loading';
 import LZString from "lz-string";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import jsPDF from "jspdf";
+import { autoTable } from "jspdf-autotable";
+import SitePopUp from '../SitePopUp';
+import CustomerPopup from '../SalesVendorPopup';
+import VendorPopup from '../ExpensesVendorPopUp';
+import ItemPopup from '../PurchaseItemPopup';
 
 const SupervisorSiteMaterial = () => {
 
@@ -19,19 +25,6 @@ const SupervisorSiteMaterial = () => {
   const [gridColumnApi, setGridColumnApi] = useState(null);
   const [editedData, setEditedData] = useState([]);
   const [selectedRows, setSelectedRows] = useState([]);
-  const [periodDrop, setPeriodDrop] = useState([]);
-  const [taxDrop, setTaxDrop] = useState([]);
-  const [partyDrop, setPartyDrop] = useState([]);
-  const [period, setPeriod] = useState(null);
-  const [tax, setTax] = useState(null);
-  const [party, setParty] = useState(null);
-  const [selectedPeriod, setSelectedPeriod] = useState(null);
-  const [selectedTax, setSelectedTax] = useState(null);
-  const [selectedParty, setSelectedParty] = useState(null);
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
-  const [start_Date, setStart_Date] = useState('');
-  const [end_Date, setEnd_Date] = useState('');
   const companyName = sessionStorage.getItem('selectedCompanyName');
   const [loading, setLoading] = useState(false);
 
@@ -42,141 +35,80 @@ const SupervisorSiteMaterial = () => {
 
   const permissions = JSON.parse(sessionStorage.getItem('permissions')) || {};
   const companyPermissions = permissions
-    .filter(permission => permission.screen_type === 'IEanalysis')
+    .filter(permission => permission.screen_type === 'SSmaterial')
     .map(permission => permission.permission_type.toLowerCase());
 
+  const [open1, setOpen1] = React.useState(false);
+  const [open2, setOpen2] = React.useState(false);
+  const [open3, setOpen3] = React.useState(false);
+  const [open4, setOpen4] = React.useState(false);
 
-  useEffect(() => {
-    fetch(`${config.apiBaseUrl}/getDateRange`)
-      .then((data) => data.json())
-      .then((val) => {
-        setPeriodDrop(val);
-
-        if (val.length > 0) {
-          const firstOption = {
-            value: val[4].Sno,
-            label: val[4].DateRangeDescription,
-          };
-          setSelectedPeriod(firstOption);
-          setPeriod(firstOption.value);
-        }
-      });
-  }, []);
-
-  const filteredOptionPeriod = Array.isArray(periodDrop)
-    ? periodDrop.map((option) => ({
-      value: option.Sno,
-      label: option.DateRangeDescription,
-    }))
-    : [];
-
-  const handleChangePeriod = (selectedPeriod) => {
-    setSelectedPeriod(selectedPeriod);
-    setPeriod(selectedPeriod ? selectedPeriod.value : '');
+  const handleClose = () => {
+    setOpen1(false);
+    setOpen2(false);
+    setOpen3(false);
+    setOpen4(false);
   };
 
-  const fetchGSTReport = () => {
-    fetch(`${config.apiBaseUrl}/getGSTReport`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        company_code: sessionStorage.getItem("selectedCompanyCode"),
-      }),
-    }).then((data) => data.json())
-      .then((val) => {
-        setTaxDrop(val);
-
-        setPartyDrop(val);
-
-        if (val.length > 0) {
-          const firstTaxOption = {
-            value: val[0].attributedetails_name,
-            label: val[0].attributedetails_name,
-          };
-          const firstPartyOption = {
-            value: val[0].descriptions,
-            label: val[0].descriptions,
-          };
-
-          setSelectedTax(firstTaxOption);
-          setTax(firstTaxOption.value);
-          setSelectedParty(firstPartyOption);
-          setParty(firstPartyOption.value);
-        }
-      });
+  const handleShowCustomer = () => {
+    setOpen1(true);
   };
 
-  useEffect(() => {
-    fetchGSTReport();
-  }, []);
+  const handleShowSite = () => {
+    setOpen2(true);
+  };
 
+  const handleShowVendor = () => {
+    setOpen3(true);
+  };
 
-  const filteredOptionTax = Array.isArray(taxDrop)
-    ? taxDrop.map((option) => ({
-      value: option.attributedetails_name,
-      label: option.attributedetails_name,
-    }))
-    : [];
+  const handleShowItem = () => {
+    setOpen4(true);
+  };
 
-  const handleChangeTax = (selectedTax) => {
-    setSelectedTax(selectedTax);
-    setTax(selectedTax ? selectedTax.value : "");
-
-    const updatedPartyOptions = partyDrop.filter(
-      (option) => option.attributedetails_name === selectedTax?.value
-    );
-    if (updatedPartyOptions.length > 0) {
-      const firstPartyOption = {
-        value: updatedPartyOptions[0].descriptions,
-        label: updatedPartyOptions[0].descriptions,
-      };
-      setSelectedParty(firstPartyOption);
-      setParty(firstPartyOption.value);
+  const handleCustomer = async (data) => {
+    if (data && data.length > 0) {
+      const [{ CustomerCode, CustomerName }] = data;
+      setCustomerCode(CustomerCode);
     } else {
-      setSelectedParty(null);
-      setParty("");
+      console.error('Data is empty or undefined');
     }
   };
 
-  const filteredOptionParty = Array.isArray(partyDrop)
-    ? partyDrop.map((option) => ({
-      value: option.descriptions,
-      label: option.descriptions,
-    }))
-    : [];
-
-  const handleChangeParty = (selectedParty) => {
-    setSelectedParty(selectedParty);
-    setParty(selectedParty ? selectedParty.value : "");
-
-    const updatedTaxOptions = taxDrop.filter(
-      (option) => option.descriptions === selectedParty?.value
-    );
-    if (updatedTaxOptions.length > 0) {
-      const firstTaxOption = {
-        value: updatedTaxOptions[0].attributedetails_name,
-        label: updatedTaxOptions[0].attributedetails_name,
-      };
-      setSelectedTax(firstTaxOption);
-      setTax(firstTaxOption.value);
+  const handleVendorCode = async (data) => {
+    if (data && data.length > 0) {
+      const [{ VendorCode, VendorName }] = data;
+      setVendorCode(VendorCode);
     } else {
-      setSelectedTax(null);
-      setTax("");
+      console.error('Data is empty or undefined');
     }
   };
+
+  const handleSiteCode = async (data) => {
+    if (data && data.length > 0) {
+      const [{ SiteID, SiteName }] = data;
+      setSiteID(SiteID);
+    } else {
+      console.error('Data is empty or undefined');
+    }
+  };
+
+  const handleItem = async (data) => {
+    if (data && data.length > 0) {
+      const [{ itemCode, itemName }] = data;
+      setMaterial(itemCode);
+    } else {
+      console.error('Data is empty or undefined');
+    }
+  };
+
+  useEffect(() => {
+    fetchSupervisorReport();
+  }, []);
 
   const reloadGridData = () => {
     window.location.reload();
   };
-
-  const formatDate = (isoDateString) => {
-    const date = new Date(isoDateString);
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    return `${day}-${month}-${year}`;
-  };
-
 
   const columnDefs = [
     {
@@ -189,58 +121,63 @@ const SupervisorSiteMaterial = () => {
     {
       headerName: "Customer Code",
       field: "customer_code",
-      editable: true,
+      editable: false,
     },
     {
       headerName: "Customer Name",
       field: "customer_name",
-      editable: true,
+      editable: false,
     },
     {
       headerName: "Site ID",
       field: "site_id",
-      editable: true,
+      editable: false,
     },
     {
       headerName: "Site Name",
       field: "site_name",
-      editable: true,
+      editable: false,
     },
     {
       headerName: "Vendor Code",
       field: "vendor_code",
-      editable: true,
+      editable: false,
     },
     {
       headerName: "Vendor Name",
       field: "vendor_name",
-      editable: true,
+      editable: false,
+    },
+    {
+      headerName: "Material Code",
+      field: "material_code",
+      editable: false,
     },
     {
       headerName: "Material Name",
       field: "material_name",
-      editable: true,
+      editable: false,
     },
     {
       headerName: "Quantity",
       field: "quantity",
-      editable: true,
+      editable: false,
     },
     {
       headerName: "Rate",
       field: "rate",
-      editable: true,
+      editable: false,
     },
     {
       headerName: "Total Amount",
       field: "total_amount",
-      editable: true,
+      editable: false,
     },
   ];
 
   const defaultColDef = {
     resizable: true,
-    wrapText: true,
+    wrapText: false,
     // flex: 1,
   };
 
@@ -252,32 +189,30 @@ const SupervisorSiteMaterial = () => {
   const generateReport = () => {
     const selectedRows = gridApi.getSelectedRows();
     if (selectedRows.length === 0) {
-      alert("Please select at least one row to generate a report");
+      toast.warning("Please select at least one row to generate a report");
       return;
     }
 
-    const formatDate = (dateString) => {
-      const date = new Date(dateString);
-      if (isNaN(date)) return dateString;
-      return date.toLocaleDateString("en-GB");
-    };
-
-    const reportData = selectedRows.map((row) => {
+    const reportData = selectedRows.map((row, index) => {
+      const formatValue = (val) => (val !== undefined && val !== null ? val : '');
       return {
-        "Date": formatDate(row.Date),
-        "Bill No": row.BillNo,
-        "Party Name": row.PartyName,
-        "GST No": row.GSTNo,
-        "Percentage %": row.Percentage,
-        "CGST": row.CGST,
-        "SGST": row.SGST,
-        "IGST": row.IGST,
-        "Bill Rate": row.BillRate,
+        "S.No": index + 1,
+        "Customer Code": formatValue(row.customer_code),
+        "Customer Name": formatValue(row.customer_name),
+        "Site ID": formatValue(row.site_id),
+        "Site Name": formatValue(row.site_name),
+        "Vendor Code": formatValue(row.vendor_code),
+        "Vendor Name": formatValue(row.vendor_name),
+        "Material Code": formatValue(row.material_code),
+        "Material Name": formatValue(row.material_name),
+        "Quantity": formatValue(row.quantity),
+        "Rate": formatValue(row.rate),
+        "Total Amount": formatValue(row.total_amount),
       };
     });
 
     const reportWindow = window.open("", "_blank");
-    reportWindow.document.write("<html><head><title>GST Report</title>");
+    reportWindow.document.write("<html><head><title>Supervisor & Site Material Report</title>");
     reportWindow.document.write("<style>");
     reportWindow.document.write(`
         body {
@@ -340,7 +275,7 @@ const SupervisorSiteMaterial = () => {
         }
       `);
     reportWindow.document.write("</style></head><body>");
-    reportWindow.document.write("<h1><u>GST Report</u></h1>");
+    reportWindow.document.write("<h1><u>Supervisor & Site Material Report</u></h1>");
 
     reportWindow.document.write("<table><thead><tr>");
     Object.keys(reportData[0]).forEach((key) => {
@@ -385,33 +320,19 @@ const SupervisorSiteMaterial = () => {
     }
   };
 
-  useEffect(() => {
-    if (selectedPeriod?.label === "Custom Date") {
-      if (startDate && endDate) {
-        fetchGstReport();
-      }
-    }
-    else if (period && party) {
-      fetchGstReport();
-    }
-  }, []);
-
-  const fetchGstReport = async () => {
+  const fetchSupervisorReport = async () => {
     setLoading(true);
     try {
-      if (selectedPeriod === "Custom Date" && (!startDate || !endDate)) {
-        return;
-      }
-
       const body = {
-        Mode: period.toString(),
+        customer_code: customerCode,
         company_code: sessionStorage.getItem("selectedCompanyCode"),
-        Party: party,
-        StartDate: selectedPeriod?.label === "Custom Date" ? startDate : undefined,
-        EndDate: selectedPeriod?.label === "Custom Date" ? endDate : undefined,
+        location_code: sessionStorage.getItem("selectedLocationCode"),
+        vendor_code: vendorCode,
+        site_id: siteID,
+        material: material,
       };
 
-      const response = await fetch(`${config.apiBaseUrl}/getGstReportAnalysis`, {
+      const response = await fetch(`${config.apiBaseUrl}/SupervisorSiteMaterialReport`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -421,43 +342,43 @@ const SupervisorSiteMaterial = () => {
 
       if (response.ok) {
         const fetchedData = await response.json();
-        if (fetchedData.length > 0) {
-          const firstItem = fetchedData[0];
-          setStart_Date(formatDate(firstItem.DateRange_Start) || "");
-          setEnd_Date(formatDate(firstItem.DateRange_End) || "");
-        }
 
-        const newRows = fetchedData.map((matchedItem) => ({
-          Date: formatDate(matchedItem.Date),
-          BillNo: matchedItem.BillNo,
-          PartyName: matchedItem.PartyName,
-          GSTNo: matchedItem.GSTNo,
-          Percentage: matchedItem.Percentage.toString(),
-          CGST: matchedItem.CGST,
-          SGST: matchedItem.SGST,
-          IGST: matchedItem.IGST,
-          BillRate: matchedItem.BillRate,
+        const newRows = fetchedData.map((matchedItem, index) => ({
+          Sno: index + 1,
+          customer_code: matchedItem.customer_code,
+          customer_name: matchedItem.customer_name,
+          site_id: matchedItem.site_id,
+          site_name: matchedItem.site_name,
+          vendor_code: matchedItem.vendor_code,
+          vendor_name: matchedItem.vendor_name,
+          material_code: matchedItem.material_code,
+          material_name: matchedItem.material_name,
+          quantity: matchedItem.quantity,
+          rate: matchedItem.rate,
+          total_amount: matchedItem.total_amount,
         }));
 
-        const totalCGST = newRows.reduce((sum, row) => sum + row.CGST, 0);
-        const totalSGST = newRows.reduce((sum, row) => sum + row.SGST, 0);
-        const totalIGST = newRows.reduce((sum, row) => sum + row.IGST, 0);
-        const totalBillRate = newRows.reduce((sum, row) => sum + row.BillRate, 0);
+        const totalQuantity = newRows.reduce((sum, row) => sum + row.quantity, 0);
+        const totalRate = newRows.reduce((sum, row) => sum + row.rate, 0);
+        const totalAmount = newRows.reduce((sum, row) => sum + row.total_amount, 0);
 
         // Add the total row
         const totalRow = {
-          Date: "",
-          BillNo: "",
-          PartyName: "",
-          GSTNo: "",
-          Percentage: "Total",
-          CGST: totalCGST,
-          SGST: totalSGST,
-          IGST: totalIGST,
-          BillRate: totalBillRate,
+          Sno: null,
+          customer_code: null,
+          customer_name: null,
+          site_id: null,
+          site_name: null,
+          vendor_code: null,
+          vendor_name: null,
+          material_code: null,
+          material_name: "Total",
+          quantity: totalQuantity,
+          rate: totalRate,
+          total_amount: totalAmount,
         };
 
-        setRowData([...newRows, totalRow]); // Add total row to grid data
+        setRowData([...newRows, totalRow]);
       } else if (response.status === 404) {
         console.log("Data Not Found");
         toast.warning("Data Not Found");
@@ -474,27 +395,20 @@ const SupervisorSiteMaterial = () => {
     }
   };
 
-  const handleCustomDatestart = (e) => {
-    e.preventDefault();
-    setStartDate(e.target.value);
-  };
-
-  const handleCustomDateend = (e) => {
-    e.preventDefault();
-    setEndDate(e.target.value);
-  };
-
   const transformRowData = (data) => {
-    return data.map(row => ({
-      "Date": row.Date,
-      "Bill No": row.BillNo,
-      "Party Name": row.PartyName,
-      "GST No": row.GSTNo,
-      "Percentage %": row.Percentage,
-      "CGST": row.CGST,
-      "SGST": row.SGST,
-      "IGST": row.IGST,
-      "Bill Rate": row.BillRate,
+    return data.map((row, index) => ({
+      "S.No": index + 1,
+      "Customer Code": row.customer_code,
+      "Customer Name": row.customer_name,
+      "Site ID": row.site_id,
+      "Site Name": row.site_name,
+      "Vendor Code": row.vendor_code,
+      "Vendor Name": row.vendor_name,
+      "Material Code": row.material_code,
+      "Material Name": row.material_name,
+      "Quantity": row.quantity,
+      "Rate": row.rate,
+      "Total Amount": row.total_amount,
     }));
   };
 
@@ -505,9 +419,8 @@ const SupervisorSiteMaterial = () => {
     }
 
     const headerData = [
-      ['GST Report Analysis'],
+      ['Supervisor & Site Material Report'],
       [`Company Name: ${companyName}`],
-      [`Date Range: ${start_Date} to ${end_Date}`],
       []
     ];
 
@@ -518,8 +431,62 @@ const SupervisorSiteMaterial = () => {
     XLSX.utils.sheet_add_json(worksheet, transformedData, { origin: 'A5' });
 
     const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'GST Report');
-    XLSX.writeFile(workbook, 'Gst_Report.xlsx');
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Site Material Report');
+    XLSX.writeFile(workbook, 'Supervisor_Site_Material_Report.xlsx');
+  };
+
+  const handleExportToPdf = () => {
+
+    const doc = new jsPDF("landscape");
+
+    doc.setFontSize(16);
+    doc.text("Supervisor & Site Material Report", 14, 15);
+
+    const tableColumn = [
+      "S.No",
+      "Customer Code",
+      "Customer Name",
+      "Site ID",
+      "Site Name",
+      "Vendor Code",
+      "Vendor Name",
+      "Material Code",
+      "Material Name",
+      "Quantity",
+      "Rate",
+      "Total Amount"
+    ];
+
+    const tableRows = rowData.map((row) => [
+      row.Sno,
+      row.customer_code,
+      row.customer_name,
+      row.site_id,
+      row.site_name,
+      row.vendor_code,
+      row.vendor_name,
+      row.material_code,
+      row.material_name,
+      row.quantity,
+      row.rate,
+      row.total_amount
+    ]);
+
+    autoTable(doc, {
+      head: [tableColumn],
+      body: tableRows,
+      startY: 25,
+      theme: "grid",
+      styles: {
+        fontSize: 9,
+        cellPadding: 2
+      },
+      headStyles: {
+        fillColor: [52, 73, 94]
+      }
+    });
+
+    doc.save("SupervisorSiteMaterialReport.pdf");
   };
 
   return (
@@ -542,12 +509,17 @@ const SupervisorSiteMaterial = () => {
                     </button>
                     <ul className="dropdown-menu ">
                       <li>
-                        <icon class="iconbutton d-flex justify-content-center">
+                        <icon class="iconbutton d-flex justify-content-center" onClick={handleExportToPdf}>
+                          <i className="fa-solid fa-file-pdf"></i>
+                        </icon>
+                      </li>
+                      <li>
+                        <icon class="iconbutton d-flex justify-content-center" onClick={generateReport}>
                           <i className="fa-solid fa-print"></i>
                         </icon>
                       </li>
                       <li>
-                        <icon class="iconbutton d-flex justify-content-center">
+                        <icon class="iconbutton d-flex justify-content-center" onClick={handleExportToExcel}>
                           <i class="fa-solid fa-file-excel"></i>
                         </icon>
                       </li>
@@ -558,10 +530,13 @@ const SupervisorSiteMaterial = () => {
             </div>
             <div className="purbut">
               <div className="d-flex justify-content-end me-5">
-                <button className="btn btn-dark mt-3 mb-3 rounded-3">
+                <button className="btn btn-dark mt-3 mb-3 rounded-3" title="Pdf" onClick={handleExportToPdf}>
+                  <i class="fa-solid fa-file-pdf"></i>
+                </button>
+                <button className="btn btn-dark mt-3 mb-3 rounded-3" onClick={generateReport}>
                   <i className="fa-solid fa-print"></i>
                 </button>
-                <button class="btn btn-dark mt-3 mb-3 rounded-3">
+                <button class="btn btn-dark mt-3 mb-3 rounded-3" onClick={handleExportToExcel}>
                   <i class="fa-solid fa-file-excel"></i>
                 </button>
               </div>
@@ -583,11 +558,11 @@ const SupervisorSiteMaterial = () => {
                   placeholder=""
                   title='Please Enter the Customer Code'
                   value={customerCode}
-                //   onKeyDown={(e) => e.key === "Enter" && fetchGstReport()}
+                  onKeyDown={(e) => e.key === "Enter" && fetchSupervisorReport()}
                   onChange={(e) => setCustomerCode(e.target.value)}
                 />
                 <div className='position-absolute mt-1 me-2'>
-                  <span className="icon searchIcon">
+                  <span className="icon searchIcon" onClick={handleShowCustomer}>
                     <i class="fa fa-search"></i>
                   </span>
                 </div>
@@ -605,10 +580,10 @@ const SupervisorSiteMaterial = () => {
                   placeholder=""
                   title='Please Enter the Site ID'
                   value={siteID}
-                //   onKeyDown={(e) => e.key === "Enter" && fetchGstReport()}
+                  onKeyDown={(e) => e.key === "Enter" && fetchSupervisorReport()}
                   onChange={(e) => setSiteID(e.target.value)}
                 />
-                <div className='position-absolute mt-1 me-2'>
+                <div className='position-absolute mt-1 me-2' onClick={handleShowSite}>
                   <span className="icon searchIcon">
                     <i class="fa fa-search"></i>
                   </span>
@@ -627,11 +602,11 @@ const SupervisorSiteMaterial = () => {
                   placeholder=""
                   title='Please Enter the Vendor Code'
                   value={vendorCode}
-                //   onKeyDown={(e) => e.key === "Enter" && fetchGstReport()}
+                  onKeyDown={(e) => e.key === "Enter" && fetchSupervisorReport()}
                   onChange={(e) => setVendorCode(e.target.value)}
                 />
                 <div className='position-absolute mt-1 me-2'>
-                  <span className="icon searchIcon">
+                  <span className="icon searchIcon" onClick={handleShowVendor}>
                     <i class="fa fa-search"></i>
                   </span>
                 </div>
@@ -649,11 +624,11 @@ const SupervisorSiteMaterial = () => {
                   placeholder=""
                   title='Please Enter the Material'
                   value={material}
-                //   onKeyDown={(e) => e.key === "Enter" && fetchGstReport()}
+                  onKeyDown={(e) => e.key === "Enter" && fetchSupervisorReport()}
                   onChange={(e) => setMaterial(e.target.value)}
                 />
                 <div className='position-absolute mt-1 me-2'>
-                  <span className="icon searchIcon">
+                  <span className="icon searchIcon" onClick={handleShowItem}>
                     <i class="fa fa-search"></i>
                   </span>
                 </div>
@@ -664,19 +639,17 @@ const SupervisorSiteMaterial = () => {
           <div className="col-md-1">
             <div class="exp-form-floating">
               <div class=" d-flex justify-content-center mt-4">
-                <icon className="popups-btn fs-6 p-3" required title="Search">
+                <icon className="popups-btn fs-6 p-3" onClick={fetchSupervisorReport} required title="Search">
                   <i className="fas fa-search"></i>
                 </icon>
-                <icon className="popups-btn fs-6 p-3" required title="Refresh">
+                <icon className="popups-btn fs-6 p-3" onClick={reloadGridData} required title="Refresh">
                   <FontAwesomeIcon icon="fa-solid fa-arrow-rotate-right" />
                 </icon>
               </div>
             </div>
           </div>
-
         </div>
 
-        {/* <p >Result Set</p> */}
         <div class="ag-theme-alpine" style={{ height: 455, width: "100%" }}>
           <AgGridReact
             rowData={rowData}
@@ -689,6 +662,13 @@ const SupervisorSiteMaterial = () => {
             paginationAutoPageSize={true}
             rowSelection="multiple"
           />
+        </div>
+
+        <div>
+          <CustomerPopup open={open1} handleClose={handleClose} handleVendor={handleCustomer} />
+          <SitePopUp open={open2} handleClose={handleClose} handleSiteCode={handleSiteCode} />
+          <VendorPopup open={open3} handleClose={handleClose} handleVendorCode={handleVendorCode} />
+          <ItemPopup open={open4} handleClose={handleClose} handleItem={handleItem} />
         </div>
 
       </div>
