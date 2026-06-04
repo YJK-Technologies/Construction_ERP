@@ -11,6 +11,10 @@ import { ToastContainer, toast } from "react-toastify";
 import LoadingScreen from '../Loading';
 import LZString from "lz-string";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import jsPDF from "jspdf";
+import { autoTable } from "jspdf-autotable";
+import ItemPopup from '../PurchaseItemPopup';
+import SitePopUp from '../SitePopUp';
 
 const MaterialUsageDetails = () => {
 
@@ -19,19 +23,6 @@ const MaterialUsageDetails = () => {
   const [gridColumnApi, setGridColumnApi] = useState(null);
   const [editedData, setEditedData] = useState([]);
   const [selectedRows, setSelectedRows] = useState([]);
-  const [periodDrop, setPeriodDrop] = useState([]);
-  const [taxDrop, setTaxDrop] = useState([]);
-  const [partyDrop, setPartyDrop] = useState([]);
-  const [period, setPeriod] = useState(null);
-  const [tax, setTax] = useState(null);
-  const [party, setParty] = useState(null);
-  const [selectedPeriod, setSelectedPeriod] = useState(null);
-  const [selectedTax, setSelectedTax] = useState(null);
-  const [selectedParty, setSelectedParty] = useState(null);
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
-  const [start_Date, setStart_Date] = useState('');
-  const [end_Date, setEnd_Date] = useState('');
   const companyName = sessionStorage.getItem('selectedCompanyName');
   const [loading, setLoading] = useState(false);
 
@@ -40,141 +31,50 @@ const MaterialUsageDetails = () => {
 
   const permissions = JSON.parse(sessionStorage.getItem('permissions')) || {};
   const companyPermissions = permissions
-    .filter(permission => permission.screen_type === 'IEanalysis')
+    .filter(permission => permission.screen_type === 'MaterialUsage')
     .map(permission => permission.permission_type.toLowerCase());
 
+  const [open1, setOpen1] = React.useState(false);
+  const [open2, setOpen2] = React.useState(false);
 
-  useEffect(() => {
-    fetch(`${config.apiBaseUrl}/getDateRange`)
-      .then((data) => data.json())
-      .then((val) => {
-        setPeriodDrop(val);
-
-        if (val.length > 0) {
-          const firstOption = {
-            value: val[4].Sno,
-            label: val[4].DateRangeDescription,
-          };
-          setSelectedPeriod(firstOption);
-          setPeriod(firstOption.value);
-        }
-      });
-  }, []);
-
-  const filteredOptionPeriod = Array.isArray(periodDrop)
-    ? periodDrop.map((option) => ({
-      value: option.Sno,
-      label: option.DateRangeDescription,
-    }))
-    : [];
-
-  const handleChangePeriod = (selectedPeriod) => {
-    setSelectedPeriod(selectedPeriod);
-    setPeriod(selectedPeriod ? selectedPeriod.value : '');
+  const handleShowSite = () => {
+    setOpen1(true);
   };
 
-  const fetchGSTReport = () => {
-    fetch(`${config.apiBaseUrl}/getGSTReport`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        company_code: sessionStorage.getItem("selectedCompanyCode"),
-      }),
-    }).then((data) => data.json())
-      .then((val) => {
-        setTaxDrop(val);
-
-        setPartyDrop(val);
-
-        if (val.length > 0) {
-          const firstTaxOption = {
-            value: val[0].attributedetails_name,
-            label: val[0].attributedetails_name,
-          };
-          const firstPartyOption = {
-            value: val[0].descriptions,
-            label: val[0].descriptions,
-          };
-
-          setSelectedTax(firstTaxOption);
-          setTax(firstTaxOption.value);
-          setSelectedParty(firstPartyOption);
-          setParty(firstPartyOption.value);
-        }
-      });
+  const handleShowItem = () => {
+    setOpen2(true);
   };
 
-  useEffect(() => {
-    fetchGSTReport();
-  }, []);
+  const handleClose = () => {
+    setOpen1(false);
+    setOpen2(false);
+  };
 
-
-  const filteredOptionTax = Array.isArray(taxDrop)
-    ? taxDrop.map((option) => ({
-      value: option.attributedetails_name,
-      label: option.attributedetails_name,
-    }))
-    : [];
-
-  const handleChangeTax = (selectedTax) => {
-    setSelectedTax(selectedTax);
-    setTax(selectedTax ? selectedTax.value : "");
-
-    const updatedPartyOptions = partyDrop.filter(
-      (option) => option.attributedetails_name === selectedTax?.value
-    );
-    if (updatedPartyOptions.length > 0) {
-      const firstPartyOption = {
-        value: updatedPartyOptions[0].descriptions,
-        label: updatedPartyOptions[0].descriptions,
-      };
-      setSelectedParty(firstPartyOption);
-      setParty(firstPartyOption.value);
+  const handleSiteCode = async (data) => {
+    if (data && data.length > 0) {
+      const [{ SiteID, SiteName }] = data;
+      setSiteID(SiteID);
     } else {
-      setSelectedParty(null);
-      setParty("");
+      console.error('Data is empty or undefined');
     }
   };
 
-  const filteredOptionParty = Array.isArray(partyDrop)
-    ? partyDrop.map((option) => ({
-      value: option.descriptions,
-      label: option.descriptions,
-    }))
-    : [];
-
-  const handleChangeParty = (selectedParty) => {
-    setSelectedParty(selectedParty);
-    setParty(selectedParty ? selectedParty.value : "");
-
-    const updatedTaxOptions = taxDrop.filter(
-      (option) => option.descriptions === selectedParty?.value
-    );
-    if (updatedTaxOptions.length > 0) {
-      const firstTaxOption = {
-        value: updatedTaxOptions[0].attributedetails_name,
-        label: updatedTaxOptions[0].attributedetails_name,
-      };
-      setSelectedTax(firstTaxOption);
-      setTax(firstTaxOption.value);
+  const handleItem = async (data) => {
+    if (data && data.length > 0) {
+      const [{ itemCode, itemName }] = data;
+      setMaterial(itemCode);
     } else {
-      setSelectedTax(null);
-      setTax("");
+      console.error('Data is empty or undefined');
     }
   };
+
+  useEffect(() => {
+    fetchMaterialReport();
+  }, []);
 
   const reloadGridData = () => {
     window.location.reload();
   };
-
-  const formatDate = (isoDateString) => {
-    const date = new Date(isoDateString);
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    return `${day}-${month}-${year}`;
-  };
-
 
   const columnDefs = [
     {
@@ -187,58 +87,53 @@ const MaterialUsageDetails = () => {
     {
       headerName: "Site ID",
       field: "site_id",
-      editable: true,
+      editable: false,
     },
     {
       headerName: "Site Name",
       field: "site_name",
-      editable: true,
+      editable: false,
     },
     {
       headerName: "Material Code",
       field: "material_code",
-      editable: true,
+      editable: false,
     },
     {
       headerName: "Material Name",
       field: "material_name",
-      editable: true,
+      editable: false,
     },
     {
       headerName: "Issued Qty",
       field: "issued_qty",
-      editable: true,
-    },
-    {
-      headerName: "Used Qty",
-      field: "used_qty",
-      editable: true,
+      editable: false,
     },
     {
       headerName: "Return Qty",
       field: "return_qty",
-      editable: true,
+      editable: false,
     },
     {
       headerName: "Balance Qty",
       field: "balance_qty",
-      editable: true,
+      editable: false,
     },
     {
       headerName: "Rate",
       field: "rate",
-      editable: true,
+      editable: false,
     },
     {
       headerName: "Amount",
       field: "total_cost",
-      editable: true,
+      editable: false,
     },
   ];
 
   const defaultColDef = {
     resizable: true,
-    wrapText: true,
+    wrapText: false,
     // flex: 1,
   };
 
@@ -250,32 +145,28 @@ const MaterialUsageDetails = () => {
   const generateReport = () => {
     const selectedRows = gridApi.getSelectedRows();
     if (selectedRows.length === 0) {
-      alert("Please select at least one row to generate a report");
+      toast.warning("Please select at least one row to generate a report");
       return;
     }
 
-    const formatDate = (dateString) => {
-      const date = new Date(dateString);
-      if (isNaN(date)) return dateString;
-      return date.toLocaleDateString("en-GB");
-    };
-
-    const reportData = selectedRows.map((row) => {
+    const reportData = selectedRows.map((row, index) => {
+      const formatValue = (val) => (val !== undefined && val !== null ? val : '');
       return {
-        "Date": formatDate(row.Date),
-        "Bill No": row.BillNo,
-        "Party Name": row.PartyName,
-        "GST No": row.GSTNo,
-        "Percentage %": row.Percentage,
-        "CGST": row.CGST,
-        "SGST": row.SGST,
-        "IGST": row.IGST,
-        "Bill Rate": row.BillRate,
+        "S.No": index + 1,
+        "Site ID": formatValue(row.site_id),
+        "Site Name": formatValue(row.site_name),
+        "Material Code": formatValue(row.material_code),
+        "Material Name": formatValue(row.material_name),
+        "Issued Qty": formatValue(row.issued_qty),
+        "Return Qty": formatValue(row.return_qty),
+        "Balance Qty": formatValue(row.balance_qty),
+        "Rate": formatValue(row.rate),
+        "Amount": formatValue(row.total_cost),
       };
     });
 
     const reportWindow = window.open("", "_blank");
-    reportWindow.document.write("<html><head><title>GST Report</title>");
+    reportWindow.document.write("<html><head><title>Material Usage Details – Site Wise Report</title>");
     reportWindow.document.write("<style>");
     reportWindow.document.write(`
         body {
@@ -338,7 +229,7 @@ const MaterialUsageDetails = () => {
         }
       `);
     reportWindow.document.write("</style></head><body>");
-    reportWindow.document.write("<h1><u>GST Report</u></h1>");
+    reportWindow.document.write("<h1><u>Material Usage Details – Site Wise Report</u></h1>");
 
     reportWindow.document.write("<table><thead><tr>");
     Object.keys(reportData[0]).forEach((key) => {
@@ -383,33 +274,17 @@ const MaterialUsageDetails = () => {
     }
   };
 
-  useEffect(() => {
-    if (selectedPeriod?.label === "Custom Date") {
-      if (startDate && endDate) {
-        fetchGstReport();
-      }
-    }
-    else if (period && party) {
-      fetchGstReport();
-    }
-  }, []);
-
-  const fetchGstReport = async () => {
+  const fetchMaterialReport = async () => {
     setLoading(true);
     try {
-      if (selectedPeriod === "Custom Date" && (!startDate || !endDate)) {
-        return;
-      }
 
       const body = {
-        Mode: period.toString(),
+        material_code: material,
         company_code: sessionStorage.getItem("selectedCompanyCode"),
-        Party: party,
-        StartDate: selectedPeriod?.label === "Custom Date" ? startDate : undefined,
-        EndDate: selectedPeriod?.label === "Custom Date" ? endDate : undefined,
+        site_id: siteID,
       };
 
-      const response = await fetch(`${config.apiBaseUrl}/getGstReportAnalysis`, {
+      const response = await fetch(`${config.apiBaseUrl}/SiteMaterialBalanceReport`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -419,40 +294,37 @@ const MaterialUsageDetails = () => {
 
       if (response.ok) {
         const fetchedData = await response.json();
-        if (fetchedData.length > 0) {
-          const firstItem = fetchedData[0];
-          setStart_Date(formatDate(firstItem.DateRange_Start) || "");
-          setEnd_Date(formatDate(firstItem.DateRange_End) || "");
-        }
 
-        const newRows = fetchedData.map((matchedItem) => ({
-          Date: formatDate(matchedItem.Date),
-          BillNo: matchedItem.BillNo,
-          PartyName: matchedItem.PartyName,
-          GSTNo: matchedItem.GSTNo,
-          Percentage: matchedItem.Percentage.toString(),
-          CGST: matchedItem.CGST,
-          SGST: matchedItem.SGST,
-          IGST: matchedItem.IGST,
-          BillRate: matchedItem.BillRate,
+        const newRows = fetchedData.map((matchedItem, index) => ({
+          Sno: index + 1,
+          site_id: matchedItem.site_id,
+          site_name: matchedItem.site_name,
+          material_code: matchedItem.material_code,
+          material_name: matchedItem.material_name,
+          issued_qty: matchedItem.issued_qty,
+          return_qty: matchedItem.return_qty,
+          balance_qty: matchedItem.balance_qty,
+          rate: matchedItem.rate,
+          total_cost: matchedItem.total_cost,
         }));
+        
+        const totalIssued = newRows.reduce((sum, row) => sum + row.issued_qty, 0);
+        const totalReturn = newRows.reduce((sum, row) => sum + row.return_qty, 0);
+        const totalBalance = newRows.reduce((sum, row) => sum + row.balance_qty, 0);
+        const totalRate = newRows.reduce((sum, row) => sum + row.rate, 0);
+        const totalCost = newRows.reduce((sum, row) => sum + row.total_cost, 0);
 
-        const totalCGST = newRows.reduce((sum, row) => sum + row.CGST, 0);
-        const totalSGST = newRows.reduce((sum, row) => sum + row.SGST, 0);
-        const totalIGST = newRows.reduce((sum, row) => sum + row.IGST, 0);
-        const totalBillRate = newRows.reduce((sum, row) => sum + row.BillRate, 0);
-
-        // Add the total row
         const totalRow = {
-          Date: "",
-          BillNo: "",
-          PartyName: "",
-          GSTNo: "",
-          Percentage: "Total",
-          CGST: totalCGST,
-          SGST: totalSGST,
-          IGST: totalIGST,
-          BillRate: totalBillRate,
+          Sno: null,
+          site_id: null,
+          site_name: null,
+          material_code: null,
+          material_name: "Total",
+          issued_qty: totalIssued,
+          return_qty: totalReturn,
+          balance_qty: totalBalance,
+          rate: totalRate,
+          total_cost: totalCost,
         };
 
         setRowData([...newRows, totalRow]); // Add total row to grid data
@@ -472,27 +344,17 @@ const MaterialUsageDetails = () => {
     }
   };
 
-  const handleCustomDatestart = (e) => {
-    e.preventDefault();
-    setStartDate(e.target.value);
-  };
-
-  const handleCustomDateend = (e) => {
-    e.preventDefault();
-    setEndDate(e.target.value);
-  };
-
   const transformRowData = (data) => {
-    return data.map(row => ({
-      "Date": row.Date,
-      "Bill No": row.BillNo,
-      "Party Name": row.PartyName,
-      "GST No": row.GSTNo,
-      "Percentage %": row.Percentage,
-      "CGST": row.CGST,
-      "SGST": row.SGST,
-      "IGST": row.IGST,
-      "Bill Rate": row.BillRate,
+    return data.map((row, index) => ({
+      "S.No": index + 1,
+      "Site ID": row.site_id,
+      "Site Name": row.site_name,
+      "Material Name": row.material_name,
+      "Issued Qty": row.issued_qty,
+      "Return Qty": row.return_qty,
+      "Balance Qty": row.balance_qty,
+      "Rate": row.rate,
+      "Amount": row.total_cost,
     }));
   };
 
@@ -503,9 +365,8 @@ const MaterialUsageDetails = () => {
     }
 
     const headerData = [
-      ['GST Report Analysis'],
+      ['Material Usage Details – Site Wise Report'],
       [`Company Name: ${companyName}`],
-      [`Date Range: ${start_Date} to ${end_Date}`],
       []
     ];
 
@@ -516,8 +377,58 @@ const MaterialUsageDetails = () => {
     XLSX.utils.sheet_add_json(worksheet, transformedData, { origin: 'A5' });
 
     const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'GST Report');
-    XLSX.writeFile(workbook, 'Gst_Report.xlsx');
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Material Usage Details');
+    XLSX.writeFile(workbook, 'Material_Usage_Details_Report.xlsx');
+  };
+
+  const handleExportToPdf = () => {
+
+    const doc = new jsPDF("landscape");
+
+    doc.setFontSize(16);
+    doc.text("Material Usage Details – Site Wise Report", 14, 15);
+
+    const tableColumn = [
+      "S.No",
+      "Site ID",
+      "Site Name",
+      "Material Code",
+      "Material Name",
+      "Issued Qty",
+      "Return Qty",
+      "Balance Qty",
+      "Rate",
+      "Amount"
+    ];
+
+    const tableRows = rowData.map((row) => [
+      row.Sno,
+      row.site_id,
+      row.site_name,
+      row.material_code,
+      row.material_name,
+      row.issued_qty,
+      row.return_qty,
+      row.balance_qty,
+      row.rate,
+      row.total_cost,
+    ]);
+
+    autoTable(doc, {
+      head: [tableColumn],
+      body: tableRows,
+      startY: 25,
+      theme: "grid",
+      styles: {
+        fontSize: 9,
+        cellPadding: 2
+      },
+      headStyles: {
+        fillColor: [52, 73, 94]
+      }
+    });
+
+    doc.save("MaterialUsageDetailsReport.pdf");
   };
 
   return (
@@ -538,14 +449,19 @@ const MaterialUsageDetails = () => {
                     <button className="btn btn-primary dropdown-toggle p-1" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                       <i className="fa-solid fa-list"></i>
                     </button>
-                    <ul className="dropdown-menu ">
+                    <ul className="dropdown-menu">
                       <li>
-                        <icon class="iconbutton d-flex justify-content-center">
+                        <icon class="iconbutton d-flex justify-content-center" onClick={handleExportToPdf}>
+                          <i className="fa-solid fa-file-pdf"></i>
+                        </icon>
+                      </li>
+                      <li>
+                        <icon class="iconbutton d-flex justify-content-center" onClick={generateReport}>
                           <i className="fa-solid fa-print"></i>
                         </icon>
                       </li>
                       <li>
-                        <icon class="iconbutton d-flex justify-content-center">
+                        <icon class="iconbutton d-flex justify-content-center" onClick={handleExportToExcel}>
                           <i class="fa-solid fa-file-excel"></i>
                         </icon>
                       </li>
@@ -556,10 +472,13 @@ const MaterialUsageDetails = () => {
             </div>
             <div className="purbut">
               <div className="d-flex justify-content-end me-5">
-                <button className="btn btn-dark mt-3 mb-3 rounded-3">
+                <button className="btn btn-dark mt-3 mb-3 rounded-3" title="Pdf" onClick={handleExportToPdf}>
+                  <i class="fa-solid fa-file-pdf"></i>
+                </button>
+                <button className="btn btn-dark mt-3 mb-3 rounded-3" onClick={generateReport}>
                   <i className="fa-solid fa-print"></i>
                 </button>
-                <button class="btn btn-dark mt-3 mb-3 rounded-3">
+                <button class="btn btn-dark mt-3 mb-3 rounded-3" onClick={handleExportToExcel}>
                   <i class="fa-solid fa-file-excel"></i>
                 </button>
               </div>
@@ -581,14 +500,14 @@ const MaterialUsageDetails = () => {
                   placeholder=""
                   title='Please Enter the Site ID'
                   value={siteID}
-                //   onKeyDown={(e) => e.key === "Enter" && fetchGstReport()}
+                  onKeyDown={(e) => e.key === "Enter" && fetchMaterialReport()}
                   onChange={(e) => setSiteID(e.target.value)}
                 />
-                {/* <div className='position-absolute mt-1 me-2'>
+                <div className='position-absolute mt-1 me-2' onClick={handleShowSite}>
                   <span className="icon searchIcon">
                     <i class="fa fa-search"></i>
                   </span>
-                </div> */}
+                </div>
               </div>
             </div>
           </div>
@@ -603,14 +522,14 @@ const MaterialUsageDetails = () => {
                   placeholder=""
                   title='Please Enter the Material'
                   value={material}
-                //   onKeyDown={(e) => e.key === "Enter" && fetchGstReport()}
+                  onKeyDown={(e) => e.key === "Enter" && fetchMaterialReport()}
                   onChange={(e) => setMaterial(e.target.value)}
                 />
-                {/* <div className='position-absolute mt-1 me-2'>
-                  <span className="icon searchIcon">
+                <div className='position-absolute mt-1 me-2'>
+                  <span className="icon searchIcon" onClick={handleShowItem}>
                     <i class="fa fa-search"></i>
                   </span>
-                </div> */}
+                </div>
               </div>
             </div>
           </div>
@@ -618,10 +537,10 @@ const MaterialUsageDetails = () => {
           <div className="col-md-1">
             <div class="exp-form-floating">
               <div class=" d-flex justify-content-center mt-4">
-                <icon className="popups-btn fs-6 p-3" required title="Search">
+                <icon className="popups-btn fs-6 p-3" required title="Search" onClick={fetchMaterialReport}>
                   <i className="fas fa-search"></i>
                 </icon>
-                <icon className="popups-btn fs-6 p-3" required title="Refresh">
+                <icon className="popups-btn fs-6 p-3" required title="Refresh" onClick={reloadGridData}>
                   <FontAwesomeIcon icon="fa-solid fa-arrow-rotate-right" />
                 </icon>
               </div>
@@ -643,6 +562,11 @@ const MaterialUsageDetails = () => {
             paginationAutoPageSize={true}
             rowSelection="multiple"
           />
+        </div>
+
+        <div>
+          <SitePopUp open={open1} handleClose={handleClose} handleSiteCode={handleSiteCode} />
+          <ItemPopup open={open2} handleClose={handleClose} handleItem={handleItem} />
         </div>
 
       </div>

@@ -11,6 +11,10 @@ import { ToastContainer, toast } from "react-toastify";
 import LoadingScreen from '../Loading';
 import LZString from "lz-string";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import jsPDF from "jspdf";
+import { autoTable } from "jspdf-autotable";
+import SitePopUp from '../SitePopUp';
+import CustomerPopup from '../SalesVendorPopup';
 
 const IncomeExpenseAnalysis = () => {
 
@@ -19,162 +23,59 @@ const IncomeExpenseAnalysis = () => {
   const [gridColumnApi, setGridColumnApi] = useState(null);
   const [editedData, setEditedData] = useState([]);
   const [selectedRows, setSelectedRows] = useState([]);
-  const [periodDrop, setPeriodDrop] = useState([]);
-  const [taxDrop, setTaxDrop] = useState([]);
-  const [partyDrop, setPartyDrop] = useState([]);
-  const [period, setPeriod] = useState(null);
-  const [tax, setTax] = useState(null);
-  const [party, setParty] = useState(null);
-  const [selectedPeriod, setSelectedPeriod] = useState(null);
-  const [selectedTax, setSelectedTax] = useState(null);
-  const [selectedParty, setSelectedParty] = useState(null);
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
-  const [start_Date, setStart_Date] = useState('');
-  const [end_Date, setEnd_Date] = useState('');
   const companyName = sessionStorage.getItem('selectedCompanyName');
   const [loading, setLoading] = useState(false);
 
   const [customer, setCustomer] = useState("");
   const [siteID, setSiteID] = useState("");
 
+  const [open1, setOpen1] = React.useState(false);
+  const [open2, setOpen2] = React.useState(false);
+
   const permissions = JSON.parse(sessionStorage.getItem('permissions')) || {};
   const companyPermissions = permissions
     .filter(permission => permission.screen_type === 'IEanalysis')
     .map(permission => permission.permission_type.toLowerCase());
 
-
-  useEffect(() => {
-    fetch(`${config.apiBaseUrl}/getDateRange`)
-      .then((data) => data.json())
-      .then((val) => {
-        setPeriodDrop(val);
-
-        if (val.length > 0) {
-          const firstOption = {
-            value: val[4].Sno,
-            label: val[4].DateRangeDescription,
-          };
-          setSelectedPeriod(firstOption);
-          setPeriod(firstOption.value);
-        }
-      });
-  }, []);
-
-  const filteredOptionPeriod = Array.isArray(periodDrop)
-    ? periodDrop.map((option) => ({
-      value: option.Sno,
-      label: option.DateRangeDescription,
-    }))
-    : [];
-
-  const handleChangePeriod = (selectedPeriod) => {
-    setSelectedPeriod(selectedPeriod);
-    setPeriod(selectedPeriod ? selectedPeriod.value : '');
-  };
-
-  const fetchGSTReport = () => {
-    fetch(`${config.apiBaseUrl}/getGSTReport`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        company_code: sessionStorage.getItem("selectedCompanyCode"),
-      }),
-    }).then((data) => data.json())
-      .then((val) => {
-        setTaxDrop(val);
-
-        setPartyDrop(val);
-
-        if (val.length > 0) {
-          const firstTaxOption = {
-            value: val[0].attributedetails_name,
-            label: val[0].attributedetails_name,
-          };
-          const firstPartyOption = {
-            value: val[0].descriptions,
-            label: val[0].descriptions,
-          };
-
-          setSelectedTax(firstTaxOption);
-          setTax(firstTaxOption.value);
-          setSelectedParty(firstPartyOption);
-          setParty(firstPartyOption.value);
-        }
-      });
-  };
-
-  useEffect(() => {
-    fetchGSTReport();
-  }, []);
-
-
-  const filteredOptionTax = Array.isArray(taxDrop)
-    ? taxDrop.map((option) => ({
-      value: option.attributedetails_name,
-      label: option.attributedetails_name,
-    }))
-    : [];
-
-  const handleChangeTax = (selectedTax) => {
-    setSelectedTax(selectedTax);
-    setTax(selectedTax ? selectedTax.value : "");
-
-    const updatedPartyOptions = partyDrop.filter(
-      (option) => option.attributedetails_name === selectedTax?.value
-    );
-    if (updatedPartyOptions.length > 0) {
-      const firstPartyOption = {
-        value: updatedPartyOptions[0].descriptions,
-        label: updatedPartyOptions[0].descriptions,
-      };
-      setSelectedParty(firstPartyOption);
-      setParty(firstPartyOption.value);
+  const handleCustomer = async (data) => {
+    console.log(data)
+    if (data && data.length > 0) {
+      const [{ CustomerCode, CustomerName }] = data;
+      setCustomer(CustomerCode);
     } else {
-      setSelectedParty(null);
-      setParty("");
+      console.error('Data is empty or undefined');
     }
   };
 
-  const filteredOptionParty = Array.isArray(partyDrop)
-    ? partyDrop.map((option) => ({
-      value: option.descriptions,
-      label: option.descriptions,
-    }))
-    : [];
-
-  const handleChangeParty = (selectedParty) => {
-    setSelectedParty(selectedParty);
-    setParty(selectedParty ? selectedParty.value : "");
-
-    const updatedTaxOptions = taxDrop.filter(
-      (option) => option.descriptions === selectedParty?.value
-    );
-    if (updatedTaxOptions.length > 0) {
-      const firstTaxOption = {
-        value: updatedTaxOptions[0].attributedetails_name,
-        label: updatedTaxOptions[0].attributedetails_name,
-      };
-      setSelectedTax(firstTaxOption);
-      setTax(firstTaxOption.value);
+  const handleSiteCode = async (data) => {
+    if (data && data.length > 0) {
+      const [{ SiteID, SiteName }] = data;
+      setSiteID(SiteID);
     } else {
-      setSelectedTax(null);
-      setTax("");
+      console.error('Data is empty or undefined');
     }
   };
+
+  const handleShowCustomer = () => {
+    setOpen1(true);
+  };
+
+  const handleShowSite = () => {
+    setOpen2(true);
+  };
+
+  const handleClose = () => {
+    setOpen1(false);
+    setOpen2(false);
+  };
+
+  useEffect(() => {
+    fetchExpenseReport();
+  }, []);
 
   const reloadGridData = () => {
     window.location.reload();
   };
-
-  const formatDate = (isoDateString) => {
-    const date = new Date(isoDateString);
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    return `${day}-${month}-${year}`;
-  };
-
 
   const columnDefs = [
     {
@@ -187,43 +88,43 @@ const IncomeExpenseAnalysis = () => {
     {
       headerName: "Customer Code",
       field: "customer_code",
-      editable: true,
+      editable: false,
     },
     {
       headerName: "Customer Name",
       field: "customer_name",
-      editable: true,
+      editable: false,
     },
     {
       headerName: "Site ID",
       field: "site_id",
-      editable: true,
+      editable: false,
     },
     {
       headerName: "Site Name",
       field: "site_name",
-      editable: true,
+      editable: false,
     },
     {
       headerName: "Total Income",
-      field: "total_income",
-      editable: true,
+      field: "Total_Income",
+      editable: false,
     },
     {
       headerName: "Total Expense",
-      field: "total_expense",
-      editable: true,
+      field: "Total_Expense",
+      editable: false,
     },
     {
       headerName: "Net Profit",
-      field: "net_profit",
-      editable: true,
+      field: "Net_Profit",
+      editable: false,
     },
   ];
 
   const defaultColDef = {
     resizable: true,
-    wrapText: true,
+    wrapText: false,
     // flex: 1,
   };
 
@@ -239,28 +140,22 @@ const IncomeExpenseAnalysis = () => {
       return;
     }
 
-    const formatDate = (dateString) => {
-      const date = new Date(dateString);
-      if (isNaN(date)) return dateString;
-      return date.toLocaleDateString("en-GB");
-    };
-
-    const reportData = selectedRows.map((row) => {
+    const reportData = selectedRows.map((row, index) => {
+      const formatValue = (val) => (val !== undefined && val !== null ? val : '');
       return {
-        "Date": formatDate(row.Date),
-        "Bill No": row.BillNo,
-        "Party Name": row.PartyName,
-        "GST No": row.GSTNo,
-        "Percentage %": row.Percentage,
-        "CGST": row.CGST,
-        "SGST": row.SGST,
-        "IGST": row.IGST,
-        "Bill Rate": row.BillRate,
+        "S.No": index + 1,
+        "Customer Code": formatValue(row.customer_code),
+        "Customer Name": formatValue(row.customer_name),
+        "Site ID": formatValue(row.site_id),
+        "Site Name": formatValue(row.site_name),
+        "Total Income": formatValue(row.Total_Income),
+        "Total Expense": formatValue(row.Total_Expense),
+        "Net Profit": formatValue(row.Net_Profit),
       };
     });
 
     const reportWindow = window.open("", "_blank");
-    reportWindow.document.write("<html><head><title>GST Report</title>");
+    reportWindow.document.write("<html><head><title>Income & Expense Analysis Report</title>");
     reportWindow.document.write("<style>");
     reportWindow.document.write(`
         body {
@@ -323,7 +218,7 @@ const IncomeExpenseAnalysis = () => {
         }
       `);
     reportWindow.document.write("</style></head><body>");
-    reportWindow.document.write("<h1><u>GST Report</u></h1>");
+    reportWindow.document.write("<h1><u>Income & Expense Analysis Report</u></h1>");
 
     reportWindow.document.write("<table><thead><tr>");
     Object.keys(reportData[0]).forEach((key) => {
@@ -368,33 +263,17 @@ const IncomeExpenseAnalysis = () => {
     }
   };
 
-  useEffect(() => {
-    if (selectedPeriod?.label === "Custom Date") {
-      if (startDate && endDate) {
-        fetchGstReport();
-      }
-    }
-    else if (period && party) {
-      fetchGstReport();
-    }
-  }, []);
-
-  const fetchGstReport = async () => {
+  const fetchExpenseReport = async () => {
     setLoading(true);
     try {
-      if (selectedPeriod === "Custom Date" && (!startDate || !endDate)) {
-        return;
-      }
 
       const body = {
-        Mode: period.toString(),
+        site_id: siteID,
         company_code: sessionStorage.getItem("selectedCompanyCode"),
-        Party: party,
-        StartDate: selectedPeriod?.label === "Custom Date" ? startDate : undefined,
-        EndDate: selectedPeriod?.label === "Custom Date" ? endDate : undefined,
+        customer_code: customer,
       };
 
-      const response = await fetch(`${config.apiBaseUrl}/getGstReportAnalysis`, {
+      const response = await fetch(`${config.apiBaseUrl}/IncomeExpenseAnalysisReport`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -404,43 +283,34 @@ const IncomeExpenseAnalysis = () => {
 
       if (response.ok) {
         const fetchedData = await response.json();
-        if (fetchedData.length > 0) {
-          const firstItem = fetchedData[0];
-          setStart_Date(formatDate(firstItem.DateRange_Start) || "");
-          setEnd_Date(formatDate(firstItem.DateRange_End) || "");
-        }
-
-        const newRows = fetchedData.map((matchedItem) => ({
-          Date: formatDate(matchedItem.Date),
-          BillNo: matchedItem.BillNo,
-          PartyName: matchedItem.PartyName,
-          GSTNo: matchedItem.GSTNo,
-          Percentage: matchedItem.Percentage.toString(),
-          CGST: matchedItem.CGST,
-          SGST: matchedItem.SGST,
-          IGST: matchedItem.IGST,
-          BillRate: matchedItem.BillRate,
+        const newRows = fetchedData.map((matchedItem, index) => ({
+          Sno: index + 1,
+          customer_code: matchedItem.customer_code,
+          customer_name: matchedItem.customer_name,
+          site_id: matchedItem.site_id,
+          site_name: matchedItem.site_name,
+          Total_Income: matchedItem.Total_Income,
+          Total_Expense: matchedItem.Total_Expense,
+          Net_Profit: matchedItem.Net_Profit,
         }));
 
-        const totalCGST = newRows.reduce((sum, row) => sum + row.CGST, 0);
-        const totalSGST = newRows.reduce((sum, row) => sum + row.SGST, 0);
-        const totalIGST = newRows.reduce((sum, row) => sum + row.IGST, 0);
-        const totalBillRate = newRows.reduce((sum, row) => sum + row.BillRate, 0);
+        const totalIncome = newRows.reduce((sum, row) => sum + row.Total_Income, 0);
+        const totalExpense = newRows.reduce((sum, row) => sum + row.Total_Expense, 0);
+        const totalProfit = newRows.reduce((sum, row) => sum + row.Net_Profit, 0);
 
         // Add the total row
         const totalRow = {
-          Date: "",
-          BillNo: "",
-          PartyName: "",
-          GSTNo: "",
-          Percentage: "Total",
-          CGST: totalCGST,
-          SGST: totalSGST,
-          IGST: totalIGST,
-          BillRate: totalBillRate,
+          Sno: null,
+          customer_code: null,
+          customer_name: null,
+          site_id: null,
+          site_name: "Total",
+          Total_Income: totalIncome,
+          Total_Expense: totalExpense,
+          Net_Profit: totalProfit,
         };
 
-        setRowData([...newRows, totalRow]); // Add total row to grid data
+        setRowData([...newRows, totalRow]);
       } else if (response.status === 404) {
         console.log("Data Not Found");
         toast.warning("Data Not Found");
@@ -457,27 +327,62 @@ const IncomeExpenseAnalysis = () => {
     }
   };
 
-  const handleCustomDatestart = (e) => {
-    e.preventDefault();
-    setStartDate(e.target.value);
-  };
+  const handleExportToPdf = () => {
 
-  const handleCustomDateend = (e) => {
-    e.preventDefault();
-    setEndDate(e.target.value);
+    const doc = new jsPDF("landscape");
+
+    doc.setFontSize(16);
+    doc.text("Income & Expense Analysis Report", 14, 15);
+
+    const tableColumn = [
+      "S.No",
+      "Customer Code",
+      "Customer Name",
+      "Site ID",
+      "Site Name",
+      "Total Income",
+      "Total Expense",
+      "Net Profit"
+    ];
+
+    const tableRows = rowData.map((row) => [
+      row.Sno,
+      row.customer_code,
+      row.customer_name,
+      row.site_id,
+      row.site_name,
+      row.Total_Income,
+      row.Total_Expense,
+      row.Net_Profit
+    ]);
+
+    autoTable(doc, {
+      head: [tableColumn],
+      body: tableRows,
+      startY: 25,
+      theme: "grid",
+      styles: {
+        fontSize: 9,
+        cellPadding: 2
+      },
+      headStyles: {
+        fillColor: [52, 73, 94]
+      }
+    });
+
+    doc.save("IncomeExpenseAnalysis.pdf");
   };
 
   const transformRowData = (data) => {
-    return data.map(row => ({
-      "Date": row.Date,
-      "Bill No": row.BillNo,
-      "Party Name": row.PartyName,
-      "GST No": row.GSTNo,
-      "Percentage %": row.Percentage,
-      "CGST": row.CGST,
-      "SGST": row.SGST,
-      "IGST": row.IGST,
-      "Bill Rate": row.BillRate,
+    return data.map((row, index) => ({
+      "S.No": index + 1,
+      "Customer Code": row.customer_code,
+      "Customer Name": row.customer_name,
+      "Site ID": row.site_id,
+      "Site Name": row.site_name,
+      "Total Income": row.Total_Income,
+      "Total Expense": row.Total_Expense,
+      "Net Profit": row.Net_Profit,
     }));
   };
 
@@ -488,9 +393,8 @@ const IncomeExpenseAnalysis = () => {
     }
 
     const headerData = [
-      ['GST Report Analysis'],
+      ['Income & Expense Analysis Report'],
       [`Company Name: ${companyName}`],
-      [`Date Range: ${start_Date} to ${end_Date}`],
       []
     ];
 
@@ -501,8 +405,8 @@ const IncomeExpenseAnalysis = () => {
     XLSX.utils.sheet_add_json(worksheet, transformedData, { origin: 'A5' });
 
     const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'GST Report');
-    XLSX.writeFile(workbook, 'Gst_Report.xlsx');
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Expense Analysis Report');
+    XLSX.writeFile(workbook, 'Income_Expense_Analysis_Report.xlsx');
   };
 
   return (
@@ -523,14 +427,19 @@ const IncomeExpenseAnalysis = () => {
                     <button className="btn btn-primary dropdown-toggle p-1" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                       <i className="fa-solid fa-list"></i>
                     </button>
-                    <ul className="dropdown-menu ">
+                    <ul className="dropdown-menu">
                       <li>
-                        <icon class="iconbutton d-flex justify-content-center">
+                        <icon class="iconbutton d-flex justify-content-center" onClick={handleExportToPdf}>
+                          <i className="fa-solid fa-file-pdf"></i>
+                        </icon>
+                      </li>
+                      <li>
+                        <icon class="iconbutton d-flex justify-content-center" onClick={generateReport}>
                           <i className="fa-solid fa-print"></i>
                         </icon>
                       </li>
                       <li>
-                        <icon class="iconbutton d-flex justify-content-center">
+                        <icon class="iconbutton d-flex justify-content-center" onClick={handleExportToExcel}>
                           <i class="fa-solid fa-file-excel"></i>
                         </icon>
                       </li>
@@ -541,10 +450,13 @@ const IncomeExpenseAnalysis = () => {
             </div>
             <div className="purbut">
               <div className="d-flex justify-content-end me-5">
-                <button className="btn btn-dark mt-3 mb-3 rounded-3">
+                <button className="btn btn-dark mt-3 mb-3 rounded-3" title="Pdf" onClick={handleExportToPdf}>
+                  <i class="fa-solid fa-file-pdf"></i>
+                </button>
+                <button className="btn btn-dark mt-3 mb-3 rounded-3" onClick={generateReport} required title="Generate Report" >
                   <i className="fa-solid fa-print"></i>
                 </button>
-                <button class="btn btn-dark mt-3 mb-3 rounded-3">
+                <button class="btn btn-dark mt-3 mb-3 rounded-3" onClick={handleExportToExcel} title='Excel'>
                   <i class="fa-solid fa-file-excel"></i>
                 </button>
               </div>
@@ -566,11 +478,11 @@ const IncomeExpenseAnalysis = () => {
                   placeholder=""
                   title='Please Enter the Customer'
                   value={customer}
-                  // onKeyDown={(e) => e.key === "Enter" && fetchGstReport()}
+                  onKeyDown={(e) => e.key === "Enter" && fetchExpenseReport()}
                   onChange={(e) => setCustomer(e.target.value)}
                 />
                 <div className='position-absolute mt-1 me-2'>
-                  <span className="icon searchIcon">
+                  <span className="icon searchIcon" onClick={handleShowCustomer}>
                     <i class="fa fa-search"></i>
                   </span>
                 </div>
@@ -588,11 +500,11 @@ const IncomeExpenseAnalysis = () => {
                   placeholder=""
                   title='Please Enter the Site ID'
                   value={siteID}
-                  // onKeyDown={(e) => e.key === "Enter" && fetchGstReport()}
+                  onKeyDown={(e) => e.key === "Enter" && fetchExpenseReport()}
                   onChange={(e) => setSiteID(e.target.value)}
                 />
                 <div className='position-absolute mt-1 me-2'>
-                  <span className="icon searchIcon">
+                  <span className="icon searchIcon" onClick={handleShowSite}>
                     <i class="fa fa-search"></i>
                   </span>
                 </div>
@@ -603,10 +515,10 @@ const IncomeExpenseAnalysis = () => {
           <div className="col-md-1">
             <div class="exp-form-floating">
               <div class=" d-flex justify-content-center mt-4">
-                <icon className="popups-btn fs-6 p-3" required title="Search">
+                <icon className="popups-btn fs-6 p-3" required title="Search" onClick={fetchExpenseReport}>
                   <i className="fas fa-search"></i>
                 </icon>
-                <icon className="popups-btn fs-6 p-3" required title="Refresh">
+                <icon className="popups-btn fs-6 p-3" onClick={reloadGridData} required title="Refresh">
                   <FontAwesomeIcon icon="fa-solid fa-arrow-rotate-right" />
                 </icon>
               </div>
@@ -615,7 +527,6 @@ const IncomeExpenseAnalysis = () => {
 
         </div>
 
-        {/* <p >Result Set</p> */}
         <div class="ag-theme-alpine" style={{ height: 455, width: "100%" }}>
           <AgGridReact
             rowData={rowData}
@@ -628,6 +539,11 @@ const IncomeExpenseAnalysis = () => {
             paginationAutoPageSize={true}
             rowSelection="multiple"
           />
+        </div>
+
+        <div>
+          <CustomerPopup open={open1} handleClose={handleClose} handleVendor={handleCustomer} />
+          <SitePopUp open={open2} handleClose={handleClose} handleSiteCode={handleSiteCode} />
         </div>
 
       </div>
