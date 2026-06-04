@@ -20,7 +20,7 @@ import LoadingScreen from './Loading';
 
 const config = require('./Apiconfig');
 
-function SalesReturn() {
+function  SalesReturn() {
 
   // State variables
   const [paydrop, setPaydrop] = useState([]);
