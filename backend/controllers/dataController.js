@@ -10807,7 +10807,7 @@ const getbankaccSearch = async (req, res) => {
 
 const addDeliveryChallanheader = async (req, res) => {
   const {
-    company_code, transaction_no, transaction_date, transport_charges, pay_type, sales_type, customer_name, bill_to_customer_code, customer_addr_1,
+    company_code, Location_Code, transaction_no, transaction_date, transport_charges, pay_type, sales_type, customer_name, bill_to_customer_code, customer_addr_1,
     customer_addr_2, customer_addr_3, customer_addr_4, customer_state, customer_country, customer_mobile_no, contact_person, ShipTo_customer_name,
     Ship_to_customer_code, ShipTo_customer_addr_1, ShipTo_customer_addr_2, ShipTo_customer_addr_3, ShipTo_customer_addr_4, ShipTo_customer_state,
     ShipTo_customer_country, ShipTo_customer_mobile_no, ShipTocontact_person, purchase_amount, add_fright, less_fright, rounded_off, loading_charges,
@@ -10822,6 +10822,7 @@ const addDeliveryChallanheader = async (req, res) => {
       .request()
       .input("mode", sql.NVarChar, "I") // Insert mode
       .input("company_code", sql.NVarChar, company_code)
+      .input("Location_Code", sql.NVarChar, Location_Code)
       .input("transaction_no", sql.NVarChar, transaction_no)
       .input("transaction_date", sql.Date, transaction_date)
       .input("transport_charges", sql.Decimal, transport_charges)
@@ -10880,7 +10881,7 @@ const addDeliveryChallanheader = async (req, res) => {
       .input("datetime2", sql.NVarChar, datetime2)
       .input("datetime3", sql.NVarChar, datetime3)
       .input("datetime4", sql.NVarChar, datetime4)
-      .query(`EXEC sp_adjustment_hdr_Ramya @mode,@company_code,@transaction_no,@transaction_date,@transport_charges,@pay_type,@sales_type,@customer_name,@bill_to_customer_code,@customer_addr_1,
+      .query(`EXEC sp_delivery_challan_hdr @mode,@company_code,@Location_Code,@transaction_no,@transaction_date,@transport_charges,@pay_type,@sales_type,@customer_name,@bill_to_customer_code,@customer_addr_1,
                    @customer_addr_2,@customer_addr_3,@customer_addr_4,@customer_state,@customer_country,@customer_mobile_no,@contact_person,@ShipTo_customer_name,
                   @Ship_to_customer_code,@ShipTo_customer_addr_1,@ShipTo_customer_addr_2,@ShipTo_customer_addr_3,@ShipTo_customer_addr_4,@ShipTo_customer_state,
                   @ShipTo_customer_country,@ShipTo_customer_mobile_no,@ShipTocontact_person,@purchase_amount,@add_fright,@less_fright,@rounded_off,@loading_charges,
@@ -10929,7 +10930,7 @@ const DCdeletehdrData = async (req, res) => {
       .input("Location_Code", sql.NVarChar, Location_Code)
       .input("transaction_no", sql.NVarChar, transaction_no)
       .input("modified_by", sql.NVarChar, modified_by)
-      .query(`EXEC sp_delivery_challan_hdr_Ramya @mode,@company_code,@Location_Code,@transaction_no,'',0,'','','','','',
+      .query(`EXEC sp_delivery_challan_hdr @mode,@company_code,@Location_Code,@transaction_no,'',0,'','','','','',
              '','','','','','','','','','','','','','','','','',0,0,0,0,0,0,0,'','','','',0,'','','','','','','','','','','','',@modified_by,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
     res.status(200).json("Delivery challan deleted successfully");
   } catch (err) {
@@ -10949,7 +10950,7 @@ const getAllDCdetData = async (req, res) => {
       .input("mode", sql.NVarChar, "A") // Insert mode
       .input("company_code", sql.NVarChar, company_code)
       .input("Location_Code", sql.NVarChar, Location_Code)
-      .query(`EXEC sp_delivery_challan_details_list_Ramya   @mode,@company_code,@Location_Code,'','',0,'','','','','','',
+      .query(`EXEC sp_delivery_challan_details_list   @mode,@company_code,@Location_Code,'','',0,'','','','','','',
       0,0,0,'','',0,'','','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
 
     res.json(result.recordset);
@@ -11001,7 +11002,7 @@ const addDeliveryChallandetail = async (req, res) => {
       .input("datetime2", sql.NVarChar, datetime2)
       .input("datetime3", sql.NVarChar, datetime3)
       .input("datetime4", sql.NVarChar, datetime4)
-      .query(`EXEC sp_delivery_challan_details_list_Ramya   @mode,@company_code,@Location_Code,@transaction_date,@transaction_no,@SNo,@code,@name,@Description,@warehouse_code,@customer_code,@customer_name,
+      .query(`EXEC sp_delivery_challan_details_list   @mode,@company_code,@Location_Code,@transaction_date,@transaction_no,@SNo,@code,@name,@Description,@warehouse_code,@customer_code,@customer_name,
       @bill_qty,@bill_rate,@unit_price,@pay_type,@sales_type,@transport_charges,@type,@hsn_code,@created_by,@modified_by,
       @tempstr1,@tempstr2,@tempstr3,@tempstr4,@datetime1,@datetime2,@datetime3,@datetime4`);
     res.json({ success: true, message: "Delivery Challan inserted successfully" });
@@ -11014,7 +11015,7 @@ const addDeliveryChallandetail = async (req, res) => {
 
 const DCdeletedetData = async (req, res) => {
   // const purch_autonosToDelete = req.body.purch_autonos;
-  const { company_code, Location_Code,ytransaction_no } = req.body;
+  const { company_code, Location_Code,transaction_no } = req.body;
 
   const pool = await connection.connectToDatabase();
   try {
@@ -11024,7 +11025,7 @@ const DCdeletedetData = async (req, res) => {
       .input("company_code", sql.NVarChar, company_code)
       .input("Location_Code", sql.NVarChar, Location_Code)
       .input("transaction_no", sql.NVarChar, transaction_no)
-      .query(`EXEC sp_delivery_challan_details_list_Ramya   @mode,@company_code,@Location_Code,'',@transaction_no,0,'','','','','','',
+      .query(`EXEC sp_delivery_challan_details_list   @mode,@company_code,@Location_Code,'',@transaction_no,0,'','','','','','',
           0,0,0,'','',0,'','','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
     res.status(200).json("Challan deleted successfully");
   } catch (err) {
@@ -12266,7 +12267,7 @@ const getDcSearchData = async (req, res) => {
       .input("transaction_date", sql.NVarChar, transaction_date)
       .input("customer_name", sql.NVarChar, customer_name)
       .input("ShipTo_customer_name", sql.NVarChar, ShipTo_customer_name)
-      .query(`EXEC sp_delivery_challan_hdr_Ramya @mode,@company_code,@Location_Code,@transaction_no,@transaction_date,0,'','',@customer_name,'','',
+      .query(`EXEC sp_delivery_challan_hdr @mode,@company_code,@Location_Code,@transaction_no,@transaction_date,0,'','',@customer_name,'','',
                            '','','','','','','',@ShipTo_customer_name,'','','','','','','','','',0,0,0,0,0,0,0,'','','','',0,'','','','','','','','','','','','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
     if (result.recordset.length > 0) {
       res.status(200).json(result.recordset);
@@ -13193,7 +13194,7 @@ const getUserRole = async (req, res) => {
 const getAllInventoryReceiptsDetails = async (req, res) => {
   try {
     await connection.connectToDatabase();
-    const result = await sql.query(`EXEC sp_InventoryReceipts_Details_Ramya 'A','','','','','','','',0,'','','',0,'','','','','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
+    const result = await sql.query(`EXEC sp_InventoryReceipts_Details 'A','','','','','','','',0,'','','',0,'','','','','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
 
     res.json(result.recordset);
   } catch (err) {
@@ -13239,7 +13240,7 @@ const addInventoryReceiptsDetails = async (req, res) => {
       .input("datetime2", sql.VarChar, datetime2)
       .input("datetime3", sql.VarChar, datetime3)
       .input("datetime4", sql.VarChar, datetime4)
-      .query(`sp_InventoryReceipts_Details_Ramya @mode,@company_code,@Location_Code,@ReceiptID,@DateReceived,@Warehouse,@Supplier,@PurchaseOrderID,@ItemSNo,@ItemCode,@ItemName,@Serial_No,@QuantityReceived,
+      .query(`sp_InventoryReceipts_Details @mode,@company_code,@Location_Code,@ReceiptID,@DateReceived,@Warehouse,@Supplier,@PurchaseOrderID,@ItemSNo,@ItemCode,@ItemName,@Serial_No,@QuantityReceived,
         @Condition,@ReceivedBy,@ApprovalStatus,@Notes,@created_by,@modified_by,@tempstr1,@tempstr2,@tempstr3,@tempstr4,@datetime1,@datetime2,@datetime3,@datetime4`);
     res.json({ success: true, message: "Data inserted successfully" });
   } catch (err) {
@@ -13257,7 +13258,7 @@ const deleteInventoryReceiptsDetails = async (req, res) => {
       .input("ReceiptID", ReceiptID)
       .input("company_code", company_code)
       .input("Location_Code", Location_Code)
-      .query(`EXEC sp_InventoryReceipts_Details_Ramya 'D',@company_code,@Location_Code,@ReceiptID,'','','','',0,'','','',0,'','','','','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
+      .query(`EXEC sp_InventoryReceipts_Details 'D',@company_code,@Location_Code,@ReceiptID,'','','','',0,'','','',0,'','','','','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
     res.status(200).json("Inventory Receipt Detail deleted successfully");
   } catch (err) {
     console.error("Error", err);
@@ -13291,7 +13292,7 @@ const addInventoryReceiptsheader = async (req, res) => {
       .input("datetime2", sql.NVarChar, datetime2)
       .input("datetime3", sql.NVarChar, datetime3)
       .input("datetime4", sql.NVarChar, datetime4)
-      .query(`EXEC sp_InventoryReceipts_hdr_Ramya @mode,@company_code,@Location_Code,@ReceiptID,@DateReceived,@Receipt_Type,
+      .query(`EXEC sp_InventoryReceipts_hdr @mode,@company_code,@Location_Code,@ReceiptID,@DateReceived,@Receipt_Type,
           @created_by, @modified_by, NULL, NULL, NULL, NULL, NULL, NULL,NULL,NULL`);
     if (result.recordset.length > 0) {
       res.status(200).json(result.recordset);
@@ -13311,7 +13312,8 @@ const inventoryReceiptsDelete = async (req, res) => {
     await pool.request()
       .input("ReceiptID", ReceiptID)
       .input("company_code", company_code)
-      .query(`EXEC sp_InventoryReceipts_hdr_Ramya 'D',@company_code,@Location_Code,@ReceiptID,'','','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`)
+      .input("Location_Code", Location_Code)
+      .query(`EXEC sp_InventoryReceipts_hdr 'D',@company_code,@Location_Code,@ReceiptID,'','','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`)
     res.status(200).json("InventoryReceipts deleted successfully");
   } catch (err) {
     console.error("Error", err);
@@ -13323,7 +13325,7 @@ const inventoryReceiptsDelete = async (req, res) => {
 const inventoryReceiptsAll = async (req, res) => {
   try {
     await connection.connectToDatabase();
-    const result = await sql.query(`EXEC sp_InventoryReceipts_hdr_Ramya  'A','','', '', '', '', '','', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL`);
+    const result = await sql.query(`EXEC sp_InventoryReceipts_hdr  'A','','', '', '', '', '','', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL`);
 
     res.json(result.recordset);
   } catch (err) {
@@ -14414,7 +14416,7 @@ const InventoryReceiptSearchData = async (req, res) => {
       .input("ReceiptID", sql.NVarChar, ReceiptID)
       .input("DateReceived", sql.NVarChar, DateReceived)
       .input("Receipt_Type", sql.NVarChar, Receipt_Type)
-      .query(`EXEC sp_InventoryReceipts_hdr_Ramya @mode,'','',@ReceiptID,@DateReceived,@Receipt_Type,'','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
+      .query(`EXEC sp_InventoryReceipts_hdr @mode,'','',@ReceiptID,@DateReceived,@Receipt_Type,'','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
     if (result.recordset.length > 0) {
       res.status(200).json(result.recordset);
     } else {
@@ -21837,7 +21839,7 @@ const DCTermsandConditions = async (req, res) => {
       .input("datetime3", sql.NVarChar, datetime3)
       .input("datetime4", sql.NVarChar, datetime4)
       .query(
-        `EXEC sp_Terms_conditions_DeliveryChallan_Ramya @mode,@transaction_no,@company_code,@Location_Code,@Terms_conditions,@created_by,'',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
+        `EXEC sp_Terms_conditions_DeliveryChallan @mode,@transaction_no,@company_code,@Location_Code,@Terms_conditions,@created_by,'',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
     res.status(200).json("Data Inserted successfully");
   } catch (err) {
     console.error("Error inserting data:", err);
@@ -21860,7 +21862,7 @@ const DCTermsandConditionsDelete = async (req, res) => {
       .input("company_code", sql.NVarChar, company_code)
       .input("Location_Code", sql.NVarChar, Location_Code)
 
-      .query(`EXEC sp_Terms_conditions_DeliveryChallan_Ramya 'D',@transaction_no,@company_code,@Location_Code,'','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
+      .query(`EXEC sp_Terms_conditions_DeliveryChallan 'D',@transaction_no,@company_code,@Location_Code,'','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
 
     res.status(200).json(" data deleted successfully");
   } catch (err) {
@@ -21876,7 +21878,7 @@ const DCTermsandConditionsDelete = async (req, res) => {
 const getallDCTermsandConditions = async (req, res) => {
   try {
     await connection.connectToDatabase();
-    const result = await sql.query(`EXEC sp_Terms_conditions_DeliveryChallan_Ramya 'A','','','','','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
+    const result = await sql.query(`EXEC sp_Terms_conditions_DeliveryChallan 'A','','','','','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
 
     res.json(result.recordset);
   } catch (err) {
@@ -22769,7 +22771,7 @@ const getDeletedDcSearchData = async (req, res) => {
       .input("transaction_date", sql.NVarChar, transaction_date)
       .input("customer_name", sql.NVarChar, customer_name)
       .input("ShipTo_customer_name", sql.NVarChar, ShipTo_customer_name)
-      .query(`EXEC sp_delivery_challan_hdr_Ramya @mode,@company_code,@Location_Code,@transaction_no,@transaction_date,0,'','',@customer_name,'','',
+      .query(`EXEC sp_delivery_challan_hdr @mode,@company_code,@Location_Code,@transaction_no,@transaction_date,0,'','',@customer_name,'','',
                '','','','','','','',@ShipTo_customer_name,'','','','','','','','','',0,0,0,0,0,0,0,'','','','',0,'','','','','','','','','','','','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
     if (result.recordset.length > 0) {
       res.status(200).json(result.recordset);
@@ -26678,7 +26680,7 @@ const updDeliveryChallanheader = async (req, res) => {
       .input("destination", sql.NVarChar, destination)
       .input("note_not_for_sale", sql.NVarChar, note_not_for_sale)
       .input("modified_by", sql.NVarChar, modified_by)
-      .query(`EXEC sp_delivery_challan_hdr_Ramya @mode,@company_code,@Location_Code,@transaction_no,@transaction_date,@transport_charges,@pay_type,@sales_type,@customer_name,@bill_to_customer_code,@customer_addr_1,
+      .query(`EXEC sp_delivery_challan_hdr @mode,@company_code,@Location_Code,@transaction_no,@transaction_date,@transport_charges,@pay_type,@sales_type,@customer_name,@bill_to_customer_code,@customer_addr_1,
       @customer_addr_2,@customer_addr_3,@customer_addr_4,@customer_state,@customer_country,@customer_mobile_no,@contact_person,@ShipTo_customer_name,
       @Ship_to_customer_code,@ShipTo_customer_addr_1,@ShipTo_customer_addr_2,@ShipTo_customer_addr_3,@ShipTo_customer_addr_4,@ShipTo_customer_state,
       @ShipTo_customer_country,@ShipTo_customer_mobile_no,@ShipTocontact_person,@purchase_amount,@add_fright,@less_fright,@rounded_off,@loading_charges,
@@ -37418,6 +37420,30 @@ const IncomeExpenseAnalysisReport = async (req, res) => {
     res.status(500).json({ message: err.message || 'Internal Server Error' });
   }
 };
+
+const SiteMaterialBalanceReport = async (req, res) => {
+  const { material_code, site_id, company_code } = req.body;
+
+  try {
+    const pool = await connection.connectToDatabase();
+
+    const result = await pool.request()
+      .input("mode", sql.NVarChar, "SMB")
+      .input("company_code", sql.NVarChar, company_code)
+      .input("site_id", sql.NVarChar, site_id)
+      .input("material_code", sql.NVarChar, material_code)
+      .query(`EXEC sp_Site_material_balanceReport @mode,@company_code,@site_id,@material_code`);
+
+    if (result.recordset.length > 0) {
+      res.status(200).json(result.recordset);
+    } else {
+      res.status(404).json("Data not found");
+    }
+  } catch (err) {
+    console.error("Error", err);
+    res.status(500).json({ message: err.message || 'Internal Server Error' });
+  }
+};
 //Code ended by pavun on 04-06-2026
 
 module.exports = {
@@ -38642,7 +38668,8 @@ module.exports = {
   getExpensesReport,
   ExpensesTrackingPrint,
   SupervisorSiteMaterialReport,
-  IncomeExpenseAnalysisReport
+  IncomeExpenseAnalysisReport,
+  SiteMaterialBalanceReport
 
 
 };

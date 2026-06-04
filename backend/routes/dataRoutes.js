@@ -1254,6 +1254,7 @@ router.post("/getExpensesReport", dataController.getExpensesReport)
 router.post("/ExpensesTrackingPrint", dataController.ExpensesTrackingPrint)
 router.post("/SupervisorSiteMaterialReport", dataController.SupervisorSiteMaterialReport)
 router.post("/IncomeExpenseAnalysisReport", dataController.IncomeExpenseAnalysisReport)
+router.post("/SiteMaterialBalanceReport", dataController.SiteMaterialBalanceReport)
 
 
 module.exports = router;

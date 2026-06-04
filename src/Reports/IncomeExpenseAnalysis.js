@@ -88,43 +88,43 @@ const IncomeExpenseAnalysis = () => {
     {
       headerName: "Customer Code",
       field: "customer_code",
-      editable: true,
+      editable: false,
     },
     {
       headerName: "Customer Name",
       field: "customer_name",
-      editable: true,
+      editable: false,
     },
     {
       headerName: "Site ID",
       field: "site_id",
-      editable: true,
+      editable: false,
     },
     {
       headerName: "Site Name",
       field: "site_name",
-      editable: true,
+      editable: false,
     },
     {
       headerName: "Total Income",
       field: "Total_Income",
-      editable: true,
+      editable: false,
     },
     {
       headerName: "Total Expense",
       field: "Total_Expense",
-      editable: true,
+      editable: false,
     },
     {
       headerName: "Net Profit",
       field: "Net_Profit",
-      editable: true,
+      editable: false,
     },
   ];
 
   const defaultColDef = {
     resizable: true,
-    wrapText: true,
+    wrapText: false,
     // flex: 1,
   };
 

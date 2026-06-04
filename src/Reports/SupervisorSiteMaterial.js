@@ -25,19 +25,6 @@ const SupervisorSiteMaterial = () => {
   const [gridColumnApi, setGridColumnApi] = useState(null);
   const [editedData, setEditedData] = useState([]);
   const [selectedRows, setSelectedRows] = useState([]);
-  const [periodDrop, setPeriodDrop] = useState([]);
-  const [taxDrop, setTaxDrop] = useState([]);
-  const [partyDrop, setPartyDrop] = useState([]);
-  const [period, setPeriod] = useState(null);
-  const [tax, setTax] = useState(null);
-  const [party, setParty] = useState(null);
-  const [selectedPeriod, setSelectedPeriod] = useState(null);
-  const [selectedTax, setSelectedTax] = useState(null);
-  const [selectedParty, setSelectedParty] = useState(null);
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
-  const [start_Date, setStart_Date] = useState('');
-  const [end_Date, setEnd_Date] = useState('');
   const companyName = sessionStorage.getItem('selectedCompanyName');
   const [loading, setLoading] = useState(false);
 
@@ -116,48 +103,11 @@ const SupervisorSiteMaterial = () => {
   };
 
   useEffect(() => {
-    fetch(`${config.apiBaseUrl}/getDateRange`)
-      .then((data) => data.json())
-      .then((val) => {
-        setPeriodDrop(val);
-
-        if (val.length > 0) {
-          const firstOption = {
-            value: val[4].Sno,
-            label: val[4].DateRangeDescription,
-          };
-          setSelectedPeriod(firstOption);
-          setPeriod(firstOption.value);
-        }
-      });
-  }, []);
-
-  const filteredOptionPeriod = Array.isArray(periodDrop)
-    ? periodDrop.map((option) => ({
-      value: option.Sno,
-      label: option.DateRangeDescription,
-    }))
-    : [];
-
-  const handleChangePeriod = (selectedPeriod) => {
-    setSelectedPeriod(selectedPeriod);
-    setPeriod(selectedPeriod ? selectedPeriod.value : '');
-  };
-
-  useEffect(() => {
     fetchSupervisorReport();
   }, []);
 
   const reloadGridData = () => {
     window.location.reload();
-  };
-
-  const formatDate = (isoDateString) => {
-    const date = new Date(isoDateString);
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    return `${day}-${month}-${year}`;
   };
 
   const columnDefs = [
@@ -171,63 +121,63 @@ const SupervisorSiteMaterial = () => {
     {
       headerName: "Customer Code",
       field: "customer_code",
-      editable: true,
+      editable: false,
     },
     {
       headerName: "Customer Name",
       field: "customer_name",
-      editable: true,
+      editable: false,
     },
     {
       headerName: "Site ID",
       field: "site_id",
-      editable: true,
+      editable: false,
     },
     {
       headerName: "Site Name",
       field: "site_name",
-      editable: true,
+      editable: false,
     },
     {
       headerName: "Vendor Code",
       field: "vendor_code",
-      editable: true,
+      editable: false,
     },
     {
       headerName: "Vendor Name",
       field: "vendor_name",
-      editable: true,
+      editable: false,
     },
     {
       headerName: "Material Code",
       field: "material_code",
-      editable: true,
+      editable: false,
     },
     {
       headerName: "Material Name",
       field: "material_name",
-      editable: true,
+      editable: false,
     },
     {
       headerName: "Quantity",
       field: "quantity",
-      editable: true,
+      editable: false,
     },
     {
       headerName: "Rate",
       field: "rate",
-      editable: true,
+      editable: false,
     },
     {
       headerName: "Total Amount",
       field: "total_amount",
-      editable: true,
+      editable: false,
     },
   ];
 
   const defaultColDef = {
     resizable: true,
-    wrapText: true,
+    wrapText: false,
     // flex: 1,
   };
 
@@ -443,16 +393,6 @@ const SupervisorSiteMaterial = () => {
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleCustomDatestart = (e) => {
-    e.preventDefault();
-    setStartDate(e.target.value);
-  };
-
-  const handleCustomDateend = (e) => {
-    e.preventDefault();
-    setEndDate(e.target.value);
   };
 
   const transformRowData = (data) => {
