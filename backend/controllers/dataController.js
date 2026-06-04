@@ -5288,7 +5288,7 @@ const getAllSalesRetHdrData = async (req, res) => {
       .input("mode", sql.NVarChar, "A")
       .input("company_code", sql.NVarChar, company_code)
       .input("Location_Code", sql.NVarChar, Location_Code)
-      .query(`EXEC sp_sales_return_hdr_Ramya @mode,@company_code,@Location_Code,'','','','','','','','','','',0,0,0,0,0,0,0,0,0,0,0,0,0,
+      .query(`EXEC sp_sales_return_hdr @mode,@company_code,@Location_Code,'','','','','','','','','','',0,0,0,0,0,0,0,0,0,0,0,0,0,
                           '','','','','','','','','','','',0,0,0,'','','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
 
     // Send response
@@ -5368,7 +5368,7 @@ const addSalesRetHdr = async (req, res) => {
       .input("datetime3", sql.NVarChar, datetime3)
       .input("datetime4", sql.NVarChar, datetime4)
       .query(
-        `EXEC sp_sales_return_hdr_Ramya @mode,@company_code,@Location_Code,@bill_date,@bill_no,@return_date,@return_no,@return_reason,@return_person,@dely_chlno,@warehouse_code,@sales_type,	
+        `EXEC sp_sales_return_hdr @mode,@company_code,@Location_Code,@bill_date,@bill_no,@return_date,@return_no,@return_reason,@return_person,@dely_chlno,@warehouse_code,@sales_type,	
                   @customer_code,@sale_amt,@less_frit,@less_disc,@less_amt,@net_amt,@excs_amt,@cess_amt,@dely_amt,@roff_amt,@othr_amt,@bill_amt,@total_item,
                   @total_qty,@pay_type,@broker_code,@tpot_code,@sman_code,@vehl_no,@mark_name,@payment_mode,@customer_name,@entry_no,@roff_acccode,@order_type,@deli_charge,
                   @tax_amount,@ref_no,'','',@created_by,@modified_by,@tempstr1,@tempstr2,@tempstr3,@tempstr4,@datetime1,@datetime2,@datetime3,@datetime4`);
@@ -6547,7 +6547,7 @@ const getAllSalesRetDetailData = async (req, res) => {
       .input("mode", sql.NVarChar, "A")
       .input("company_code", sql.NVarChar, company_code)
       .input("Location_Code", sql.NVarChar, Location_Code)
-      .query(`EXEC sp_sales_return_details_Ramya @mode,@company_code,@Location_Code,'','','','','','','','','','','',0,0,0,0,0,0,0,'','','','','','','','','','','','',0,0,0,'','','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
+      .query(`EXEC sp_sales_return_details @mode,@company_code,@Location_Code,'','','','','','','','','','','',0,0,0,0,0,0,0,'','','','','','','','','','','','',0,0,0,'','','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
     if (result.recordset.length > 0) {
       res.status(200).json(result.recordset);
     } else {
@@ -6620,7 +6620,7 @@ const addSalesRetDetail = async (req, res) => {
       .input("datetime3", sql.NVarChar, datetime3)
       .input("datetime4", sql.NVarChar, datetime4)
       .query(
-        `EXEC sp_sales_return_details_Ramya @mode,@company_code,@Location_Code,@bill_date,@bill_no,@return_date,@return_no,@return_reason,@return_person,@dely_chlno,@warehouse_code,
+        `EXEC sp_sales_return_details @mode,@company_code,@Location_Code,@bill_date,@bill_no,@return_date,@return_no,@return_reason,@return_person,@dely_chlno,@warehouse_code,
           @customer_code,@item_code,@item_name,@bill_qty,@return_qty,@bill_rate,@item_amt,@weight,@return_weight,
           @total_weight,@pay_type,@sales_type, @broker_code,@tpot_code,@sman_code,@salesacc_code,@stock_type,@stock_code,
           @entry_no,@customer_name,@order_type,@hsn,@return_amt,@tax_amt, @ItemSNo,'','', @created_by,@modified_by,@tempstr1,@tempstr2,@tempstr3,@tempstr4,@datetime1,@datetime2,@datetime3,@datetime4`);
@@ -6643,7 +6643,7 @@ const getAllSalesRetTaxDetailData = async (req, res) => {
       .input("mode", sql.NVarChar, "A")
       .input("company_code", sql.NVarChar, company_code)
       .input("Location_Code", sql.NVarChar, Location_Code)
-      .query(`EXEC sp_sales_return_tax_details_Ramya @mode,@company_code,@Location_Code,'','','','','','','','',0,0,'','','','',0,0,'','','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
+      .query(`EXEC sp_sales_return_tax_details @mode,@company_code,@Location_Code,'','','','','','','','',0,0,'','','','',0,0,'','','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
     if (result.recordset.length > 0) {
       res.status(200).json(result.recordset);
     } else {
@@ -6701,7 +6701,7 @@ const addSalesRetTaxDetail = async (req, res) => {
       .input("datetime3", sql.NVarChar, datetime3)
       .input("datetime4", sql.NVarChar, datetime4)
       .query(
-        `EXEC sp_sales_return_tax_details_Ramya @mode,@company_code,@Location_Code,@bill_date, @bill_no, @return_no, @return_date, @return_reason, @return_person,
+        `EXEC sp_sales_return_tax_details @mode,@company_code,@Location_Code,@bill_date, @bill_no, @return_no, @return_date, @return_reason, @return_person,
 @customer_code, @pay_type, @ItemSNo, @TaxSNo, @item_code,  @item_name, @tax_type, @tax_name_details, @tax_amt,
 @tax_per, @tax_acode,'', @created_by, @modified_by, @tempstr1, @tempstr2, @tempstr3, @tempstr4, @datetime1, @datetime2, @datetime3, @datetime4
 `);
@@ -10344,7 +10344,7 @@ const getsalesreturnsearchViewdata = async (req, res) => {
       .input("pay_type", sql.NVarChar, pay_type)
 
       // .input("status", sql.NVarChar, status)
-      .query(`EXEC sp_sales_return_hdr_Ramya @mode,@company_code,@Location_Code,@bill_date,@bill_no,'',@return_no,'','','','',@sales_type,@customer_code,0,0,0,0,0,0,0,0,0,0,0,0,0,
+      .query(`EXEC sp_sales_return_hdr @mode,@company_code,@Location_Code,@bill_date,@bill_no,'',@return_no,'','','','',@sales_type,@customer_code,0,0,0,0,0,0,0,0,0,0,0,0,0,
                           @pay_type,'','','','','','',@customer_name,'','','',0,0,0,'','','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
 
     // Send response
@@ -12828,7 +12828,7 @@ const salereturndeletehdrData = async (req, res) => {
         .input("Location_Code", Location_Code)
         .input("return_no", return_no)
         .input("modified_by", sql.NVarChar, req.headers['modified-by'])
-        .query(`EXEC sp_sales_return_hdr_Ramya 'D',@company_code,@Location_Code,'','','',@return_no,'','','','','','',0,0,0,0,0,0,0,0,0,0,0,0,0,
+        .query(`EXEC sp_sales_return_hdr 'D',@company_code,@Location_Code,'','','',@return_no,'','','','','','',0,0,0,0,0,0,0,0,0,0,0,0,0,
                       '','','','','','','','','','','',0,0,0,'','','',@modified_by,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL `);
     } catch (error) {
       if (error.number === 547) {
@@ -12859,7 +12859,7 @@ const salereturndeletedetData = async (req, res) => {
         .input("Location_Code", Location_Code)
         .input("return_no", return_no)
         .input("modified_by", sql.NVarChar, req.headers['modified-by'])
-        .query(`EXEC sp_sales_return_details_Ramya 'D',@company_code,@Location_Code,'','','',@return_no,'','','','','','','',0,0,0,0,0,0,0,'','','','','','','','','','','','',0,0,0,'','','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
+        .query(`EXEC sp_sales_return_details 'D',@company_code,@Location_Code,'','','',@return_no,'','','','','','','',0,0,0,0,0,0,0,'','','','','','','','','','','','',0,0,0,'','','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
     } catch (error) {
       if (error.number === 547) {
         // Foreign key constraint violation
@@ -12890,7 +12890,7 @@ const salereturndeletetaxdetData = async (req, res) => {
         .input("return_no", return_no)
         .input("modified_by", sql.NVarChar, req.headers['modified-by'])
         .query(`
-              EXEC sp_sales_return_tax_details_Ramya 'D',@company_code,@Location_Code,'','',@return_no,'','','','','',0,0,'','','','',0,0,'','','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
+              EXEC sp_sales_return_tax_details 'D',@company_code,@Location_Code,'','',@return_no,'','','','','',0,0,'','','','',0,0,'','','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
     } catch (error) {
       if (error.number === 547) {
         // Foreign key constraint violation
@@ -15481,7 +15481,7 @@ const SalesReturnAuthHdr = async (req, res) => {
       .input("Location_Code", sql.NVarChar, Location_Code)
       .input("return_no", sql.NVarChar, return_no)
       .input("authroization_status", sql.NVarChar, authroization_status)
-      .query(`EXEC sp_sales_return_hdr_Ramya @mode,@company_code,@Location_Code,'','','',@return_no,'','','','','','',0,0,0,0,0,0,0,0,0,0,0,0,0,
+      .query(`EXEC sp_sales_return_hdr @mode,@company_code,@Location_Code,'','','',@return_no,'','','','','','',0,0,0,0,0,0,0,0,0,0,0,0,0,
                           '','','','','','','','','','','',0,0,0,@authroization_status,'','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
     if (result.recordset.length > 0) {
       res.status(200).json(result.recordset);
@@ -15506,7 +15506,7 @@ const SalesReturnAuthDetail = async (req, res) => {
       .input("Location_Code", sql.NVarChar, Location_Code)
       .input("return_no", sql.NVarChar, return_no)
       .input("authroization_status", sql.NVarChar, authroization_status)
-      .query(`EXEC sp_sales_return_details_Ramya @mode,@company_code,@Location_Code,'','','',@return_no,'','','','','','','',0,0,0,0,0,0,0,'','','','','','','','','',
+      .query(`EXEC sp_sales_return_details @mode,@company_code,@Location_Code,'','','',@return_no,'','','','','','','',0,0,0,0,0,0,0,'','','','','','','','','',
 '','','',0,0,0,@authroization_status,'','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
     if (result.recordset.length > 0) {
       res.status(200).json(result.recordset);
@@ -15532,7 +15532,7 @@ const SalesReturnAuthTaxDetail = async (req, res) => {
       .input("Location_Code", sql.NVarChar, Location_Code)
       .input("return_no", sql.NVarChar, return_no)
       .input("authroization_status", sql.NVarChar, authroization_status)
-      .query(`EXEC sp_sales_return_tax_details_Ramya @mode,@company_code,@Location_Code,'','',@return_no,'','','','','',0,0,'','','','',0,0,'',@authroization_status,'',''
+      .query(`EXEC sp_sales_return_tax_details @mode,@company_code,@Location_Code,'','',@return_no,'','','','','',0,0,'','','','',0,0,'',@authroization_status,'',''
 ,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
     if (result.recordset.length > 0) {
       res.status(200).json(result.recordset);
@@ -17451,7 +17451,7 @@ const salretauthstatus = async (req, res) => {
       .input("company_code", sql.NVarChar, company_code)
       .input("Location_Code", sql.NVarChar, Location_Code)
       .input("return_no", sql.NVarChar, return_no)
-      .query(`EXEC sp_sales_return_hdr_Ramya @mode,@company_code,@Location_Code,'','','',@return_no,'','','','','','',0,0,0,0,0,0,0,0,0,0,0,0,0,
+      .query(`EXEC sp_sales_return_hdr @mode,@company_code,@Location_Code,'','','',@return_no,'','','','','','',0,0,0,0,0,0,0,0,0,0,0,0,0,
 '','','','','','','','','','','',0,0,0,'','','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
 
     // Check if any records were returned

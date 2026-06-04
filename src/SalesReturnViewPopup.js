@@ -133,7 +133,9 @@ export default function SalesRetrunView({ open, handleClose, handleDataView }) {
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({ bill_date, company_code: sessionStorage.getItem('selectedCompanyCode'), bill_no, return_no, dely_chlno, sales_type, customer_code, customer_name, pay_type, order_type })
+        body: JSON.stringify({ bill_date, company_code: sessionStorage.getItem('selectedCompanyCode'), 
+          Location_Code: sessionStorage.getItem("selectedLocationCode"),
+          bill_no, return_no, dely_chlno, sales_type, customer_code, customer_name, pay_type, order_type })
       });
       if (response.ok) {
         const searchData = await response.json();

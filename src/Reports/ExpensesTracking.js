@@ -1000,7 +1000,7 @@ const ExpensesTracking = () => {
                                 <icon className="popups-btn fs-6 p-3" onClick={fetchExpensesData} required title="Search">
                                     <i className="fas fa-search"></i>
                                 </icon>
-                                <icon className="popups-btn fs-6 p-3" required title="Refresh">
+                                <icon className="popups-btn fs-6 p-3" onClick={reloadGridData} required title="Refresh">
                                     <FontAwesomeIcon icon="fa-solid fa-arrow-rotate-right" />
                                 </icon>
                             </div>
