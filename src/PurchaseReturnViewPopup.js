@@ -178,7 +178,7 @@ export default function PurchaseReturnView({ open, handleClose, handleItemView }
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({ company_code:sessionStorage.getItem("selectedCompanyCode"), transaction_no, transaction_date, vendor_code, vendor_name, purchase_type, pay_type, return_no }) // Send company_no and company_name as search criteria
+        body: JSON.stringify({ company_code:sessionStorage.getItem("selectedCompanyCode"), Location_Code: sessionStorage.getItem('selectedLocationCode'), transaction_no, transaction_date, vendor_code, vendor_name, purchase_type, pay_type, return_no }) // Send company_no and company_name as search criteria
       });
       if (response.ok) {
         const searchData = await response.json();
