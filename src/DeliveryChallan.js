@@ -1043,6 +1043,7 @@ function DeliveryChallan() {
 
             const Header = {
                 company_code: sessionStorage.getItem('selectedCompanyCode'),
+                Location_Code: sessionStorage.getItem('selectedLocationCode'),
                 transport_charges: Totaltransport,
                 bill_to_customer_code: billToData['Customer Code'],
                 customer_name: billToData['Customer Name'],
@@ -1149,6 +1150,7 @@ function DeliveryChallan() {
 
             const Header = {
                 company_code: sessionStorage.getItem('selectedCompanyCode'),
+                Location_Code: sessionStorage.getItem('selectedLocationCode'),
                 bill_to_customer_code: billToData['Customer Code'],
                 customer_name: billToData['Customer Name'],
                 customer_addr_1: billToData['Address 1'],
@@ -1230,6 +1232,7 @@ function DeliveryChallan() {
                 const Details = {
                     created_by: sessionStorage.getItem('selectedUserCode'),
                     company_code: sessionStorage.getItem('selectedCompanyCode'),
+                    Location_Code: sessionStorage.getItem('selectedLocationCode'),
                     transaction_no: transaction_no,
                     transaction_date: transactionDate,
                     code: row.productItemCode,
@@ -1279,6 +1282,7 @@ function DeliveryChallan() {
                 const Details = {
                     created_by: sessionStorage.getItem('selectedUserCode'),
                     company_code: sessionStorage.getItem('selectedCompanyCode'),
+                    Location_Code: sessionStorage.getItem('selectedLocationCode'),
                     transaction_no: transaction_no,
                     Terms_conditions: row.Terms_conditions,
                 };
@@ -1505,7 +1509,7 @@ function DeliveryChallan() {
                 headers: {
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify({ transaction_no: code, company_code: sessionStorage.getItem("selectedCompanyCode") }) // Send company_no and company_name as search criteria
+                body: JSON.stringify({ transaction_no: code, company_code: sessionStorage.getItem("selectedCompanyCode"), Location_Code: sessionStorage.getItem("selectedLocationCode") }) // Send company_no and company_name as search criteria
             });
             if (response.ok) {
                 const searchData = await response.json();
@@ -1630,6 +1634,7 @@ function DeliveryChallan() {
                 body: JSON.stringify({
                     transaction_no: new_running_no,
                     company_code: sessionStorage.getItem("selectedCompanyCode"),
+                    Location_Code: sessionStorage.getItem("selectedLocationCode"),
                     modified_by: sessionStorage.getItem("selectedUserCode")
                 })
             });
@@ -1653,7 +1658,8 @@ function DeliveryChallan() {
                 },
                 body: JSON.stringify({
                     transaction_no: new_running_no.toString(),
-                    company_code: sessionStorage.getItem("selectedCompanyCode")
+                    company_code: sessionStorage.getItem("selectedCompanyCode"),
+                    Location_Code: sessionStorage.getItem("selectedLocationCode")
                 })
             });
             if (response.ok) {
@@ -1676,7 +1682,8 @@ function DeliveryChallan() {
                 },
                 body: JSON.stringify({
                     transaction_no: new_running_no.toString(),
-                    company_code: sessionStorage.getItem("selectedCompanyCode")
+                    company_code: sessionStorage.getItem("selectedCompanyCode"),
+                    Location_Code: sessionStorage.getItem("selectedLocationCode")
                 })
             });
             if (response.ok) {
@@ -1704,7 +1711,7 @@ function DeliveryChallan() {
                 setLoading(true);
                 try {
                     const termsResult = await handleDeleteTerms();
-                    const detailResult = await handleDeleteDetail();
+                    const detailResult = await handleDeleteDetail(); 
                     const headerResult = await handleDeleteHeader();
 
                     if (headerResult === true && detailResult === true && termsResult === true) {

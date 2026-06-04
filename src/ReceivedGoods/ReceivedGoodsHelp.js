@@ -238,7 +238,7 @@ export default function ReceivedGoodsPopup({ open, handleClose, handleRGData }) 
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({ bill_no, bill_date, item_code, item_name, company_code: sessionStorage.getItem("selectedCompanyCode") })
+        body: JSON.stringify({ bill_no, bill_date, item_code, item_name, company_code: sessionStorage.getItem("selectedCompanyCode"), Location_Code: sessionStorage.getItem("selectedLocationCode") })
       });
       if (response.ok) {
         const searchData = await response.json();
