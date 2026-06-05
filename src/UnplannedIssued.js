@@ -879,7 +879,7 @@ const UnplannedIssued = () => {
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({ IssuanceID: issuedId, company_code: sessionStorage.getItem("selectedCompanyCode"),Location_Code: sessionStorage.getItem("selectedLocationCode"), })
+        body: JSON.stringify({ IssuanceID: issuedId, company_code: sessionStorage.getItem("selectedCompanyCode"), Location_Code: sessionStorage.getItem("selectedLocationCode"), })
       });
       if (response.ok) {
         return true;
@@ -1148,18 +1148,20 @@ const UnplannedIssued = () => {
   };
 
   const transformRowData = (data) => {
+    const formatValue = (val) => (val !== undefined && val !== null ? val : '');
+
     return data.map(row => ({
-      "S.No": row.serialNumber,
-      "Item Code": row.itemCode.toString(),
-      "Item Name": row.itemName.toString(),
-      "Warehouse": row.warehouse.toString(),
-      "Department": row.department.toString(),
-      "Serial No": row.serialno.toString(),
-      "Rate": row.Rate.toString(),
-      "Quantity Issued": row.quantityIssued.toString(),
-      "Total": row.Total.toString(),
-      "Reason For Issuance": row.reasonForIssuance.toString(),
-      "Issued By": row.issuedBy.toString(),
+      "S.No": formatValue(row.serialNumber),
+      "Item Code": formatValue(row.itemCode),
+      "Item Name": formatValue(row.itemName),
+      "Warehouse": formatValue(row.warehouse),
+      "Department": formatValue(row.department),
+      "Serial No": formatValue(row.serialno),
+      "Rate": formatValue(row.Rate),
+      "Quantity Issued": formatValue(row.quantityIssued),
+      "Total": formatValue(row.Total),
+      "Reason For Issuance": formatValue(row.reasonForIssuance),
+      "Issued By": formatValue(row.issuedBy),
     }));
   };
 

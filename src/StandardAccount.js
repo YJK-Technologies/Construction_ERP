@@ -53,7 +53,7 @@ const StandardAcc = () => {
     //code added by Pavun purpose of set user permisssion
      const permissions = JSON.parse(sessionStorage.getItem('permissions')) || {};
      const companyPermissions = permissions
-     .filter(permission => permission.screen_type === 'Company')
+     .filter(permission => permission.screen_type === 'StandardAccount')
      .map(permission => permission.permission_type.toLowerCase());
    
    

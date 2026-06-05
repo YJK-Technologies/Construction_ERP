@@ -38,7 +38,7 @@ function NumberSeriesGrid() {
   //code added by Haraish purpose of set user permisssion
   const permissions = JSON.parse(sessionStorage.getItem("permissions")) || {};
   const numberSeriesPermission = permissions
-    .filter((permission) => permission.screen_type === "Number Series")
+    .filter((permission) => permission.screen_type === "NumberSeries")
     .map((permission) => permission.permission_type.toLowerCase());
 
   console.log(numberSeriesPermission);
@@ -754,17 +754,21 @@ function NumberSeriesGrid() {
               <div class="exp-form-floating">
                 <div class=" d-flex  justify-content-center">
 
-                  <div class=''><icon className="popups-btn fs-6 p-3" onClick={handleSearch} required title="Search"><i className="fas fa-search"></i></icon></div>
-                  <div><icon className="popups-btn fs-6 p-3" onClick={reloadGridData} required title="Refresh"><FontAwesomeIcon icon="fa-solid fa-arrow-rotate-right" /></icon></div>
-                </div> </div></div>
-
-
-
-
+                  <div class=''>
+                    <icon className="popups-btn fs-6 p-3" onClick={handleSearch} required title="Search">
+                      <i className="fas fa-search"></i>
+                      </icon>
+                      </div>
+                  <div>
+                    <icon className="popups-btn fs-6 p-3" onClick={reloadGridData} required title="Refresh">
+                      <FontAwesomeIcon icon="fa-solid fa-arrow-rotate-right" />
+                      </icon>
+                      </div>
+                </div> 
+                </div>
+                </div>
 
           </div>
-          {/* <p>Result Set</p> */}
-
           <div class="ag-theme-alpine" style={{ height: 500, width: "100%" }}>
             <AgGridReact
               rowData={rowData}
