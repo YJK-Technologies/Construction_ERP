@@ -57,7 +57,7 @@ const columnDefs = [
 
 const defaultColDef = {
   resizable: true,
-  wrapText: true,
+  wrapText: false,
   sortable: true,
   editable: true,
   flex: 1,

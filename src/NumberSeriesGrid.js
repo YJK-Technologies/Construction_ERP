@@ -182,31 +182,12 @@ function NumberSeriesGrid() {
       field: "Start_Year",
       editable: false,
       cellStyle: { textAlign: "left" },
-
-      // minWidth: 10,
-      valueFormatter: (params) => {
-        if (!params.value) return ""; // Return an empty string if the value is null or undefined
-        const date = new Date(params.value);
-        const day = date.getDate().toString().padStart(2, "0"); // Get day (padStart ensures double-digit format)
-        const month = (date.getMonth() + 1).toString().padStart(2, "0"); // Get month (+1 because months are zero-indexed)
-        const year = date.getFullYear();
-        return `${day}/${month}/${year}`; // Return formatted date string with day, month, and year
-      },
     },
     {
       headerName: "End Year",
       field: "End_Year",
       editable: false,
       cellStyle: { textAlign: "left" },
-      // minWidth: 10,
-      valueFormatter: (params) => {
-        if (!params.value) return ""; // Return an empty string if the value is null or undefined
-        const date = new Date(params.value);
-        const day = date.getDate().toString().padStart(2, "0"); // Get day (padStart ensures double-digit format)
-        const month = (date.getMonth() + 1).toString().padStart(2, "0"); // Get month (+1 because months are zero-indexed)
-        const year = date.getFullYear();
-        return `${day}/${month}/${year}`; // Return formatted date string with day, month, and year
-      },
     },
     {
       headerName: "Start No",
@@ -304,27 +285,12 @@ function NumberSeriesGrid() {
 
     const reportData = selectedRows.map((row) => {
       return {
-        /* Date: moment(row.expenses_date).format("YYYY-MM-DD"),
-        Type: row.expenses_type,
-        Expenditure: row.expenses_amount,
-        "Spent By": row.expenses_spentby,
-        Remarks: row.remarks,*/
         "Screen Type": row.Screen_Type,
         "Start Year": row.Start_Year,
         "End Year": row.End_Year,
         "Start No": row.Start_No,
         "Running No": row.Running_No,
         "End No": row.End_No,
-        //"Founded Date": row.FoundedDate,
-        //"Website URL": row.WebsiteURL,
-        //"Company Logo": row.Company_logo,
-        //"Contact Number": row.contact_no,
-        //  "CEO Name": row.CEOName,
-        // "Annual Report URL": row.AnnualReportURL,
-        // "created by": row.created_by,
-        // "created date": row.created_date,
-        // "modfied by": row.modfied_by,
-        // "modfied date": row.modfied_date,
       };
     });
 

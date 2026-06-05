@@ -28,7 +28,6 @@ const columnDefs = [
     editable: false,
     minWidth: 160,
     maxWidth: 160,
-    valueFormatter: params => format(new Date(params.value), 'yyyy-MM-dd'),
   },
   {
     headerName: "Customer Name",
@@ -226,7 +225,7 @@ const columnDefs = [
 
 const defaultColDef = {
   resizable: true,
-  wrapText: true,
+  wrapText: false,
   sortable: true,
   editable: true,
   flex: 1,

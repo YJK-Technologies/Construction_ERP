@@ -69,10 +69,6 @@ const IncomeExpenseAnalysis = () => {
     setOpen2(false);
   };
 
-  useEffect(() => {
-    fetchExpenseReport();
-  }, []);
-
   const reloadGridData = () => {
     window.location.reload();
   };

@@ -102,10 +102,6 @@ const SupervisorSiteMaterial = () => {
     }
   };
 
-  useEffect(() => {
-    fetchSupervisorReport();
-  }, []);
-
   const reloadGridData = () => {
     window.location.reload();
   };

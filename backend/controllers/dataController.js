@@ -4586,7 +4586,6 @@ const getcompanymappingsearchdata = async (req, res) => {
       .input("company_no", sql.NVarChar, company_no)
       .input("location_no", sql.NVarChar, location_no)
       .input("status", sql.NVarChar, status)
-
       .query(`EXEC sp_user_company_mapping @mode,@company_code,@user_code,@company_no,@location_no,@status,0,'','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
 
     // Send response
@@ -4617,8 +4616,7 @@ const getattributeSearchdata = async (req, res) => {
       .input("attributedetails_code", sql.NVarChar, attributedetails_code)
       .input("attributedetails_name", sql.NVarChar, attributedetails_name)
       .input("descriptions", sql.NVarChar, descriptions)
-      .query(`EXEC sp_attribute_Info 'SC',@company_code,@attributeheader_code,@attributedetails_code,@attributedetails_name,@descriptions,'','','','','','','','','',''
-                `);
+      .query(`EXEC sp_attribute_Info @mode,@company_code,@attributeheader_code,@attributedetails_code,@attributedetails_name,@descriptions,'','','','','','','','','',''`);
 
     // Send response
     if (result.recordset.length > 0) {
@@ -4933,7 +4931,7 @@ const gettaxSearchdata = async (req, res) => {
       .input("transaction_type", sql.NVarChar, transaction_type)
       .input("status", sql.NVarChar, status)
       .query(`EXEC sp_tax_name_details @mode,@company_code,@tax_type_header, @tax_name_details, @tax_percentage , @tax_shortname, @tax_accountcode, @transaction_type, @status,
-                         NULL, NULL, NULL, NULL,'','','','','',''`);
+      NULL, NULL, NULL, NULL,'','','','','',''`);
 
     // Send response
     if (result.recordset.length > 0) {
@@ -5477,7 +5475,7 @@ const getnumberseriessearchdata = async (req, res) => {
       .input("company_code", sql.NVarChar, company_code)
       .input("Screen_Type", sql.NVarChar, Screen_Type) // Correct parameter name
       .query(`EXEC sp_numberseries @mode,@company_code,@Screen_Type,'','',0,0,0,'','','','','',
-                         null,null,null,null,null,null,null,null,''`);
+      null,null,null,null,null,null,null,null,''`);
 
     // Send response
     if (result.recordset.length > 0) {
@@ -9079,7 +9077,6 @@ const getsearchdataBase = async (req, res) => {
       .input("base_accgroup_code", sql.NVarChar, base_accgroup_code)
       .input("base_accgroup_name", sql.NVarChar, base_accgroup_name)
       .input("status", sql.NVarChar, status)
-
       .query(` EXEC [sp_Base_Account_group] @mode,@base_accgroup_code,@base_accgroup_name,@status,'','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL `);
 
     // Send response
@@ -9567,7 +9564,7 @@ const getstandardsearchdata = async (req, res) => {
       .input("standard_accgroup_name", sql.NVarChar, standard_accgroup_name)
       .input("base_accgroup_code", sql.NVarChar, base_accgroup_code)
       .input("status", sql.NVarChar, status)
-      .query(` EXEC [sp_standard_account_group] 'SC',@standard_accgroup_code,@standard_accgroup_name,@base_accgroup_code	,'','',@status,'','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL `);
+      .query(` EXEC [sp_standard_account_group] @mode,@standard_accgroup_code,@standard_accgroup_name,@base_accgroup_code	,'','',@status,'','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL `);
 
     // Send response
     if (result.recordset.length > 0) {
@@ -12267,7 +12264,7 @@ const getDcSearchData = async (req, res) => {
       .input("customer_name", sql.NVarChar, customer_name)
       .input("ShipTo_customer_name", sql.NVarChar, ShipTo_customer_name)
       .query(`EXEC sp_delivery_challan_hdr @mode,@company_code,@Location_Code,@transaction_no,@transaction_date,0,'','',@customer_name,'','',
-                           '','','','','','','',@ShipTo_customer_name,'','','','','','','','','',0,0,0,0,0,0,0,'','','','',0,'','','','','','','','','','','','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
+      '','','','','','','',@ShipTo_customer_name,'','','','','','','','','',0,0,0,0,0,0,0,'','','','',0,'','','','','','','','','','','','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
     if (result.recordset.length > 0) {
       res.status(200).json(result.recordset);
     } else {
@@ -17161,7 +17158,7 @@ const ObDetailPrint = async (req, res) => {
 
 // code added by Harish 09/10/2024
 const AdjustmentSearch = async (req, res) => {
-  const { transaction_no, transaction_date, transaction_type } = req.body;
+  const { transaction_no, transaction_date, transaction_type, company_code, Location_Code } = req.body;
 
   try {
     const pool = await connection.connectToDatabase();
@@ -17171,7 +17168,9 @@ const AdjustmentSearch = async (req, res) => {
       .input("transaction_no", sql.NVarChar, transaction_no)
       .input("transaction_date", sql.NVarChar, transaction_date)
       .input("transaction_type", sql.NVarChar, transaction_type)
-      .query(`EXEC sp_adjustment_hdr @mode,@transaction_no,'','',  @transaction_date,@transaction_type,'','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
+      .input("company_code", sql.NVarChar, company_code)
+      .input("Location_Code", sql.NVarChar, Location_Code)
+      .query(`EXEC sp_adjustment_hdr @mode,@transaction_no,@company_code,@Location_Code,@transaction_date,@transaction_type,'','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
     if (result.recordset.length > 0) {
       res.status(200).json(result.recordset);
     } else {
@@ -21103,7 +21102,7 @@ const openingItemSearch = async (req, res) => {
       .input("Item_code", sql.NVarChar, Item_code)
       .input("Item_name", sql.NVarChar, Item_name)
       .query(`EXEC sp_opening_item_details @mode,@transaction_no,@company_code,@Location_Code,@transaction_date,@Item_code,@Item_name,0,0,'',''
-          ,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
+      ,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
 
     if (result.recordset.length > 0) {
       res.status(200).json(result.recordset);
@@ -37297,7 +37296,7 @@ const inventoryIssueCalculation = async (req, res) => {
 //Code added by Dinesh Gokul on 01-06-2026
 const getExpensesReport = async (req, res) => {
   const { mode, company_code, Location_Code, SiteID, customer, vendor, StartDate, EndDate, expense_no, expense_date, 
-    expense_type, reference_type, reference_code, reference_name, payment_mode, amountFrom, amountTo} = req.body;
+    expense_type, reference_type, reference_code, reference_name, payment_mode, amountFrom, amountTo, is_approved, created_by} = req.body;
   let pool;
   try {
     const pool = await connection.connectToDatabase();
@@ -37320,8 +37319,10 @@ const getExpensesReport = async (req, res) => {
       .input("payment_mode", sql.NVarChar, payment_mode)
       .input("amountFrom", sql.Int, amountFrom)
       .input("amountTo", sql.Int, amountTo)
+      .input("is_approved", sql.NVarChar, is_approved)
+      .input("created_by", sql.NVarChar, created_by)
       .query(`EXEC sp_Expenses_Report @mode,@company_code, @Location_Code, @SiteID, @customer, @vendor, @StartDate,@EndDate,@expense_no,
-        @expense_date,@expense_type,@reference_type, @reference_code, @reference_name, @payment_mode, @amountFrom, @amountTo`);
+        @expense_date,@expense_type,@reference_type, @reference_code, @reference_name, @payment_mode, @amountFrom, @amountTo, @is_approved, @created_by`);
     if (result.recordset.length > 0) {
       res.status(200).json(result.recordset);
     } else {
