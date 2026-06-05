@@ -329,7 +329,6 @@ function Main() {
     { path: "/AddDesgination", component: <DesginationInput/>},
     { path: "/AdjustmnetPrint", component: <AdjustmnetPrint/>},
     { path: "/ObPrint", component: <ObPrint/>},
-    { path: "/JournalPrint", component: <JournalPrint/>},
     { path: "/GSTReport", component: <GSTReport/>},
     { path: "/OIAnalysis", component: <OpeningItemAnalysis/>},
      { path: "/DataWiseStock", component: <DataWiseStock/>},
@@ -386,6 +385,7 @@ function Main() {
       <Route path="/DeliveryChallanTemplate2" element={<DeliveryChallanTemplate2 />} />
       <Route path="/ExpensesTrackingPrint" element={<ExpensesTrackingPrint  />} />
       <Route path="/ExpensesSummaryPrint" element={<ExpensesSummaryPrint   />} />
+      <Route  path= "/JournalPrint" element={<JournalPrint/>} />
 
 
       <Route

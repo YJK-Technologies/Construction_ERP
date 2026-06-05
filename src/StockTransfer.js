@@ -795,6 +795,7 @@ finally {
         transaction_date: transactionDate,
         created_by: sessionStorage.getItem('selectedUserCode'),
         company_code: sessionStorage.getItem('selectedCompanyCode'),
+        Location_Code: sessionStorage.getItem("selectedLocationCode"),
       };
 
       const response = await fetch(`${config.apiBaseUrl}/addstocktransferhdr`, {
@@ -842,6 +843,7 @@ finally {
         const Details = {
           created_by: sessionStorage.getItem('selectedUserCode'),
           company_code: sessionStorage.getItem('selectedCompanyCode'),
+          Location_Code: sessionStorage.getItem("selectedLocationCode"),
           ItemSNo: row.serialNumber,
           transaction_no: transaction_no.toString(),
           item_code: row.itemCode,
@@ -886,7 +888,10 @@ finally {
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({ transaction_no: new_running_no.toString() })
+        body: JSON.stringify({ transaction_no: new_running_no.toString() ,
+          company_code: sessionStorage.getItem("selectedCompanyCode"),
+          Location_Code: sessionStorage.getItem("selectedLocationCode"),
+        })
       });
 
       if (response.ok) {
@@ -1169,7 +1174,9 @@ finally {
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({ transaction_no: code }) // Send company_no and company_name as search criteria
+        body: JSON.stringify({ transaction_no: code, 
+          company_code: sessionStorage.getItem("selectedCompanyCode"),
+          Location_Code: sessionStorage.getItem("selectedLocationCode"),}) // Send company_no and company_name as search criteria
       });
       if (response.ok) {
         setSaveButtonVisible(false)
@@ -1185,7 +1192,13 @@ finally {
 
           setNew_running_no(item.transaction_no);
 
-          setTransactionDate(formatDate(item.transaction_date));
+          const dateObj = new Date(item.transaction_date);
+
+setTransactionDate({
+  year: dateObj.getFullYear(),
+  month: dateObj.getMonth() + 1,
+  day: dateObj.getDate(),
+});
           setTransactionNumber(item.transaction_no);
 
 
@@ -1286,13 +1299,17 @@ finally {
 
   const handlePurchaseData = async (data) => {
     if (data && data.length > 0) {
-      const [{ TransactionNo, transaction_date, }] = data;
+      const [{ TransactionNo, transaction_date }] = data;
 
-      const transactiondate = document.getElementById('transactionDate');
-      if (transactiondate) {
-        transactiondate.value = transaction_date;
-        setTransactionDate(formatDate(transaction_date));  // You can choose to use formattedDate instead if required
-      } else {
+if (transaction_date) {
+  const dateObj = new Date(transaction_date);
+
+  setTransactionDate({
+    year: dateObj.getFullYear(),
+    month: dateObj.getMonth() + 1,
+    day: dateObj.getDate(),
+  });
+} else {
         console.error('entry element not found');
       }
 
@@ -1323,7 +1340,10 @@ finally {
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({ transaction_no: TransactionNo })
+        body: JSON.stringify({ transaction_no: TransactionNo ,
+          company_code: sessionStorage.getItem("selectedCompanyCode"),
+          Location_Code: sessionStorage.getItem("selectedLocationCode"),
+        })
       });
 
       if (response.ok) {
@@ -1331,31 +1351,41 @@ finally {
 
         const newRowData = [];
         searchData.forEach(item => {
-          const {
-            ItemSNo,
-            item_code,
-            Item_name,
-            weight,
-            from_Warehouse,
-            to_Warehouse,
-            transfer_Qty,
-            total_weight,
 
-          } = item;
+  const {
+    ItemSNo,
+    item_code,
+    Item_name,
+    weight,
+    from_Warehouse,
+    to_Warehouse,
+    transfer_Qty,
+    total_weight,
+    transaction_date
+  } = item;
 
-          newRowData.push({
-            serialNumber: ItemSNo,
-            itemCode: item_code,
-            itemName: Item_name,
-            unitWeight: weight,
-            purchaseQty: transfer_Qty,
-            warehouse: from_Warehouse,
-            warehouseTo: to_Warehouse,
-          
+  if (transaction_date) {
+    const dt = new Date(transaction_date);
 
-            ItemTotalWight: parseFloat(total_weight).toFixed(2),
-          });
-        });
+    setTransactionDate({
+      year: dt.getFullYear(),
+      month: dt.getMonth() + 1,
+      day: dt.getDate(),
+    });
+  }
+
+  newRowData.push({
+    serialNumber: ItemSNo,
+    itemCode: item_code,
+    itemName: Item_name,
+    unitWeight: weight,
+    purchaseQty: transfer_Qty,
+    warehouse: from_Warehouse,
+    warehouseTo: to_Warehouse,
+    ItemTotalWight: parseFloat(total_weight).toFixed(2),
+  });
+
+});
         setRowData(newRowData);
 
       } else if (response.status === 404) {
@@ -1387,6 +1417,8 @@ finally {
         body: JSON.stringify({
           transfer_Qty: params.data.purchaseQty,
           weight: params.data.unitWeight,
+          company_code: sessionStorage.getItem("selectedCompanyCode"),
+          Location_Code: sessionStorage.getItem("selectedLocationCode"),
         })
       });
 
@@ -1484,7 +1516,8 @@ finally {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ Tax_amount: formattedTotalTaxAmounts, company_code:sessionStorage.getItem("selectedCompanyCode"), Putchase_amount: formattedTotalItemAmounts }),
+          body: JSON.stringify({ Tax_amount: formattedTotalTaxAmounts, company_code:sessionStorage.getItem("selectedCompanyCode",), 
+            Location_Code: sessionStorage.getItem("selectedLocationCode"),Putchase_amount: formattedTotalItemAmounts }),
         });
         if (response.ok) {
           const data = await response.json();
@@ -1511,7 +1544,10 @@ finally {
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({ transaction_no: new_running_no })
+        body: JSON.stringify({ transaction_no: new_running_no,
+          company_code: sessionStorage.getItem("selectedCompanyCode"),
+          Location_Code: sessionStorage.getItem("selectedLocationCode"),
+         })
       });
       if (response.ok) {
         console.log("Rows deleted successfully:", new_running_no);
@@ -1526,11 +1562,15 @@ finally {
   const handleDeleteDetail = async () => {
     try {
       const response = await fetch(`${config.apiBaseUrl}/deletestocktransfer`, {
+        
         method: "POST",
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({ transaction_no: new_running_no, transaction_date: transactionDate })
+        body: JSON.stringify({ transaction_no: new_running_no, transaction_date: transactionDate ,
+          company_code: sessionStorage.getItem("selectedCompanyCode"),
+          Location_Code: sessionStorage.getItem("selectedLocationCode"),
+        })
       });
       if (response.ok) {
         console.log("Rows deleted successfully:", new_running_no);
@@ -1587,12 +1627,9 @@ setprintButtonVisible(true)
         setStatus("Reference Number Does Not Exist or Failed to delete details");
       }
     } catch (error) {
-      // Handle any errors that occur during the API call execution
-      console.error("Error executing API calls:", error);
-
-      toast.error("Reference Number Does Not Exist or Failed to delete details.")
-      setStatus("Error occurred while deleting data");
-    }
+  console.error("Error executing API calls:", error);
+  setStatus("Error occurred while deleting data");
+}
 finally {
       setLoading(false);
     }
@@ -1611,6 +1648,7 @@ finally {
   };
 
   useEffect(() => {
+    console.log("Current Transaction Date State:", transactionDate);
     const today = new Date();
     const currentYear = today.getFullYear();
     const currentMonth = today.getMonth() + 1;
@@ -1752,7 +1790,7 @@ finally {
       
 <div className="shadow-lg p-1 bg-body-tertiary rounded  pt-4 "
           align="left">
-              <div className="status">{status}</div>
+              {/* <div className="status">{status}</div> */}
         <div  
          >
 
@@ -1796,11 +1834,11 @@ finally {
               <div class="exp-form-floating" >
                 <label for="" className={`${error && !transactionDate ? 'red' : ''}`}>Transaction Date</label>
                 <span className="text-danger">*</span>
-                <DtPicker
+                <input
                   name="transactionDate"
                   id="transactionDate"
                   className="exp-input-field form-control"
-                  type="single"
+                  type="date"
                   placeholder="select the Date"
                   required
                   value={transactionDate}

@@ -126,7 +126,10 @@ export default function StockItemPopup({ open, handleClose, handlePurchaseData }
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({ transaction_no, transaction_date, item_code, Item_name, to_Warehouse, from_Warehouse, transfer_Qty, total_weight, weight }) // Send company_no and company_name as search criteria
+        body: JSON.stringify({ transaction_no, transaction_date, item_code, Item_name, 
+          to_Warehouse, from_Warehouse, transfer_Qty, total_weight, weight ,
+        company_code: sessionStorage.getItem("selectedCompanyCode"),
+        Location_Code: sessionStorage.getItem("selectedLocationCode"),}) // Send company_no and company_name as search criteria
       });
       if (response.ok) {
         const searchData = await response.json();
