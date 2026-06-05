@@ -1109,22 +1109,26 @@ finally {
 
 
 
-  const handleTransactionDateChange = (date) => {
-    // Check if 'date' is a valid object and has day, month, year or is a Date object
-    if (date && typeof date === 'object') {
-      const day = date.day || date.getDate();  // Handle if it's {day, month, year} or Date object
-      const month = date.month || (date.getMonth() + 1); // Adjust for Date object month (0-based)
-      const year = date.year || date.getFullYear();
+  // const handleTransactionDateChange = (date) => {
+  //   // Check if 'date' is a valid object and has day, month, year or is a Date object
+  //   if (date && typeof date === 'object') {
+  //     const day = date.day || date.getDate();  // Handle if it's {day, month, year} or Date object
+  //     const month = date.month || (date.getMonth() + 1); // Adjust for Date object month (0-based)
+  //     const year = date.year || date.getFullYear();
 
-      // Format the selected date as DD-MM-YYYY
-      const formattedDate = `${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}-${year}`;
-      setStatus('Typing...');
-      setTransactionDate(formattedDate); // Set the formatted date
-    } else {
-      console.error('Invalid date object:', date);
-      setStatus('Invalid Date');
-    }
-  };
+  //     // Format the selected date as DD-MM-YYYY
+  //     const formattedDate = `${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}-${year}`;
+  //     setStatus('Typing...');
+  //     setTransactionDate(formattedDate); // Set the formatted date
+  //   } else {
+  //     console.error('Invalid date object:', date);
+  //     setStatus('Invalid Date');
+  //   }
+  // };
+
+  const handleTransactionDateChange = (e) => {
+  setTransactionDate(e.target.value);
+};
 
   const handleEntryDateChange = (e) => {
     const date = e.target.value;
@@ -1194,11 +1198,16 @@ finally {
 
           const dateObj = new Date(item.transaction_date);
 
-setTransactionDate({
-  year: dateObj.getFullYear(),
-  month: dateObj.getMonth() + 1,
-  day: dateObj.getDate(),
-});
+          // setTransactionDate({
+          //   year: dateObj.getFullYear(),
+          //   month: dateObj.getMonth() + 1,
+          //   day: dateObj.getDate(),
+          // });
+          const formattedDate = new Date(item.transaction_date)
+            .toISOString()
+            .split("T")[0];
+
+          setTransactionDate(formattedDate);
           setTransactionNumber(item.transaction_no);
 
 
@@ -1301,15 +1310,23 @@ finally {
     if (data && data.length > 0) {
       const [{ TransactionNo, transaction_date }] = data;
 
-if (transaction_date) {
-  const dateObj = new Date(transaction_date);
+// if (transaction_date) {
+//   const dateObj = new Date(transaction_date);
 
-  setTransactionDate({
-    year: dateObj.getFullYear(),
-    month: dateObj.getMonth() + 1,
-    day: dateObj.getDate(),
-  });
-} else {
+//   setTransactionDate({
+//     year: dateObj.getFullYear(),
+//     month: dateObj.getMonth() + 1,
+//     day: dateObj.getDate(),
+//   });
+// }
+if (transaction_date) {
+  const formattedDate = new Date(transaction_date)
+    .toISOString()
+    .split("T")[0];
+
+  setTransactionDate(formattedDate);
+}
+ else {
         console.error('entry element not found');
       }
 
@@ -1364,15 +1381,23 @@ if (transaction_date) {
     transaction_date
   } = item;
 
-  if (transaction_date) {
-    const dt = new Date(transaction_date);
+  // if (transaction_date) {
+  //   const dt = new Date(transaction_date);
 
-    setTransactionDate({
-      year: dt.getFullYear(),
-      month: dt.getMonth() + 1,
-      day: dt.getDate(),
-    });
-  }
+  //   setTransactionDate({
+  //     year: dt.getFullYear(),
+  //     month: dt.getMonth() + 1,
+  //     day: dt.getDate(),
+  //   });
+  // }
+
+  if (transaction_date) {
+  const formattedDate = new Date(transaction_date)
+    .toISOString()
+    .split("T")[0];
+
+  setTransactionDate(formattedDate);
+}
 
   newRowData.push({
     serialNumber: ItemSNo,
@@ -1401,10 +1426,6 @@ finally {
     }
 
   };
-
-
-
-
 
   //CODE FOR TOTAL WEIGHT, TOTAL TAX AND TOTAL AMOUNT CALCULATION
   const ItemAmountCalculation = async (params) => {

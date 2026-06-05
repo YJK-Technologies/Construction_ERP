@@ -37296,7 +37296,7 @@ const inventoryIssueCalculation = async (req, res) => {
 //Code added by Dinesh Gokul on 01-06-2026
 const getExpensesReport = async (req, res) => {
   const { mode, company_code, Location_Code, SiteID, customer, vendor, StartDate, EndDate, expense_no, expense_date, 
-    expense_type, reference_type, reference_code, reference_name, payment_mode, amountFrom, amountTo} = req.body;
+    expense_type, reference_type, reference_code, reference_name, payment_mode, amountFrom, amountTo, is_approved, created_by} = req.body;
   let pool;
   try {
     const pool = await connection.connectToDatabase();
@@ -37319,8 +37319,10 @@ const getExpensesReport = async (req, res) => {
       .input("payment_mode", sql.NVarChar, payment_mode)
       .input("amountFrom", sql.Int, amountFrom)
       .input("amountTo", sql.Int, amountTo)
+      .input("is_approved", sql.NVarChar, is_approved)
+      .input("created_by", sql.NVarChar, created_by)
       .query(`EXEC sp_Expenses_Report @mode,@company_code, @Location_Code, @SiteID, @customer, @vendor, @StartDate,@EndDate,@expense_no,
-        @expense_date,@expense_type,@reference_type, @reference_code, @reference_name, @payment_mode, @amountFrom, @amountTo`);
+        @expense_date,@expense_type,@reference_type, @reference_code, @reference_name, @payment_mode, @amountFrom, @amountTo, @is_approved, @created_by`);
     if (result.recordset.length > 0) {
       res.status(200).json(result.recordset);
     } else {
