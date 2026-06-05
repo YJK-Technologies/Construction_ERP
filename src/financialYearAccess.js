@@ -241,11 +241,11 @@ function Grid() {
 
         return (
           <span style={{ cursor: "pointer" }} onClick={handleClick}>
-            {formatDate(params.value)}
+            {params.value}
           </span>
         );
       },
-      valueFormatter: (params) => formatDate(params.value),
+      // valueFormatter: (params) => formatDate(params.value),
       filter: "agDateColumnFilter",
       filterParams: {
         comparator: (filterLocalDateAtMidnight, cellValue) => {
@@ -266,7 +266,7 @@ function Grid() {
       cellEditorParams: {
         maxLength: 250,
       },
-      valueFormatter: (params) => formatDate(params.value),
+      // valueFormatter: (params) => formatDate(params.value),
       filterParams: {
         comparator: (filterLocalDateAtMidnight, cellValue) => {
           const cellDate = new Date(cellValue.split('/').join('-'));

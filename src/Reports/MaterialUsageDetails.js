@@ -68,10 +68,6 @@ const MaterialUsageDetails = () => {
     }
   };
 
-  useEffect(() => {
-    fetchMaterialReport();
-  }, []);
-
   const reloadGridData = () => {
     window.location.reload();
   };
