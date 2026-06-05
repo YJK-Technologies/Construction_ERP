@@ -45,9 +45,7 @@ const ExpensesTracking = () => {
     const [customer, setCustomer] = useState("");
     const [vendor, setVendor] = useState("");
     const [referenceCode, setReferenceCode] = useState("");
-    const [referenceType, setReferenceType] = useState("");
-    const [expenseType, setExpenseType] = useState("");
-    const [paymentMode, setPaymentMode] = useState("");
+    const [created_by, setcreated_by] = useState("");
     const [amountFrom, setAmountFrom] = useState("");
     const [amountTo, setAmountTo] = useState("");
 
@@ -67,6 +65,135 @@ const ExpensesTracking = () => {
 
     const [issuedId, setIssuedId] = useState('');
     const [deleteError, setDeleteError] = useState("");
+
+    // For fix
+    const [selectedis_approved, setselectedis_approved] = useState('');
+    const [is_approved, setis_approved] = useState("");
+    const [is_approveddrop, setis_approveddrop] = useState([]);
+    const [purchasedrop, setPurchasedrop] = useState([]);
+
+    const [payment_mode, setpayment_mode] = useState("");
+    const [selectedpayment_mode, setselectedpayment_mode] = useState('');
+    const [payment_modedrop, setpayment_modedrop] = useState([]);
+
+    const [expense_type, setexpense_type] = useState("");
+    const [selectedexpense_type, setselectedexpense_type] = useState('');
+    const [expense_typedrop, setexpense_typedrop] = useState([]);
+
+    const [reference_type, setreference_type] = useState("");
+    const [selectedreference_type, setselectedreference_type] = useState('');
+    const [reference_typedrop, setreference_typedrop] = useState([]);
+
+    const handleChangeis_approved = (selectedis_approved) => {
+    setselectedis_approved(selectedis_approved);
+    setis_approved(selectedis_approved ? selectedis_approved.value : '');
+  };
+
+  const filteredOptionis_approved = is_approveddrop.map((option) => ({
+    value: option.attributedetails_name,
+    label: option.attributedetails_name,
+  }));
+  
+  useEffect(() => {
+    const companyCode = sessionStorage.getItem('selectedCompanyCode');
+
+    fetch(`${config.apiBaseUrl}/getKids`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        company_code: companyCode,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => setis_approveddrop(data))
+      .catch((error) => console.error("Error fetching payment types:", error));
+  }, []);
+
+    const handleChangepayment_mode = (selectedpayment_mode) => {
+    setselectedpayment_mode(selectedpayment_mode);
+    setpayment_mode(selectedpayment_mode ? selectedpayment_mode.value : '');
+  };
+
+  const filteredOptionpayment_mode = payment_modedrop.map((option) => ({
+    value: option.attributedetails_name,
+    label: option.attributedetails_name,
+  }));
+  
+  useEffect(() => {
+    const companyCode = sessionStorage.getItem('selectedCompanyCode');
+
+    fetch(`${config.apiBaseUrl}/getExpensePaymentType`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        company_code: companyCode,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => setpayment_modedrop(data))
+      .catch((error) => console.error("Error fetching payment types:", error));
+  }, []);
+
+    const handleChangeexpense_type = (selectedexpense_type) => {
+    setselectedexpense_type(selectedexpense_type);
+    setexpense_type(selectedexpense_type ? selectedexpense_type.value : '');
+  };
+
+  const filteredOptionexpense_type = expense_typedrop.map((option) => ({
+    value: option.attributedetails_name,
+    label: option.attributedetails_name,
+  }));
+  
+  useEffect(() => {
+    const companyCode = sessionStorage.getItem('selectedCompanyCode');
+
+    fetch(`${config.apiBaseUrl}/getExpenseType`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        company_code: companyCode,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => setexpense_typedrop(data))
+      .catch((error) => console.error("Error fetching payment types:", error));
+  }, []);
+
+    const handleChangereference_type = (selectedreference_type) => {
+    setselectedreference_type(selectedreference_type);
+    setreference_type(selectedreference_type ? selectedreference_type.value : '');
+  };
+
+  const filteredOptionreference_type = reference_typedrop.map((option) => ({
+    value: option.attributedetails_name,
+    label: option.attributedetails_name,
+  }));
+  
+  useEffect(() => {
+    const companyCode = sessionStorage.getItem('selectedCompanyCode');
+
+    fetch(`${config.apiBaseUrl}/getReferenceType`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        company_code: companyCode,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => setreference_typedrop(data))
+      .catch((error) => console.error("Error fetching payment types:", error));
+  }, []);
+
+
+
 
     const permissions = JSON.parse(sessionStorage.getItem('permissions')) || {};
     const issuedPermission = permissions
@@ -199,13 +326,15 @@ const ExpensesTracking = () => {
                 vendor: vendor,
                 expense_no: expense_no,
                 expense_date: expense_date || null,
-                expense_type: expenseType,
-                reference_type: referenceType,
+                expense_type: expense_type,
+                reference_type: reference_type,
                 reference_code: referenceCode,
                 reference_name: reference_name,
-                payment_mode: paymentMode,
+                payment_mode: payment_mode,
                 amountFrom: amountFrom,
                 amountTo: amountTo,
+                is_approved: is_approved,
+                created_by: created_by,
                 StartDate: selectedPeriod?.label === "Custom Date" ? startDate : undefined,
                 EndDate: selectedPeriod?.label === "Custom Date" ? endDate : undefined,
             };
@@ -909,56 +1038,65 @@ const ExpensesTracking = () => {
                         </div>
                     </div>
 
-                    <div className="col-md-3 form-group mb-2">
-                        <label className="">Reference Type</label>
-                        <div className="exp-form-floating">
-                            <div className="d-flex justify-content-end">
-                                <input
-                                    id="wcode"
-                                    className="exp-input-field form-control justify-content-start"
-                                    placeholder=""
-                                    title='Please Enter the Reference Type'
-                                    value={referenceType}
-                                    //   onKeyDown={(e) => e.key === "Enter" && fetchGstReport()}
-                                    onChange={(e) => setReferenceType(e.target.value)}
-                                />
-                            </div>
-                        </div>
-                    </div>
+                    <div className="col-md-3 form-group mb-2"><label >Reference Type
+                                      
+                                    </label>
+                                      <div class="exp-form-floating">
+                                        <div title="select a payment type">
+                                          <Select
+                                            id="is_approved"
+                                            value={selectedreference_type}
+                                            onChange={handleChangereference_type}
+                                            options={filteredOptionreference_type}
+                                            isClearable
+                                            className="exp-input-field"
+                                            placeholder=""
+                                            required
+                                            data-tip="Please select a payment type"
+                                          />
+                                        </div>
+                                      </div>
+                                    </div>
 
-                    <div className="col-md-3 form-group mb-2">
-                        <label className="">Expense Type</label>
-                        <div className="exp-form-floating">
-                            <div className="d-flex justify-content-end">
-                                <input
-                                    id="wcode"
-                                    className="exp-input-field form-control justify-content-start"
-                                    placeholder=""
-                                    title='Please Enter the Expense Type'
-                                    value={expenseType}
-                                    //   onKeyDown={(e) => e.key === "Enter" && fetchGstReport()}
-                                    onChange={(e) => setExpenseType(e.target.value)}
-                                />
-                            </div>
-                        </div>
-                    </div>
+                    <div className="col-md-3 form-group mb-2"><label >Expense Type
+                                      
+                                    </label>
+                                      <div class="exp-form-floating">
+                                        <div title="select a payment type">
+                                          <Select
+                                            id="is_approved"
+                                            value={selectedexpense_type}
+                                            onChange={handleChangeexpense_type}
+                                            options={filteredOptionexpense_type}
+                                            isClearable
+                                            className="exp-input-field"
+                                            placeholder=""
+                                            required
+                                            data-tip="Please select a payment type"
+                                          />
+                                        </div>
+                                      </div>
+                                    </div>
 
-                    <div className="col-md-3 form-group mb-2">
-                        <label className="">Payment Mode</label>
-                        <div className="exp-form-floating">
-                            <div className="d-flex justify-content-end">
-                                <input
-                                    id="wcode"
-                                    className="exp-input-field form-control justify-content-start"
-                                    placeholder=""
-                                    title='Please Enter the Payment Mode'
-                                    value={paymentMode}
-                                    //   onKeyDown={(e) => e.key === "Enter" && fetchGstReport()}
-                                    onChange={(e) => setPaymentMode(e.target.value)}
-                                />
-                            </div>
-                        </div>
-                    </div>
+                    <div className="col-md-3 form-group mb-2"><label >Payment Mode
+                                      
+                                    </label>
+                                      <div class="exp-form-floating">
+                                        <div title="select a payment type">
+                                          <Select
+                                            id="is_approved"
+                                            value={selectedpayment_mode}
+                                            onChange={handleChangepayment_mode}
+                                            options={filteredOptionpayment_mode}
+                                            isClearable
+                                            className="exp-input-field"
+                                            placeholder=""
+                                            required
+                                            data-tip="Please select a payment type"
+                                          />
+                                        </div>
+                                      </div>
+                                    </div>
 
                     <div className="col-md-3 form-group mb-2">
                         <label className="">Amount From</label>
@@ -989,6 +1127,60 @@ const ExpensesTracking = () => {
                                     value={amountTo}
                                     //   onKeyDown={(e) => e.key === "Enter" && fetchGstReport()}
                                     onChange={(e) => setAmountTo(e.target.value)}
+                                />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="col-md-3 form-group mb-2"><label >Is Approved
+                                      
+                                    </label>
+                                      <div class="exp-form-floating">
+                                        <div title="select a payment type">
+                                          <Select
+                                            id="is_approved"
+                                            value={selectedis_approved}
+                                            onChange={handleChangeis_approved}
+                                            options={filteredOptionis_approved}
+                                            isClearable
+                                            className="exp-input-field"
+                                            placeholder=""
+                                            required
+                                            data-tip="Please select a payment type"
+                                          />
+                                        </div>
+                                      </div>
+                                    </div>
+
+                                    <div className="col-md-3 form-group mb-2">
+                        <label className="">Created User</label>
+                        <div className="exp-form-floating">
+                            <div className="d-flex justify-content-end">
+                                <input
+                                    id="wcode"
+                                    className="exp-input-field form-control justify-content-start"
+                                    placeholder=""
+                                    title='Please Enter the Expense Type'
+                                    value={created_by}
+                                    //   onKeyDown={(e) => e.key === "Enter" && fetchGstReport()}
+                                    onChange={(e) => setcreated_by(e.target.value)}
+                                />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="col-md-3 form-group mb-2">
+                        <label className="">Expense No</label>
+                        <div className="exp-form-floating">
+                            <div className="d-flex justify-content-end">
+                                <input
+                                    id="wcode"
+                                    className="exp-input-field form-control justify-content-start"
+                                    placeholder=""
+                                    title='Please Enter the Expense Type'
+                                    value={expense_no}
+                                    //   onKeyDown={(e) => e.key === "Enter" && fetchGstReport()}
+                                    onChange={(e) => setexpense_no(e.target.value)}
                                 />
                             </div>
                         </div>
