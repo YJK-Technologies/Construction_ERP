@@ -27,7 +27,6 @@ const columnDefs = [
     field: "transaction_date",
     editable: false,
     cellStyle: { textAlign: "center" },
-    valueFormatter: params => format(new Date(params.value), 'yyyy-MM-dd')
   },
   {
     headerName: "Transaction Type",
@@ -57,7 +56,7 @@ const columnDefs = [
 
 const defaultColDef = {
   resizable: true,
-  wrapText: true,
+  wrapText: false,
   sortable: true,
   editable: true,
 };
@@ -78,7 +77,8 @@ export default function AdjustmentPopup({ open, handleClose, adjustmentData }) {
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({ transaction_no, transaction_date, transaction_type })
+        body: JSON.stringify({ transaction_no, transaction_date, transaction_type, company_code: sessionStorage.getItem('selectedCompanyCode'),
+        Location_Code: sessionStorage.getItem('selectedLocationCode'), })
       });
       if (response.ok) {
         const searchData = await response.json();
