@@ -13,7 +13,7 @@ const config = require('./Apiconfig');
 
 const columnDefs = [
   {
-    headerCheckboxSelection: true,
+    // headerCheckboxSelection: true,
     checkboxSelection: true,
     headerName: "Journal NO",
     field: "journal_no",
@@ -92,9 +92,9 @@ const columnDefs = [
 
 const defaultColDef = {
   resizable: true,
-  wrapText: true,
+  wrapText: false,
   sortable: true,
-  editable: true,
+  editable: false,
   // flex: 1
 };
 
@@ -107,6 +107,7 @@ export default function JournalPopup({ open, handleClose, handlejournal }) {
   const [original_accountcode, setoriginal_accountcode] = useState("");
   const [contra_accountCode, setcontra_accountCode] = useState("");
   const [status, setstatus] = useState("");
+  const Location_Code = sessionStorage.getItem("selectedLocationCode");
 
   const handleSearchItem = async () => {
     try {
@@ -115,7 +116,7 @@ export default function JournalPopup({ open, handleClose, handlejournal }) {
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({  company_code : sessionStorage.getItem('selectedCompanyCode'),
+        body: JSON.stringify({ Location_Code, company_code : sessionStorage.getItem('selectedCompanyCode'),
           journal_no, transaction_date, transaction_type, original_accountcode, contra_accountCode }) // Send company_no and company_name as search criteria
       });
       if (response.ok) {
@@ -148,7 +149,6 @@ export default function JournalPopup({ open, handleClose, handlejournal }) {
     settransaction_type("");
     setoriginal_accountcode("");
     setcontra_accountCode("");
-
   };
 
   const [selectedRows, setSelectedRows] = useState([]);
@@ -197,7 +197,7 @@ export default function JournalPopup({ open, handleClose, handlejournal }) {
                       </div>
                       <div className="modal-body">
                         <div className="row ms-3 me-3">
-                          <div className="col-sm mb-2">
+                          <div className="col-md-3 mb-2">
                             <input
                               type='text'
                               id='ItemCode'
@@ -209,7 +209,7 @@ export default function JournalPopup({ open, handleClose, handlejournal }) {
                               autoComplete="off"
                             />
                           </div>
-                          <div className="col-sm mb-2">
+                          <div className="col-md-3 mb-2">
                             <input
                               type='text'
                               id='Variant'
@@ -221,7 +221,7 @@ export default function JournalPopup({ open, handleClose, handlejournal }) {
                               autoComplete="off"
                             />
                           </div>
-                          <div className="col-sm mb-2">
+                          {/* <div className="col-sm mb-2">
                             <input
                               type='text'
                               id='ItemName'
@@ -256,8 +256,8 @@ export default function JournalPopup({ open, handleClose, handlejournal }) {
                               onChange={(e) => setcontra_accountCode(e.target.value)}
                               autoComplete="off"
                             />
-                          </div>
-                          <div className="mb-2 mt-2 d-flex justify-content-end">
+                          </div> */}
+                          <div className=" col-md-3 d-flex justify-content-end">
                             <icon className="icon popups-btn" onClick={handleSearchItem}>
                               <FontAwesomeIcon icon={faMagnifyingGlass} />
                             </icon>
@@ -332,7 +332,7 @@ export default function JournalPopup({ open, handleClose, handlejournal }) {
                               autoComplete="off"
                             />
                           </div>
-                          <div className="col-sm mb-2">
+                          {/* <div className="col-sm mb-2">
                             <input
                               type='text'
                               id='ItemName'
@@ -367,7 +367,7 @@ export default function JournalPopup({ open, handleClose, handlejournal }) {
                               onChange={(e) => setcontra_accountCode(e.target.value)}
                               autoComplete="off"
                             />
-                          </div>
+                          </div> */}
                           <div className="mb-2 mt-2 d-flex justify-content-end">
                             <button className="" onClick={handleSearchItem}>
                               <FontAwesomeIcon icon={faMagnifyingGlass} />
