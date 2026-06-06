@@ -12653,7 +12653,7 @@ const getPOperiod = async (req, res) => {
       .input("vendor_name", sql.NVarChar, vendor_name)
       .input("ShipTo_customer_name", sql.NVarChar, ShipTo_customer_name)
       .input("transaction_no", sql.NVarChar, transaction_no)
-      .query(`EXEC sp_purchase_order_period_Ramya @mode,@company_code,@Location_Code,StartDate,@EndDate,@ShipTo_customer_addr_1,@vendor_name,@ShipTo_customer_name,@transaction_no`);
+      .query(`EXEC sp_purchase_order_period @mode,@company_code,@Location_Code, @StartDate,@EndDate,@ShipTo_customer_addr_1,@vendor_name,@ShipTo_customer_name,@transaction_no`);
     if (result.recordset.length > 0) {
       res.status(200).json(result.recordset); // 200 OK if data is found
     } else {
@@ -12681,7 +12681,8 @@ const getDCperiod = async (req, res) => {
       .input("customer_name", sql.NVarChar, customer_name)
       .input("ShipTo_customer_name", sql.NVarChar, ShipTo_customer_name)
       .input("ShipTo_customer_addr_1", sql.NVarChar, ShipTo_customer_addr_1)
-      .query(`EXEC sp_Delivery_challan_period_Ramya @mode,@company_code,@Location_Code,@StartDate,@EndDate,@transaction_no,@customer_name,@ShipTo_customer_name,@ShipTo_customer_addr_1`);
+      .query(`EXEC sp_Delivery_challan_period @mode,@company_code,@Location_Code,@StartDate,@EndDate,@transaction_no,
+        @customer_name,@ShipTo_customer_name,@ShipTo_customer_addr_1`);
     if (result.recordset.length > 0) {
       res.status(200).json(result.recordset); // 200 OK if data is found
     } else {
