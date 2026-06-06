@@ -658,7 +658,7 @@ const getInthdrcode = async (req, res) => {
   }
 };
 const gethdrcode = async (req, res) => {
-    const { company_code } = req.body;
+  const { company_code } = req.body;
   let pool;
 
   try {
@@ -667,10 +667,10 @@ const gethdrcode = async (req, res) => {
       .request()
       .input("company_code", sql.NVarChar, company_code)
 
-     .query(
-      
-      "EXEC sp_attribute_Info 'TS',@company_code,'', '','','','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
-    );
+      .query(
+
+        "EXEC sp_attribute_Info 'TS',@company_code,'', '','','','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+      );
 
     res.json(result.recordset);
   } catch (err) {
@@ -1540,12 +1540,12 @@ const WareHousedeleteData = async (req, res) => {
     const pool = await connection.connectToDatabase();
 
     for (const warehouse_code of warehouse_codesToDelete) {
-        await pool.request().
-          input("warehouse_code", warehouse_code)
-          .input("company_code", sql.NVarChar, req.headers['company_code'])
-          .input("modified_by", sql.NVarChar, req.headers['modified-by'])
-          .query(`EXEC sp_warehouse_info 'D',@company_code,@warehouse_code,'','','','',@modified_by,'','','','','','','',''`);
-          }
+      await pool.request().
+        input("warehouse_code", warehouse_code)
+        .input("company_code", sql.NVarChar, req.headers['company_code'])
+        .input("modified_by", sql.NVarChar, req.headers['modified-by'])
+        .query(`EXEC sp_warehouse_info 'D',@company_code,@warehouse_code,'','','','',@modified_by,'','','','','','','',''`);
+    }
     res.status(200).json("WareHouse deleted successfully");
   } catch (err) {
     console.error("Error", err);
@@ -2782,7 +2782,7 @@ const addItemBrandData = async (req, res) => {
 
     const result = await pool
       .request()
-      .input("mode", sql.NVarChar, "I") 
+      .input("mode", sql.NVarChar, "I")
       .input("company_code", sql.NVarChar, company_code)
       .input("Item_code", sql.NVarChar, Item_code)
       .input("Item_variant", sql.NVarChar, Item_variant)
@@ -2886,7 +2886,7 @@ const addVendorHdrData = async (req, res) => {
     pool = await sql.connect(dbConfig);
     const result = await pool
       .request()
-      .input("mode", sql.NVarChar, "I") 
+      .input("mode", sql.NVarChar, "I")
       .input("company_code", sql.NVarChar, company_code)
       .input("vendor_code", sql.NVarChar, vendor_code)
       .input("vendor_name", sql.NVarChar, vendor_name)
@@ -3018,7 +3018,7 @@ const addVendorDetData = async (req, res) => {
       .input("office_type", sql.NVarChar, office_type)
       .input("created_by", sql.NVarChar, created_by)
       .input("modified_by", sql.NVarChar, modified_by)
-      .input("opening_balance", sql.Decimal(18,2), opening_balance)
+      .input("opening_balance", sql.Decimal(18, 2), opening_balance)
       .input("balance_type", sql.VarChar, balance_type)
       .input("tempstr3", sql.NVarChar, tempstr3)
       .input("tempstr4", sql.NVarChar, tempstr4)
@@ -3090,7 +3090,7 @@ const updvendordetData = async (req, res) => {
         .input("keyfield", sql.NVarChar, updatedRow.keyfield)
         .input("created_by", sql.NVarChar, updatedRow.created_by)
         .input("modified_by", sql.NVarChar, req.headers['modified-by'])
-        .input("opening_balance", sql.Decimal(18,2), updatedRow.opening_balance)
+        .input("opening_balance", sql.Decimal(18, 2), updatedRow.opening_balance)
         .input("balance_type", sql.VarChar, updatedRow.balance_type)
         .input("tempstr3", sql.NVarChar, updatedRow.tempstr3)
         .input("tempstr4", sql.NVarChar, updatedRow.tempstr4)
@@ -3493,7 +3493,7 @@ const locationdeleteData = async (req, res) => {
 };
 
 const getitemsearchdata = async (req, res) => {
-  const { company_code, Item_code, Item_name, Item_variant, costing_methods, standard_cost,  Item_short_name, Item_Our_Brand, status } = req.body;
+  const { company_code, Item_code, Item_name, Item_variant, costing_methods, standard_cost, Item_short_name, Item_Our_Brand, status } = req.body;
 
   try {
     const pool = await connection.connectToDatabase();
@@ -3508,7 +3508,7 @@ const getitemsearchdata = async (req, res) => {
       .input("Item_short_name", sql.NVarChar, Item_short_name)
       .input("Item_Our_Brand", sql.NVarChar, Item_Our_Brand)
       .input("status", sql.NVarChar, status)
-      .input("standard_cost", sql.Decimal(10,2), standard_cost)
+      .input("standard_cost", sql.Decimal(10, 2), standard_cost)
       .input("costing_methods", sql.NVarChar, costing_methods)
       .query(`EXEC sp_item_brand_info @mode,@company_code,@Item_code,@Item_variant,@Item_name,0,'','',@Item_short_name,0,0,0,0,'','','','','','','',
         @Item_Our_Brand,@status,'','','','',0,0,'','','','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,@standard_cost,@costing_methods`);
@@ -3738,7 +3738,7 @@ const addpurchasereturntaxdetails = async (req, res) => {
 
 
 const getpurchasereturndetails = async (req, res) => {
-  const { company_code,Location_Code } = req.body;
+  const { company_code, Location_Code } = req.body;
 
   try {
     // Connect to the database
@@ -3767,7 +3767,7 @@ const getpurchasereturndetails = async (req, res) => {
 
 
 const getpurchasereturntaxdetails = async (req, res) => {
-  const { company_code,Location_Code } = req.body;
+  const { company_code, Location_Code } = req.body;
 
   try {
     // Connect to the database
@@ -3778,7 +3778,7 @@ const getpurchasereturntaxdetails = async (req, res) => {
       .request()
       .input("mode", sql.NVarChar, "A")
       .input("company_code", sql.NVarChar, company_code)
-      .input("Location_Code", sql.NVarChar, Location_Code )
+      .input("Location_Code", sql.NVarChar, Location_Code)
       .query(`EXEC sp_purchase_return_tax_details @mode,@company_code,@Location_Code,'','','','','','','','',0,0,'','','','',0,0,'','','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
 
     // Send response
@@ -3797,7 +3797,7 @@ const getpurchasereturntaxdetails = async (req, res) => {
 
 const addpurchasereturndetails = async (req, res) => {
   const {
-    company_code,Location_Code, transaction_date, transaction_no, return_date, return_no, warehouse_code,
+    company_code, Location_Code, transaction_date, transaction_no, return_date, return_no, warehouse_code,
     vendor_code, item_code, item_name, return_item_name, bill_qty, return_qty, bill_rate,
     item_amt, weight, return_weight, total_weight, return_details, pay_type, purchase_type, broker_code, tpot_code, sman_code,
     purchacc_code, stock_type, stock_code, entry_no, vendor_name, order_type, tax_amount, hsn, return_amt, ItemSNo, created_by, modified_by,
@@ -4155,7 +4155,7 @@ const getvendorSearchdata = async (req, res) => {
 
 
 const getAllpurhdrData = async (req, res) => {
-  const { company_code, Location_Code} = req.body;
+  const { company_code, Location_Code } = req.body;
 
   try {
     // Connect to the database
@@ -4671,7 +4671,7 @@ const getintermediarySearchdata = async (req, res) => {
 
 const addpurchasereturnheader = async (req, res) => {
   const {
-    company_code, Location_Code,Entry_date, return_no, Return_date, return_reason, return_person, transaction_no,
+    company_code, Location_Code, Entry_date, return_no, Return_date, return_reason, return_person, transaction_no,
     transaction_date, purchase_type, vendor_code, vendor_name, pay_type, purchase_amount_returne,
     add_fright, less_fright,
     tax_amount, tax_Persantage, rounded_off,
@@ -4746,7 +4746,7 @@ const addpurchasereturnheader = async (req, res) => {
 
 
 const getAllpurchaseheaderreturnData = async (req, res) => {
-  const { company_code,Location_Code } = req.body;
+  const { company_code, Location_Code } = req.body;
 
   try {
     // Connect to the database
@@ -5262,7 +5262,7 @@ const addinventorytaxdetail = async (req, res) => {
 };
 
 const getAllSalesRetHdrData = async (req, res) => {
-  const { company_code,Location_Code } = req.body;
+  const { company_code, Location_Code } = req.body;
 
   try {
     // Connect to the database
@@ -5292,7 +5292,7 @@ const getAllSalesRetHdrData = async (req, res) => {
 
 const addSalesRetHdr = async (req, res) => {
   const {
-    company_code,Location_Code, bill_date, bill_no, return_date, return_no, return_reason, return_person, dely_chlno, warehouse_code, sales_type, customer_code, sale_amt, less_frit, less_disc, less_amt,
+    company_code, Location_Code, bill_date, bill_no, return_date, return_no, return_reason, return_person, dely_chlno, warehouse_code, sales_type, customer_code, sale_amt, less_frit, less_disc, less_amt,
     net_amt, excs_amt, cess_amt, dely_amt, roff_amt, othr_amt, bill_amt, total_item, total_qty, pay_type, broker_code, tpot_code, sman_code, vehl_no, mark_name, payment_mode,
     customer_name, entry_no, roff_acccode, order_type, deli_charge, tax_amount, ref_no, created_by, modified_by,
     tempstr1, tempstr2, tempstr3, tempstr4, datetime1, datetime2, datetime3, datetime4,
@@ -6524,7 +6524,7 @@ const getPermissions = async (req, res) => {
 
 
 const getAllSalesRetDetailData = async (req, res) => {
-  const { company_code,Location_Code } = req.body;
+  const { company_code, Location_Code } = req.body;
 
   try {
     const pool = await connection.connectToDatabase();
@@ -6548,7 +6548,7 @@ const getAllSalesRetDetailData = async (req, res) => {
 
 const addSalesRetDetail = async (req, res) => {
   const {
-    company_code,Location_Code, bill_date, bill_no, return_date, return_no, return_reason, return_person, dely_chlno, warehouse_code,
+    company_code, Location_Code, bill_date, bill_no, return_date, return_no, return_reason, return_person, dely_chlno, warehouse_code,
     customer_code, item_code, item_name, bill_qty, return_qty, bill_rate, item_amt, weight, return_weight, total_weight, pay_type, sales_type, broker_code,
     tpot_code, sman_code, salesacc_code, stock_type, stock_code, entry_no, customer_name, order_type, hsn, return_amt, tax_amt, ItemSNo, created_by, modified_by, tempstr1,
     tempstr2, tempstr3, tempstr4, datetime1, datetime2, datetime3, datetime4
@@ -6620,7 +6620,7 @@ const addSalesRetDetail = async (req, res) => {
 
 
 const getAllSalesRetTaxDetailData = async (req, res) => {
-  const { company_code,Location_Code } = req.body;
+  const { company_code, Location_Code } = req.body;
 
   try {
     const pool = await connection.connectToDatabase();
@@ -6646,7 +6646,7 @@ const getAllSalesRetTaxDetailData = async (req, res) => {
 
 const addSalesRetTaxDetail = async (req, res) => {
   const {
-    company_code, Location_Code,bill_date, bill_no, return_no, return_date, return_reason, return_person,
+    company_code, Location_Code, bill_date, bill_no, return_no, return_date, return_reason, return_person,
     customer_code, item_code, item_name, ItemSNo, TaxSNo, tax_type, tax_name_details, tax_amt, tax_per, tax_acode, pay_type,
     created_by, modified_by, tempstr1, tempstr2, tempstr3, tempstr4, datetime1, datetime2, datetime3, datetime4
 
@@ -7049,7 +7049,7 @@ const getcustomercode = async (req, res) => {
                         null,null,null,null,null,null,null`);
 
     if (result.recordset.length > 0) {
-      res.status(200).json(result.recordset); 
+      res.status(200).json(result.recordset);
     } else {
       res.status(404).json("Data not found");
     }
@@ -7803,7 +7803,7 @@ const addstocktransferdetail = async (req, res) => {
 };
 
 const getstocktransferSearch = async (req, res) => {
-  const { company_code, Location_Code,transaction_date, transaction_no, item_code, Item_name, from_Warehouse, to_Warehouse } = req.body;
+  const { company_code, Location_Code, transaction_date, transaction_no, item_code, Item_name, from_Warehouse, to_Warehouse } = req.body;
 
   try {
     // Connect to the database
@@ -8874,7 +8874,7 @@ const getStockKey = async (req, res) => {
 
 const StockTransferDetail = async (req, res) => {
   const { transaction_no, company_code,
-    Location_Code,} = req.body;
+    Location_Code, } = req.body;
 
   try {
     // Connect to the database
@@ -8959,7 +8959,7 @@ const deletestocktransferhdr = async (req, res) => {
 //STOCKTRANSFER DELETE 06/07/2024 Harish//
 const deletestocktransfer = async (req, res) => {
   const { company_code,
-    Location_Code,transaction_no, transaction_date } = req.body;
+    Location_Code, transaction_no, transaction_date } = req.body;
 
   try {
     const pool = await connection.connectToDatabase();
@@ -9043,9 +9043,9 @@ const addBaseaccountData = async (req, res) => {
       return res.status(200).json({ success: true, message: 'Data inserted successfully' });
     }
   } catch (error) {
-      // Handle unexpected errors
-      res.status(500).json({ message: 'Internal Server Error', error: error.message });
-    
+    // Handle unexpected errors
+    res.status(500).json({ message: 'Internal Server Error', error: error.message });
+
   }
 };
 //code Ended by Harish (02/08/2024)
@@ -9998,7 +9998,7 @@ const getSalesreturnView = async (req, res) => {
 };
 
 const getpurreturnsearchViewdata = async (req, res) => {
-  const { company_code, Location_Code ,return_no, transaction_date, transaction_no, vendor_name, vendor_code, purchase_type, pay_type, } = req.body;
+  const { company_code, Location_Code, return_no, transaction_date, transaction_no, vendor_name, vendor_code, purchase_type, pay_type, } = req.body;
 
   try {
     // Connect to the database
@@ -10009,7 +10009,7 @@ const getpurreturnsearchViewdata = async (req, res) => {
       .request()
       .input("mode", sql.NVarChar, "SC")
       .input("company_code", sql.NVarChar, company_code)
-      .input("Location_Code ", sql.NVarChar, Location_Code )
+      .input("Location_Code ", sql.NVarChar, Location_Code)
       .input("return_no", sql.NVarChar, return_no)
       .input("transaction_no", sql.NVarChar, transaction_no)
       .input("transaction_date", sql.NVarChar, transaction_date)
@@ -10319,7 +10319,7 @@ const getAllAccNameData = async (req, res) => {
 
 
 const getsalesreturnsearchViewdata = async (req, res) => {
-  const { company_code,Location_Code, bill_date, bill_no, return_no, sales_type, customer_code, customer_name, pay_type } = req.body;
+  const { company_code, Location_Code, bill_date, bill_no, return_no, sales_type, customer_code, customer_name, pay_type } = req.body;
 
   try {
     // Connect to the database
@@ -10916,7 +10916,7 @@ const getAllDChdrData = async (req, res) => {
 
 const DCdeletehdrData = async (req, res) => {
   // const purch_autonosToDelete = req.body.purch_autonos;
-  const { company_code, Location_Code,transaction_no, modified_by } = req.body;
+  const { company_code, Location_Code, transaction_no, modified_by } = req.body;
   const pool = await connection.connectToDatabase();
   try {
     await pool
@@ -10937,7 +10937,7 @@ const DCdeletehdrData = async (req, res) => {
 
 
 const getAllDCdetData = async (req, res) => {
-  const { company_code,Location_Code } = req.body;
+  const { company_code, Location_Code } = req.body;
   let pool;
   try {
     pool = await sql.connect(dbConfig);
@@ -10959,7 +10959,7 @@ const getAllDCdetData = async (req, res) => {
 
 const addDeliveryChallandetail = async (req, res) => {
   const {
-    company_code, Location_Code,transaction_date, transaction_no, SNo, code, name, Description, warehouse_code, customer_code, customer_name,
+    company_code, Location_Code, transaction_date, transaction_no, SNo, code, name, Description, warehouse_code, customer_code, customer_name,
     bill_qty, bill_rate, unit_price, pay_type, sales_type, transport_charges, type, hsn_code, created_by, modified_by,
     tempstr1, tempstr2, tempstr3, tempstr4, datetime1, datetime2, datetime3, datetime4
   } = req.body;
@@ -11011,7 +11011,7 @@ const addDeliveryChallandetail = async (req, res) => {
 
 const DCdeletedetData = async (req, res) => {
   // const purch_autonosToDelete = req.body.purch_autonos;
-  const { company_code, Location_Code,transaction_no } = req.body;
+  const { company_code, Location_Code, transaction_no } = req.body;
 
   const pool = await connection.connectToDatabase();
   try {
@@ -11332,9 +11332,9 @@ const refNumberToQuotationHeaderPrintData = async (req, res) => {
       .query(`EXEC sp_print @mode,@transaction_no,@company_code,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
 
     if (result.recordset.length > 0) {
-      res.status(200).json(result.recordset); 
+      res.status(200).json(result.recordset);
     } else {
-      res.status(404).json("Data not found"); 
+      res.status(404).json("Data not found");
     }
   } catch (err) {
     console.error("Error", err);
@@ -12251,7 +12251,7 @@ const getItemCodeDcData = async (req, res) => {
 };
 
 const getDcSearchData = async (req, res) => {
-  const { company_code, Location_Code,transaction_no, transaction_date, customer_name, ShipTo_customer_name } = req.body;
+  const { company_code, Location_Code, transaction_no, transaction_date, customer_name, ShipTo_customer_name } = req.body;
   try {
     const pool = await connection.connectToDatabase();
     const result = await pool
@@ -12610,7 +12610,7 @@ const getPurchaseOrder = async (req, res) => {
 
 
 const getQuotationPeriod = async (req, res) => {
-  const { mode, company_code,Location_Code,  StartDate, EndDate, customer_name, customer_addr_1, customer_mobile_no, transaction_no } = req.body;
+  const { mode, company_code, Location_Code, StartDate, EndDate, customer_name, customer_addr_1, customer_mobile_no, transaction_no } = req.body;
   let pool;
   try {
     const pool = await connection.connectToDatabase();
@@ -12638,7 +12638,7 @@ const getQuotationPeriod = async (req, res) => {
 };
 
 const getPOperiod = async (req, res) => {
-  const { mode, company_code,Location_Code, StartDate, EndDate, ShipTo_customer_addr_1, ShipTo_customer_name, vendor_name, transaction_no } = req.body;
+  const { mode, company_code, Location_Code, StartDate, EndDate, ShipTo_customer_addr_1, ShipTo_customer_name, vendor_name, transaction_no } = req.body;
   let pool;
   try {
     const pool = await connection.connectToDatabase();
@@ -12667,7 +12667,7 @@ const getPOperiod = async (req, res) => {
 };
 
 const getDCperiod = async (req, res) => {
-  const { mode, company_code,Location_Code, StartDate, EndDate, transaction_no, customer_name, ShipTo_customer_name, ShipTo_customer_addr_1 } = req.body;
+  const { mode, company_code, Location_Code, StartDate, EndDate, transaction_no, customer_name, ShipTo_customer_name, ShipTo_customer_addr_1 } = req.body;
   try {
     const pool = await connection.connectToDatabase();
     const result = await pool
@@ -12723,14 +12723,14 @@ const getDCperiod = async (req, res) => {
 // };
 
 const purreturndeletehdrData = async (req, res) => {
-  const { company_code,Location_Code , return_no } = req.body;
+  const { company_code, Location_Code, return_no } = req.body;
 
   try {
     const pool = await connection.connectToDatabase();
     try {
       await pool.request()
         .input("company_code", company_code)
-        .input("Location_Code ", Location_Code )
+        .input("Location_Code ", Location_Code)
         .input("return_no", return_no)
         .input("modified_by", sql.NVarChar, req.headers['modified-by'])
         .query(`
@@ -12756,7 +12756,7 @@ const purreturndeletehdrData = async (req, res) => {
 
 
 const purreturndeletedetData = async (req, res) => {
-  const { company_code,Location_Code, return_no } = req.body;
+  const { company_code, Location_Code, return_no } = req.body;
 
   try {
     const pool = await connection.connectToDatabase();
@@ -12787,7 +12787,7 @@ const purreturndeletedetData = async (req, res) => {
 
 
 const purreturndeletetaxdetData = async (req, res) => {
-  const { company_code,Location_Code, return_no } = req.body;
+  const { company_code, Location_Code, return_no } = req.body;
 
   try {
     const pool = await connection.connectToDatabase();
@@ -12818,7 +12818,7 @@ const purreturndeletetaxdetData = async (req, res) => {
 
 
 const salereturndeletehdrData = async (req, res) => {
-  const { company_code,Location_Code, return_no } = req.body;
+  const { company_code, Location_Code, return_no } = req.body;
 
   try {
     const pool = await connection.connectToDatabase();
@@ -12849,7 +12849,7 @@ const salereturndeletehdrData = async (req, res) => {
 
 
 const salereturndeletedetData = async (req, res) => {
-  const { company_code,Location_Code, return_no } = req.body;
+  const { company_code, Location_Code, return_no } = req.body;
 
   try {
     const pool = await connection.connectToDatabase();
@@ -12879,7 +12879,7 @@ const salereturndeletedetData = async (req, res) => {
 
 
 const salereturndeletetaxdetData = async (req, res) => {
-  const { company_code,Location_Code, return_no } = req.body;
+  const { company_code, Location_Code, return_no } = req.body;
 
   try {
     const pool = await connection.connectToDatabase();
@@ -13206,7 +13206,7 @@ const getAllInventoryReceiptsDetails = async (req, res) => {
 
 const addInventoryReceiptsDetails = async (req, res) => {
   const {
-    company_code,Location_Code, ReceiptID, DateReceived, Warehouse, Supplier, PurchaseOrderID, ItemSNo, ItemCode, ItemName, Serial_No, QuantityReceived, Condition, ReceivedBy, ApprovalStatus, Notes,
+    company_code, Location_Code, ReceiptID, DateReceived, Warehouse, Supplier, PurchaseOrderID, ItemSNo, ItemCode, ItemName, Serial_No, QuantityReceived, Condition, ReceivedBy, ApprovalStatus, Notes,
     created_by, modified_by, tempstr1, tempstr2, tempstr3, tempstr4, datetime1, datetime2, datetime3, datetime4 } = req.body;
   let pool;
   try {
@@ -13250,7 +13250,7 @@ const addInventoryReceiptsDetails = async (req, res) => {
 };
 
 const deleteInventoryReceiptsDetails = async (req, res) => {
-  const { ReceiptID, company_code,Location_Code } = req.body;
+  const { ReceiptID, company_code, Location_Code } = req.body;
 
   try {
     const pool = await connection.connectToDatabase();
@@ -13267,7 +13267,7 @@ const deleteInventoryReceiptsDetails = async (req, res) => {
 };
 
 const addInventoryReceiptsheader = async (req, res) => {
-  const { company_code,Location_Code ,ReceiptID, DateReceived, Receipt_Type, created_by, modified_by,
+  const { company_code, Location_Code, ReceiptID, DateReceived, Receipt_Type, created_by, modified_by,
     tempstr1, tempstr2, tempstr3, tempstr4, datetime1, datetime2, datetime3, datetime4,
 
   } = req.body;
@@ -13306,7 +13306,7 @@ const addInventoryReceiptsheader = async (req, res) => {
 };
 
 const inventoryReceiptsDelete = async (req, res) => {
-  const { ReceiptID, company_code,Location_Code } = req.body;
+  const { ReceiptID, company_code, Location_Code } = req.body;
   try {
     const pool = await connection.connectToDatabase();
     await pool.request()
@@ -13372,7 +13372,7 @@ const addInventoryReturnheader = async (req, res) => {
 
 
 const inventoryReturnHeaderDelete = async (req, res) => {
-  const { ReturnID, company_code,Location_Code } = req.body;
+  const { ReturnID, company_code, Location_Code } = req.body;
   try {
     const pool = await connection.connectToDatabase();
     await pool
@@ -13391,7 +13391,7 @@ const inventoryReturnHeaderDelete = async (req, res) => {
 
 
 const inventoryReturnHeaderAll = async (req, res) => {
-  const { company_code,Location_Code } = req.body;
+  const { company_code, Location_Code } = req.body;
   let pool;
   try {
     pool = await sql.connect(dbConfig);
@@ -13413,7 +13413,7 @@ const inventoryReturnHeaderAll = async (req, res) => {
 
 const addInventoryReturndetails = async (req, res) => {
   const {
-    company_code,Location_Code, ReturnID, DateReturned, Warehouse, Supplier, ItemSNo, ItemCode, ItemName, Serial_no, QuantityReturned, ReasonForReturn,
+    company_code, Location_Code, ReturnID, DateReturned, Warehouse, Supplier, ItemSNo, ItemCode, ItemName, Serial_no, QuantityReturned, ReasonForReturn,
     Condition, ProcessedBy, ApprovalStatus, ActionTaken, Notes, created_by, modified_by,
     tempstr1, tempstr2, tempstr3, tempstr4, datetime1, datetime2, datetime3, datetime4,
 
@@ -13463,7 +13463,7 @@ const addInventoryReturndetails = async (req, res) => {
 };
 
 const InventoryReturnDeleteDetailData = async (req, res) => {
-  const { company_code, Location_Code,ReturnID } = req.body;
+  const { company_code, Location_Code, ReturnID } = req.body;
 
   try {
     const pool = await connection.connectToDatabase();
@@ -13835,9 +13835,9 @@ const addInventoryIssuancedetails = async (req, res) => {
       .input("datetime2", sql.NVarChar, datetime2)
       .input("datetime3", sql.NVarChar, datetime3)
       .input("datetime4", sql.NVarChar, datetime4)
-      .input("rate", sql.Decimal(10,2), rate)
-      .input("total", sql.Decimal(10,2), total)
-      .query( `EXEC sp_InventoryIssuances_details @mode,@company_code,@Location_Code,@IssuanceID,@DateIssued,@Warehouse,@Department,@ItemSNo,@ItemCode,@ItemName,@Serial_No,@QuantityIssued,@ReasonForIssuance,
+      .input("rate", sql.Decimal(10, 2), rate)
+      .input("total", sql.Decimal(10, 2), total)
+      .query(`EXEC sp_InventoryIssuances_details @mode,@company_code,@Location_Code,@IssuanceID,@DateIssued,@Warehouse,@Department,@ItemSNo,@ItemCode,@ItemName,@Serial_No,@QuantityIssued,@ReasonForIssuance,
       @IssuedBy,@ApprovalStatus,@ActionTaken,@Notes,@created_by,@modified_by,@tempstr1,@tempstr2,@tempstr3,@tempstr4,@datetime1,@datetime2,@datetime3,@datetime4,@rate,@total`);
     res.json({ success: true, message: "Data inserted successfully" });
   } catch (err) {
@@ -13875,7 +13875,7 @@ const getAllInventoryIssuancedetailData = async (req, res) => {
       .request()
       .input("mode", sql.NVarChar, "A") // Insert mode
       .input("company_code", sql.NVarChar, company_code)
-      .input("Location_Code", sql.NVarChar, Location_Code) 
+      .input("Location_Code", sql.NVarChar, Location_Code)
       .query(`EXEC sp_InventoryIssuances_details 'A',@company_code,@Location_Code,'','','','',0,'','','',0,'',
       '','','','','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,0`);
 
@@ -14381,7 +14381,7 @@ const GetAllAssetsAllocationDetails = async (req, res) => {
 
 
 const InventoryReturnSearchData = async (req, res) => {
-  const { company_code,Location_Code, ReturnID, Return_Type, DateReturned } = req.body;
+  const { company_code, Location_Code, ReturnID, Return_Type, DateReturned } = req.body;
 
   try {
     const pool = await connection.connectToDatabase();
@@ -14746,7 +14746,7 @@ const updateitemData = async (req, res) => {
         .input("datetime2", sql.NVarChar, updatedRow.datetime2)
         .input("datetime3", sql.NVarChar, updatedRow.datetime3)
         .input("datetime4", sql.NVarChar, updatedRow.datetime4)
-        .input("standard_cost", sql.Decimal(10,2), updatedRow.standard_cost)
+        .input("standard_cost", sql.Decimal(10, 2), updatedRow.standard_cost)
         .input("costing_methods", sql.NVarChar, updatedRow.costing_methods)
         .query(`EXEC sp_item_brand_info @mode, @company_code, @Item_code, @Item_variant, @Item_name, @Item_wigh,
         @Item_BaseUOM, @Item_SecondaryUOM, @Item_short_name, @Item_Last_salesRate_ExTax, @Item_Last_salesRate_IncludingTax,
@@ -15396,7 +15396,7 @@ const departmentDelete = async (req, res) => {
 
 
 const PurchReturnAuthHdr = async (req, res) => {
-  const { company_code,Location_Code, return_no, authroization_status } = req.body;
+  const { company_code, Location_Code, return_no, authroization_status } = req.body;
 
   try {
     const pool = await connection.connectToDatabase();
@@ -15421,7 +15421,7 @@ const PurchReturnAuthHdr = async (req, res) => {
 };
 
 const PurchReturnAuthDetail = async (req, res) => {
-  const { company_code,Location_Code, return_no, authroization_status } = req.body;
+  const { company_code, Location_Code, return_no, authroization_status } = req.body;
 
   try {
     const pool = await connection.connectToDatabase();
@@ -15471,7 +15471,7 @@ const PurchReturnAuthTaxDetail = async (req, res) => {
 
 
 const SalesReturnAuthHdr = async (req, res) => {
-  const { company_code,Location_Code, return_no, authroization_status } = req.body;
+  const { company_code, Location_Code, return_no, authroization_status } = req.body;
 
   try {
     const pool = await connection.connectToDatabase();
@@ -15496,7 +15496,7 @@ const SalesReturnAuthHdr = async (req, res) => {
 };
 
 const SalesReturnAuthDetail = async (req, res) => {
-  const { return_no, company_code,Location_Code, authroization_status } = req.body;
+  const { return_no, company_code, Location_Code, authroization_status } = req.body;
 
   try {
     const pool = await connection.connectToDatabase();
@@ -15522,7 +15522,7 @@ const SalesReturnAuthDetail = async (req, res) => {
 
 
 const SalesReturnAuthTaxDetail = async (req, res) => {
-  const { company_code,Location_Code, return_no, authroization_status } = req.body;
+  const { company_code, Location_Code, return_no, authroization_status } = req.body;
 
   try {
     const pool = await connection.connectToDatabase();
@@ -15873,7 +15873,7 @@ const ItemUpdate = async (req, res) => {
     Item_Last_salesRate_IncludingTax, Item_std_purch_price, Item_std_sales_price, Item_stock_code, Item_purch_tax_type,
     Item_sales_tax_type, Item_Costing_Method, Item_stock_type, hsn, Item_Register_Brand, Item_Our_Brand,
     status, Item_other_purch_taxtype, Item_other_sales_taxtype, MRP_price, discount_Percentage, created_by, modified_by,
-  standard_cost, costing_methods } = req.body;
+    standard_cost, costing_methods } = req.body;
 
   let item_images = null;
 
@@ -15997,7 +15997,7 @@ const VendorUpdate = async (req, res) => {
   const { vendor_code, company_code, vendor_name, vendor_gst_no, vendor_addr_1, vendor_addr_2, vendor_addr_3, vendor_addr_4,
     vendor_area_code, vendor_state_code, vendor_country_code, vendor_imex_no, vendor_office_no, vendor_resi_no, vendor_mobile_no,
     vendor_fax_no, vendor_email_id, vendor_credit_limit, vendor_transport_code, vendor_salesman_code, vendor_broker_code,
-    vendor_weekday_code, contact_person, office_type, keyfield, modified_by, status, 
+    vendor_weekday_code, contact_person, office_type, keyfield, modified_by, status,
     vendor_type, opening_balance, balance_type } = req.body;
 
   let pool;
@@ -16032,7 +16032,7 @@ const VendorUpdate = async (req, res) => {
       .input("office_type", sql.NVarChar, office_type)
       .input("keyfield", sql.NVarChar, keyfield)
       .input("modified_by", sql.NVarChar, modified_by)
-      .input("opening_balance", sql.Decimal(18,2), opening_balance)
+      .input("opening_balance", sql.Decimal(18, 2), opening_balance)
       .input("balance_type", sql.VarChar, balance_type)
       .input("status", sql.VarChar, status)
       .input("vendor_type", sql.VarChar, vendor_type)
@@ -16053,7 +16053,7 @@ const VendorUpdate = async (req, res) => {
 // Code Added By Harish
 
 const addadjustmenthdr = async (req, res) => {
-  const { company_code,Location_Code, transaction_no, transaction_date, transaction_type, Data_deleted, created_by, modified_by,
+  const { company_code, Location_Code, transaction_no, transaction_date, transaction_type, Data_deleted, created_by, modified_by,
     tempstr1, tempstr2, tempstr3, tempstr4, datetime1, datetime2, datetime3, datetime4,
 
   } = req.body;
@@ -16093,7 +16093,7 @@ const addadjustmenthdr = async (req, res) => {
 
 
 const Adjustmnetdelhdr = async (req, res) => {
-  const { transaction_no, company_code,Location_Code } = req.body;
+  const { transaction_no, company_code, Location_Code } = req.body;
 
   try {
     const pool = await connection.connectToDatabase();
@@ -16114,7 +16114,7 @@ const Adjustmnetdelhdr = async (req, res) => {
 
 
 const adjustmentupdatehdr = async (req, res) => {
-  const { transaction_no, company_code,Location_Code, transaction_date, transaction_type, Data_deleted, modified_by, created_by } = req.body;
+  const { transaction_no, company_code, Location_Code, transaction_date, transaction_type, Data_deleted, modified_by, created_by } = req.body;
   try {
     const pool = await connection.connectToDatabase();
 
@@ -16155,7 +16155,7 @@ const getalladjustmnethdr = async (req, res) => {
 
 const addadjustmnetdetails = async (req, res) => {
   const {
-    transaction_no, company_code, Location_Code,transaction_date, transaction_type, item_code, qty, Item_SNo, created_by, modified_by,
+    transaction_no, company_code, Location_Code, transaction_date, transaction_type, item_code, qty, Item_SNo, created_by, modified_by,
     tempstr1, tempstr2, tempstr3, tempstr4, datetime1, datetime2, datetime3, datetime4
   } = req.body;
 
@@ -16200,7 +16200,7 @@ const addadjustmnetdetails = async (req, res) => {
 
 
 const adjustmnetdeletedetails = async (req, res) => {
-  const { transaction_no, company_code,Location_Code } = req.body;
+  const { transaction_no, company_code, Location_Code } = req.body;
 
   try {
     const pool = await connection.connectToDatabase();
@@ -16402,7 +16402,7 @@ const getallopeningBalDet = async (req, res) => {
 };
 
 const AddJournalHdr = async (req, res) => {
-  const { journal_no, company_code,Location_Code, transaction_date, created_by, modified_by,
+  const { journal_no, company_code, Location_Code, transaction_date, created_by, modified_by,
     tempstr1, tempstr2, tempstr3, tempstr4, datetime1, datetime2, datetime3, datetime4,
 
   } = req.body;
@@ -16442,13 +16442,13 @@ const AddJournalHdr = async (req, res) => {
 
 const JournaDeleteHdr = async (req, res) => {
 
-  const { journal_no, company_code,Location_Code } = req.body;
+  const { journal_no, company_code, Location_Code } = req.body;
 
   try {
     const pool = await connection.connectToDatabase();
     await pool.request()
       .input("journal_no", sql.NVarChar, journal_no)
-      .input("company_code", sql.NVarChar,company_code)
+      .input("company_code", sql.NVarChar, company_code)
       .input("Location_Code", sql.NVarChar, Location_Code)
       .query(`EXEC [sp_journal_hdr] 'D',@journal_no,@company_code,@Location_Code,'','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
     res.status(200).json("Journal Header deleted successfully");
@@ -16460,7 +16460,7 @@ const JournaDeleteHdr = async (req, res) => {
 };
 
 const JournalUpdateHdr = async (req, res) => {
-  const { journal_no, company_code,Location_Code, transaction_date, modified_by } = req.body;
+  const { journal_no, company_code, Location_Code, transaction_date, modified_by } = req.body;
   try {
     const pool = await connection.connectToDatabase();
 
@@ -16494,7 +16494,7 @@ const GetAllJournalHdr = async (req, res) => {
 
 const AddJournalDetails = async (req, res) => {
   const {
-    journal_no, company_code,Location_Code, transaction_date, transaction_type, original_accountcode, contra_accountCode, journal_amount, Item_SNo, narration1, narration2, narration3, narration4, created_by, modified_by,
+    journal_no, company_code, Location_Code, transaction_date, transaction_type, original_accountcode, contra_accountCode, journal_amount, Item_SNo, narration1, narration2, narration3, narration4, created_by, modified_by,
     tempstr1, tempstr2, tempstr3, tempstr4, datetime1, datetime2, datetime3, datetime4,
 
   } = req.body;
@@ -16539,7 +16539,7 @@ const AddJournalDetails = async (req, res) => {
 
 
 const JournalDeletedet = async (req, res) => {
-  const { journal_no, company_code,Location_Code } = req.body;
+  const { journal_no, company_code, Location_Code } = req.body;
 
   try {
     const pool = await connection.connectToDatabase();
@@ -17417,7 +17417,7 @@ const salauthstatus = async (req, res) => {
     if (result.recordset.length === 0) {
       return res.status(404).json("Transaction not found.");
     }
- 
+
     // If the transaction exists, return a success response
     return res.status(200).json(result.recordset);
 
@@ -17433,7 +17433,7 @@ const salauthstatus = async (req, res) => {
 };
 
 const salretauthstatus = async (req, res) => {
-  const { company_code,Location_Code, return_no } = req.body;
+  const { company_code, Location_Code, return_no } = req.body;
 
   try {
     const pool = await connection.connectToDatabase();
@@ -17773,15 +17773,15 @@ const TaxInvoicehdrDelteData = async (req, res) => {
   const { company_code, Location_Code, bill_no, invoice_type, modified_by } = req.body;
   try {
     const pool = await connection.connectToDatabase();
-      await pool.request()
-        .input("company_code", sql.NVarChar,company_code)
-        .input("Location_Code", sql.NVarChar,Location_Code)
-        .input("bill_no", sql.NVarChar,bill_no)
-        .input("invoice_type", sql.NVarChar,invoice_type)
-        .input("modified_by", sql.NVarChar,modified_by)
-        .query(` EXEC sp_taxInvoice_Header 'D',@company_code,@Location_Code,'',@bill_no,'','','','',0,0,0,0,0,0,0,0,0,0,0,0,0,0,'','','','','','','','','','','',0,'','','','','','','','','','','','','','','','','','','','','',0,'',0,@invoice_type,'','','','','','','','','','','','','','',@modified_by,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
+    await pool.request()
+      .input("company_code", sql.NVarChar, company_code)
+      .input("Location_Code", sql.NVarChar, Location_Code)
+      .input("bill_no", sql.NVarChar, bill_no)
+      .input("invoice_type", sql.NVarChar, invoice_type)
+      .input("modified_by", sql.NVarChar, modified_by)
+      .query(` EXEC sp_taxInvoice_Header 'D',@company_code,@Location_Code,'',@bill_no,'','','','',0,0,0,0,0,0,0,0,0,0,0,0,0,0,'','','','','','','','','','','',0,'','','','','','','','','','','','','','','','','','','','','',0,'',0,@invoice_type,'','','','','','','','','','','','','','',@modified_by,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
 
-      res.status(200).json("Invoice hdr Deleted Successfully");
+    res.status(200).json("Invoice hdr Deleted Successfully");
   } catch (err) {
     console.error("Error", err);
     res.status(500).json({ message: err.message || 'Internal Server Error' });
@@ -17811,13 +17811,13 @@ const TaxInvoiceDeldetData = async (req, res) => {
 
   try {
     const pool = await connection.connectToDatabase();
-      await pool.request()
-        .input("company_code", sql.NVarChar,company_code)
-        .input("Location_Code", sql.NVarChar,Location_Code)
-        .input("bill_no", sql.NVarChar,bill_no)
-        .input("invoice_type", sql.NVarChar,invoice_type)
-        .input("modified_by", sql.NVarChar, req.headers['modified-by'])
-        .query(`EXEC sp_tax_invoice_details_list 'D',@company_code,@Location_Code,'',@bill_no,0,'','','','','','','',0,0,0,0,0,0,'','',@invoice_type,'',@modified_by,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
+    await pool.request()
+      .input("company_code", sql.NVarChar, company_code)
+      .input("Location_Code", sql.NVarChar, Location_Code)
+      .input("bill_no", sql.NVarChar, bill_no)
+      .input("invoice_type", sql.NVarChar, invoice_type)
+      .input("modified_by", sql.NVarChar, req.headers['modified-by'])
+      .query(`EXEC sp_tax_invoice_details_list 'D',@company_code,@Location_Code,'',@bill_no,0,'','','','','','','',0,0,0,0,0,0,'','',@invoice_type,'',@modified_by,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
 
     res.status(200).json("Invoice Deleted Successfully");
   } catch (err) {
@@ -17855,7 +17855,7 @@ const getAllTaxInvoiceDetData = async (req, res) => {
 // api for tax invoice tax details
 const addTaxInvoiceTaxdetail = async (req, res) => {
   const { company_code, Location_Code, bill_date, bill_no, customer_code, pay_type, ItemSNo, TaxSNo, item_code, item_name, tax_type, tax_name_details, tax_amt, tax_per, tax_acode, Product_SNo, invoice_type,
-    created_by, modified_by, tempstr1, tempstr2, tempstr3, tempstr4, 
+    created_by, modified_by, tempstr1, tempstr2, tempstr3, tempstr4,
     datetime1, datetime2, datetime3, datetime4 } = req.body;
   let pool;
   try {
@@ -17907,13 +17907,13 @@ const TaxInvoicetaxDelteData = async (req, res) => {
 
   try {
     const pool = await connection.connectToDatabase();
-      await pool.request()
-        .input("company_code", sql.NVarChar,company_code)
-        .input("Location_Code", sql.NVarChar,Location_Code)
-        .input("bill_no", sql.NVarChar,bill_no)
-        .input("invoice_type", sql.NVarChar,invoice_type)
-        .input("modified_by", sql.NVarChar, req.headers['modified-by'])
-        .query(`EXEC sp_taxInvoice_tax_details 'D',@company_code,@Location_Code,'',@bill_no,'','',0,0,'','','','',0,0,'',0,@invoice_type,'',@modified_by,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
+    await pool.request()
+      .input("company_code", sql.NVarChar, company_code)
+      .input("Location_Code", sql.NVarChar, Location_Code)
+      .input("bill_no", sql.NVarChar, bill_no)
+      .input("invoice_type", sql.NVarChar, invoice_type)
+      .input("modified_by", sql.NVarChar, req.headers['modified-by'])
+      .query(`EXEC sp_taxInvoice_tax_details 'D',@company_code,@Location_Code,'',@bill_no,'','',0,0,'','','','',0,0,'',0,@invoice_type,'',@modified_by,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
 
     res.status(200).json("Invoice tax Deleted Successfully");
   } catch (err) {
@@ -20277,7 +20277,7 @@ const deleteEmployeeIdentityDocument = async (req, res) => {
 
 // code added by Harish 21_11_2024
 const getTaxInvoicePeriod = async (req, res) => {
-  const { mode, company_code,Location_Code, Type, StartDate, EndDate, bill_no, billTo_customer_name, shipTo_customer_name, ShipTo_customer_addr_1 } = req.body;
+  const { mode, company_code, Location_Code, Type, StartDate, EndDate, bill_no, billTo_customer_name, shipTo_customer_name, ShipTo_customer_addr_1 } = req.body;
   let pool;
   try {
     const pool = await connection.connectToDatabase();
@@ -21845,7 +21845,7 @@ const DCTermsandConditions = async (req, res) => {
 
 
 const DCTermsandConditionsDelete = async (req, res) => {
-  const { transaction_no, company_code,Location_Code } = req.body;
+  const { transaction_no, company_code, Location_Code } = req.body;
 
   try {
     const pool = await connection.connectToDatabase();
@@ -21964,7 +21964,7 @@ const getallQuoTermsandConditions = async (req, res) => {
       .request()
       .input("company_code", sql.NVarChar, company_code)
       .input("Location_Code", sql.NVarChar, Location_Code)
-    .query(`EXEC sp_Terms_conditions_Quotation 'A', '','', @Location_Code,'','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
+      .query(`EXEC sp_Terms_conditions_Quotation 'A', '','', @Location_Code,'','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
 
     res.json(result.recordset);
   } catch (err) {
@@ -22754,7 +22754,7 @@ const getDeletedDeliveryChallan = async (req, res) => {
 
 
 const getDeletedDcSearchData = async (req, res) => {
-  const { company_code, Location_Code,transaction_no, transaction_date, customer_name, ShipTo_customer_name } = req.body;
+  const { company_code, Location_Code, transaction_no, transaction_date, customer_name, ShipTo_customer_name } = req.body;
   try {
     const pool = await connection.connectToDatabase();
     const result = await pool
@@ -23343,26 +23343,26 @@ const getLeaveReason = async (req, res) => {
 };
 
 const getDateWiseItemStock = async (req, res) => {
-  const { item_code, month, company_code,Location_Code, item_variant } = req.body;
-  let pool;
-  try {
-    const pool = await connection.connectToDatabase();
-    const result = await pool
-      .request()
-      .input("item_code", sql.NVarChar, item_code) // Insert mode
-      .input("company_code", sql.NVarChar, company_code)
-      .input("Location_Code", sql.NVarChar, Location_Code)
-      .input("month", sql.NVarChar, month)
-      .input("item_variant", sql.NVarChar, item_variant)
-      .query(`EXEC sp_datewise_item_stock @company_code,@Location_Code,@month,@item_code,@item_variant`);
-    if (result.recordset.length > 0) {
-      res.status(200).json(result.recordset); // 200 OK if data is found
-    }
-    else res.status(404).json({ message: "Data not found" })
-  } catch (err) {
-    console.error("Error", err.message);
-    return res.status(500).json({ message: err.message || 'Internal Server Error' });
-  }
+  const { item_code, month, company_code, Location_Code, item_variant } = req.body;
+  let pool;
+  try {
+    const pool = await connection.connectToDatabase();
+    const result = await pool
+      .request()
+      .input("item_code", sql.NVarChar, item_code) // Insert mode
+      .input("company_code", sql.NVarChar, company_code)
+      .input("Location_Code", sql.NVarChar, Location_Code)
+      .input("month", sql.NVarChar, month)
+      .input("item_variant", sql.NVarChar, item_variant)
+      .query(`EXEC sp_datewise_item_stock @company_code,@Location_Code,@month,@item_code,@item_variant`);
+    if (result.recordset.length > 0) {
+      res.status(200).json(result.recordset); // 200 OK if data is found
+    }
+    else res.status(404).json({ message: "Data not found" })
+  } catch (err) {
+    console.error("Error", err.message);
+    return res.status(500).json({ message: err.message || 'Internal Server Error' });
+  }
 };
 
 // Code Added by Harish on 10/01/25
@@ -25123,7 +25123,7 @@ const getSalesReturnAmountCalculation = async (req, res) => {
 
 //CODE ADDED BY PAVUN 27-01-2025
 const getReceivedGoods = async (req, res) => {
-  const { company_code,Location_Code, bill_no } = req.body;
+  const { company_code, Location_Code, bill_no } = req.body;
 
   try {
     const pool = await connection.connectToDatabase();
@@ -25178,7 +25178,7 @@ const updateReceivedGoods = async (req, res) => {
 // Code  Added by Harish 28-01-2025
 
 const getReceivedGoodsReport = async (req, res) => {
-  const { company_code,Location_Code, bill_no, item_code, item_name, pending, start_date, end_date } = req.body;
+  const { company_code, Location_Code, bill_no, item_code, item_name, pending, start_date, end_date } = req.body;
 
   try {
     const pool = await connection.connectToDatabase();
@@ -25300,7 +25300,7 @@ const getPurchaseAnalysis = async (req, res) => {
 };
 
 const getReceivedGoodsHelp = async (req, res) => {
-  const { company_code,Location_Code, bill_no, bill_date, item_name, item_code } = req.body;
+  const { company_code, Location_Code, bill_no, bill_date, item_name, item_code } = req.body;
 
   try {
     const pool = await connection.connectToDatabase();
@@ -26611,7 +26611,7 @@ const AnnouncementSearchCretria = async (req, res) => {
 
 const updDeliveryChallanheader = async (req, res) => {
   const {
-    company_code, Location_Code,transaction_no, transaction_date, transport_charges, pay_type, sales_type, customer_name, bill_to_customer_code, customer_addr_1,
+    company_code, Location_Code, transaction_no, transaction_date, transport_charges, pay_type, sales_type, customer_name, bill_to_customer_code, customer_addr_1,
     customer_addr_2, customer_addr_3, customer_addr_4, customer_state, customer_country, customer_mobile_no, contact_person, ShipTo_customer_name,
     Ship_to_customer_code, ShipTo_customer_addr_1, ShipTo_customer_addr_2, ShipTo_customer_addr_3, ShipTo_customer_addr_4, ShipTo_customer_state,
     ShipTo_customer_country, ShipTo_customer_mobile_no, ShipTocontact_person, purchase_amount, add_fright, less_fright, rounded_off, loading_charges,
@@ -28375,7 +28375,7 @@ const customerCodeDropdown = async (req, res) => {
       .input("company_code", sql.NVarChar, company_code)
       .query(`EXEC sp_customer_details_info @mode,'',@company_code,'','','','','','','','','','','','','','','','','',0,0,'','','','','','','','','','','',NULL,NULL,NULL,null,null,null,null,null`);
 
-    if (result.recordset.length > 0) { 
+    if (result.recordset.length > 0) {
       res.status(200).json(result.recordset);
     } else {
       res.status(404).json("Data not found");
@@ -34607,7 +34607,7 @@ const Expired = async (req, res) => {
 // Auto-generated Node.js CRUD for sp_SiteMaster
 const SiteMasterInsert = async (req, res) => {
   const { site_id, site_name, site_location, client_code, project_type, start_date, end_date, site_status, total_budget, status, keyfield, Warehouses, Tolerance_Type, Tolerance_values, data_deleted,
-  created_by, company_code } = req.body;
+    created_by, company_code } = req.body;
 
   try {
     const pool = await sql.connect(dbConfig);
@@ -34641,7 +34641,7 @@ const SiteMasterInsert = async (req, res) => {
 
 const SiteMasterUpdate = async (req, res) => {
   const { site_id, site_name, site_location, client_code, project_type, start_date, end_date, site_status, total_budget, status, keyfield, Warehouses, Tolerance_Type, Tolerance_values, data_deleted,
-  created_by, modified_by, company_code } = req.body;
+    created_by, modified_by, company_code } = req.body;
 
   try {
     const pool = await sql.connect(dbConfig);
@@ -34743,9 +34743,9 @@ const SiteMasterLoopDelete = async (req, res) => {
 
 const Pending_vendorInsert = async (req, res) => {
   const {
-  company_code, vendor_code, bill_no, bill_date, bill_amt, paid_amt, bal_amt, pending, keyfield, description, Data_deleted, TypeofPay,
-  created_by
-} = req.body;
+    company_code, vendor_code, bill_no, bill_date, bill_amt, paid_amt, bal_amt, pending, keyfield, description, Data_deleted, TypeofPay,
+    created_by
+  } = req.body;
 
   try {
     const pool = await sql.connect(dbConfig);
@@ -34775,9 +34775,9 @@ const Pending_vendorInsert = async (req, res) => {
 
 const Pending_vendorUpdate = async (req, res) => {
   const {
-  company_code, vendor_code, bill_no, bill_date, bill_amt, paid_amt, bal_amt, pending, keyfield, description, 
-  Data_deleted, TypeofPay, created_by, modified_by
-} = req.body;
+    company_code, vendor_code, bill_no, bill_date, bill_amt, paid_amt, bal_amt, pending, keyfield, description,
+    Data_deleted, TypeofPay, created_by, modified_by
+  } = req.body;
 
   try {
     const pool = await sql.connect(dbConfig);
@@ -34810,7 +34810,7 @@ const Pending_vendorUpdate = async (req, res) => {
 
 const Pending_vendorDelete = async (req, res) => {
   const {
-  company_code, vendor_code, keyfield, } = req.body;
+    company_code, vendor_code, keyfield, } = req.body;
 
   try {
     const pool = await sql.connect(dbConfig);
@@ -34933,12 +34933,12 @@ const Pending_vendorLoopDelete = async (req, res) => {
 // Auto-generated Node.js CRUD for sp_Expenses
 const ExpensesInsert = async (req, res) => {
   const {
-  expense_no, expense_date, expense_type, reference_type, reference_code, reference_name, payment_mode, amount, description, is_approved, is_closed, keyfield, data_deleted,
-  created_by,
-  company_code,
-  Location,
-  Expens_Sno
-} = req.body;
+    expense_no, expense_date, expense_type, reference_type, reference_code, reference_name, payment_mode, amount, description, is_approved, is_closed, keyfield, data_deleted,
+    created_by,
+    company_code,
+    Location,
+    Expens_Sno
+  } = req.body;
 
   try {
     const pool = await sql.connect(dbConfig);
@@ -34974,13 +34974,13 @@ const ExpensesInsert = async (req, res) => {
 
 const ExpensesUpdate = async (req, res) => {
   const {
-  expense_no, expense_date, expense_type, reference_type, reference_code, reference_name, payment_mode, amount, description, is_approved, is_closed, keyfield, data_deleted,
-  created_by,
-  modified_by,
-  company_code,
-  Location_Code,
-  Expens_Sno
-} = req.body;
+    expense_no, expense_date, expense_type, reference_type, reference_code, reference_name, payment_mode, amount, description, is_approved, is_closed, keyfield, data_deleted,
+    created_by,
+    modified_by,
+    company_code,
+    Location_Code,
+    Expens_Sno
+  } = req.body;
 
   try {
     const pool = await sql.connect(dbConfig);
@@ -35017,9 +35017,9 @@ const ExpensesUpdate = async (req, res) => {
 
 const ExpensesDelete = async (req, res) => {
   const {
-  expense_no, keyfield, 
-  company_code, Location_Code, Expens_Sno
-} = req.body;
+    expense_no, keyfield,
+    company_code, Location_Code, Expens_Sno
+  } = req.body;
 
   try {
     const pool = await sql.connect(dbConfig);
@@ -35152,187 +35152,187 @@ const ExpensesLoopDelete = async (req, res) => {
 // Auto-generated Node.js CRUD for sp_Advance_amount
 
 const Advance_amountInsert = async (req, res) => {
-  const {
-  company_code, advance_no, advance_date, reference_type, reference_code, reference_name, adjusted_amt, balance_amt, payment_mode, description, is_closed, keyfield,
-  created_by,
-} = req.body;
+  const {
+    company_code, advance_no, advance_date, reference_type, reference_code, reference_name, adjusted_amt, balance_amt, payment_mode, description, is_closed, keyfield,
+    created_by,
+  } = req.body;
 
-  try {
-    const pool = await sql.connect(dbConfig);
-    await pool.request()
-      .input("mode", sql.NVarChar, "I")
-      .input("company_code", sql.NVarChar, company_code)
-      .input("advance_no", sql.NVarChar, advance_no)
-      .input("advance_date", sql.Date, advance_date)
-      .input("reference_type", sql.NVarChar, reference_type)
-      .input("reference_code", sql.NVarChar, reference_code)
-      .input("reference_name", sql.NVarChar, reference_name)
-      .input("adjusted_amt", sql.Decimal(14, 3), adjusted_amt)
-      .input("balance_amt", sql.Decimal(14, 3), balance_amt)
-      .input("payment_mode", sql.NVarChar, payment_mode)
-      .input("description", sql.NVarChar, description)
-      .input("is_closed", sql.NVarChar, is_closed)
-      .input("keyfield", sql.NVarChar, keyfield)
-      .input("created_by", sql.NVarChar, created_by)
-      .query(`EXEC sp_Advance_amount @mode, @company_code, @advance_no, @advance_date, @reference_type, @reference_code, @reference_name, @adjusted_amt, @balance_amt, @payment_mode, @description, @is_closed, @keyfield, @company_code, @created_by, ''`);
+  try {
+    const pool = await sql.connect(dbConfig);
+    await pool.request()
+      .input("mode", sql.NVarChar, "I")
+      .input("company_code", sql.NVarChar, company_code)
+      .input("advance_no", sql.NVarChar, advance_no)
+      .input("advance_date", sql.Date, advance_date)
+      .input("reference_type", sql.NVarChar, reference_type)
+      .input("reference_code", sql.NVarChar, reference_code)
+      .input("reference_name", sql.NVarChar, reference_name)
+      .input("adjusted_amt", sql.Decimal(14, 3), adjusted_amt)
+      .input("balance_amt", sql.Decimal(14, 3), balance_amt)
+      .input("payment_mode", sql.NVarChar, payment_mode)
+      .input("description", sql.NVarChar, description)
+      .input("is_closed", sql.NVarChar, is_closed)
+      .input("keyfield", sql.NVarChar, keyfield)
+      .input("created_by", sql.NVarChar, created_by)
+      .query(`EXEC sp_Advance_amount @mode, @company_code, @advance_no, @advance_date, @reference_type, @reference_code, @reference_name, @adjusted_amt, @balance_amt, @payment_mode, @description, @is_closed, @keyfield, @company_code, @created_by, ''`);
 
-    res.status(200).json({ success: true, message: "Advance_amount insertd successfully" });
-  } catch (err) {
-    console.error("Error during Advance_amount insert:", err);
-    res.status(500).json({ message: err.message || "Internal Server Error" });
-  }
+    res.status(200).json({ success: true, message: "Advance_amount insertd successfully" });
+  } catch (err) {
+    console.error("Error during Advance_amount insert:", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
 };
 
 const Advance_amountUpdate = async (req, res) => {
-  const {
-  company_code, advance_no, advance_date, reference_type, reference_code, reference_name, adjusted_amt, balance_amt, payment_mode, description, is_closed, keyfield,
-  created_by,
-  modified_by,
-} = req.body;
+  const {
+    company_code, advance_no, advance_date, reference_type, reference_code, reference_name, adjusted_amt, balance_amt, payment_mode, description, is_closed, keyfield,
+    created_by,
+    modified_by,
+  } = req.body;
 
-  try {
-    const pool = await sql.connect(dbConfig);
-    await pool.request()
-      .input("mode", sql.NVarChar, "U")
-      .input("company_code", sql.NVarChar, company_code)
-      .input("advance_no", sql.NVarChar, advance_no)
-      .input("advance_date", sql.Date, advance_date)
-      .input("reference_type", sql.NVarChar, reference_type)
-      .input("reference_code", sql.NVarChar, reference_code)
-      .input("reference_name", sql.NVarChar, reference_name)
-      .input("adjusted_amt", sql.Decimal(14, 3), adjusted_amt)
-      .input("balance_amt", sql.Decimal(14, 3), balance_amt)
-      .input("payment_mode", sql.NVarChar, payment_mode)
-      .input("description", sql.NVarChar, description)
-      .input("is_closed", sql.NVarChar, is_closed)
-      .input("keyfield", sql.NVarChar, keyfield)
-      .input("company_code", sql.NVarChar, company_code)
-      .input("created_by", sql.NVarChar, created_by)
-      .input("modified_by", sql.NVarChar, modified_by)
-      .query(`EXEC sp_Advance_amount @mode, @company_code, @advance_no, @advance_date, @reference_type, @reference_code, @reference_name, @adjusted_amt, @balance_amt, @payment_mode, @description, @is_closed, @keyfield, @company_code, @created_by, @modified_by`);
+  try {
+    const pool = await sql.connect(dbConfig);
+    await pool.request()
+      .input("mode", sql.NVarChar, "U")
+      .input("company_code", sql.NVarChar, company_code)
+      .input("advance_no", sql.NVarChar, advance_no)
+      .input("advance_date", sql.Date, advance_date)
+      .input("reference_type", sql.NVarChar, reference_type)
+      .input("reference_code", sql.NVarChar, reference_code)
+      .input("reference_name", sql.NVarChar, reference_name)
+      .input("adjusted_amt", sql.Decimal(14, 3), adjusted_amt)
+      .input("balance_amt", sql.Decimal(14, 3), balance_amt)
+      .input("payment_mode", sql.NVarChar, payment_mode)
+      .input("description", sql.NVarChar, description)
+      .input("is_closed", sql.NVarChar, is_closed)
+      .input("keyfield", sql.NVarChar, keyfield)
+      .input("company_code", sql.NVarChar, company_code)
+      .input("created_by", sql.NVarChar, created_by)
+      .input("modified_by", sql.NVarChar, modified_by)
+      .query(`EXEC sp_Advance_amount @mode, @company_code, @advance_no, @advance_date, @reference_type, @reference_code, @reference_name, @adjusted_amt, @balance_amt, @payment_mode, @description, @is_closed, @keyfield, @company_code, @created_by, @modified_by`);
 
-    res.status(200).json({ success: true, message: "Advance_amount updated successfully" });
-  } catch (err) {
-    console.error("Error during Advance_amount update:", err);
-    res.status(500).json({ message: err.message || "Internal Server Error" });
-  }
+    res.status(200).json({ success: true, message: "Advance_amount updated successfully" });
+  } catch (err) {
+    console.error("Error during Advance_amount update:", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
 };
 
 const Advance_amountDelete = async (req, res) => {
-  const {
-  company_code, advance_no, keyfield
-} = req.body;
+  const {
+    company_code, advance_no, keyfield
+  } = req.body;
 
-  try {
-    const pool = await sql.connect(dbConfig);
-    await pool.request()
-      .input("mode", sql.NVarChar, "D")
-      .input("company_code", sql.NVarChar, company_code)
-      .input("advance_no", sql.NVarChar, advance_no)
-      .input("keyfield", sql.NVarChar, keyfield)
-      .query(`EXEC sp_Advance_amount @mode, @company_code, @advance_no, '', '', '', '', '', '', '', '', '', @keyfield, @company_code, '', ''`);
+  try {
+    const pool = await sql.connect(dbConfig);
+    await pool.request()
+      .input("mode", sql.NVarChar, "D")
+      .input("company_code", sql.NVarChar, company_code)
+      .input("advance_no", sql.NVarChar, advance_no)
+      .input("keyfield", sql.NVarChar, keyfield)
+      .query(`EXEC sp_Advance_amount @mode, @company_code, @advance_no, '', '', '', '', '', '', '', '', '', @keyfield, @company_code, '', ''`);
 
-    res.status(200).json({ success: true, message: "Advance_amount deleted successfully" });
-  } catch (err) {
-    console.error("Error during Advance_amount delete:", err);
-    res.status(500).json({ message: err.message || "Internal Server Error" });
-  }
+    res.status(200).json({ success: true, message: "Advance_amount deleted successfully" });
+  } catch (err) {
+    console.error("Error during Advance_amount delete:", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
 };
 
 // ---------- HEADER LOOP CRUD ----------
 // Auto-generated Advance_amountLoopInsert API for sp_Advance_amount
 const Advance_amountLoopInsert = async (req, res) => {
-  const Advance_amountData = req.body.Advance_amountData;
-  if (!Advance_amountData || !Advance_amountData.length) {
-    return res.status(400).json("Invalid or empty Advance_amountData array.");
-  }
+  const Advance_amountData = req.body.Advance_amountData;
+  if (!Advance_amountData || !Advance_amountData.length) {
+    return res.status(400).json("Invalid or empty Advance_amountData array.");
+  }
 
-  try {
-    const pool = await sql.connect(dbConfig);
-    for (const item of Advance_amountData) {
-      await pool.request()
-        .input("mode", sql.NVarChar, "I")
-        .input("company_code", sql.NVarChar, item.company_code)
-        .input("advance_no", sql.NVarChar, item.advance_no)
-        .input("advance_date", sql.Date, item.advance_date)
-        .input("reference_type", sql.NVarChar, item.reference_type)
-        .input("reference_code", sql.NVarChar, item.reference_code)
-        .input("reference_name", sql.NVarChar, item.reference_name)
-        .input("adjusted_amt", sql.Decimal(14, 3), item.adjusted_amt)
-        .input("balance_amt", sql.Decimal(14, 3), item.balance_amt)
-        .input("payment_mode", sql.NVarChar, item.payment_mode)
-        .input("description", sql.NVarChar, item.description)
-        .input("is_closed", sql.NVarChar, item.is_closed)
-        .input("keyfield", sql.NVarChar, item.keyfield)
-        .input("created_by", sql.NVarChar, item.created_by)
-        .query(`EXEC sp_Advance_amount @mode, @company_code, @advance_no, @advance_date, @reference_type, @reference_code, @reference_name, 
+  try {
+    const pool = await sql.connect(dbConfig);
+    for (const item of Advance_amountData) {
+      await pool.request()
+        .input("mode", sql.NVarChar, "I")
+        .input("company_code", sql.NVarChar, item.company_code)
+        .input("advance_no", sql.NVarChar, item.advance_no)
+        .input("advance_date", sql.Date, item.advance_date)
+        .input("reference_type", sql.NVarChar, item.reference_type)
+        .input("reference_code", sql.NVarChar, item.reference_code)
+        .input("reference_name", sql.NVarChar, item.reference_name)
+        .input("adjusted_amt", sql.Decimal(14, 3), item.adjusted_amt)
+        .input("balance_amt", sql.Decimal(14, 3), item.balance_amt)
+        .input("payment_mode", sql.NVarChar, item.payment_mode)
+        .input("description", sql.NVarChar, item.description)
+        .input("is_closed", sql.NVarChar, item.is_closed)
+        .input("keyfield", sql.NVarChar, item.keyfield)
+        .input("created_by", sql.NVarChar, item.created_by)
+        .query(`EXEC sp_Advance_amount @mode, @company_code, @advance_no, @advance_date, @reference_type, @reference_code, @reference_name, 
   @adjusted_amt, @balance_amt, @payment_mode, @description, @is_closed, @keyfield, @company_code, @created_by, ''`);
-    }
-    res.status(200).json("Advance_amount data inserted successfully");
-  } catch (err) {
-    console.error("Error in Advance_amountLoopInsert:", err);
-    res.status(500).json({ message: err.message || "Internal Server Error" });
-  }
+    }
+    res.status(200).json("Advance_amount data inserted successfully");
+  } catch (err) {
+    console.error("Error in Advance_amountLoopInsert:", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
 };
 
 // Auto-generated Advance_amountLoopUpdate API for sp_Advance_amount
 const Advance_amountLoopUpdate = async (req, res) => {
-  const Advance_amountData = req.body.Advance_amountData;
-  if (!Advance_amountData || !Advance_amountData.length) {
-    return res.status(400).json("Invalid or empty Advance_amountData array.");
-  }
+  const Advance_amountData = req.body.Advance_amountData;
+  if (!Advance_amountData || !Advance_amountData.length) {
+    return res.status(400).json("Invalid or empty Advance_amountData array.");
+  }
 
-  try {
-    const pool = await sql.connect(dbConfig);
-    for (const item of Advance_amountData) {
-      await pool.request()
-        .input("mode", sql.NVarChar, "U")
-        .input("company_code", sql.NVarChar, item.company_code)
-        .input("advance_no", sql.NVarChar, item.advance_no)
-        .input("advance_date", sql.Date, item.advance_date)
-        .input("reference_type", sql.NVarChar, item.reference_type)
-        .input("reference_code", sql.NVarChar, item.reference_code)
-        .input("reference_name", sql.NVarChar, item.reference_name)
-        .input("adjusted_amt", sql.Decimal(14, 3), item.adjusted_amt)
-        .input("balance_amt", sql.Decimal(14, 3), item.balance_amt)
-        .input("payment_mode", sql.NVarChar, item.payment_mode)
-        .input("description", sql.NVarChar, item.description)
-        .input("is_closed", sql.NVarChar, item.is_closed)
-        .input("keyfield", sql.NVarChar, item.keyfield)
-        .input("company_code", sql.NVarChar, item.company_code)
-        .input("created_by", sql.NVarChar, item.created_by)
-        .input("modified_by", sql.NVarChar, item.modified_by)
-        .query(`EXEC sp_Advance_amount @mode, @company_code, @advance_no, @advance_date, @reference_type, @reference_code, @reference_name, @adjusted_amt, @balance_amt, @payment_mode, @description, @is_closed, @keyfield, @company_code, @created_by, ''`);
-    }
-    res.status(200).json("Advance_amount data updated successfully");
-  } catch (err) {
-    console.error("Error in Advance_amountLoopUpdate:", err);
-    res.status(500).json({ message: err.message || "Internal Server Error" });
-  }
+  try {
+    const pool = await sql.connect(dbConfig);
+    for (const item of Advance_amountData) {
+      await pool.request()
+        .input("mode", sql.NVarChar, "U")
+        .input("company_code", sql.NVarChar, item.company_code)
+        .input("advance_no", sql.NVarChar, item.advance_no)
+        .input("advance_date", sql.Date, item.advance_date)
+        .input("reference_type", sql.NVarChar, item.reference_type)
+        .input("reference_code", sql.NVarChar, item.reference_code)
+        .input("reference_name", sql.NVarChar, item.reference_name)
+        .input("adjusted_amt", sql.Decimal(14, 3), item.adjusted_amt)
+        .input("balance_amt", sql.Decimal(14, 3), item.balance_amt)
+        .input("payment_mode", sql.NVarChar, item.payment_mode)
+        .input("description", sql.NVarChar, item.description)
+        .input("is_closed", sql.NVarChar, item.is_closed)
+        .input("keyfield", sql.NVarChar, item.keyfield)
+        .input("company_code", sql.NVarChar, item.company_code)
+        .input("created_by", sql.NVarChar, item.created_by)
+        .input("modified_by", sql.NVarChar, item.modified_by)
+        .query(`EXEC sp_Advance_amount @mode, @company_code, @advance_no, @advance_date, @reference_type, @reference_code, @reference_name, @adjusted_amt, @balance_amt, @payment_mode, @description, @is_closed, @keyfield, @company_code, @created_by, ''`);
+    }
+    res.status(200).json("Advance_amount data updated successfully");
+  } catch (err) {
+    console.error("Error in Advance_amountLoopUpdate:", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
 };
 
 // Auto-generated Advance_amountLoopDelete API for sp_Advance_amount
 const Advance_amountLoopDelete = async (req, res) => {
-  const Advance_amountData = req.body.Advance_amountData;
-  if (!Advance_amountData || !Advance_amountData.length) {
-    return res.status(400).json("Invalid or empty Advance_amountData array.");
-  }
+  const Advance_amountData = req.body.Advance_amountData;
+  if (!Advance_amountData || !Advance_amountData.length) {
+    return res.status(400).json("Invalid or empty Advance_amountData array.");
+  }
 
-  try {
-    const pool = await sql.connect(dbConfig);
-    for (const item of Advance_amountData) {
-      await pool.request()
-        .input("mode", sql.NVarChar, "D")
-        .input("company_code", sql.NVarChar, item.company_code)
-        .input("advance_no", sql.NVarChar, item.advance_no)
-        .input("keyfield", sql.NVarChar, item.keyfield)
-        .query(`EXEC sp_Advance_amount @mode, @company_code, @advance_no, '', '', '', '', '', '', '', '', '', @keyfield, @created_by, ''`);
-    }
-    res.status(200).json("Advance_amount data deleted successfully");
-  } catch (err) {
-    console.error("Error in Advance_amountLoopDelete:", err);
-    res.status(500).json({ message: err.message || "Internal Server Error" });
-  }
+  try {
+    const pool = await sql.connect(dbConfig);
+    for (const item of Advance_amountData) {
+      await pool.request()
+        .input("mode", sql.NVarChar, "D")
+        .input("company_code", sql.NVarChar, item.company_code)
+        .input("advance_no", sql.NVarChar, item.advance_no)
+        .input("keyfield", sql.NVarChar, item.keyfield)
+        .query(`EXEC sp_Advance_amount @mode, @company_code, @advance_no, '', '', '', '', '', '', '', '', '', @keyfield, @created_by, ''`);
+    }
+    res.status(200).json("Advance_amount data deleted successfully");
+  } catch (err) {
+    console.error("Error in Advance_amountLoopDelete:", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
 };
 // Code ended by Dinesh Gokul 21-05-2026
 
@@ -35341,11 +35341,11 @@ const Advance_amountLoopDelete = async (req, res) => {
 
 const PaymentInsert = async (req, res) => {
   const {
-  payment_no, payment_date, owner_type, owner_code, owner_name, payment_type, payment_mode, reference_no, total_amount, paid_amount, balance_amount, 
-  description, is_closed, keyfield, data_deleted,
-  created_by,
-  company_code
-} = req.body;
+    payment_no, payment_date, owner_type, owner_code, owner_name, payment_type, payment_mode, reference_no, total_amount, paid_amount, balance_amount,
+    description, is_closed, keyfield, data_deleted,
+    created_by,
+    company_code
+  } = req.body;
 
   try {
     const pool = await sql.connect(dbConfig);
@@ -35379,11 +35379,11 @@ const PaymentInsert = async (req, res) => {
 
 const PaymentUpdate = async (req, res) => {
   const {
-  payment_no, payment_date, owner_type, owner_code, owner_name, payment_type, payment_mode, reference_no, total_amount, paid_amount, balance_amount, description, is_closed, keyfield, data_deleted,
-  created_by,
-  modified_by,
-  company_code
-} = req.body;
+    payment_no, payment_date, owner_type, owner_code, owner_name, payment_type, payment_mode, reference_no, total_amount, paid_amount, balance_amount, description, is_closed, keyfield, data_deleted,
+    created_by,
+    modified_by,
+    company_code
+  } = req.body;
 
   try {
     const pool = await sql.connect(dbConfig);
@@ -35418,9 +35418,9 @@ const PaymentUpdate = async (req, res) => {
 
 const PaymentDelete = async (req, res) => {
   const {
-  payment_no, keyfield,
-  company_code
-} = req.body;
+    payment_no, keyfield,
+    company_code
+  } = req.body;
 
   try {
     const pool = await sql.connect(dbConfig);
@@ -35548,10 +35548,10 @@ const PaymentLoopDelete = async (req, res) => {
 
 const SiteAndCustomerMappingInsert = async (req, res) => {
   const {
-  site_id, site_name, customer_code, customer_name, mapping_date, is_primary, is_active, data_deleted, keyfield,
-  created_by,
-  company_code
-} = req.body;
+    site_id, site_name, customer_code, customer_name, mapping_date, is_primary, is_active, data_deleted, keyfield,
+    created_by,
+    company_code
+  } = req.body;
 
   try {
     const pool = await sql.connect(dbConfig);
@@ -35580,11 +35580,11 @@ const SiteAndCustomerMappingInsert = async (req, res) => {
 
 const SiteAndCustomerMappingUpdate = async (req, res) => {
   const {
-  site_id, site_name, customer_code, customer_name, mapping_date, is_primary, is_active, data_deleted, keyfield,
-  created_by,
-  modified_by,
-  company_code
-} = req.body;
+    site_id, site_name, customer_code, customer_name, mapping_date, is_primary, is_active, data_deleted, keyfield,
+    created_by,
+    modified_by,
+    company_code
+  } = req.body;
 
   try {
     const pool = await sql.connect(dbConfig);
@@ -35613,9 +35613,9 @@ const SiteAndCustomerMappingUpdate = async (req, res) => {
 
 const SiteAndCustomerMappingDelete = async (req, res) => {
   const {
-  site_id, keyfield,
-  company_code
-} = req.body;
+    site_id, keyfield,
+    company_code
+  } = req.body;
 
   try {
     const pool = await sql.connect(dbConfig);
@@ -35846,7 +35846,7 @@ const searchCriteriaSiteMaster = async (req, res) => {
     if (result.recordset.length > 0) {
       res.status(200).json(result.recordset);
     } else {
-      res.status(404).json("Data not found"); 
+      res.status(404).json("Data not found");
     }
   } catch (err) {
     console.error("Error during SiteMaster update:", err);
@@ -35868,7 +35868,7 @@ const getSiteMaster = async (req, res) => {
     if (result.recordset.length > 0) {
       res.status(200).json(result.recordset);
     } else {
-      res.status(404).json("Data not found"); 
+      res.status(404).json("Data not found");
     }
   } catch (err) {
     console.error("Error during SiteMaster update:", err);
@@ -35955,14 +35955,14 @@ const SiteWarehouseMappingLoopDelete = async (req, res) => {
 //code added by sakthi on 05-22-26
 const opening_balanceInsert = async (req, res) => {
   const {
-  transaction_no, financial_year, entry_date, party_type, party_code, keyfield, opening_amount, balance_type, remarks, status, data_deleted,
-  created_date,
-  modified_date,
-  created_by,
-  modified_by,
-  company_code,
-  Location_Code
-} = req.body;
+    transaction_no, financial_year, entry_date, party_type, party_code, keyfield, opening_amount, balance_type, remarks, status, data_deleted,
+    created_date,
+    modified_date,
+    created_by,
+    modified_by,
+    company_code,
+    Location_Code
+  } = req.body;
 
   try {
     const pool = await sql.connect(dbConfig);
@@ -35996,14 +35996,14 @@ const opening_balanceInsert = async (req, res) => {
 
 const opening_balanceUpdate = async (req, res) => {
   const {
-  transaction_no, financial_year, entry_date, party_type, party_code, keyfield, opening_amount, balance_type, remarks, status, data_deleted,
-  created_date,
-  modified_date,
-  created_by,
-  modified_by,
-  company_code,
-  Location_Code
-} = req.body;
+    transaction_no, financial_year, entry_date, party_type, party_code, keyfield, opening_amount, balance_type, remarks, status, data_deleted,
+    created_date,
+    modified_date,
+    created_by,
+    modified_by,
+    company_code,
+    Location_Code
+  } = req.body;
 
   try {
     const pool = await sql.connect(dbConfig);
@@ -36037,14 +36037,14 @@ const opening_balanceUpdate = async (req, res) => {
 
 const opening_balanceDelete = async (req, res) => {
   const {
-  transaction_no, financial_year, entry_date, party_type, party_code, keyfield, opening_amount, balance_type, remarks, status, data_deleted,
-  created_date,
-  modified_date,
-  created_by,
-  modified_by,
-  company_code,
-  Location_Code
-} = req.body;
+    transaction_no, financial_year, entry_date, party_type, party_code, keyfield, opening_amount, balance_type, remarks, status, data_deleted,
+    created_date,
+    modified_date,
+    created_by,
+    modified_by,
+    company_code,
+    Location_Code
+  } = req.body;
 
   try {
     const pool = await sql.connect(dbConfig);
@@ -36098,7 +36098,7 @@ const opening_balanceLoopInsert = async (req, res) => {
         .input("party_type", sql.NVarChar, item.party_type)
         .input("party_code", sql.NVarChar, item.party_code)
         .input("keyfield", sql.NVarChar, "")
-        .input("opening_amount", sql.Decimal(18, 2), item.opening_amount )
+        .input("opening_amount", sql.Decimal(18, 2), item.opening_amount)
         .input("balance_type", sql.NVarChar, item.balance_type)
         .input("remarks", sql.NVarChar, item.remarks)
         .input("status", sql.NVarChar, item.status)
@@ -36261,16 +36261,16 @@ const getExpensePaymentType = async (req, res) => {
 
 const Expenses_HdrInsert = async (req, res) => {
   const {
-  expense_no, expense_date, keyfield, data_deleted,
-  created_date,
-  created_by,
-  modified_by,
-  company_code, Location
-} = req.body;
+    expense_no, expense_date, keyfield, data_deleted,
+    created_date,
+    created_by,
+    modified_by,
+    company_code, Location
+  } = req.body;
 
   try {
     const pool = await sql.connect(dbConfig);
-   const result =  await pool.request()
+    const result = await pool.request()
       .input("mode", sql.NVarChar, "I")
       .input("expense_no", sql.NVarChar, expense_no)
       .input("expense_date", sql.Date, expense_date)
@@ -36283,10 +36283,15 @@ const Expenses_HdrInsert = async (req, res) => {
       .input("modified_by", sql.NVarChar, modified_by)
       .query(`EXEC sp_Expenses_Hdr @mode, @expense_no, @expense_date, @keyfield, @data_deleted, @company_code, @Location_Code, @created_by, ''`);
 
-    if (result.recordset.length > 0) {
-      res.status(200).json(result.recordset);
-    } else {
-      res.status(404).json("Data Added Successfully");
+    // SP returned ErrorNumber/ErrorMessage
+    if (
+      result.recordset &&
+      result.recordset.length > 0 &&
+      result.recordset[0].ErrorMessage
+    ) {
+      return res.status(400).json({
+        message: result.recordset[0].ErrorMessage
+      });
     }
   } catch (err) {
     console.error("Error", err);
@@ -36296,14 +36301,14 @@ const Expenses_HdrInsert = async (req, res) => {
 
 const Expenses_HdrUpdate = async (req, res) => {
   const {
-  expense_no, expense_date, keyfield, data_deleted,
-  created_date,
-  modified_date,
-  created_by,
-  modified_by,
-  company_code,
-  Location
-} = req.body;
+    expense_no, expense_date, keyfield, data_deleted,
+    created_date,
+    modified_date,
+    created_by,
+    modified_by,
+    company_code,
+    Location
+  } = req.body;
 
   try {
     const pool = await sql.connect(dbConfig);
@@ -36330,9 +36335,9 @@ const Expenses_HdrUpdate = async (req, res) => {
 
 const Expenses_HdrDelete = async (req, res) => {
   const {
-  expense_no, expense_date, 
-  company_code, Location
-} = req.body;
+    expense_no, expense_date,
+    company_code, Location
+  } = req.body;
 
   try {
     const pool = await sql.connect(dbConfig);
@@ -36446,7 +36451,7 @@ const Expenses_HdrLoopDelete = async (req, res) => {
   }
 };
 // Code ended by Dinesh Gokul 23-05-2026
- 
+
 // Code added by Dinesh Gokul 25-05-2026
 const getCustomerCodeExpenses = async (req, res) => {
   const { company_code, customer_code } = req.body;
@@ -36513,7 +36518,7 @@ const getSiteMasterExpenses = async (req, res) => {
     if (result.recordset.length > 0) {
       res.status(200).json(result.recordset);
     } else {
-      res.status(404).json("Data not found"); 
+      res.status(404).json("Data not found");
     }
   } catch (err) {
     console.error("Error during SiteMaster update:", err);
@@ -36523,16 +36528,16 @@ const getSiteMasterExpenses = async (req, res) => {
 
 const ExpensesSC = async (req, res) => {
   const {
-  expense_no, expense_date, expense_type, reference_type, reference_code, reference_name, 
-  payment_mode, amount, description, is_approved, is_closed, keyfield, data_deleted,
-  created_by,
-  company_code,
-  Location_Code,
-  Expens_Sno,
-  modified_by,
-  Start_Date,
-  End_Date
-} = req.body;
+    expense_no, expense_date, expense_type, reference_type, reference_code, reference_name,
+    payment_mode, amount, description, is_approved, is_closed, keyfield, data_deleted,
+    created_by,
+    company_code,
+    Location_Code,
+    Expens_Sno,
+    modified_by,
+    Start_Date,
+    End_Date
+  } = req.body;
 
   try {
     const pool = await connection.connectToDatabase();
@@ -36657,42 +36662,42 @@ const searchSiteWarehouseMapping = async (req, res) => {
 
 //code added by sakthi on 05-23-26
 const OpeningBalanceSC = async (req, res) => {
-  const { transaction_no, financial_year, entry_date, party_type, party_code, keyfield, opening_amount, balance_type, remarks, status, data_deleted, company_code, created_by, created_date, modified_by, modified_date, Location_Code } = req.body;
+  const { transaction_no, financial_year, entry_date, party_type, party_code, keyfield, opening_amount, balance_type, remarks, status, data_deleted, company_code, created_by, created_date, modified_by, modified_date, Location_Code } = req.body;
 
-  try {
-    const pool = await connection.connectToDatabase();
+  try {
+    const pool = await connection.connectToDatabase();
 
-    const result = await pool.request()
-      .input("mode", sql.NVarChar, "SC")
-      .input("transaction_no", sql.NVarChar, transaction_no || '')
-      .input("financial_year", sql.NVarChar, financial_year || '')
-      .input("entry_date", sql.Date, entry_date || null)
-      .input("party_type", sql.NVarChar, party_type || '')
-      .input("party_code", sql.NVarChar, party_code || '')
-      .input("keyfield", sql.NVarChar, keyfield || '')
-      .input("opening_amount", sql.Decimal(18, 2), opening_amount || 0)
-      .input("balance_type", sql.NVarChar, balance_type || '')
-      .input("remarks", sql.NVarChar, remarks || '')
-      .input("status", sql.NVarChar, status || '')
-      .input("data_deleted", sql.Bit, data_deleted ?? null)
-      .input("company_code", sql.NVarChar, company_code || '')
-      .input("created_by", sql.NVarChar, created_by || '')
-      .input("created_date", sql.DateTime, created_date || null)
-      .input("modified_by", sql.NVarChar, modified_by || '')
-      .input("modified_date", sql.DateTime, modified_date || null)
-      .input("Location_Code", sql.NVarChar, Location_Code || '')
-      .query(`EXEC sp_opening_balance @mode,@transaction_no,@financial_year,@entry_date,@party_type,@party_code,@keyfield,@opening_amount,@balance_type,@remarks,@status,@data_deleted,@company_code,@Location_Code,@created_by,@created_date,@modified_by,@modified_date`);
+    const result = await pool.request()
+      .input("mode", sql.NVarChar, "SC")
+      .input("transaction_no", sql.NVarChar, transaction_no || '')
+      .input("financial_year", sql.NVarChar, financial_year || '')
+      .input("entry_date", sql.Date, entry_date || null)
+      .input("party_type", sql.NVarChar, party_type || '')
+      .input("party_code", sql.NVarChar, party_code || '')
+      .input("keyfield", sql.NVarChar, keyfield || '')
+      .input("opening_amount", sql.Decimal(18, 2), opening_amount || 0)
+      .input("balance_type", sql.NVarChar, balance_type || '')
+      .input("remarks", sql.NVarChar, remarks || '')
+      .input("status", sql.NVarChar, status || '')
+      .input("data_deleted", sql.Bit, data_deleted ?? null)
+      .input("company_code", sql.NVarChar, company_code || '')
+      .input("created_by", sql.NVarChar, created_by || '')
+      .input("created_date", sql.DateTime, created_date || null)
+      .input("modified_by", sql.NVarChar, modified_by || '')
+      .input("modified_date", sql.DateTime, modified_date || null)
+      .input("Location_Code", sql.NVarChar, Location_Code || '')
+      .query(`EXEC sp_opening_balance @mode,@transaction_no,@financial_year,@entry_date,@party_type,@party_code,@keyfield,@opening_amount,@balance_type,@remarks,@status,@data_deleted,@company_code,@Location_Code,@created_by,@created_date,@modified_by,@modified_date`);
 
-    if (result.recordset.length > 0) {
-      res.status(200).json(result.recordset);
-    } else {
-      res.status(404).json("Data not found");
-    }
+    if (result.recordset.length > 0) {
+      res.status(200).json(result.recordset);
+    } else {
+      res.status(404).json("Data not found");
+    }
 
-  } catch (err) {
-    console.error("Error", err);
-    res.status(500).json({ message: err.message || 'Internal Server Error' });
-  }
+  } catch (err) {
+    console.error("Error", err);
+    res.status(500).json({ message: err.message || 'Internal Server Error' });
+  }
 };
 //code Ended by sakthi on 05-23-26
 
@@ -36785,43 +36790,44 @@ const CustRecTransDrop = async (req, res) => {
 };
 
 const CustomerReceiptLoopInsert = async (req, res) => {
-    const Vendor_PaymentData = req.body.Vendor_PaymentData;
-    if (!Vendor_PaymentData || !Vendor_PaymentData.length) {
-        return res
-            .status(400)
-            .json("Invalid or empty Vendor_PaymentData array.");
+  const Vendor_PaymentData = req.body.Vendor_PaymentData;
+  if (!Vendor_PaymentData || !Vendor_PaymentData.length) {
+    return res
+      .status(400)
+      .json("Invalid or empty Vendor_PaymentData array.");
+  }
+  try {
+    const pool = await sql.connect(dbConfig);
+    for (const item of Vendor_PaymentData) {
+      await pool.request()
+        .input("mode", sql.NVarChar, "I")
+        .input("company_code", sql.NVarChar, req.headers['company_code'])
+        .input("Location_Code", sql.NVarChar, req.headers['location_code'])
+        .input("keyfield", sql.NVarChar, item.keyfield)
+        .input("TypeofPay", sql.NVarChar, item.TypeofPay)
+        .input("Remarks", sql.NVarChar, item.Remarks)
+        .input("customer_code", sql.NVarChar, item.customer_code)
+        .input("customer_name", sql.NVarChar, item.customer_name)
+        .input("bill_no", sql.NVarChar, item.bill_no)
+        .input("bill_date", sql.Date, new Date(item.bill_date))
+        .input("bill_amt", sql.Int, item.bill_amt)
+        .input("paid_amt", sql.Decimal(14, 2), item.paid_amt)
+        .input("bal_amt", sql.Int, item.bal_amt)
+        .input("pending", sql.NVarChar, item.pending)
+        .input("created_by", sql.NVarChar, item.created_by)
+        .query(`EXEC sp_customerReceipt @mode, @company_code, @Location_Code, @customer_code, @customer_name, @bill_no, @bill_date, @bill_amt, @paid_amt, @bal_amt, @pending, '', @keyfield, '', @created_by, '', @Remarks, @TypeofPay, '', '', Null, Null, Null, Null`);
     }
-    try {
-        const pool = await sql.connect(dbConfig);
-        for (const item of Vendor_PaymentData) {
-            await pool.request()
-                .input("mode", sql.NVarChar, "I")
-                .input("company_code", sql.NVarChar,req.headers['company_code'])
-                .input("Location_Code", sql.NVarChar, req.headers['location_code'])
-                .input("keyfield", sql.NVarChar,item.keyfield)
-                .input("TypeofPay", sql.NVarChar,item.TypeofPay)
-                .input("Remarks", sql.NVarChar,item.Remarks)
-                .input("customer_code", sql.NVarChar,item.customer_code)
-                .input("customer_name", sql.NVarChar,item.customer_name)
-                .input("bill_no", sql.NVarChar,item.bill_no)
-                .input("bill_date", sql.Date, new Date(item.bill_date))
-                .input("bill_amt", sql.Int,item.bill_amt)
-                .input("paid_amt", sql.Decimal(14, 2),item.paid_amt)
-                .input("bal_amt", sql.Int,item.bal_amt)
-                .input("pending", sql.NVarChar,item.pending)
-                .input("created_by", sql.NVarChar,item.created_by)
-                .query(`EXEC sp_customerReceipt @mode, @company_code, @Location_Code, @customer_code, @customer_name, @bill_no, @bill_date, @bill_amt, @paid_amt, @bal_amt, @pending, '', @keyfield, '', @created_by, '', @Remarks, @TypeofPay, '', '', Null, Null, Null, Null`);}
-        res
-            .status(200)
-            .json("Advance inserted successfully");
-    } catch (err) {
+    res
+      .status(200)
+      .json("Advance inserted successfully");
+  } catch (err) {
 
-        console.error(err);
+    console.error(err);
 
-        res.status(500).json({
-            message: err.message || "Internal Server Error"
-        });
-    }
+    res.status(500).json({
+      message: err.message || "Internal Server Error"
+    });
+  }
 };
 //code added by Dinesh Gokul on 26-05-26
 
@@ -36849,14 +36855,14 @@ const PendingVendor = async (req, res) => {
 
 const Vendor_PaymentInsert = async (req, res) => {
   const {
-  vendor_code, TransactionNo, TransactionDate, TransactionType, Site_ID, PONo, PO_date, PO_amt, paid_amt, bal_amt, pending, keyfield, Remarks, TypeofPay, Data_deleted,
-  created_date,
-  modified_date,
-  created_by,
-  modified_by,
-  company_code,
-  Location_Code
-} = req.body;
+    vendor_code, TransactionNo, TransactionDate, TransactionType, Site_ID, PONo, PO_date, PO_amt, paid_amt, bal_amt, pending, keyfield, Remarks, TypeofPay, Data_deleted,
+    created_date,
+    modified_date,
+    created_by,
+    modified_by,
+    company_code,
+    Location_Code
+  } = req.body;
 
   try {
     const pool = await sql.connect(dbConfig);
@@ -36895,14 +36901,14 @@ const Vendor_PaymentInsert = async (req, res) => {
 
 const Vendor_PaymentUpdate = async (req, res) => {
   const {
-  vendor_code, TransactionNo, TransactionDate, TransactionType, Site_ID, PONo, PO_date, PO_amt, paid_amt, bal_amt, pending, keyfield, Remarks, TypeofPay, Data_deleted,
-  created_date,
-  modified_date,
-  created_by,
-  modified_by,
-  company_code,
-  Location_Code
-} = req.body;
+    vendor_code, TransactionNo, TransactionDate, TransactionType, Site_ID, PONo, PO_date, PO_amt, paid_amt, bal_amt, pending, keyfield, Remarks, TypeofPay, Data_deleted,
+    created_date,
+    modified_date,
+    created_by,
+    modified_by,
+    company_code,
+    Location_Code
+  } = req.body;
 
   try {
     const pool = await sql.connect(dbConfig);
@@ -36941,14 +36947,14 @@ const Vendor_PaymentUpdate = async (req, res) => {
 
 const Vendor_PaymentDelete = async (req, res) => {
   const {
-  vendor_code, TransactionNo, TransactionDate, TransactionType, Site_ID, PONo, PO_date, PO_amt, paid_amt, bal_amt, pending, keyfield, Remarks, TypeofPay, Data_deleted,
-  created_date,
-  modified_date,
-  created_by,
-  modified_by,
-  company_code,
-  Location_Code
-} = req.body;
+    vendor_code, TransactionNo, TransactionDate, TransactionType, Site_ID, PONo, PO_date, PO_amt, paid_amt, bal_amt, pending, keyfield, Remarks, TypeofPay, Data_deleted,
+    created_date,
+    modified_date,
+    created_by,
+    modified_by,
+    company_code,
+    Location_Code
+  } = req.body;
 
   try {
     const pool = await sql.connect(dbConfig);
@@ -37290,8 +37296,8 @@ const inventoryIssueCalculation = async (req, res) => {
       .request()
       .input("mode", sql.NVarChar, "IAC")
       .input("company_code", sql.NVarChar, company_code)
-      .input("Rate", sql.Decimal(10,2), Rate)
-      .input("quantityIssued", sql.Decimal(10,2), quantityIssued)
+      .input("Rate", sql.Decimal(10, 2), Rate)
+      .input("quantityIssued", sql.Decimal(10, 2), quantityIssued)
       .query(`EXEC sp_InventoryIssueCalculation @mode,@company_code,@Rate,@quantityIssued`);
     res.json(result.recordset);
   } catch (err) {
@@ -37303,8 +37309,8 @@ const inventoryIssueCalculation = async (req, res) => {
 
 //Code added by Dinesh Gokul on 01-06-2026
 const getExpensesReport = async (req, res) => {
-  const { mode, company_code, Location_Code, SiteID, customer, vendor, StartDate, EndDate, expense_no, expense_date, 
-    expense_type, reference_type, reference_code, reference_name, payment_mode, amountFrom, amountTo, is_approved, created_by} = req.body;
+  const { mode, company_code, Location_Code, SiteID, customer, vendor, StartDate, EndDate, expense_no, expense_date,
+    expense_type, reference_type, reference_code, reference_name, payment_mode, amountFrom, amountTo, is_approved, created_by } = req.body;
   let pool;
   try {
     const pool = await connection.connectToDatabase();
@@ -37399,11 +37405,7 @@ const getExpensesSummarySiteWise = async (req, res) => {
         data: result.recordset
       });
     } else {
-      res.status(200).json({
-        success: true,
-        columns: [],
-        data: []
-      });
+      res.status(404).json("Data not found");
     }
   } catch (err) {
     console.error("Error:", err);
@@ -37431,9 +37433,9 @@ const SupervisorSiteMaterialReport = async (req, res) => {
       .input("site_id", sql.NVarChar, site_id)
       .input("material", sql.NVarChar, material)
       .query(`EXEC sp_Internal_vendor_purchase_report @mode,@company_code,@location_code,@customer_code,@vendor_code,@site_id,@material`);
-    
+
     if (result.recordset.length > 0) {
-      res.status(200).json(result.recordset); 
+      res.status(200).json(result.recordset);
     } else {
       res.status(404).json("Data not found");
     }
@@ -38647,55 +38649,55 @@ module.exports = {
   getPurpose,
   AttendanceTransaction,
   Expired,
-  SiteMasterInsert, 
-  SiteMasterUpdate, 
-  SiteMasterLoopUpdate, 
+  SiteMasterInsert,
+  SiteMasterUpdate,
+  SiteMasterLoopUpdate,
   SiteMasterLoopDelete,
-  Pending_vendorInsert, 
-  Pending_vendorUpdate, 
+  Pending_vendorInsert,
+  Pending_vendorUpdate,
   Pending_vendorDelete,
-  Pending_vendorLoopInsert, 
-  Pending_vendorLoopUpdate, 
+  Pending_vendorLoopInsert,
+  Pending_vendorLoopUpdate,
   Pending_vendorLoopDelete,
-  ExpensesInsert, 
-  ExpensesUpdate, 
+  ExpensesInsert,
+  ExpensesUpdate,
   ExpensesDelete,
-  ExpensesLoopInsert, 
-  ExpensesLoopUpdate, 
+  ExpensesLoopInsert,
+  ExpensesLoopUpdate,
   ExpensesLoopDelete,
-  Advance_amountInsert, 
-  Advance_amountUpdate, 
+  Advance_amountInsert,
+  Advance_amountUpdate,
   Advance_amountDelete,
-  Advance_amountLoopInsert, 
-  Advance_amountLoopUpdate, 
+  Advance_amountLoopInsert,
+  Advance_amountLoopUpdate,
   Advance_amountLoopDelete,
-  PaymentInsert, 
-  PaymentUpdate, 
+  PaymentInsert,
+  PaymentUpdate,
   PaymentDelete,
-  PaymentLoopInsert, 
-  PaymentLoopUpdate, 
+  PaymentLoopInsert,
+  PaymentLoopUpdate,
   PaymentLoopDelete,
-  SiteAndCustomerMappingInsert, 
-  SiteAndCustomerMappingUpdate, 
+  SiteAndCustomerMappingInsert,
+  SiteAndCustomerMappingUpdate,
   SiteAndCustomerMappingDelete,
-  SiteAndCustomerMappingLoopInsert, 
-  SiteAndCustomerMappingLoopUpdate, 
+  SiteAndCustomerMappingLoopInsert,
+  SiteAndCustomerMappingLoopUpdate,
   SiteAndCustomerMappingLoopDelete,
   getbalance_type,
-  opening_balanceInsert, 
-  opening_balanceUpdate, 
+  opening_balanceInsert,
+  opening_balanceUpdate,
   opening_balanceDelete,
-  opening_balanceLoopInsert, 
-  opening_balanceLoopUpdate, 
+  opening_balanceLoopInsert,
+  opening_balanceLoopUpdate,
   opening_balanceLoopDelete,
   getExpenseType,
   getReferenceType,
   getExpensePaymentType,
-  Expenses_HdrInsert, 
-  Expenses_HdrUpdate, 
+  Expenses_HdrInsert,
+  Expenses_HdrUpdate,
   Expenses_HdrDelete,
-  Expenses_HdrLoopInsert, 
-  Expenses_HdrLoopUpdate, 
+  Expenses_HdrLoopInsert,
+  Expenses_HdrLoopUpdate,
   Expenses_HdrLoopDelete,
   OpeningBalanceSC,
   getCustomerCodeExpenses,
@@ -38718,11 +38720,11 @@ module.exports = {
   CustRecTransDrop,
   CustomerReceiptLoopInsert,
   PendingVendor,
-  Vendor_PaymentInsert, 
-  Vendor_PaymentUpdate, 
+  Vendor_PaymentInsert,
+  Vendor_PaymentUpdate,
   Vendor_PaymentDelete,
-  Vendor_PaymentLoopInsert, 
-  Vendor_PaymentLoopUpdate, 
+  Vendor_PaymentLoopInsert,
+  Vendor_PaymentLoopUpdate,
   Vendor_PaymentLoopDelete,
   updateVendorPayment,
   getPendingVendorPayment,
