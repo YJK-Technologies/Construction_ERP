@@ -177,6 +177,7 @@ const DCanalysis = () => {
       const body = {
         mode: period.toString(),
         company_code: sessionStorage.getItem('selectedCompanyCode'),
+        Location_Code: sessionStorage.getItem('selectedLocationCode'),
         transaction_no: transactionNo,
         customer_name: customerName,
         ShipTo_customer_name: shipToCustomerName,
