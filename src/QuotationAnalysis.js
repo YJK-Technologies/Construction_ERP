@@ -147,6 +147,7 @@ const QOanalysis = () => {
       const body = {
         mode: period.toString(),
         company_code: sessionStorage.getItem('selectedCompanyCode'),
+        Location_Code: sessionStorage.getItem("selectedLocationCode"),
         customer_name: customerName,
         customer_addr_1: customerAddress,
         customer_mobile_no: customerPhoneNo,

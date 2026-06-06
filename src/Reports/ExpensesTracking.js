@@ -97,7 +97,7 @@ const ExpensesTracking = () => {
   useEffect(() => {
     const companyCode = sessionStorage.getItem('selectedCompanyCode');
 
-    fetch(`${config.apiBaseUrl}/getKids`, {
+    fetch(`${config.apiBaseUrl}/getYorN`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

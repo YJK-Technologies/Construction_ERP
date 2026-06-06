@@ -397,6 +397,7 @@ function Grid() {
         Mode: period.toString(),
         company_code: sessionStorage.getItem("selectedCompanyCode"),
         Party: party,
+        Location_Code: sessionStorage.getItem('selectedLocationCode'),
         StartDate: selectedPeriod?.label === "Custom Date" ? startDate : undefined,
         EndDate: selectedPeriod?.label === "Custom Date" ? endDate : undefined,
       };
@@ -561,17 +562,22 @@ function Grid() {
       </div>
       <div className="shadow-lg p-1 bg-body-tertiary rounded mb-2 mt-2">
         <div className="row ms-4 mt-3 mb-3 me-4">
-          <div className="col-md-3 form-group">
-            <label for="city" class="form-label">Date Range</label>
-            <Select
-              id="status"
-              value={selectedPeriod}
-              onChange={handleChangePeriod}
-              options={filteredOptionPeriod}
-              className="border-secondary"
-              placeholder=""
-            />
+
+          <div className="col-md-3 form-group mb-2">
+            <div className="exp-form-floating">
+              <label for="city" class="form-label">Date Range</label>
+              <Select
+                id="status"
+                isClearable
+                value={selectedPeriod}
+                onChange={handleChangePeriod}
+                options={filteredOptionPeriod}
+                className="exp-input-field"
+                placeholder=""
+              />
+            </div>
           </div>
+
           {selectedPeriod && selectedPeriod.label === "Custom Date" && (
             <div className="col-md-5 mb-3">
               <div className="row">
@@ -596,56 +602,48 @@ function Grid() {
               </div>
             </div>
           )}
-          <div className="col-md-3">
-            <label for="city" class="form-label">Tax</label>
-            <Select
-              id="status"
-              value={selectedTax}
-              onChange={handleChangeTax}
-              options={filteredOptionTax}
-              className="border-secondary"
-              placeholder=""
-            />
+
+          <div className="col-md-3 form-group mb-2">
+            <div className="exp-form-floating">
+              <label for="city" class="form-label">Tax</label>
+              <Select
+                isClearable
+                id="status"
+                value={selectedTax}
+                onChange={handleChangeTax}
+                options={filteredOptionTax}
+                className="exp-input-field"
+                placeholder=""
+              />
+            </div>
           </div>
-          <div className="col-md-3">
-            <label class="form-label">
-              Party
-            </label>
-            <Select
-              id="status"
-              value={selectedParty}
-              onChange={handleChangeParty}
-              options={filteredOptionParty}
-              className="border-secondary"
-              placeholder=""
-            />
+
+          <div className="col-md-3 form-group mb-2">
+            <div className="exp-form-floating">
+              <label class="form-label">
+                Party
+              </label>
+              <Select
+                id="status"
+                isClearable
+                value={selectedParty}
+                onChange={handleChangeParty}
+                options={filteredOptionParty}
+                className="exp-input-field"
+                placeholder=""
+              />
+            </div>
           </div>
+
           <div className="col-md-1">
             <div class="exp-form-floating">
               <div class=" d-flex justify-content-center mt-4">
                 <icon className="popups-btn fs-6 p-3" onClick={fetchGstReport} required title="Search">
                   <i className="fas fa-search"></i>
                 </icon>
-                {/* <icon className="popups-btn fs-6 p-3" required title="Refresh">
-                      <FontAwesomeIcon icon="fa-solid fa-arrow-rotate-right" />
-                    </icon> */}
-              </div>
-            </div>
-          </div>
-          <div className="col-md-3 form-group mt-4">
-            <div class="exp-form-floating">
-              <div class=" d-flex  justify-content-center">
-
-                {/* <div class=''>
-                  <icon className=" text-dark popups-btn fs-6" onClick={handleSearch} required title="Search">
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                  </icon>
-                </div> */}
-                {/* <div>
-                  <icon className=" popups-btn text-dark fs-6" onClick={reloadGridData} required title="Refresh">
-                    <FontAwesomeIcon icon="fa-solid fa-arrow-rotate-right" />
-                  </icon>
-                </div> */}
+                <icon className="popups-btn fs-6 p-3" required title="Refresh" onClick={reloadGridData}>
+                  <FontAwesomeIcon icon="fa-solid fa-arrow-rotate-right" />
+                </icon>
               </div>
             </div>
           </div>
