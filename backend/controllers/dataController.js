@@ -12610,7 +12610,7 @@ const getPurchaseOrder = async (req, res) => {
 
 
 const getQuotationPeriod = async (req, res) => {
-  const { mode, company_code, Location_Code,  StartDate, EndDate, customer_name, customer_addr_1, customer_mobile_no, transaction_no } = req.body;
+  const { mode, company_code,Location_Code,  StartDate, EndDate, customer_name, customer_addr_1, customer_mobile_no, transaction_no } = req.body;
   let pool;
   try {
     const pool = await connection.connectToDatabase();
@@ -12625,7 +12625,7 @@ const getQuotationPeriod = async (req, res) => {
       .input("customer_addr_1", sql.NVarChar, customer_addr_1)
       .input("customer_mobile_no", sql.NVarChar, customer_mobile_no)
       .input("transaction_no", sql.NVarChar, transaction_no)
-      .query(`EXEC sp_quotation_period @mode,@company_code, @Location_Code, @StartDate,@EndDate,@customer_name,@customer_addr_1,@customer_mobile_no,@transaction_no`);
+      .query(`EXEC sp_quotation_period @mode,@company_code,@Location_Code, @StartDate,@EndDate,@customer_name,@customer_addr_1,@customer_mobile_no,@transaction_no`);
     if (result.recordset.length > 0) {
       res.status(200).json(result.recordset);
     } else {
@@ -12638,7 +12638,7 @@ const getQuotationPeriod = async (req, res) => {
 };
 
 const getPOperiod = async (req, res) => {
-  const { mode, company_code, StartDate, EndDate, ShipTo_customer_addr_1, ShipTo_customer_name, vendor_name, transaction_no } = req.body;
+  const { mode, company_code,Location_Code, StartDate, EndDate, ShipTo_customer_addr_1, ShipTo_customer_name, vendor_name, transaction_no } = req.body;
   let pool;
   try {
     const pool = await connection.connectToDatabase();
@@ -12646,13 +12646,14 @@ const getPOperiod = async (req, res) => {
       .request()
       .input("mode", sql.NVarChar, mode) // Insert mode
       .input("company_code", sql.NVarChar, company_code)
+      .input("Location_Code", sql.NVarChar, Location_Code)
       .input("StartDate", sql.NVarChar, StartDate)
       .input("EndDate", sql.NVarChar, EndDate)
       .input("ShipTo_customer_addr_1", sql.NVarChar, ShipTo_customer_addr_1)
       .input("vendor_name", sql.NVarChar, vendor_name)
       .input("ShipTo_customer_name", sql.NVarChar, ShipTo_customer_name)
       .input("transaction_no", sql.NVarChar, transaction_no)
-      .query(`EXEC sp_purchase_order_period @mode,@company_code,@StartDate,@EndDate,@ShipTo_customer_addr_1,@vendor_name,@ShipTo_customer_name,@transaction_no`);
+      .query(`EXEC sp_purchase_order_period @mode,@company_code,@Location_Code, @StartDate,@EndDate,@ShipTo_customer_addr_1,@vendor_name,@ShipTo_customer_name,@transaction_no`);
     if (result.recordset.length > 0) {
       res.status(200).json(result.recordset); // 200 OK if data is found
     } else {
@@ -12666,20 +12667,22 @@ const getPOperiod = async (req, res) => {
 };
 
 const getDCperiod = async (req, res) => {
-  const { mode, company_code, StartDate, EndDate, transaction_no, customer_name, ShipTo_customer_name, ShipTo_customer_addr_1 } = req.body;
+  const { mode, company_code,Location_Code, StartDate, EndDate, transaction_no, customer_name, ShipTo_customer_name, ShipTo_customer_addr_1 } = req.body;
   try {
     const pool = await connection.connectToDatabase();
     const result = await pool
       .request()
       .input("mode", sql.NVarChar, mode) // Insert mode
       .input("company_code", sql.NVarChar, company_code)
+      .input("Location_Code", sql.NVarChar, Location_Code)
       .input("StartDate", sql.NVarChar, StartDate)
       .input("EndDate", sql.NVarChar, EndDate)
       .input("transaction_no", sql.NVarChar, transaction_no)
       .input("customer_name", sql.NVarChar, customer_name)
       .input("ShipTo_customer_name", sql.NVarChar, ShipTo_customer_name)
       .input("ShipTo_customer_addr_1", sql.NVarChar, ShipTo_customer_addr_1)
-      .query(`EXEC sp_Delivery_challan_period @mode,@company_code,@StartDate,@EndDate,@transaction_no,@customer_name,@ShipTo_customer_name,@ShipTo_customer_addr_1`);
+      .query(`EXEC sp_Delivery_challan_period @mode,@company_code,@Location_Code,@StartDate,@EndDate,@transaction_no,
+        @customer_name,@ShipTo_customer_name,@ShipTo_customer_addr_1`);
     if (result.recordset.length > 0) {
       res.status(200).json(result.recordset); // 200 OK if data is found
     } else {
@@ -20274,7 +20277,7 @@ const deleteEmployeeIdentityDocument = async (req, res) => {
 
 // code added by Harish 21_11_2024
 const getTaxInvoicePeriod = async (req, res) => {
-  const { mode, company_code, Location_Code, Type, StartDate, EndDate, bill_no, billTo_customer_name, shipTo_customer_name, ShipTo_customer_addr_1 } = req.body;
+  const { mode, company_code,Location_Code, Type, StartDate, EndDate, bill_no, billTo_customer_name, shipTo_customer_name, ShipTo_customer_addr_1 } = req.body;
   let pool;
   try {
     const pool = await connection.connectToDatabase();
@@ -20290,7 +20293,7 @@ const getTaxInvoicePeriod = async (req, res) => {
       .input("billTo_customer_name", sql.NVarChar, billTo_customer_name)
       .input("shipTo_customer_name", sql.NVarChar, shipTo_customer_name)
       .input("ShipTo_customer_addr_1", sql.NVarChar, ShipTo_customer_addr_1)
-      .query(`EXEC sp_tax_invoice_period @mode,@company_code, @Location_Code, @Type,@StartDate,@EndDate,@bill_no,@billTo_customer_name,@shipTo_customer_name,@ShipTo_customer_addr_1`);
+      .query(`EXEC sp_tax_invoice_period @mode,@company_code,@Location_Code, @Type,@StartDate,@EndDate,@bill_no,@billTo_customer_name,@shipTo_customer_name,@ShipTo_customer_addr_1`);
     if (result.recordset.length > 0) {
       res.status(200).json(result.recordset);
     } else {
@@ -20536,7 +20539,7 @@ const taxInvoiceBalanceAmountCalculation = async (req, res) => {
       .input("mode", sql.NVarChar, "BAC")
       .input("TotalAmount", sql.Decimal(14, 2), TotalAmount)
       .input("AdvanceAmount", sql.Decimal(14, 2), AdvanceAmount)
-      .query(`EXEC sp_tax_invoice_ItemAmountCalculation @mode,'','',0,'',0,0,'','','',0,0,@TotalAmount,@AdvanceAmount,'','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
+      .query(`EXEC sp_tax_invoice_ItemAmountCalculation_Ramya @mode,'','','',0,'',0,0,'','','',0,0,@TotalAmount,@AdvanceAmount,'','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
     // Send response
     if (result.recordset.length > 0) {
       res.status(200).json(result.recordset); // 200 OK if data is found
@@ -22623,7 +22626,7 @@ const getSelectSlot = async (req, res) => {
 };
 
 const getGstReportAnalysis = async (req, res) => {
-  const { Mode, Party, StartDate, EndDate, company_code } = req.body;
+  const { Mode, Party, StartDate, EndDate, company_code,Location_Code } = req.body;
   let pool;
   try {
     const pool = await connection.connectToDatabase();
@@ -22631,10 +22634,11 @@ const getGstReportAnalysis = async (req, res) => {
       .request()
       .input("Mode", sql.NVarChar, Mode) // Insert mode
       .input("company_code", sql.NVarChar, company_code)
+      .input("Location_Code", sql.NVarChar, Location_Code)
       .input("Party", sql.NVarChar, Party)
       .input("StartDate", sql.Date, StartDate)
       .input("EndDate", sql.Date, EndDate)
-      .query(`EXEC sp_gst_report @Mode,@company_code,@Party,@StartDate,@EndDate,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
+      .query(`EXEC sp_gst_report_Ramya @Mode,@company_code,"Location_Code,@Party,@StartDate,@EndDate,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
     if (result.recordset.length > 0) {
       res.status(200).json(result.recordset); // 200 OK if data is found
     }
@@ -23338,7 +23342,7 @@ const getLeaveReason = async (req, res) => {
 };
 
 const getDateWiseItemStock = async (req, res) => {
-  const { item_code, month, company_code, item_variant } = req.body;
+  const { item_code, month, company_code,Location_Code, item_variant } = req.body;
   let pool;
   try {
     const pool = await connection.connectToDatabase();
@@ -23346,9 +23350,10 @@ const getDateWiseItemStock = async (req, res) => {
       .request()
       .input("item_code", sql.NVarChar, item_code) // Insert mode
       .input("company_code", sql.NVarChar, company_code)
+      .input("Location_Code", sql.NVarChar, Location_Code)
       .input("month", sql.NVarChar, month)
       .input("item_variant", sql.NVarChar, item_variant)
-      .query(`EXEC sp_datewise_item_stock @company_code,@month,@item_code,@item_variant`);
+      .query(`EXEC sp_datewise_item_stock_Ramya @company_code,@Location_Code,@month,@item_code,@item_variant`);
     if (result.recordset.length > 0) {
       res.status(200).json(result.recordset); // 200 OK if data is found
     }
