@@ -8,6 +8,7 @@ import './App.css';
 import Select from 'react-select';
 import * as XLSX from 'xlsx';
 import { ToastContainer, toast } from 'react-toastify';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import 'react-toastify/dist/ReactToastify.css';
 import "./test.css"
 import LoadingScreen from './Loading';
@@ -42,10 +43,12 @@ function ReceivedGoodsRt() {
         setPendingStatus(selected ? selected.value : '');
     };
 
-    const filteredOptionStatus = pendingStatusDrop.map((option) => ({
-        value: option.attributedetails_name,
-        label: option.attributedetails_name,
-    }));
+    const filteredOptionStatus = Array.isArray(pendingStatusDrop)
+        ? pendingStatusDrop.map((option) => ({
+            value: option.attributedetails_name,
+            label: option.attributedetails_name,
+        }))
+        : [];
 
     useEffect(() => {
         fetch(`${config.apiBaseUrl}/getPendingStatus`, {
@@ -53,7 +56,6 @@ function ReceivedGoodsRt() {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
                 company_code: sessionStorage.getItem("selectedCompanyCode"),
-
             }),
         })
 
@@ -94,7 +96,6 @@ function ReceivedGoodsRt() {
         setFinancialYearEnd(financialYearEndDate);
     }, []);
 
-
     useEffect(() => {
         const fetchItemCode = async () => {
             try {
@@ -122,10 +123,12 @@ function ReceivedGoodsRt() {
         fetchItemCode();
     }, []);
 
-    const filteredOptionItem = itemCodeDrop.map((option) => ({
-        value: option.Item_code,
-        label: `${option.Item_code} - ${option.Item_name}`,
-    }));
+    const filteredOptionItem = Array.isArray(itemCodeDrop)
+        ? itemCodeDrop.map((option) => ({
+            value: option.Item_code,
+            label: `${option.Item_code} - ${option.Item_name}`,
+        }))
+        : [];
 
     const handleChangeItem = (selectedItem) => {
         setSelectedItem(selectedItem);
@@ -222,13 +225,16 @@ function ReceivedGoodsRt() {
             sortable: false,
             editable: false
         }
-
     ];
 
     const defaultColDef = {
         resizable: true,
-        wrapText: true,
+        wrapText: false,
         flex: 1,
+    };
+
+    const reloadGridData = () => {
+        window.location.reload();
     };
 
     const onGridReady = (params) => {
@@ -636,16 +642,17 @@ function ReceivedGoodsRt() {
                     </div>
                     <div className="col-md-3 form-group">
                         <label for="city" className="form-label">Item Code</label>
-                        <div title ='Please Enter the Item Code'>
-                        <Select
-                            id="status"
-                            value={selectedItem}
-                            onChange={handleChangeItem}
-                            options={filteredOptionItem}
-                            className="exp-input-field"
-                            placeholder=""
-                            onKeyDown={(e) => e.key === 'Enter' && fetchreceivedgoodsreport()}
-                        />
+                        <div title='Please Enter the Item Code'>
+                            <Select
+                                id="status"
+                                isClearable
+                                value={selectedItem}
+                                onChange={handleChangeItem}
+                                options={filteredOptionItem}
+                                className="exp-input-field"
+                                placeholder=""
+                                onKeyDown={(e) => e.key === 'Enter' && fetchreceivedgoodsreport()}
+                            />
                         </div>
                     </div>
                     <div className="col-md-3 form-group mb-2 ">
@@ -663,45 +670,46 @@ function ReceivedGoodsRt() {
                     <div className="col-md-3 form-group">
                         <label className="form-label">Pending Status </label>
                         <div title='Please Enter the Pending Status'>
-                        <Select
-                            id="returnType"
-                            className=" exp-input-field"
-                            placeholder=""
-                            required
-                            value={selectedPendingStatus}
-                            onChange={handleChangeStatus}
-                            options={filteredOptionStatus}
-                            onKeyDown={(e) => e.key === 'Enter' && fetchreceivedgoodsreport()}
-                            data-tip="Please select a default warehouse"
-                        />
+                            <Select
+                                id="returnType"
+                                className=" exp-input-field"
+                                placeholder=""
+                                required
+                                isClearable
+                                value={selectedPendingStatus}
+                                onChange={handleChangeStatus}
+                                options={filteredOptionStatus}
+                                onKeyDown={(e) => e.key === 'Enter' && fetchreceivedgoodsreport()}
+                                data-tip="Please select a default warehouse"
+                            />
+                        </div>
                     </div>
-                </div>
-                <div className="col-md-1">
+                    <div className="col-md-1">
                         <div class="exp-form-floating">
                             <div class=" d-flex justify-content-center mt-4">
                                 <icon className="popups-btn fs-6 p-3" onClick={fetchreceivedgoodsreport} required title="Search">
                                     <i className="fas fa-search"></i>
                                 </icon>
-                                {/* <icon className="popups-btn fs-6 p-3" required title="Refresh">
-                      <FontAwesomeIcon icon="fa-solid fa-arrow-rotate-right" />
-                    </icon> */}
+                                <icon className="popups-btn fs-6 p-3" required title="Refresh" onClick={reloadGridData}>
+                                    <FontAwesomeIcon icon="fa-solid fa-arrow-rotate-right" />
+                                </icon>
                             </div>
                         </div>
                     </div>
-                <div class="ag-theme-alpine" style={{ height: 455, width: "100%" }}>
-                    <AgGridReact
-                        rowData={rowData}
-                        columnDefs={columnDefs}
-                        defaultColDef={defaultColDef}
-                        onGridReady={onGridReady}
-                        onCellValueChanged={onCellValueChanged}
-                        onSelectionChanged={onSelectionChanged}
-                        pagination={true}
-                        paginationAutoPageSize={true}
-                    />
+                    <div class="ag-theme-alpine" style={{ height: 455, width: "100%" }}>
+                        <AgGridReact
+                            rowData={rowData}
+                            columnDefs={columnDefs}
+                            defaultColDef={defaultColDef}
+                            onGridReady={onGridReady}
+                            onCellValueChanged={onCellValueChanged}
+                            onSelectionChanged={onSelectionChanged}
+                            pagination={true}
+                            paginationAutoPageSize={true}
+                        />
+                    </div>
                 </div>
             </div>
-        </div>
         </div>
     );
 }

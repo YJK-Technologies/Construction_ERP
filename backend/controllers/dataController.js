@@ -22626,7 +22626,7 @@ const getSelectSlot = async (req, res) => {
 };
 
 const getGstReportAnalysis = async (req, res) => {
-  const { Mode, Party, StartDate, EndDate, company_code,Location_Code } = req.body;
+  const { Mode, Party, StartDate, EndDate, company_code, Location_Code } = req.body;
   let pool;
   try {
     const pool = await connection.connectToDatabase();
@@ -22635,12 +22635,13 @@ const getGstReportAnalysis = async (req, res) => {
       .input("Mode", sql.NVarChar, Mode) // Insert mode
       .input("company_code", sql.NVarChar, company_code)
       .input("Location_Code", sql.NVarChar, Location_Code)
+      .input("Location_Code", sql.NVarChar, Location_Code)
       .input("Party", sql.NVarChar, Party)
       .input("StartDate", sql.Date, StartDate)
       .input("EndDate", sql.Date, EndDate)
-      .query(`EXEC sp_gst_report_Ramya @Mode,@company_code,"Location_Code,@Party,@StartDate,@EndDate,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
+      .query(`EXEC sp_gst_report @Mode,@company_code,@Location_Code,@Party,@StartDate,@EndDate,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
     if (result.recordset.length > 0) {
-      res.status(200).json(result.recordset); // 200 OK if data is found
+      res.status(200).json(result.recordset);
     }
     else res.status(404).json({ message: "Data not found" })
   } catch (err) {
@@ -23342,26 +23343,26 @@ const getLeaveReason = async (req, res) => {
 };
 
 const getDateWiseItemStock = async (req, res) => {
-  const { item_code, month, company_code,Location_Code, item_variant } = req.body;
-  let pool;
-  try {
-    const pool = await connection.connectToDatabase();
-    const result = await pool
-      .request()
-      .input("item_code", sql.NVarChar, item_code) // Insert mode
-      .input("company_code", sql.NVarChar, company_code)
-      .input("Location_Code", sql.NVarChar, Location_Code)
-      .input("month", sql.NVarChar, month)
-      .input("item_variant", sql.NVarChar, item_variant)
-      .query(`EXEC sp_datewise_item_stock_Ramya @company_code,@Location_Code,@month,@item_code,@item_variant`);
-    if (result.recordset.length > 0) {
-      res.status(200).json(result.recordset); // 200 OK if data is found
-    }
-    else res.status(404).json({ message: "Data not found" })
-  } catch (err) {
-    console.error("Error", err.message);
-    return res.status(500).json({ message: err.message || 'Internal Server Error' });
-  }
+  const { item_code, month, company_code,Location_Code, item_variant } = req.body;
+  let pool;
+  try {
+    const pool = await connection.connectToDatabase();
+    const result = await pool
+      .request()
+      .input("item_code", sql.NVarChar, item_code) // Insert mode
+      .input("company_code", sql.NVarChar, company_code)
+      .input("Location_Code", sql.NVarChar, Location_Code)
+      .input("month", sql.NVarChar, month)
+      .input("item_variant", sql.NVarChar, item_variant)
+      .query(`EXEC sp_datewise_item_stock @company_code,@Location_Code,@month,@item_code,@item_variant`);
+    if (result.recordset.length > 0) {
+      res.status(200).json(result.recordset); // 200 OK if data is found
+    }
+    else res.status(404).json({ message: "Data not found" })
+  } catch (err) {
+    console.error("Error", err.message);
+    return res.status(500).json({ message: err.message || 'Internal Server Error' });
+  }
 };
 
 // Code Added by Harish on 10/01/25
