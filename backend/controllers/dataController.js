@@ -37398,11 +37398,7 @@ const getExpensesSummarySiteWise = async (req, res) => {
         data: result.recordset
       });
     } else {
-      res.status(200).json({
-        success: true,
-        columns: [],
-        data: []
-      });
+      res.status(404).json("Data not found");
     }
   } catch (err) {
     console.error("Error:", err);
