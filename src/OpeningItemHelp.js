@@ -27,7 +27,6 @@ const columnDefs = [
     field: "transaction_date",
     editable: false,
     cellStyle: { textAlign: "center" },
-    valueFormatter: params => format(new Date(params.value), 'yyyy-MM-dd'),
   },
   {
     headerName: "Item No",

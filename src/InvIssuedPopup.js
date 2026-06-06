@@ -24,7 +24,6 @@ const columnDefs = [
     headerName: "Transaction Date",
     field: "DateIssued",
     editable: false,
-    valueFormatter: params => format(new Date(params.value), 'yyyy-MM-dd'),
   },
   {
     headerName: "Transaction Type",
@@ -97,7 +96,7 @@ const columnDefs = [
 
 const defaultColDef = {
   resizable: true,
-  wrapText: true,
+  wrapText: false,
   sortable: true,
   editable: true,
   // flex: 1,
