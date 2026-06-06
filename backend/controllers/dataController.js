@@ -12610,7 +12610,7 @@ const getPurchaseOrder = async (req, res) => {
 
 
 const getQuotationPeriod = async (req, res) => {
-  const { mode, company_code,Location_Code, StartDate, EndDate, customer_name, customer_addr_1, customer_mobile_no, transaction_no } = req.body;
+  const { mode, company_code,Location_Code,  StartDate, EndDate, customer_name, customer_addr_1, customer_mobile_no, transaction_no } = req.body;
   let pool;
   try {
     const pool = await connection.connectToDatabase();
@@ -12625,7 +12625,7 @@ const getQuotationPeriod = async (req, res) => {
       .input("customer_addr_1", sql.NVarChar, customer_addr_1)
       .input("customer_mobile_no", sql.NVarChar, customer_mobile_no)
       .input("transaction_no", sql.NVarChar, transaction_no)
-      .query(`EXEC sp_quotation_period_Ramya @mode,@company_code,@Location_Code,@StartDate,@EndDate,@customer_name,@customer_addr_1,@customer_mobile_no,@transaction_no`);
+      .query(`EXEC sp_quotation_period @mode,@company_code,@Location_Code, @StartDate,@EndDate,@customer_name,@customer_addr_1,@customer_mobile_no,@transaction_no`);
     if (result.recordset.length > 0) {
       res.status(200).json(result.recordset);
     } else {
@@ -20293,7 +20293,7 @@ const getTaxInvoicePeriod = async (req, res) => {
       .input("billTo_customer_name", sql.NVarChar, billTo_customer_name)
       .input("shipTo_customer_name", sql.NVarChar, shipTo_customer_name)
       .input("ShipTo_customer_addr_1", sql.NVarChar, ShipTo_customer_addr_1)
-      .query(`EXEC sp_tax_invoice_period_Ramya @mode,@company_code,@Location_Code,@Type,@StartDate,@EndDate,@bill_no,@billTo_customer_name,@shipTo_customer_name,@ShipTo_customer_addr_1`);
+      .query(`EXEC sp_tax_invoice_period @mode,@company_code,@Location_Code, @Type,@StartDate,@EndDate,@bill_no,@billTo_customer_name,@shipTo_customer_name,@ShipTo_customer_addr_1`);
     if (result.recordset.length > 0) {
       res.status(200).json(result.recordset);
     } else {
@@ -37491,6 +37491,26 @@ const SiteMaterialBalanceReport = async (req, res) => {
 };
 //Code ended by pavun on 04-06-2026
 
+//Code added by Dinesh Gokul on 06-06-2026
+const getYorN = async (req, res) => {
+  const { company_code } = req.body;
+  try {
+    const pool = await connection.connectToDatabase();
+    const result = await pool
+      .request()
+      .input("company_code", sql.NVarChar, company_code)
+      .query(
+        "EXEC sp_attribute_Info 'F',@company_code,'YorN','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+      );
+
+    res.json(result.recordset);
+  } catch (err) {
+    console.error("Error", err);
+    res.status(500).json({ message: err.message || 'Internal Server Error' });
+  }
+};
+//Code ended by Dinesh Gokul on 06-06-2026
+
 module.exports = {
   login,
   forgetPassword,
@@ -38715,7 +38735,8 @@ module.exports = {
   getExpensesSummarySiteWise,
   SupervisorSiteMaterialReport,
   IncomeExpenseAnalysisReport,
-  SiteMaterialBalanceReport
+  SiteMaterialBalanceReport,
+  getYorN
 
 
 };

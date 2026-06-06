@@ -227,6 +227,7 @@ const TaxInvoiceanalysis = () => {
       const body = {
         mode: period.toString(),
         company_code: sessionStorage.getItem('selectedCompanyCode'),
+        Location_Code: sessionStorage.getItem("selectedLocationCode"),
         Type: invoicetype,
         bill_no: transactionNo,
         billTo_customer_name: customerName,
