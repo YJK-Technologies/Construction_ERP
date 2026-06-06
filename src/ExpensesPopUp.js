@@ -31,15 +31,6 @@ const columnDefs = [
         field: "expense_date",
         editable: false,
         cellStyle: { textAlign: "center" },
-        valueFormatter: (params) => {
-            if (!params.value) return "";
-
-            const date = new Date(params.value);
-
-            return isNaN(date.getTime())
-                ? ""
-                : format(date, "yyyy-MM-dd");
-        },
     },
     {
         headerName: "Expense Type",
