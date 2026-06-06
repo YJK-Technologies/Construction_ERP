@@ -734,7 +734,8 @@ const UnplannedReturn = () => {
         company_code: sessionStorage.getItem('selectedCompanyCode'),
         DateReturned: returnDate,
         Return_Type: returnType,
-        created_by: sessionStorage.getItem('selectedUserCode')
+        created_by: sessionStorage.getItem('selectedUserCode'),
+        Location_Code: sessionStorage.getItem('selectedLocationCode'),
       };
 
       const response = await fetch(`${config.apiBaseUrl}/addInventoryReturnheader`, {
@@ -791,6 +792,7 @@ const UnplannedReturn = () => {
           ApprovalStatus: row.approvalStatus,
           ActionTaken: row.actionTaken,
           Notes: row.notes,
+          Location_Code: sessionStorage.getItem('selectedLocationCode'),
         };
 
         const response = await fetch(`${config.apiBaseUrl}/addInventoryReturndetails`, {
@@ -866,7 +868,7 @@ const UnplannedReturn = () => {
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({ ReturnID: returnId, company_code: sessionStorage.getItem("selectedCompanyCode") })
+        body: JSON.stringify({ ReturnID: returnId, company_code: sessionStorage.getItem("selectedCompanyCode"), Location_Code: sessionStorage.getItem('selectedLocationCode'), })
 
       });
       if (response.ok) {
@@ -887,7 +889,7 @@ const UnplannedReturn = () => {
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({ ReturnID: returnId, company_code: sessionStorage.getItem("selectedCompanyCode") })
+        body: JSON.stringify({ ReturnID: returnId, company_code: sessionStorage.getItem("selectedCompanyCode"), Location_Code: sessionStorage.getItem('selectedLocationCode'), })
       });
       if (response.ok) {
         return true;
@@ -1118,7 +1120,7 @@ const UnplannedReturn = () => {
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({ transaction_no: ReturnID })
+        body: JSON.stringify({ company_code : sessionStorage.getItem('selectedCompanyCode'), transaction_no: ReturnID })
       });
 
       if (response.ok) {
