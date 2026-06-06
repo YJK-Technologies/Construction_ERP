@@ -575,6 +575,7 @@ setRowData([...cleanedRows, totalRow]);
 
 } else {
     setRowData([]);
+    toast.warning("No rows to display");
 }
                 } else if (response.status === 404) {
                     console.log("Data Not Found");

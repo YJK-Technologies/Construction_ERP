@@ -619,9 +619,10 @@ function BankAccInput({ }) {
                   <div class="exp-form-floating">
                     <div class="d-flex justify-content-start">
                       <div>
-                        <label for="rid" class="exp-form-labels">User Account Code</label>
+                        <label for="rid" className={`exp-form-labels ${error && !user_accgroup_code ? 'text-danger' : ''}`}>
+                      User Account Code<span className="text-danger">*</span>
+                    </label>
                       </div>
-                      <div><span className="text-danger">*</span></div>
                     </div>
                     <div title="Select the User Account Code ">
                       <Select
@@ -635,16 +636,19 @@ function BankAccInput({ }) {
                         ref={User}
                         onKeyDown={(e) => handleKeyDown(e, Bank, User)}
                       />
-                      {error && !user_accgroup_code && <div className="text-danger">User Account Code should not be blank</div>}
                     </div>
                   </div>
                 </div>
+
                 <div className="col-md-3 form-group mb-2">
                   <div class="d-flex justify-content-start">
                     <div>
-                      <label for="rid" class="exp-form-labels">Bank Name</label>
                     </div>
-                    <div> <span className="text-danger">*</span></div>
+                    <div>
+                        <label for="rid" className={`exp-form-labels ${error && !account_name ? 'text-danger' : ''}`}>
+                      Bank Name<span className="text-danger">*</span>
+                    </label>
+                      </div>
                   </div>
                   <input
                     id="cusad1"
@@ -659,14 +663,15 @@ function BankAccInput({ }) {
                     ref={Bank}
                     onKeyDown={(e) => handleKeyDown(e, AccountNumber, Bank)}
                   />
-                  {error && !account_name && <div className="text-danger">Accountant Name should not be blank</div>}
                 </div>
+
                 <div className="col-md-3 form-group mb-2">
                   <div class="d-flex justify-content-start">
                     <div>
-                      <label for="rid" class="exp-form-labels">Account Number</label>
-                    </div>
-                    <div><span className="text-danger">*</span></div>
+                        <label for="rid" className={`exp-form-labels ${error && !account_number ? 'text-danger' : ''}`}>
+                      Account Number<span className="text-danger">*</span>
+                    </label>
+                      </div>
                   </div>
                   <input
                     id="bnkaccnum"
@@ -680,8 +685,8 @@ function BankAccInput({ }) {
                     ref={AccountNumber}
                     onKeyDown={(e) => handleKeyDown(e, IFSc, AccountNumber)}
                   />
-                  {error && !account_number && <div className="text-danger">Account Number should not be blank</div>}
                 </div>
+
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
                     <div class="d-flex justify-content-start">
