@@ -269,12 +269,12 @@ const SiteWarehouseMappingScreen = () => {
 
     const handleChangePrimarySc = (selectedIsPrimarySc) => {
         setSelectedIsPrimarySc(selectedIsPrimarySc);
-        setStatusSc(selectedIsPrimarySc ? selectedIsPrimarySc.value : "");
+        setIsPrimarySc(selectedIsPrimarySc ? selectedIsPrimarySc.value : "");
     };
 
     const handleChangeWarehouseCodeSc = (selectedWarehouseCodeSc) => {
         setSelectedWarehouseCodeSc(selectedWarehouseCodeSc);
-        setIsPrimarySc(selectedWarehouseCodeSc ? selectedWarehouseCodeSc.value : "");
+        setWarehouseCodeSc(selectedWarehouseCodeSc ? selectedWarehouseCodeSc.value : "");
     };
 
     useEffect(() => {

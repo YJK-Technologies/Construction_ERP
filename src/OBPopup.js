@@ -34,8 +34,6 @@ const columnDefs = [
     editable: false,
     cellStyle: { textAlign: "center" },
     minWidth: 150,
-    valueFormatter: (params) =>
-      params.value ? format(new Date(params.value), "yyyy-MM-dd") : "",
   },
   {
     headerName: "Party Type",
@@ -84,7 +82,7 @@ const columnDefs = [
 
 const defaultColDef = {
   resizable: true,
-  wrapText: true,
+  wrapText: false,
   sortable: true,
   editable: true,
   flex: 1,

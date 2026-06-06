@@ -213,7 +213,10 @@ export default function StockTransferItemPopup({ open, handleClose, handleItem }
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({ Item_code, Item_variant, Item_name, Item_short_name, Item_Our_Brand, status }) // Send company_no and company_name as search criteria
+        body: JSON.stringify({ Item_code, Item_variant, Item_name, Item_short_name, Item_Our_Brand, status,
+          company_code: sessionStorage.getItem("selectedCompanyCode"),
+          Location_Code: sessionStorage.getItem("selectedLocationCode"),
+        }) // Send company_no and company_name as search criteria
       });
       if (response.ok) {
         const searchData = await response.json();

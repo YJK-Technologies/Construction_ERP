@@ -132,7 +132,10 @@ function StocktransferGrid() {
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({ transaction_date, transaction_type, transaction_no, item_code }) // Send company_no and company_name as search criteria
+        body: JSON.stringify({ transaction_date, transaction_type, transaction_no, item_code ,
+          company_code: sessionStorage.getItem("selectedCompanyCode"),
+          Location_Code: sessionStorage.getItem("selectedLocationCode"),
+        }) // Send company_no and company_name as search criteria
       });
       if (response.ok) {
         const searchData = await response.json();
@@ -438,7 +441,9 @@ function StocktransferGrid() {
         body: JSON.stringify({
           transaction_datesToUpdate: selectedRowsData.map(row => row.transaction_date),
           transaction_nosToUpdate: selectedRowsData.map(row => row.transaction_no),
-          updatedData: selectedRowsData
+          updatedData: selectedRowsData,
+          company_code: sessionStorage.getItem("selectedCompanyCode"),
+          Location_Code: sessionStorage.getItem("selectedLocationCode"),
         }), // Send the selected rows for saving along with their header and detail codes
       });
 
@@ -510,7 +515,10 @@ function StocktransferGrid() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ transaction_datesToDelete, transaction_noToDelete }), // Corrected the key name to match the server-side expectation
+        body: JSON.stringify({ transaction_datesToDelete, transaction_noToDelete,
+          company_code: sessionStorage.getItem("selectedCompanyCode"),
+          Location_Code: sessionStorage.getItem("selectedLocationCode"),
+         }), // Corrected the key name to match the server-side expectation
       });
 
       if (response.ok) {
