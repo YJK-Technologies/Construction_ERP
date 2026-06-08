@@ -203,10 +203,10 @@ function Grid() {
   };
 
   const handleSearch = async () => {
-    if (!month ||
-      !item_code ||
-      !item_variant
-    )
+    if (!month) {
+  toast.warning("Please select a month");
+  return;
+}
       setLoading(true);
     try {
       const response = await fetch(`${config.apiBaseUrl}/getDateWiseItemStock`, {
@@ -218,7 +218,8 @@ function Grid() {
           month,
           item_code: item,
           item_variant: item_variant,
-          company_code: sessionStorage.getItem('selectedCompanyCode')
+          company_code: sessionStorage.getItem('selectedCompanyCode'),
+          Location_Code: sessionStorage.getItem("selectedLocationCode"),
         })
       });
       if (response.ok) {
@@ -588,14 +589,14 @@ function Grid() {
               </h1>
             </div>
             <div className="d-flex justify-content-end purbut me-3">
-              <printbutton className="purbut btn btn-dark mt-3 mb-3 rounded-3" title='excel' onClick={handleExcelDownload}>
-                <i class="fa-solid fa-file-excel"></i>
-              </printbutton>
               {['all permission', 'view'].some(permission => companyPermissions.includes(permission)) && (
                 <printbutton className="purbut btn btn-dark mt-3 mb-3 rounded-3" onClick={generateReport} required title="Generate Report">
                   <i class="fa-solid fa-print"></i>
                 </printbutton>
               )}
+              <printbutton className="purbut btn btn-dark mt-3 mb-3 rounded-3" title='excel' onClick={handleExcelDownload}>
+                <i class="fa-solid fa-file-excel"></i>
+              </printbutton>
             </div>
           </div>
           <div class="mobileview">
@@ -612,16 +613,6 @@ function Grid() {
                     {['all permission', 'view'].some(permission => companyPermissions.includes(permission)) && (
                       <icon
                         class="icon"
-                        onClick={handleExcelDownload}
-                      >
-                        <i class="fa-solid fa-file-excel"></i>
-                      </icon>
-                    )}
-                  </li>
-                  <li class="iconbutton  d-flex justify-content-center ">
-                    {['all permission', 'view'].some(permission => companyPermissions.includes(permission)) && (
-                      <icon
-                        class="icon"
                         onClick={generateReport}
                       >
                         <i class="fa-solid fa-print"></i>
@@ -629,6 +620,16 @@ function Grid() {
                     )}
                   </li>
                 </ul>
+                <li class="iconbutton  d-flex justify-content-center ">
+                    {['all permission', 'view'].some(permission => companyPermissions.includes(permission)) && (
+                      <icon
+                        class="icon"
+                        onClick={handleExcelDownload}
+                      >
+                        <i class="fa-solid fa-file-excel"></i>
+                      </icon>
+                    )}
+                  </li>
               </div>
             </div>
           </div>

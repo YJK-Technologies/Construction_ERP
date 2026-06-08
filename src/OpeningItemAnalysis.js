@@ -251,6 +251,7 @@ function Grid() {
             const body = {
                 Item_code: item,
                 company_code: sessionStorage.getItem("selectedCompanyCode"),
+                Location_Code: sessionStorage.getItem("selectedLocationCode"),
             };
 
             const response = await fetch(`${config.apiBaseUrl}/getOpeningItemPeriod`, {
@@ -338,12 +339,12 @@ function Grid() {
                                         </button>
                                         <ul className="dropdown-menu ">
                                             <li>
-                                                <icon class="iconbutton d-flex justify-content-center" onClick={generateReport}>
+                                                <icon class="iconbutton d-flex justify-content-center" onClick={generateReport} title="Generate Report">
                                                     <i className="fa-solid fa-print"></i>
                                                 </icon>
                                             </li>
                                             <li>
-                                                <icon class="iconbutton d-flex justify-content-center" onClick={handleExportToExcel}>
+                                                <icon class="iconbutton d-flex justify-content-center" onClick={handleExportToExcel} title='excel'>
                                                     <i class="fa-solid fa-file-excel"></i>
                                                 </icon>
                                             </li>
@@ -354,10 +355,10 @@ function Grid() {
                         </div>
                         <div className="purbut">
                             <div className="d-flex justify-content-end me-5">
-                                <button className="btn btn-dark mt-3 mb-3 rounded-3" onClick={generateReport}>
+                                <button className="btn btn-dark mt-3 mb-3 rounded-3" onClick={generateReport} title="Generate Report">
                                     <i className="fa-solid fa-print"></i>
                                 </button>
-                                <button class="btn btn-dark mt-3 mb-3 rounded-3" onClick={handleExportToExcel}>
+                                <button class="btn btn-dark mt-3 mb-3 rounded-3" onClick={handleExportToExcel} title='excel'>
                                     <i class="fa-solid fa-file-excel"></i>
                                 </button>
                             </div>

@@ -432,7 +432,7 @@ const AddAddSiteMasterScreen = () => {
             });
             if (response.ok) {
                 toast.success("Data inserted Successfully", {
-                    onClose: () => clearInputFields()
+                    // onClose: () => clearInputFields()
                 });
             } else {
                 const errorResponse = await response.json();
