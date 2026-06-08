@@ -23,7 +23,6 @@ const columnDefs = [
     headerName: "Transaction Date",
     field: "DateReturned",
     editable: false,
-    valueFormatter: params => format(new Date(params.value), 'yyyy-MM-dd'),
   },
   {
     headerName: "Transaction Type",
@@ -100,7 +99,7 @@ const columnDefs = [
 
 const defaultColDef = {
   resizable: true,
-  wrapText: true,
+  wrapText: false,
   sortable: true,
   editable: true,
   // flex: 1,
@@ -123,7 +122,7 @@ export default function InvReturnPopup({ open, handleClose, InvReturnData }) {
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({ company_code : sessionStorage.getItem('selectedCompanyCode'),ReturnID, DateReturned, Return_Type}) // Send company_no and company_name as search criteria
+        body: JSON.stringify({ company_code : sessionStorage.getItem('selectedCompanyCode'),ReturnID, DateReturned, Return_Type, Location_Code: sessionStorage.getItem('selectedLocationCode'),}) // Send company_no and company_name as search criteria
       });
       if (response.ok) {
         const searchData = await response.json();
