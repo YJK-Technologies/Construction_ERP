@@ -549,10 +549,10 @@ function Grid() {
             </div>
             <div className="purbut">
               <div className="d-flex justify-content-end me-5">
-                <button className="btn btn-dark mt-3 mb-3 rounded-3" onClick={generateReport}>
+                <button className="btn btn-dark mt-3 mb-3 rounded-3" title="Generate Report" onClick={generateReport}>
                   <i className="fa-solid fa-print"></i>
                 </button>
-                <button class="btn btn-dark mt-3 mb-3 rounded-3" onClick={handleExportToExcel}>
+                <button class="btn btn-dark mt-3 mb-3 rounded-3" title="Excel" onClick={handleExportToExcel}>
                   <i class="fa-solid fa-file-excel"></i>
                 </button>
               </div>
