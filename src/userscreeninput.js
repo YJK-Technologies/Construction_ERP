@@ -228,7 +228,7 @@ function UserScreenInput({ }) {
       if (response.ok) {
         console.log("Data updated successfully");
         toast.success("Data updated successfully!", {
-          onClose: () => clearInputFields(),
+          // onClose: () => clearInputFields(),
         });
       } else {
         const errorResponse = await response.json();
