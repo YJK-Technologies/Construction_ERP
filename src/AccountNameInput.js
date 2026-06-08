@@ -524,8 +524,8 @@ function AccNameInput({ }) {
               <div className="col-md-3 form-group ">
                 <div class="exp-form-floating">
                   <div class="">
-                    <label for="rid" class="exp-form-labels">
-                      User Account Code
+                    <label for="rid" className={`exp-form-labels ${error && !user_accgroup_code ? 'text-danger' : ''}`}>
+                      User Account Code<span className="text-danger">*</span>
                     </label>
                       <div title="Select the User Account Code">
                     <Select
@@ -538,22 +538,18 @@ function AccNameInput({ }) {
                       ref={User}
                       onKeyDown={(e) => handleKeyDown(e, Accountant, User)}
                     />
-                    {error && !user_accgroup_code && (
-                      <div className="text-danger">
-                        User Account Code should not be blank
-                      </div>
-                    )}
                   </div>
                   </div>
                 </div>
               </div>
+
               <div className="col-md-3 form-group ">
                 <div class="exp-form-floating">
                   <div class="d-flex justify-content-start">
                     <div>
-                      <label for="rid" class="exp-form-labels">
-                        Accountant Name<span className="text-danger">*</span>
-                      </label>
+                      <label for="rid" className={`exp-form-labels ${error && !account_name ? 'text-danger' : ''}`}>
+                      Accountant Name<span className="text-danger">*</span>
+                    </label>
                     </div>
                   </div>
                   <input
@@ -570,20 +566,16 @@ function AccNameInput({ }) {
                     ref={Accountant}
                     onKeyDown={(e) => handleKeyDown(e, Address1, Accountant)}
                   />
-                  {error && !account_name && (
-                    <div className="text-danger">
-                      Accountant Name should not be blank
-                    </div>
-                  )}
                 </div>
               </div>
+
               <div className="col-md-3 form-group">
                 <div class="exp-form-floating">
                   <div class="d-flex justify-content-start">
                     <div>
-                      <label for="rid" class="exp-form-labels">
-                        Address 1<span className="text-danger">*</span>
-                      </label>
+                      <label for="rid" className={`exp-form-labels ${error && !acc_addr_1 ? 'text-danger' : ''}`}>
+                      Address 1<span className="text-danger">*</span>
+                    </label>
                     </div>
                   </div>
                   <input
@@ -598,18 +590,16 @@ function AccNameInput({ }) {
                     ref={Address1}
                     onKeyDown={(e) => handleKeyDown(e, Address2, Address1)}
                   />
-                  {error && !acc_addr_1 && (
-                    <div className="text-danger">Address should not be blank</div>
-                  )}
                 </div>
               </div>
+
               <div className="col-md-3 form-group ">
                 <div class="exp-form-floating">
                   <div class="d-flex justify-content-start">
                     <div>
-                      <label for="rid" class="exp-form-labels">
-                        Address 2<span className="text-danger">*</span>
-                      </label>
+                      <label for="rid" className={`exp-form-labels ${error && !acc_addr_2 ? 'text-danger' : ''}`}>
+                      Address 2<span className="text-danger">*</span>
+                    </label>
                     </div>
                   </div>
                   <input
@@ -625,9 +615,6 @@ function AccNameInput({ }) {
                     ref={Address2}
                     onKeyDown={(e) => handleKeyDown(e, Address3, Address2)}
                   />
-                  {error && !acc_addr_2 && (
-                    <div className="text-danger">Address should not be blank</div>
-                  )}
                 </div>
               </div>
               <div className="col-md-3 form-group ">
@@ -674,9 +661,9 @@ function AccNameInput({ }) {
                 <div class="exp-form-floating">
                   <div class="d-flex justify-content-start">
                     <div>
-                      <label for="rid" class="exp-form-labels">
-                        City<span className="text-danger">*</span>
-                      </label>
+                      <label for="rid" className={`exp-form-labels ${error && !acc_area_code ? 'text-danger' : ''}`}>
+                      City<span className="text-danger">*</span>
+                    </label>
                     </div>
                   </div>
                    <div title="Select the City"> 
@@ -690,17 +677,15 @@ function AccNameInput({ }) {
                     ref={City}
                     onKeyDown={(e) => handleKeyDown(e, State, City)}
                   />
-                  {error && !acc_area_code && (
-                    <div className="text-danger">City should not be blank</div>
-                  )}
                 </div>
               </div>
               </div>
+
               <div className="col-md-3 form-group ">
                 <div class="exp-form-floating">
-                  <label for="rid" class="exp-form-labels">
-                    State<span className="text-danger">*</span>
-                  </label>
+                  <label for="rid" className={`exp-form-labels ${error && !acc_state_code ? 'text-danger' : ''}`}>
+                      State<span className="text-danger">*</span>
+                    </label>
                    <div title="Select the State"> 
                   <Select
                     id="state"
@@ -712,19 +697,17 @@ function AccNameInput({ }) {
                     ref={State}
                     onKeyDown={(e) => handleKeyDown(e, Country, State)}
                   />
-                  {error && !acc_state_code && (
-                    <div className="text-danger">State should not be blank</div>
-                  )}
                 </div>
               </div>
               </div>
+
               <div className="col-md-3 form-group ">
                 <div class="exp-form-floating">
                   <div class="d-flex justify-content-start">
                     <div>
-                      <label for="rid" class="exp-form-labels">
-                        Country<span className="text-danger">*</span>
-                      </label>
+                      <label for="rid" className={`exp-form-labels ${error && !acc_country_code ? 'text-danger' : ''}`}>
+                      Country<span className="text-danger">*</span>
+                    </label>
                     </div>
                   </div>
                   <div title="Select the Country"> 
@@ -738,19 +721,17 @@ function AccNameInput({ }) {
                     ref={Country}
                     onKeyDown={(e) => handleKeyDown(e, IMEX, Country)}
                   />
-                  {error && !acc_country_code && (
-                    <div className="text-danger">Country should not be blank</div>
-                  )}
                 </div>
                 </div>
               </div>
+
               <div className="col-md-3 form-group mb-2">
                 <div class="exp-form-floating">
                   <div class="d-flex justify-content-start">
                     <div>
-                      <label for="rid" class="exp-form-labels">
-                        IMEX No<span className="text-danger">*</span>
-                      </label>
+                      <label for="rid" className={`exp-form-labels ${error && !acc_imex_no ? 'text-danger' : ''}`}>
+                      IMEX No<span className="text-danger">*</span>
+                    </label>
                     </div>
                   </div>
                   <input
@@ -766,11 +747,9 @@ function AccNameInput({ }) {
                     ref={IMEX}
                     onKeyDown={(e) => handleKeyDown(e, Office, IMEX)}
                   />
-                  {error && !acc_imex_no && (
-                    <div className="text-danger">IMEX No should not be blank</div>
-                  )}
                 </div>
               </div>
+
               <div className="col-md-3 form-group mb-2">
                 <div class="exp-form-floating">
                   <label for="cusoff" class="exp-form-labels">
@@ -811,13 +790,14 @@ function AccNameInput({ }) {
                   />
                 </div>
               </div>
+
               <div className="col-md-3 form-group mb-2">
                 <div class="exp-form-floating">
                   <div class="d-flex justify-content-start">
                     <div>
-                      <label for="rid" class="exp-form-labels">
-                        Mobile No<span className="text-danger">*</span>
-                      </label>
+                      <label for="rid" className={`exp-form-labels ${error && !acc_mobile_no ? 'text-danger' : ''}`}>
+                      Mobile No<span className="text-danger">*</span>
+                    </label>
                     </div>
                   </div>
                   <input
@@ -833,20 +813,16 @@ function AccNameInput({ }) {
                     ref={Mobile}
                     onKeyDown={(e) => handleKeyDown(e, Fax, Mobile)}
                   />
-                  {error && !acc_mobile_no && (
-                    <div className="text-danger">
-                      Mobile Number should not be blank
-                    </div>
-                  )}
                 </div>
               </div>
+
               <div className="col-md-3 form-group mb-2">
                 <div class="exp-form-floating">
                   <div class="d-flex justify-content-start">
                     <div>
-                      <label for="rid" class="exp-form-labels">
-                        Fax No<span className="text-danger">*</span>
-                      </label>
+                      <label for="rid" className={`exp-form-labels ${error && !acc_fax_no ? 'text-danger' : ''}`}>
+                      Fax No<span className="text-danger">*</span>
+                    </label>
                     </div>
                   </div>
                   <input
@@ -862,20 +838,16 @@ function AccNameInput({ }) {
                     ref={Fax}
                     onKeyDown={(e) => handleKeyDown(e, Email, Fax)}
                   />
-                  {error && !acc_fax_no && (
-                    <div className="text-danger">
-                      FAX Number should not be blank
-                    </div>
-                  )}
                 </div>
               </div>
+
               <div className="col-md-3 form-group mb-2">
                 <div class="exp-form-floating">
                   <div class="d-flex justify-content-start">
                     <div>
-                      <label for="rid" class="exp-form-labels">
-                        Email ID<span className="text-danger">*</span>
-                      </label>
+                      <label for="rid" className={`exp-form-labels ${error && !acc_email_id ? 'text-danger' : ''}`}>
+                      Email ID<span className="text-danger">*</span>
+                    </label>
                     </div>
                   </div>
                   <input
@@ -891,18 +863,16 @@ function AccNameInput({ }) {
                     ref={Email}
                     onKeyDown={(e) => handleKeyDown(e, Credit, Email)}
                   />
-                  {error && !validateEmail(acc_email_id) && (
-                    <div className="text-danger">Please Enter Valid Email Id</div>
-                  )}
                 </div>
               </div>
+              
               <div className="col-md-3 form-group mb-2">
                 <div class="exp-form-floating">
                   <div class="d-flex justify-content-start">
                     <div>
-                      <label for="rid" class="exp-form-labels">
-                        Credit Limit<span className="text-danger">*</span>
-                      </label>
+                      <label for="rid" className={`exp-form-labels ${error && !acc_credit_limit ? 'text-danger' : ''}`}>
+                      Credit Limit<span className="text-danger">*</span>
+                    </label>
                     </div>
                   </div>
                   <input
@@ -918,13 +888,9 @@ function AccNameInput({ }) {
                     ref={Credit}
                     onKeyDown={(e) => handleKeyDown(e, Transport, Credit)}
                   />
-                  {error && !acc_credit_limit && (
-                    <div className="text-danger">
-                      Credit Limit should not be blank
-                    </div>
-                  )}
                 </div>
               </div>
+
               <div className="col-md-3 form-group mb-2">
                 <div class="exp-form-floating">
                   <label for="custrans" class="exp-form-labels">
@@ -1006,9 +972,9 @@ function AccNameInput({ }) {
                 <div class="exp-form-floating">
                   <div class="d-flex justify-content-start">
                     <div>
-                      <label for="rid" class="exp-form-labels">
-                        Status<span className="text-danger">*</span>
-                      </label>
+                      <label for="rid" className={`exp-form-labels ${error && !status ? 'text-danger' : ''}`}>
+                      City<span className="text-danger">*</span>
+                    </label>
                     </div>
                   </div>
                   <div title="Select the Status"> 
@@ -1022,9 +988,6 @@ function AccNameInput({ }) {
                     ref={Status}
                     onKeyDown={(e) => handleKeyDown}
                   />
-                  {error && !status && (
-                    <div className="text-danger">Status should not be blank</div>
-                  )}
                 </div>
                 </div>
               </div>
