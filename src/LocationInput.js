@@ -349,7 +349,7 @@ function LocInfoInput({ }) {
       });
       if (response.ok) {
         toast.success("Data updated successfully", {
-          onClose: () => clearInputFields()
+          // onClose: () => clearInputFields()
         });
       } else if (response.status === 400) {
         const errorResponse = await response.json();

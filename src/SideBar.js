@@ -515,7 +515,7 @@ const Sidebar = () => {
                   </Link>
                 )}
               </div>
-              <div className=" ms-3">
+              {/*<div className=" ms-3">
                 {screenType.includes("ValidationGrid") && (
                   <Link
                     to="/ValidationGrid"
@@ -539,7 +539,7 @@ const Sidebar = () => {
                     </div>
                   </Link>
                 )}
-              </div>
+              </div>*/}
             </div>
           </>
         )}
