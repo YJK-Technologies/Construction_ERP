@@ -153,7 +153,7 @@ function Role_input({ }) {
       });
       if (response.ok) {
         toast.success("Data updated successfully", {
-          onClose: () => clearInputFields()
+          // onClose: () => clearInputFields()
         });
       } else {
         const errorResponse = await response.json();

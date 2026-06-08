@@ -22635,7 +22635,6 @@ const getGstReportAnalysis = async (req, res) => {
       .input("Mode", sql.NVarChar, Mode) // Insert mode
       .input("company_code", sql.NVarChar, company_code)
       .input("Location_Code", sql.NVarChar, Location_Code)
-      .input("Location_Code", sql.NVarChar, Location_Code)
       .input("Party", sql.NVarChar, Party)
       .input("StartDate", sql.Date, StartDate)
       .input("EndDate", sql.Date, EndDate)

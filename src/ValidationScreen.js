@@ -166,8 +166,8 @@ function Role_input({ }) {
       });
       if (response.status === 200) {
         console.log("Data Updated successfully");
-        setIsUpdated(true);
-        clearInputFields();
+        // setIsUpdated(true);
+        // clearInputFields();
         toast.success("Data Updated successfully!")
       } else {
         const errorResponse = await response.json();
