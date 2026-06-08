@@ -472,7 +472,7 @@ function BankAccInput({ }) {
       if (response.ok) {
         console.log("Data Updated successfully");
         setIsUpdated(true);
-        clearInputFields();
+        // clearInputFields();
         toast.success("Data Updated successfully!");
       } else {
         const errorResponse = await response.json();
