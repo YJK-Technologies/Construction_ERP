@@ -952,48 +952,6 @@ function CustomerDetInput({ }) {
                   </div>
                 </div>
 
-                <div className="col-md-3 form-group mb-2">
-                  <div class="exp-form-floating">
-                    <label for="rid" className={`exp-form-labels ${error && !customer_credit_limit ? 'text-danger' : ''}`}>
-                      Credit Limit<span className="text-danger">*</span>
-                    </label>
-                    <input
-                      id="cuscre"
-                      class="exp-input-field form-control"
-                      type="number"
-                      placeholder=""
-                      required title="Please enter the credit limit"
-                      value={customer_credit_limit}
-                      onChange={(e) => setcustomer_credit_limit(e.target.value)}
-                      maxLength={18}
-                      ref={Credit}
-                      onKeyDown={(e) => handleKeyDown(e, Transport, Credit)}
-                    />
-                  </div>
-                </div>
-
-                <div className="col-md-3 form-group mb-2">
-                  <div class="exp-form-floating">
-                    <label for="rid" className={`exp-form-labels ${error && !opening_balance ? 'text-danger' : ''}`}>
-                      Opening Balance<span className="text-danger">*</span>
-                    </label>
-                    <input
-                      id="vencre"
-                      class="exp-input-field form-control"
-                      type="number"
-                      placeholder=""
-                      required
-                      title="Please enter the opening balance"
-                      value={opening_balance}
-                      onChange={(e) => setopening_balance(e.target.value)}
-                      maxLength={18}
-                      ref={openingbalance}
-                      onKeyDown={(e) =>
-                        handleKeyDown(e, Transport, openingbalance)
-                      }
-                    />
-                  </div>
-                </div>
 
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
@@ -1016,25 +974,6 @@ function CustomerDetInput({ }) {
                   </div>
                 </div>
 
-                <div className="col-md-3 form-group mb-2">
-                  <div class="exp-form-floating">
-                    <label for="ventrans" className={`exp-form-labels ${error && !balance_type ? 'text-danger' : ''}`}>
-                      Balance Type<span className="text-danger">*</span>
-                    </label>
-                    <div title="Select the Balance Type">
-                      <Select
-                        id="ventrans"
-                        value={selectedBT}
-                        onChange={handleChangeBT}
-                        options={filteredOptionBT}
-                        className="exp-input-field"
-                        placeholder=""
-                        ref={BalanceType}
-                        onKeyDown={(e) => handleKeyDown(e, Salesman, BalanceType)}
-                      />
-                    </div>
-                  </div>
-                </div>
 
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
@@ -1165,6 +1104,81 @@ function CustomerDetInput({ }) {
                   </div>
                 </div>
 
+                <div>
+                  <CustomerHdrInputPopup open={open2} handleClose={handleClose} />
+                </div>
+
+              </div>
+            </div>
+
+            <div className="shadow-lg p-3 bg-body-tertiary rounded  mb-2">
+                <div className="col-md-3 form-group mb-3 mt-3" style={{ width: "150px" }}>
+                    <h6 className=""><strong>Financial Year:</strong></h6>
+                </div>
+                                  <div className="row mb-3 ">
+                  <div className="col-md-3 form-group mb-2">
+                  <div class="exp-form-floating">
+                    <label for="ventrans" className={`exp-form-labels ${error && !balance_type ? 'text-danger' : ''}`}>
+                      Balance Type<span className="text-danger">*</span>
+                    </label>
+                    <div title="Select the Balance Type">
+                      <Select
+                        id="ventrans"
+                        value={selectedBT}
+                        onChange={handleChangeBT}
+                        options={filteredOptionBT}
+                        className="exp-input-field"
+                        placeholder=""
+                        ref={BalanceType}
+                        onKeyDown={(e) => handleKeyDown(e, Salesman, BalanceType)}
+                      />
+                    </div>
+                  </div>
+                  </div>
+
+                <div className="col-md-3 form-group mb-2">
+                  <div class="exp-form-floating">
+                    <label for="rid" className={`exp-form-labels ${error && !customer_credit_limit ? 'text-danger' : ''}`}>
+                      Credit Limit<span className="text-danger">*</span>
+                    </label>
+                    <input
+                      id="cuscre"
+                      class="exp-input-field form-control"
+                      type="number"
+                      placeholder=""
+                      required title="Please enter the credit limit"
+                      value={customer_credit_limit}
+                      onChange={(e) => setcustomer_credit_limit(e.target.value)}
+                      maxLength={18}
+                      ref={Credit}
+                      onKeyDown={(e) => handleKeyDown(e, Transport, Credit)}
+                    />
+                  </div>
+                </div>
+
+                <div className="col-md-3 form-group mb-2">
+                  <div class="exp-form-floating">
+                    <label for="rid" className={`exp-form-labels ${error && !opening_balance ? 'text-danger' : ''}`}>
+                      Opening Balance<span className="text-danger">*</span>
+                    </label>
+                    <input
+                      id="vencre"
+                      class="exp-input-field form-control"
+                      type="number"
+                      placeholder=""
+                      required
+                      title="Please enter the opening balance"
+                      value={opening_balance}
+                      onChange={(e) => setopening_balance(e.target.value)}
+                      maxLength={18}
+                      ref={openingbalance}
+                      onKeyDown={(e) =>
+                        handleKeyDown(e, Transport, openingbalance)
+                      }
+                    />
+                  </div>
+                </div>
+
                 <div class="col-md-3 form-group d-flex justify-content-start p-2">
                   {mode === "create" ? (
                     <button onClick={handleInsert} className="mt-3" title="Save">
@@ -1177,12 +1191,10 @@ function CustomerDetInput({ }) {
                   )}
                 </div>
 
-                <div>
-                  <CustomerHdrInputPopup open={open2} handleClose={handleClose} />
                 </div>
 
-              </div>
             </div>
+            
           </div>
         </div>
       </div>
