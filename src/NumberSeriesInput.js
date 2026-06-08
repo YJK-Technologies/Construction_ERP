@@ -134,7 +134,7 @@ function NumberSeriesInput({ }) {
       });
       if (response.ok) {
         toast.success("Data updated successfully", {
-          onClose: () => clearInputFields()
+          // onClose: () => clearInputFields()
         });
       }
       else {

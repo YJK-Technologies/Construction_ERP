@@ -181,6 +181,7 @@ function AttriDetInput({ }) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
+          company_code: sessionStorage.getItem("selectedCompanyCode"),
           attributeheader_code,
           attributedetails_code,
           attributedetails_name,
@@ -191,7 +192,7 @@ function AttriDetInput({ }) {
       });
       if (response.ok) {
         toast.success("Data updated successfully", {
-          onClose: () => clearInputFields()
+          // onClose: () => clearInputFields()
         });
       } else {
         const errorResponse = await response.json();
