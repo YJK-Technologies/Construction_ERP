@@ -373,8 +373,13 @@ function LocInfoInput({ }) {
   }
 
   const handleNavigate = () => {
-    navigate("/Location"); // Pass selectedRows as props to the Input component
-  };
+  navigate("/Location", {
+    state: {
+      preservedRowData: location.state?.preservedRowData,
+      preservedInputs: location.state?.preservedInputs,
+    },
+  });
+};
 
   const handleKeyDown = async (
     e,

@@ -12,6 +12,7 @@ import Select from "react-select";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import labels from "./Labels";
 import { showConfirmationToast } from './ToastConfirmation';
+import {  useLocation } from "react-router-dom";
 import LoadingScreen from './Loading';
 
 const config = require("./Apiconfig");
@@ -42,11 +43,33 @@ function CompanyMappingGrid() {
   const [createdDate, setCreatedDate] = useState("");
   const [modifiedDate, setModifiedDate] = useState("");
 
+  const location = useLocation();
+
   //code added by Harish purpose of set user permisssion
   const permissions = JSON.parse(sessionStorage.getItem("permissions")) || {};
   const companyMappingPermission = permissions
     .filter((permission) => permission.screen_type === "Company Mapping")
     .map((permission) => permission.permission_type.toLowerCase());
+
+    useEffect(() => {
+  if (location.state?.preservedRowData) {
+    setRowData(location.state.preservedRowData);
+  }
+
+  if (location.state?.preservedInputs) {
+    setuser_code(location.state.preservedInputs.user_code || "");
+    setcompany_no(location.state.preservedInputs.company_no || "");
+    setlocation_no(location.state.preservedInputs.location_no || "");
+    setstatus(location.state.preservedInputs.status || "");
+
+    if (location.state.preservedInputs.status) {
+      setSelectedStatus({
+        label: location.state.preservedInputs.status,
+        value: location.state.preservedInputs.status,
+      });
+    }
+  }
+}, [location.state]);
 
 
   useEffect(() => {
@@ -164,8 +187,18 @@ function CompanyMappingGrid() {
   };
 
   const reloadGridData = () => {
-    window.location.reload();
-  };
+  setuser_code("");
+  setcompany_no("");
+  setlocation_no("");
+  setstatus("");
+  setSelectedStatus(null);
+  setRowData([]);
+
+  navigate("/CompanyMapping", {
+    replace: true,
+    state: {}
+  });
+};
 
   const columnDefs = [
     {
@@ -392,9 +425,11 @@ function CompanyMappingGrid() {
   const handleNavigateToForm = () => {
     navigate("/AddCompanyMapping", { state: { mode: "create" } }); // Pass selectedRows as props to the Input component
   };
-  const handleNavigateWithRowData = (selectedRow) => {
-    navigate("/AddCompanyMapping", { state: { mode: "update", selectedRow } });
-  };
+
+const handleNavigateWithRowData = (selectedRow) => {
+  navigate("/AddCompanyMapping", { state: { mode: "update", selectedRow, preservedRowData: rowData, 
+      preservedInputs: { user_code, company_no, location_no, status } } });
+};
 
   // const onCellValueChanged = (params) => {
   //   const updatedRowData = [...rowData];
