@@ -2,17 +2,18 @@ import React, { useState, useEffect, useRef } from "react";
 import "./input.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useLocation } from "react-router-dom";
-import { ToastContainer, toast } from 'react-toastify';
-import Select from 'react-select'
+import { ToastContainer, toast } from "react-toastify";
+import Select from "react-select";
 import { useNavigate } from "react-router-dom";
-import 'react-toastify/dist/ReactToastify.css';
-import Barcode from 'react-barcode';
-import { useReactToPrint } from 'react-to-print';
-import LoadingScreen from './Loading';
+import "react-toastify/dist/ReactToastify.css";
+import Barcode from "react-barcode";
+import { useReactToPrint } from "react-to-print";
+import DefaultProductImage from "./DefaultIMG/Product.png";
+import LoadingScreen from "./Loading";
 
-const config = require('./Apiconfig');
+const config = require("./Apiconfig");
 
-function ItemInput({ }) {
+function ItemInput({}) {
   const [Item_code, setItem_code] = useState("");
   const inputRef = useRef(null);
   const [Item_variant, setItem_variant] = useState("");
@@ -22,7 +23,10 @@ function ItemInput({ }) {
   const [Item_SecondaryUOM, setItem_SecondaryUOM] = useState("");
   const [Item_short_name, setItem_short_name] = useState("");
   const [Item_Last_salesRate_ExTax, setItem_Last_salesRate_ExTax] = useState(0);
-  const [Item_Last_salesRate_IncludingTax, setItem_Last_salesRate_IncludingTax] = useState(0);
+  const [
+    Item_Last_salesRate_IncludingTax,
+    setItem_Last_salesRate_IncludingTax,
+  ] = useState(0);
   const [Item_std_purch_price, setItem_std_purch_price] = useState("");
   const [Item_std_sales_price, setItem_std_sales_price] = useState("");
   const [Item_stock_code, setItem_stock_code] = useState("");
@@ -43,24 +47,24 @@ function ItemInput({ }) {
   const [uomdrop, setuomdrop] = useState([]);
   const [suomdrop, setsuomdrop] = useState([]);
   const [variantdrop, setvariantdrop] = useState([]);
-  const [selectedvarient, setselectedvarient] = useState('');
+  const [selectedvarient, setselectedvarient] = useState("");
   const [purtaxdrop, setpurtaxdrop] = useState([]);
-  const [selectedpurtax, setselectedpurtax] = useState('');
-  const [selectedOtherpurtax, setselectedOtherpurtax] = useState('');
-  const [selectedOthersaltax, setselectedOthersaltax] = useState('');
+  const [selectedpurtax, setselectedpurtax] = useState("");
+  const [selectedOtherpurtax, setselectedOtherpurtax] = useState("");
+  const [selectedOthersaltax, setselectedOthersaltax] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const [Item_sales_Othertax_type, setItem_sales_Othertax_type] = useState('');
-  const [Othersaltaxdrop, setOthersaltaxdrop] = useState('');
+  const [Item_sales_Othertax_type, setItem_sales_Othertax_type] = useState("");
+  const [Othersaltaxdrop, setOthersaltaxdrop] = useState("");
   const [saltaxdrop, setsaltaxdrop] = useState([]);
   const [otherpurtaxdrop, setotherPurtaxdrop] = useState([]);
-  const [selectedsaltax, setselectedsaltax] = useState('');
+  const [selectedsaltax, setselectedsaltax] = useState("");
   const [selectedRows, setSelectedRows] = useState([]);
-  const [selectedUom, setSelectedUom] = useState('');
-  const [selectedSuom, setSelectedSuom] = useState('');
-  const [selectedRegister, setSelectedRegister] = useState('');
-  const [selectedBrand, setSelectedBrand] = useState('');
-  const [selectedStatus, setSelectedStatus] = useState('');
+  const [selectedUom, setSelectedUom] = useState("");
+  const [selectedSuom, setSelectedSuom] = useState("");
+  const [selectedRegister, setSelectedRegister] = useState("");
+  const [selectedBrand, setSelectedBrand] = useState("");
+  const [selectedStatus, setSelectedStatus] = useState("");
   const [selectedImage, setSelectedImage] = useState(null);
   const navigate = useNavigate();
   const purchaseprice = useRef(null);
@@ -91,12 +95,12 @@ function ItemInput({ }) {
   const CostingMethod = useRef(null);
   const StandardCost = useRef(null);
   const [hasValueChanged, setHasValueChanged] = useState(false);
-  const [barcodeValue, setBarcodeValue] = useState('');
+  const [barcodeValue, setBarcodeValue] = useState("");
   const [barcode, setBarcode] = useState("");
   const [MRPprice, setMRPPrice] = useState(0);
   const [Discount, setDiscount] = useState(0);
 
-  const created_by = sessionStorage.getItem('selectedUserCode')
+  const created_by = sessionStorage.getItem("selectedUserCode");
   const modified_by = sessionStorage.getItem("selectedUserCode");
 
   const [costingMethodDrop, setCostingMethodDrop] = useState([]);
@@ -121,30 +125,30 @@ function ItemInput({ }) {
     setItem_Last_salesRate_IncludingTax(0);
     setItem_Last_salesRate_ExTax(0);
     setItem_short_name("");
-    setSelectedUom('');
-    setSelectedSuom('');
-    setSelectedRegister('');
-    setSelectedBrand('');
-    setSelectedStatus('');
-    setselectedsaltax('');
+    setSelectedUom("");
+    setSelectedSuom("");
+    setSelectedRegister("");
+    setSelectedBrand("");
+    setSelectedStatus("");
+    setselectedsaltax("");
     setSelectedImage(null);
     setItem_image("");
-    setselectedpurtax('');
-    setselectedvarient('');
+    setselectedpurtax("");
+    setselectedvarient("");
     setMRPPrice(0);
     setDiscount(0);
-    setItem_BaseUOM('');
-    setItem_SecondaryUOM('');
-    setItem_Register_Brand('');
-    setItem_Our_Brand('');
-    setStatus('');
-    setItem_sales_Othertax_type('');
-    setItem_sales_tax_type('');
-    setItem_purch_tax_type('');
-    setItem_purch_othertax_type('');
-    setItem_variant('');
-    setselectedOthersaltax('');
-    setselectedOtherpurtax('');
+    setItem_BaseUOM("");
+    setItem_SecondaryUOM("");
+    setItem_Register_Brand("");
+    setItem_Our_Brand("");
+    setStatus("");
+    setItem_sales_Othertax_type("");
+    setItem_sales_tax_type("");
+    setItem_purch_tax_type("");
+    setItem_purch_othertax_type("");
+    setItem_variant("");
+    setselectedOthersaltax("");
+    setselectedOtherpurtax("");
     setStandardCost(0);
     setSelectedCostingMethod("");
     setCostingMethod("");
@@ -161,8 +165,8 @@ function ItemInput({ }) {
 
   useEffect(() => {
     if (mode === "update" && selectedRow) {
-      setBarcodeValue(selectedRow.Barcode_Data || "")
-      setBarcode(selectedRow.Barcode_Data || "")
+      setBarcodeValue(selectedRow.Barcode_Data || "");
+      setBarcode(selectedRow.Barcode_Data || "");
       setItem_code(selectedRow.Item_code || "");
       setItem_name(selectedRow.Item_name || "");
       setItem_wigh(selectedRow.Item_wigh || 0);
@@ -171,7 +175,9 @@ function ItemInput({ }) {
       setItem_stock_code(selectedRow.Item_stock_code || "");
       setItem_std_sales_price(selectedRow.Item_std_sales_price || 0);
       setItem_std_purch_price(selectedRow.Item_std_purch_price || 0);
-      setItem_Last_salesRate_IncludingTax(selectedRow.Item_Last_salesRate_IncludingTax || 0);
+      setItem_Last_salesRate_IncludingTax(
+        selectedRow.Item_Last_salesRate_IncludingTax || 0,
+      );
       setItem_Last_salesRate_ExTax(selectedRow.Item_Last_salesRate_ExTax || 0);
       setItem_short_name(selectedRow.Item_short_name || "");
       setMRPPrice(selectedRow.MRP_Price || 0);
@@ -235,25 +241,26 @@ function ItemInput({ }) {
 
       if (selectedRow.item_images && selectedRow.item_images.data) {
         const base64Image = arrayBufferToBase64(selectedRow.item_images.data);
-        const file = base64ToFile(`data:image/jpeg;base64,${base64Image}`, 'item_images.jpg');
+        const file = base64ToFile(
+          `data:image/jpeg;base64,${base64Image}`,
+          "item_images.jpg",
+        );
         setSelectedImage(`data:image/jpeg;base64,${base64Image}`);
-        setItem_image(file)
+        setItem_image(file);
       } else {
         setSelectedImage(null);
       }
-
     } else if (mode === "create") {
       clearInputFields();
     }
   }, [mode, selectedRow]);
-
 
   const base64ToFile = (base64Data, fileName) => {
     if (!base64Data || !base64Data.startsWith("data:")) {
       throw new Error("Invalid base64 string");
     }
 
-    const parts = base64Data.split(',');
+    const parts = base64Data.split(",");
     if (parts.length !== 2) {
       throw new Error("Base64 string is not properly formatted");
     }
@@ -283,8 +290,7 @@ function ItemInput({ }) {
     if (file) {
       const maxSize = 1 * 1024 * 1024;
       if (file.size > maxSize) {
-
-        toast.error("File size exceeds 1MB. Please upload a smaller file.")
+        toast.error("File size exceeds 1MB. Please upload a smaller file.");
         event.target.value = null;
         return;
       }
@@ -294,133 +300,131 @@ function ItemInput({ }) {
   };
 
   useEffect(() => {
-    const company_code = sessionStorage.getItem('selectedCompanyCode');
+    const company_code = sessionStorage.getItem("selectedCompanyCode");
 
     fetch(`${config.apiBaseUrl}/ourbrand`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify({ company_code })
+      body: JSON.stringify({ company_code }),
     })
       .then((data) => data.json())
       .then((val) => setourbranddrop(val))
-      .catch((error) => console.error('Error fetching data:', error));
+      .catch((error) => console.error("Error fetching data:", error));
   }, []);
 
-
   useEffect(() => {
-    const company_code = sessionStorage.getItem('selectedCompanyCode');
+    const company_code = sessionStorage.getItem("selectedCompanyCode");
 
     fetch(`${config.apiBaseUrl}/regbrand`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify({ company_code })
+      body: JSON.stringify({ company_code }),
     })
       .then((data) => data.json())
       .then((val) => setregbranddrop(val))
-      .catch((error) => console.error('Error fetching data:', error));
+      .catch((error) => console.error("Error fetching data:", error));
   }, []);
 
   useEffect(() => {
-    const company_code = sessionStorage.getItem('selectedCompanyCode');
+    const company_code = sessionStorage.getItem("selectedCompanyCode");
 
     fetch(`${config.apiBaseUrl}/status`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify({ company_code })
+      body: JSON.stringify({ company_code }),
     })
       .then((data) => data.json())
       .then((val) => setStatusdrop(val))
-      .catch((error) => console.error('Error fetching data:', error));
+      .catch((error) => console.error("Error fetching data:", error));
   }, []);
 
   useEffect(() => {
-    const company_code = sessionStorage.getItem('selectedCompanyCode');
+    const company_code = sessionStorage.getItem("selectedCompanyCode");
 
     fetch(`${config.apiBaseUrl}/getSecondaryuom`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify({ company_code })
+      body: JSON.stringify({ company_code }),
     })
       .then((data) => data.json())
       .then((val) => setuomdrop(val))
-      .catch((error) => console.error('Error fetching data:', error));
+      .catch((error) => console.error("Error fetching data:", error));
   }, []);
 
-
   useEffect(() => {
-    const company_code = sessionStorage.getItem('selectedCompanyCode');
+    const company_code = sessionStorage.getItem("selectedCompanyCode");
 
     fetch(`${config.apiBaseUrl}/uom`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify({ company_code })
+      body: JSON.stringify({ company_code }),
     })
       .then((data) => data.json())
       .then((val) => setsuomdrop(val))
-      .catch((error) => console.error('Error fetching data:', error));
+      .catch((error) => console.error("Error fetching data:", error));
   }, []);
 
   useEffect(() => {
-    const company_code = sessionStorage.getItem('selectedCompanyCode');
+    const company_code = sessionStorage.getItem("selectedCompanyCode");
 
     fetch(`${config.apiBaseUrl}/variant`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify({ company_code })
+      body: JSON.stringify({ company_code }),
     })
       .then((data) => data.json())
       .then((val) => setvariantdrop(val))
-      .catch((error) => console.error('Error fetching data:', error));
+      .catch((error) => console.error("Error fetching data:", error));
   }, []);
 
   useEffect(() => {
-    const company_code = sessionStorage.getItem('selectedCompanyCode');
+    const company_code = sessionStorage.getItem("selectedCompanyCode");
 
     fetch(`${config.apiBaseUrl}/getCostingMethods`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify({ company_code })
+      body: JSON.stringify({ company_code }),
     })
       .then((data) => data.json())
       .then((val) => setCostingMethodDrop(val))
-      .catch((error) => console.error('Error fetching data:', error));
+      .catch((error) => console.error("Error fetching data:", error));
   }, []);
 
   useEffect(() => {
-    const company_code = sessionStorage.getItem('selectedCompanyCode');
+    const company_code = sessionStorage.getItem("selectedCompanyCode");
 
     const fetchsaltaxtype = async () => {
       try {
         const response = await fetch(`${config.apiBaseUrl}/gettaxitemsales`, {
-          method: 'POST',
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
           body: JSON.stringify({ company_code }),
         });
 
         if (!response.ok) {
-          throw new Error('Network response was not ok');
+          throw new Error("Network response was not ok");
         }
 
         const val = await response.json();
         setsaltaxdrop(val);
       } catch (error) {
-        console.error('Error fetching departments:', error);
+        console.error("Error fetching departments:", error);
       }
     };
     if (company_code) {
@@ -429,26 +433,26 @@ function ItemInput({ }) {
   }, []);
 
   useEffect(() => {
-    const company_code = sessionStorage.getItem('selectedCompanyCode');
+    const company_code = sessionStorage.getItem("selectedCompanyCode");
 
     const fetchsaltaxtype = async () => {
       try {
         const response = await fetch(`${config.apiBaseUrl}/getotherpurtax`, {
-          method: 'POST',
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
           body: JSON.stringify({ company_code }),
         });
 
         if (!response.ok) {
-          throw new Error('Network response was not ok');
+          throw new Error("Network response was not ok");
         }
 
         const val = await response.json();
         setotherPurtaxdrop(val);
       } catch (error) {
-        console.error('Error fetching departments:', error);
+        console.error("Error fetching departments:", error);
       }
     };
     if (company_code) {
@@ -457,26 +461,26 @@ function ItemInput({ }) {
   }, []);
 
   useEffect(() => {
-    const company_code = sessionStorage.getItem('selectedCompanyCode');
+    const company_code = sessionStorage.getItem("selectedCompanyCode");
 
     const fetchsaltaxtype = async () => {
       try {
         const response = await fetch(`${config.apiBaseUrl}/getothersalestax`, {
-          method: 'POST',
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
           body: JSON.stringify({ company_code }),
         });
 
         if (!response.ok) {
-          throw new Error('Network response was not ok');
+          throw new Error("Network response was not ok");
         }
 
         const val = await response.json();
         setOthersaltaxdrop(val);
       } catch (error) {
-        console.error('Error fetching departments:', error);
+        console.error("Error fetching departments:", error);
       }
     };
     if (company_code) {
@@ -484,28 +488,27 @@ function ItemInput({ }) {
     }
   }, []);
 
-
   useEffect(() => {
-    const company_code = sessionStorage.getItem('selectedCompanyCode');
+    const company_code = sessionStorage.getItem("selectedCompanyCode");
 
     const fetchpurtaxtype = async () => {
       try {
         const response = await fetch(`${config.apiBaseUrl}/gettaxitempur`, {
-          method: 'POST',
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
           body: JSON.stringify({ company_code }),
         });
 
         if (!response.ok) {
-          throw new Error('Network response was not ok');
+          throw new Error("Network response was not ok");
         }
 
         const val = await response.json();
         setpurtaxdrop(val);
       } catch (error) {
-        console.error('Error fetching departments:', error);
+        console.error("Error fetching departments:", error);
       }
     };
     if (company_code) {
@@ -515,135 +518,135 @@ function ItemInput({ }) {
 
   const filteredOptionOthertaxitemsales = Array.isArray(Othersaltaxdrop)
     ? Othersaltaxdrop.map((option) => ({
-      value: option.Other_Sales_tax_type,
-      label: option.Other_Sales_tax_type,
-    }))
+        value: option.Other_Sales_tax_type,
+        label: option.Other_Sales_tax_type,
+      }))
     : [];
 
   const filteredOptionRegister = Array.isArray(regbranddrop)
     ? regbranddrop.map((option) => ({
-      value: option.attributedetails_name,
-      label: option.attributedetails_name,
-    }))
+        value: option.attributedetails_name,
+        label: option.attributedetails_name,
+      }))
     : [];
 
   const filteredOptionBrand = Array.isArray(ourbranddrop)
     ? ourbranddrop.map((option) => ({
-      value: option.attributedetails_name,
-      label: option.attributedetails_name,
-    }))
+        value: option.attributedetails_name,
+        label: option.attributedetails_name,
+      }))
     : [];
 
   const filteredOptionStatus = Array.isArray(statusdrop)
     ? statusdrop.map((option) => ({
-      value: option.attributedetails_name,
-      label: option.attributedetails_name,
-    }))
+        value: option.attributedetails_name,
+        label: option.attributedetails_name,
+      }))
     : [];
 
   const filteredOptionuom = Array.isArray(uomdrop)
     ? uomdrop.map((option) => ({
-      value: option.attributedetails_name,
-      label: option.attributedetails_name,
-    }))
+        value: option.attributedetails_name,
+        label: option.attributedetails_name,
+      }))
     : [];
 
   const filteredOptionSuom = Array.isArray(suomdrop)
     ? suomdrop.map((option) => ({
-      value: option.attributedetails_name,
-      label: option.attributedetails_name,
-    }))
+        value: option.attributedetails_name,
+        label: option.attributedetails_name,
+      }))
     : [];
 
   const filteredOptionVariant = Array.isArray(variantdrop)
     ? variantdrop.map((option) => ({
-      value: option.attributedetails_name,
-      label: option.attributedetails_name,
-    }))
+        value: option.attributedetails_name,
+        label: option.attributedetails_name,
+      }))
     : [];
 
   const filteredOptiontaxitemsales = Array.isArray(saltaxdrop)
     ? saltaxdrop.map((option) => ({
-      value: option.tax_type,
-      label: option.tax_type,
-    }))
+        value: option.tax_type,
+        label: option.tax_type,
+      }))
     : [];
 
   const filteredOptiontaxitempur = Array.isArray(purtaxdrop)
     ? purtaxdrop.map((option) => ({
-      value: option.tax_type,
-      label: option.tax_type,
-    }))
+        value: option.tax_type,
+        label: option.tax_type,
+      }))
     : [];
 
   const filteredOptionothertaxitempur = Array.isArray(otherpurtaxdrop)
     ? otherpurtaxdrop.map((option) => ({
-      value: option.Other_purch_tax_type,
-      label: option.Other_purch_tax_type,
-    }))
+        value: option.Other_purch_tax_type,
+        label: option.Other_purch_tax_type,
+      }))
     : [];
 
   const filteredOptionCostingMethod = Array.isArray(costingMethodDrop)
     ? costingMethodDrop.map((option) => ({
-      value: option.attributedetails_name,
-      label: option.attributedetails_name,
-    }))
+        value: option.attributedetails_name,
+        label: option.attributedetails_name,
+      }))
     : [];
 
   const handleChangeRegister = (selectedRegister) => {
     setSelectedRegister(selectedRegister);
-    setItem_Register_Brand(selectedRegister ? selectedRegister.value : '');
+    setItem_Register_Brand(selectedRegister ? selectedRegister.value : "");
   };
 
   const handleChangeBrand = (selectedBrand) => {
     setSelectedBrand(selectedBrand);
-    setItem_Our_Brand(selectedBrand ? selectedBrand.value : '');
+    setItem_Our_Brand(selectedBrand ? selectedBrand.value : "");
   };
 
   const handleChangeStatus = (selectedStatus) => {
     setSelectedStatus(selectedStatus);
-    setStatus(selectedStatus ? selectedStatus.value : '');
+    setStatus(selectedStatus ? selectedStatus.value : "");
   };
 
   const handleChangeUom = (selectedUom) => {
     setSelectedUom(selectedUom);
-    setItem_BaseUOM(selectedUom ? selectedUom.value : '');
+    setItem_BaseUOM(selectedUom ? selectedUom.value : "");
     // setItem_wigh(1000);
   };
 
   const handleChangeSuom = (selectedSuom) => {
     setSelectedSuom(selectedSuom);
-    setItem_SecondaryUOM(selectedSuom ? selectedSuom.value : '');
+    setItem_SecondaryUOM(selectedSuom ? selectedSuom.value : "");
   };
 
   const handleChangeVariant = (selectedvarient) => {
     setselectedvarient(selectedvarient);
-    setItem_variant(selectedvarient ? selectedvarient.value : '');
+    setItem_variant(selectedvarient ? selectedvarient.value : "");
   };
 
   const handleChangesaltax = (selectedsaltax) => {
     setselectedsaltax(selectedsaltax);
-    setItem_sales_Othertax_type(selectedsaltax ? selectedsaltax.value : '');
+    setItem_sales_Othertax_type(selectedsaltax ? selectedsaltax.value : "");
   };
 
   const handleChangeOthersaltax = (selectedsaltax) => {
     setselectedOthersaltax(selectedsaltax);
-    setItem_sales_tax_type(selectedsaltax ? selectedsaltax.value : '');
+    setItem_sales_tax_type(selectedsaltax ? selectedsaltax.value : "");
   };
 
   const handleChangepurtax = (selectedpurtax) => {
     setselectedpurtax(selectedpurtax);
-    setItem_purch_tax_type(selectedpurtax ? selectedpurtax.value : '');
+    setItem_purch_tax_type(selectedpurtax ? selectedpurtax.value : "");
   };
 
   const handleChangeotherpurtax = (selectedpurtax) => {
     setselectedOtherpurtax(selectedpurtax);
-    setItem_purch_othertax_type(selectedpurtax ? selectedpurtax.value : '');
+    setItem_purch_othertax_type(selectedpurtax ? selectedpurtax.value : "");
   };
 
   const handleChangeCostingMethod = (selectedCostingMethod) => {
     setSelectedCostingMethod(selectedCostingMethod);
-    setCostingMethod(selectedCostingMethod ? selectedCostingMethod.value : '');
+    setCostingMethod(selectedCostingMethod ? selectedCostingMethod.value : "");
   };
 
   const handleInsert = async () => {
@@ -676,7 +679,10 @@ function ItemInput({ }) {
 
     try {
       const formData = new FormData();
-      formData.append("company_code", sessionStorage.getItem('selectedCompanyCode'));
+      formData.append(
+        "company_code",
+        sessionStorage.getItem("selectedCompanyCode"),
+      );
       formData.append("Item_code", Item_code);
       formData.append("Item_variant", Item_variant);
       formData.append("Item_name", Item_name);
@@ -685,7 +691,10 @@ function ItemInput({ }) {
       formData.append("Item_SecondaryUOM", Item_SecondaryUOM);
       formData.append("Item_short_name", Item_short_name);
       formData.append("Item_Last_salesRate_ExTax", Item_Last_salesRate_ExTax);
-      formData.append("Item_Last_salesRate_IncludingTax", Item_Last_salesRate_IncludingTax);
+      formData.append(
+        "Item_Last_salesRate_IncludingTax",
+        Item_Last_salesRate_IncludingTax,
+      );
       formData.append("Item_std_purch_price", Item_std_purch_price);
       formData.append("Item_std_sales_price", Item_std_sales_price);
       formData.append("Item_stock_code", Item_stock_code);
@@ -703,7 +712,7 @@ function ItemInput({ }) {
       formData.append("discount_Percentage", Discount);
       formData.append("standard_cost", standardCost);
       formData.append("costing_methods", costingMethod);
-      formData.append("created_by", sessionStorage.getItem('selectedUserCode'));
+      formData.append("created_by", sessionStorage.getItem("selectedUserCode"));
 
       if (item_images) {
         formData.append("item_images", item_images); // Appending the image file
@@ -716,7 +725,7 @@ function ItemInput({ }) {
 
       if (response.ok) {
         toast.success("Data inserted Successfully", {
-          onClose: () => clearInputFields()
+          onClose: () => clearInputFields(),
         });
       } else {
         const errorResponse = await response.json();
@@ -725,14 +734,20 @@ function ItemInput({ }) {
       }
     } catch (error) {
       console.error("Error inserting data:", error);
-      toast.error('Error inserting data: ' + error.message);
+      toast.error("Error inserting data: " + error.message);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleKeyDown = async (e, nextFieldRef, value, hasValueChanged, setHasValueChanged) => {
-    if (e.key === 'Enter') {
+  const handleKeyDown = async (
+    e,
+    nextFieldRef,
+    value,
+    hasValueChanged,
+    setHasValueChanged,
+  ) => {
+    if (e.key === "Enter") {
       // Check if the value has changed and handle the search logic
       if (hasValueChanged) {
         await handleKeyDownStatus(e); // Trigger the search function
@@ -749,17 +764,16 @@ function ItemInput({ }) {
   };
 
   const handleKeyDownStatus = async (e) => {
-    if (e.key === 'Enter' && hasValueChanged) { // Only trigger search if the value has changed
+    if (e.key === "Enter" && hasValueChanged) {
+      // Only trigger search if the value has changed
       // Trigger the search function
       setHasValueChanged(false); // Reset the flag after search
     }
   };
 
-
   const handleNavigate = () => {
     navigate("/Item"); // Pass selectedRows as props to the Input component
   };
-
 
   const handleUpdate = async () => {
     if (
@@ -791,7 +805,10 @@ function ItemInput({ }) {
 
     try {
       const formData = new FormData();
-      formData.append("company_code", sessionStorage.getItem('selectedCompanyCode'));
+      formData.append(
+        "company_code",
+        sessionStorage.getItem("selectedCompanyCode"),
+      );
       formData.append("Item_code", Item_code);
       formData.append("Item_variant", Item_variant);
       formData.append("Item_name", Item_name);
@@ -800,7 +817,10 @@ function ItemInput({ }) {
       formData.append("Item_SecondaryUOM", Item_SecondaryUOM);
       formData.append("Item_short_name", Item_short_name);
       formData.append("Item_Last_salesRate_ExTax", Item_Last_salesRate_ExTax);
-      formData.append("Item_Last_salesRate_IncludingTax", Item_Last_salesRate_IncludingTax);
+      formData.append(
+        "Item_Last_salesRate_IncludingTax",
+        Item_Last_salesRate_IncludingTax,
+      );
       formData.append("Item_std_purch_price", Item_std_purch_price);
       formData.append("Item_std_sales_price", Item_std_sales_price);
       formData.append("Item_stock_code", Item_stock_code);
@@ -817,7 +837,7 @@ function ItemInput({ }) {
       formData.append("status", status);
       formData.append("standard_cost", standardCost);
       formData.append("costing_methods", costingMethod);
-      formData.append("created_by", sessionStorage.getItem('selectedUserCode'));
+      formData.append("created_by", sessionStorage.getItem("selectedUserCode"));
 
       if (item_images) {
         formData.append("item_images", item_images); // Appending the image file
@@ -839,7 +859,7 @@ function ItemInput({ }) {
       }
     } catch (error) {
       console.error("Error inserting data:", error);
-      toast.error('Error inserting data: ' + error.message);
+      toast.error("Error inserting data: " + error.message);
     } finally {
       setLoading(false);
     }
@@ -856,7 +876,6 @@ function ItemInput({ }) {
       setBarcodeValue(false); 
     }
   };
-
 
   const componentRef = useRef();
 
@@ -876,17 +895,17 @@ function ItemInput({ }) {
 
   useEffect(() => {
     const handleScan = (e) => {
-      if (e.key === 'Enter') {
+      if (e.key === "Enter") {
         setItem_code(e.target.value);
       }
     };
     if (inputRef.current) {
       inputRef.current.focus();
-      inputRef.current.addEventListener('keydown', handleScan);
+      inputRef.current.addEventListener("keydown", handleScan);
     }
     return () => {
       if (inputRef.current) {
-        inputRef.current.removeEventListener('keydown', handleScan);
+        inputRef.current.removeEventListener("keydown", handleScan);
       }
     };
   }, []);
@@ -903,7 +922,6 @@ function ItemInput({ }) {
   return (
     <div class="container-fluid Topnav-screen ">
       <div className="">
-
         <div class="">
           {loading && <LoadingScreen />}
 
@@ -913,24 +931,34 @@ function ItemInput({ }) {
             theme="colored"
           />
           <div className="shadow-lg p-0 bg-body-tertiary rounded ">
-            <div className=" mb-0 d-flex justify-content-between" >
-              <h1 align="left" class="purbut">{mode === 'update' ? 'Update Item' : 'Add Item'}</h1>
-              <h1 align="left" class="mobileview fs-4">{mode === 'update' ? 'Update Item' : 'Add Item'}</h1>
+            <div className=" mb-0 d-flex justify-content-between">
+              <h1 align="left" class="purbut">
+                {mode === "update" ? "Update Item" : "Add Item"}
+              </h1>
+              <h1 align="left" class="mobileview fs-4">
+                {mode === "update" ? "Update Item" : "Add Item"}
+              </h1>
 
-              <button onClick={handleNavigate} className=" btn btn-danger shadow-none rounded-0 h-70 fs-5" required title="Close">
+              <button
+                onClick={handleNavigate}
+                className=" btn btn-danger shadow-none rounded-0 h-70 fs-5"
+                required
+                title="Close"
+              >
                 <i class="fa-solid fa-xmark"></i>
               </button>
             </div>
-
           </div>
 
           <div class="pt-2 mb-4">
-
             <div className="shadow-lg p-3 bg-body-tertiary rounded  mb-2">
               <div class="row">
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
-                    <label for="state" className={`exp-form-labels ${error && !Item_code ? 'text-danger' : ''}`}>
+                    <label
+                      for="state"
+                      className={`exp-form-labels ${error && !Item_code ? "text-danger" : ""}`}
+                    >
                       Code<span className="text-danger">*</span>
                     </label>
                     <input
@@ -938,7 +966,8 @@ function ItemInput({ }) {
                       class="exp-input-field form-control"
                       type="text"
                       placeholder=""
-                      required title="Please enter the code"
+                      required
+                      title="Please enter the code"
                       value={Item_code}
                       onChange={(e) => setItem_code(e.target.value)}
                       maxLength={18}
@@ -951,7 +980,10 @@ function ItemInput({ }) {
 
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
-                    <label for="state" className={`exp-form-labels ${error && !Item_variant ? 'text-danger' : ''}`}>
+                    <label
+                      for="state"
+                      className={`exp-form-labels ${error && !Item_variant ? "text-danger" : ""}`}
+                    >
                       Variant<span className="text-danger">*</span>
                     </label>
                     <div title="Select the Variant">
@@ -975,7 +1007,10 @@ function ItemInput({ }) {
 
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
-                    <label for="state" className={`exp-form-labels ${error && !Item_name ? 'text-danger' : ''}`}>
+                    <label
+                      for="state"
+                      className={`exp-form-labels ${error && !Item_name ? "text-danger" : ""}`}
+                    >
                       Name<span className="text-danger">*</span>
                     </label>
                     <input
@@ -983,7 +1018,8 @@ function ItemInput({ }) {
                       class="exp-input-field form-control"
                       type="text"
                       placeholder=""
-                      required title="Please enter the name"
+                      required
+                      title="Please enter the name"
                       value={Item_name}
                       onChange={(e) => setItem_name(e.target.value)}
                       maxLength={40}
@@ -1004,7 +1040,8 @@ function ItemInput({ }) {
                       class="exp-input-field form-control"
                       type="text"
                       placeholder=""
-                      required title="Please enter the short name"
+                      required
+                      title="Please enter the short name"
                       value={Item_short_name}
                       onChange={(e) => setItem_short_name(e.target.value)}
                       maxLength={50}
@@ -1016,7 +1053,10 @@ function ItemInput({ }) {
 
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
-                    <label for="state" className={`exp-form-labels ${error && !Item_BaseUOM ? 'text-danger' : ''}`}>
+                    <label
+                      for="state"
+                      className={`exp-form-labels ${error && !Item_BaseUOM ? "text-danger" : ""}`}
+                    >
                       Base UOM <span className="text-danger">*</span>
                     </label>
                     <div title="Select the Base UOM">
@@ -1030,7 +1070,9 @@ function ItemInput({ }) {
                         placeholder=""
                         maxLength={60}
                         ref={baseuom}
-                        onKeyDown={(e) => handleKeyDown(e, seceondoryuom, baseuom)}
+                        onKeyDown={(e) =>
+                          handleKeyDown(e, seceondoryuom, baseuom)
+                        }
                       />
                     </div>
                   </div>
@@ -1038,7 +1080,10 @@ function ItemInput({ }) {
 
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
-                    <label for="state" className={`exp-form-labels ${error && !Item_SecondaryUOM ? 'text-danger' : ''}`}>
+                    <label
+                      for="state"
+                      className={`exp-form-labels ${error && !Item_SecondaryUOM ? "text-danger" : ""}`}
+                    >
                       Procurement Unit<span className="text-danger">*</span>
                     </label>
                     <div title="Select the Secondary UOM">
@@ -1052,7 +1097,9 @@ function ItemInput({ }) {
                         placeholder=""
                         maxLength={60}
                         ref={seceondoryuom}
-                        onKeyDown={(e) => handleKeyDown(e, shortname, seceondoryuom)}
+                        onKeyDown={(e) =>
+                          handleKeyDown(e, shortname, seceondoryuom)
+                        }
                       />
                     </div>
                   </div>
@@ -1062,12 +1109,14 @@ function ItemInput({ }) {
                   <div class="exp-form-floating">
                     <label for="Iweight" class="exp-form-labels">
                       Conversion Factor
-                    </label><input
+                    </label>
+                    <input
                       id="weight"
                       class="exp-input-field form-control"
                       type="Number"
                       placeholder=""
-                      required title="Please enter the weight"
+                      required
+                      title="Please enter the weight"
                       value={Item_wigh}
                       onChange={(e) => setItem_wigh(e.target.value)}
                       maxLength={20}
@@ -1087,9 +1136,12 @@ function ItemInput({ }) {
                       class="exp-input-field form-control"
                       type="Number"
                       placeholder=""
-                      required title="Please enter the without tax"
+                      required
+                      title="Please enter the without tax"
                       value={Item_Last_salesRate_ExTax}
-                      onChange={(e) => setItem_Last_salesRate_ExTax(e.target.value)}
+                      onChange={(e) =>
+                        setItem_Last_salesRate_ExTax(e.target.value)
+                      }
                       maxLength={20}
                       ref={withouttax}
                       onKeyDown={(e) => handleKeyDown(e, withtax, withouttax)}
@@ -1107,19 +1159,27 @@ function ItemInput({ }) {
                       class="exp-input-field form-control"
                       type="Number"
                       placeholder=""
-                      required title="Please enter the with tax"
+                      required
+                      title="Please enter the with tax"
                       value={Item_Last_salesRate_IncludingTax}
-                      onChange={(e) => setItem_Last_salesRate_IncludingTax(e.target.value)}
+                      onChange={(e) =>
+                        setItem_Last_salesRate_IncludingTax(e.target.value)
+                      }
                       maxLength={20}
                       ref={withtax}
-                      onKeyDown={(e) => handleKeyDown(e, purchaseprice, withtax)}
+                      onKeyDown={(e) =>
+                        handleKeyDown(e, purchaseprice, withtax)
+                      }
                     />
                   </div>
                 </div>
 
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
-                    <label for="state" className={`exp-form-labels ${error && !Item_std_purch_price ? 'text-danger' : ''}`}>
+                    <label
+                      for="state"
+                      className={`exp-form-labels ${error && !Item_std_purch_price ? "text-danger" : ""}`}
+                    >
                       Purchase Price<span className="text-danger">*</span>
                     </label>
                     <input
@@ -1127,19 +1187,25 @@ function ItemInput({ }) {
                       class="exp-input-field form-control"
                       type="number"
                       placeholder=""
-                      required title="Please enter the purchase price"
+                      required
+                      title="Please enter the purchase price"
                       value={Item_std_purch_price}
                       onChange={(e) => setItem_std_purch_price(e.target.value)}
                       maxLength={20}
                       ref={purchaseprice}
-                      onKeyDown={(e) => handleKeyDown(e, salesprice, purchaseprice)}
+                      onKeyDown={(e) =>
+                        handleKeyDown(e, salesprice, purchaseprice)
+                      }
                     />
                   </div>
                 </div>
 
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
-                    <label for="state" className={`exp-form-labels ${error && !Item_std_sales_price ? 'text-danger' : ''}`}>
+                    <label
+                      for="state"
+                      className={`exp-form-labels ${error && !Item_std_sales_price ? "text-danger" : ""}`}
+                    >
                       Sales Price<span className="text-danger">*</span>
                     </label>
                     <input
@@ -1147,7 +1213,8 @@ function ItemInput({ }) {
                       class="exp-input-field form-control"
                       type="number"
                       placeholder=""
-                      required title="Please enter the sales price"
+                      required
+                      title="Please enter the sales price"
                       value={Item_std_sales_price}
                       onChange={(e) => setItem_std_sales_price(e.target.value)}
                       maxLength={20}
@@ -1159,7 +1226,10 @@ function ItemInput({ }) {
 
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
-                    <label for="state" className={`exp-form-labels ${error && !MRPprice ? 'text-danger' : ''}`}>
+                    <label
+                      for="state"
+                      className={`exp-form-labels ${error && !MRPprice ? "text-danger" : ""}`}
+                    >
                       MRP Price<span className="text-danger">*</span>
                     </label>
                     <input
@@ -1167,7 +1237,8 @@ function ItemInput({ }) {
                       class="exp-input-field form-control"
                       type="number"
                       placeholder=""
-                      required title="Please enter the MRP price"
+                      required
+                      title="Please enter the MRP price"
                       value={MRPprice}
                       onChange={(e) => setMRPPrice(e.target.value)}
                       maxLength={20}
@@ -1187,20 +1258,27 @@ function ItemInput({ }) {
                       class="exp-input-field form-control"
                       type="number"
                       placeholder=""
-                      required title="Please enter the Discount Percentage"
+                      required
+                      title="Please enter the Discount Percentage"
                       value={Discount}
                       onChange={(e) => setDiscount(e.target.value)}
                       maxLength={20}
                       ref={discount}
-                      onKeyDown={(e) => handleKeyDown(e, Lpurchasetaxtype, discount)}
+                      onKeyDown={(e) =>
+                        handleKeyDown(e, Lpurchasetaxtype, discount)
+                      }
                     />
                   </div>
                 </div>
 
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
-                    <label for="state" className={`exp-form-labels ${error && !Item_purch_tax_type ? 'text-danger' : ''}`}>
-                      Local Purchase Tax Type<span className="text-danger">*</span>
+                    <label
+                      for="state"
+                      className={`exp-form-labels ${error && !Item_purch_tax_type ? "text-danger" : ""}`}
+                    >
+                      Local Purchase Tax Type
+                      <span className="text-danger">*</span>
                     </label>
                     <div title="Select the Local Purchase Tax Type ">
                       <Select
@@ -1213,7 +1291,9 @@ function ItemInput({ }) {
                         placeholder=""
                         maxLength={18}
                         ref={Lpurchasetaxtype}
-                        onKeyDown={(e) => handleKeyDown(e, Opurchasetaxtype, Lpurchasetaxtype)}
+                        onKeyDown={(e) =>
+                          handleKeyDown(e, Opurchasetaxtype, Lpurchasetaxtype)
+                        }
                       />
                     </div>
                   </div>
@@ -1221,8 +1301,12 @@ function ItemInput({ }) {
 
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
-                    <label for="state" className={`exp-form-labels ${error && !Item_purch_othertax_type ? 'text-danger' : ''}`}>
-                      Other Purchase Tax Type<span className="text-danger">*</span>
+                    <label
+                      for="state"
+                      className={`exp-form-labels ${error && !Item_purch_othertax_type ? "text-danger" : ""}`}
+                    >
+                      Other Purchase Tax Type
+                      <span className="text-danger">*</span>
                     </label>
                     <div title="Select the Other Purchase Tax Type ">
                       <Select
@@ -1235,7 +1319,9 @@ function ItemInput({ }) {
                         placeholder=""
                         maxLength={18}
                         ref={Opurchasetaxtype}
-                        onKeyDown={(e) => handleKeyDown(e, Lsalestaxtype, Opurchasetaxtype)}
+                        onKeyDown={(e) =>
+                          handleKeyDown(e, Lsalestaxtype, Opurchasetaxtype)
+                        }
                       />
                     </div>
                   </div>
@@ -1243,7 +1329,10 @@ function ItemInput({ }) {
 
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
-                    <label for="state" className={`exp-form-labels ${error && !Item_sales_tax_type ? 'text-danger' : ''}`}>
+                    <label
+                      for="state"
+                      className={`exp-form-labels ${error && !Item_sales_tax_type ? "text-danger" : ""}`}
+                    >
                       Local Sales Tax Type<span className="text-danger">*</span>
                     </label>
                     <div title="Select the Local Sales Tax Type ">
@@ -1257,7 +1346,9 @@ function ItemInput({ }) {
                         placeholder=""
                         maxLength={18}
                         ref={Lsalestaxtype}
-                        onKeyDown={(e) => handleKeyDown(e, Osalestaxtype, Lsalestaxtype)}
+                        onKeyDown={(e) =>
+                          handleKeyDown(e, Osalestaxtype, Lsalestaxtype)
+                        }
                       />
                     </div>
                   </div>
@@ -1265,7 +1356,10 @@ function ItemInput({ }) {
 
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
-                    <label for="state" className={`exp-form-labels ${error && !Item_sales_Othertax_type ? 'text-danger' : ''}`}>
+                    <label
+                      for="state"
+                      className={`exp-form-labels ${error && !Item_sales_Othertax_type ? "text-danger" : ""}`}
+                    >
                       Other Sales Tax Type<span className="text-danger">*</span>
                     </label>
                     <div title="Select the Other Sales Tax Type ">
@@ -1279,7 +1373,9 @@ function ItemInput({ }) {
                         placeholder=""
                         maxLength={18}
                         ref={Osalestaxtype}
-                        onKeyDown={(e) => handleKeyDown(e, stockcode, Osalestaxtype)}
+                        onKeyDown={(e) =>
+                          handleKeyDown(e, stockcode, Osalestaxtype)
+                        }
                       />
                     </div>
                   </div>
@@ -1295,7 +1391,8 @@ function ItemInput({ }) {
                       class="exp-input-field form-control"
                       type="text"
                       placeholder=""
-                      required title="Please enter the stock code"
+                      required
+                      title="Please enter the stock code"
                       value={Item_stock_code}
                       onChange={(e) => setItem_stock_code(e.target.value)}
                       maxLength={10}
@@ -1315,7 +1412,8 @@ function ItemInput({ }) {
                       class="exp-input-field form-control"
                       type="text"
                       placeholder=""
-                      required title="Please enter the stock type"
+                      required
+                      title="Please enter the stock type"
                       value={Item_stock_type}
                       onChange={(e) => setItem_stock_type(e.target.value)}
                       maxLength={50}
@@ -1327,7 +1425,10 @@ function ItemInput({ }) {
 
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
-                    <label for="state" className={`exp-form-labels ${error && !hsn ? 'text-danger' : ''}`}>
+                    <label
+                      for="state"
+                      className={`exp-form-labels ${error && !hsn ? "text-danger" : ""}`}
+                    >
                       HSN Code<span className="text-danger">*</span>
                     </label>
                     <input
@@ -1335,7 +1436,8 @@ function ItemInput({ }) {
                       class="exp-input-field form-control"
                       type="text"
                       placeholder=""
-                      required title="Please enter the HSN code"
+                      required
+                      title="Please enter the HSN code"
                       value={hsn}
                       onChange={(e) => sethsn(e.target.value)}
                       maxLength={6}
@@ -1347,7 +1449,10 @@ function ItemInput({ }) {
 
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
-                    <label for="state" className={`exp-form-labels ${error && !Item_Register_Brand ? 'text-danger' : ''}`}>
+                    <label
+                      for="state"
+                      className={`exp-form-labels ${error && !Item_Register_Brand ? "text-danger" : ""}`}
+                    >
                       Register Brand<span className="text-danger">*</span>
                     </label>
                     <div title="Select the Register Brand ">
@@ -1369,7 +1474,10 @@ function ItemInput({ }) {
 
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
-                    <label for="state" className={`exp-form-labels ${error && !Item_Our_Brand ? 'text-danger' : ''}`}>
+                    <label
+                      for="state"
+                      className={`exp-form-labels ${error && !Item_Our_Brand ? "text-danger" : ""}`}
+                    >
                       Our Brand<span className="text-danger">*</span>
                     </label>
                     <div title="Select the Our Brand ">
@@ -1391,7 +1499,10 @@ function ItemInput({ }) {
 
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
-                    <label for="state" className={`exp-form-labels ${error && !status ? 'text-danger' : ''}`}>
+                    <label
+                      for="state"
+                      className={`exp-form-labels ${error && !status ? "text-danger" : ""}`}
+                    >
                       Status<span className="text-danger">*</span>
                     </label>
                     <div title="Select the Our Brand ">
@@ -1416,7 +1527,8 @@ function ItemInput({ }) {
                     <label for="locno" class="exp-form-labels">
                       Image
                     </label>
-                    <input type="file"
+                    <input
+                      type="file"
                       class="exp-input-field form-control"
                       accept="image/*"
                       onChange={handleFileSelect}
@@ -1426,18 +1538,18 @@ function ItemInput({ }) {
                   </div>
                 </div>
 
-                {selectedImage && (
-                  <div className="col-md-3 form-group mb-2">
-                    <div class="exp-form-floating">
-                      <img
-                        src={selectedImage}
-                        alt="Selected Preview"
-                        className="avatar rounded sm mt-4"
-                        style={{ height: '200px', width: '200px' }}
-                      />
-                    </div>
+                <div className="col-md-3 form-group mb-2">
+                    
+                  <div className="image-preview-frame">
+                          
+                    <img
+                      src={selectedImage || DefaultProductImage}
+                      alt="Selected Preview"
+                      className="preview-image"
+                    />
+                      
                   </div>
-                )}
+                </div>
 
                 <div className="col-md-3 form-group mb-2">
                   <div className="exp-form-floating">
@@ -1481,7 +1593,10 @@ function ItemInput({ }) {
 
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
-                    <label for="state" className={`exp-form-labels ${error && !standardCost ? 'text-danger' : ''}`}>
+                    <label
+                      for="state"
+                      className={`exp-form-labels ${error && !standardCost ? "text-danger" : ""}`}
+                    >
                       Standard Cost<span className="text-danger">*</span>
                     </label>
                     <input
@@ -1489,19 +1604,25 @@ function ItemInput({ }) {
                       class="exp-input-field form-control"
                       type="text"
                       placeholder=""
-                      required title="Please enter the HSN code"
+                      required
+                      title="Please enter the HSN code"
                       value={standardCost}
                       onChange={handleStandardCostChange}
                       maxLength={6}
                       ref={StandardCost}
-                      onKeyDown={(e) => handleKeyDown(e, CostingMethod, StandardCost)}
+                      onKeyDown={(e) =>
+                        handleKeyDown(e, CostingMethod, StandardCost)
+                      }
                     />
                   </div>
                 </div>
 
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
-                    <label for="state" className={`exp-form-labels ${error && !costingMethod ? 'text-danger' : ''}`}>
+                    <label
+                      for="state"
+                      className={`exp-form-labels ${error && !costingMethod ? "text-danger" : ""}`}
+                    >
                       Costing Methods<span className="text-danger">*</span>
                     </label>
                     <div title="Select the Register Brand ">
@@ -1516,7 +1637,7 @@ function ItemInput({ }) {
                         maxLength={30}
                         ref={CostingMethod}
                         onKeyDown={(e) => {
-                          if (e.key === 'Enter') {
+                          if (e.key === "Enter") {
                             if (mode === "create") {
                               handleInsert();
                             } else {
@@ -1531,13 +1652,20 @@ function ItemInput({ }) {
 
                 <div class="col-md-3 form-group">
                   <div class="d-flex justify-content-start ">
-
                     {mode === "create" ? (
-                      <button onClick={handleInsert} className="mt-4" title="Save">
+                      <button
+                        onClick={handleInsert}
+                        className="mt-4"
+                        title="Save"
+                      >
                         <i class="fa-solid fa-floppy-disk"></i>
                       </button>
                     ) : (
-                      <button onClick={handleUpdate} className="mt-4" title="Update">
+                      <button
+                        onClick={handleUpdate}
+                        className="mt-4"
+                        title="Update"
+                      >
                         <i class="fa-solid fa-floppy-disk"></i>
                       </button>
                     )}
@@ -1560,7 +1688,6 @@ function ItemInput({ }) {
         </div>
       </div>
     </div>
-
   );
 }
 export default ItemInput;

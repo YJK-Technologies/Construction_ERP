@@ -1,65 +1,71 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { AgGridReact } from 'ag-grid-react';
-import 'ag-grid-community/styles/ag-grid.css';
-import 'ag-grid-community/styles/ag-theme-alpine.css';
+import React, { useState, useEffect, useRef } from "react";
+import { AgGridReact } from "ag-grid-react";
+import "ag-grid-community/styles/ag-grid.css";
+import "ag-grid-community/styles/ag-theme-alpine.css";
 import "ag-grid-enterprise";
 import "./apps.css";
 import "./input.css";
 import "bootstrap/dist/css/bootstrap.min.css";
-import 'ag-grid-autocomplete-editor/dist/main.css';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import Select from 'react-select'
+import "ag-grid-autocomplete-editor/dist/main.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import Select from "react-select";
 import "./mobile.css";
-import './mobile.css';
-import * as XLSX from 'xlsx';
-import ProductItemPopup from './ProductItemPopup';
-import ProductPopup from './ProductPopup';
-import labels from './Labels';
-import { toast } from 'react-toastify';
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import { faPlus, faMinus } from '@fortawesome/free-solid-svg-icons';
-import { showConfirmationToast } from './ToastConfirmation';
-import ProductImagePopup from './ProductImageUpdate'
-import LoadingScreen from './Loading';
+import "./mobile.css";
+import * as XLSX from "xlsx";
+import ProductItemPopup from "./ProductItemPopup";
+import ProductPopup from "./ProductPopup";
+import labels from "./Labels";
+import { toast } from "react-toastify";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { faPlus, faMinus } from "@fortawesome/free-solid-svg-icons";
+import { showConfirmationToast } from "./ToastConfirmation";
+import ProductImagePopup from "./ProductImageUpdate";
+import DefaultProductImage from "./DefaultIMG/Product.png";
+import LoadingScreen from "./Loading";
 
-const config = require('./Apiconfig');
+const config = require("./Apiconfig");
 
 const Product = () => {
-
   //code added by Pavun purpose of set user permisssion
-  const permissions = JSON.parse(sessionStorage.getItem('permissions')) || {};
+  const permissions = JSON.parse(sessionStorage.getItem("permissions")) || {};
   const returnPermission = permissions
-    .filter(permission => permission.screen_type === 'Product')
-    .map(permission => permission.permission_type.toLowerCase());
+    .filter((permission) => permission.screen_type === "Product")
+    .map((permission) => permission.permission_type.toLowerCase());
 
-  const [rowData, setRowData] = useState([{
-    itemCode: '', itemName: '', quantity: 0, ItemSno: 1
-  }]);
-  const [activeTable, setActiveTable] = useState('myTable');
-  const [global, setGlobal] = useState(null)
-  const [globalItem, setGlobalItem] = useState(null)
-  const [returnDate, setReturnDate] = useState('');
-  const [returnId, setReturnId] = useState('');
+  const [rowData, setRowData] = useState([
+    {
+      itemCode: "",
+      itemName: "",
+      quantity: 0,
+      ItemSno: 1,
+    },
+  ]);
+  const [activeTable, setActiveTable] = useState("myTable");
+  const [global, setGlobal] = useState(null);
+  const [globalItem, setGlobalItem] = useState(null);
+  const [returnDate, setReturnDate] = useState("");
+  const [returnId, setReturnId] = useState("");
   const [statusdrop, setStatusdrop] = useState([]);
   const [error, setError] = useState("");
   const [showExcelButton, setShowExcelButton] = useState(false);
   const [saveButtonVisible, setSaveButtonVisible] = useState(true);
-  const [selectedStatus, setSelectedStatus] = useState('');
-  const [selectedTax, setselectedTax] = useState('');
+  const [selectedStatus, setSelectedStatus] = useState("");
+  const [selectedTax, setselectedTax] = useState("");
   const [status, setStatus] = useState("");
   const [taxType, setTaxType] = useState("");
-  const [productCode, setProductCode] = useState('');
-  const [productName, setProductName] = useState('');
-  const [description, setDescription] = useState('');
+  const [productCode, setProductCode] = useState("");
+  const [productName, setProductName] = useState("");
+  const [description, setDescription] = useState("");
   const [saltaxdrop, setsaltaxdrop] = useState([]);
   const [unitPrice, setUnitPrice] = useState("");
   const [Datastatus, setDatastatus] = useState(0);
-  const [user_images, setuser_image] = useState('');
-  const [selectedsaltax, setselectedsaltax] = useState('');
-  const [Item_sales_Othertax_type, setItem_sales_Othertax_type] = useState('');
-  const [Othersaltaxdrop, setOthersaltaxdrop] = useState('');
-  const [selectedImage, setSelectedImage] = useState('default-placeholder.png');
+  const [user_images, setuser_image] = useState("");
+  const [selectedsaltax, setselectedsaltax] = useState("");
+  const [Item_sales_Othertax_type, setItem_sales_Othertax_type] = useState("");
+  const [Othersaltaxdrop, setOthersaltaxdrop] = useState("");
+  // const [selectedImage, setSelectedImage] = useState('default-placeholder.png');
+  const [selectedImage, setSelectedImage] = useState(DefaultProductImage);
   const [updateButtonVisible, setUpdateButtonVisible] = useState(false);
   const [loading, setLoading] = useState(false);
   const [additionalData, setAdditionalData] = useState({
@@ -67,37 +73,35 @@ const Product = () => {
     created_by: "",
     modified_date: "",
     created_date: "",
-  })
+  });
   const [hovered, setHovered] = useState(false);
-  const [HSN, setHSNcode] = useState('');
+  const [HSN, setHSNcode] = useState("");
 
   const handleClick = () => {
     setOpen2(true);
   };
 
-
-
   useEffect(() => {
-    const company_code = sessionStorage.getItem('selectedCompanyCode');
+    const company_code = sessionStorage.getItem("selectedCompanyCode");
 
     const fetchsaltaxtype = async () => {
       try {
         const response = await fetch(`${config.apiBaseUrl}/getothersalestax`, {
-          method: 'POST',
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
           body: JSON.stringify({ company_code }),
         });
 
         if (!response.ok) {
-          throw new Error('Network response was not ok');
+          throw new Error("Network response was not ok");
         }
 
         const val = await response.json();
         setOthersaltaxdrop(val);
       } catch (error) {
-        console.error('Error fetching departments:', error);
+        console.error("Error fetching departments:", error);
       }
     };
     if (company_code) {
@@ -105,27 +109,25 @@ const Product = () => {
     }
   }, []);
 
-
   useEffect(() => {
-    const company_code = sessionStorage.getItem('selectedCompanyCode');
+    const company_code = sessionStorage.getItem("selectedCompanyCode");
 
     fetch(`${config.apiBaseUrl}/status`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify({ company_code })
+      body: JSON.stringify({ company_code }),
     })
       .then((data) => data.json())
       .then((val) => setStatusdrop(val));
   }, []);
 
-
   useEffect(() => {
     fetch(`${config.apiBaseUrl}/gettaxitemsales`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         company_code: sessionStorage.getItem("selectedCompanyCode"),
@@ -138,38 +140,38 @@ const Product = () => {
 
   const filteredOptionStatus = Array.isArray(statusdrop)
     ? statusdrop.map((option) => ({
-      value: option.attributedetails_name,
-      label: option.attributedetails_name,
-    }))
+        value: option.attributedetails_name,
+        label: option.attributedetails_name,
+      }))
     : [];
 
   const filteredOptionTax = Array.isArray(saltaxdrop)
     ? saltaxdrop.map((option) => ({
-      value: option.tax_type,
-      label: option.tax_type,
-    }))
+        value: option.tax_type,
+        label: option.tax_type,
+      }))
     : [];
 
   const filteredOptionOthertaxitemsales = Array.isArray(Othersaltaxdrop)
     ? Othersaltaxdrop.map((option) => ({
-      value: option.Other_Sales_tax_type,
-      label: option.Other_Sales_tax_type,
-    }))
+        value: option.Other_Sales_tax_type,
+        label: option.Other_Sales_tax_type,
+      }))
     : [];
 
   const handleChangeStatus = (selectedStatus) => {
     setSelectedStatus(selectedStatus);
-    setStatus(selectedStatus ? selectedStatus.value : '');
+    setStatus(selectedStatus ? selectedStatus.value : "");
   };
 
   const handleChangeTax = (selectedsaltax) => {
     setselectedTax(selectedsaltax);
-    setTaxType(selectedsaltax ? selectedsaltax.value : '');
+    setTaxType(selectedsaltax ? selectedsaltax.value : "");
   };
 
   const handleChangesaltax = (selectedsaltax) => {
     setselectedsaltax(selectedsaltax);
-    setItem_sales_Othertax_type(selectedsaltax ? selectedsaltax.value : '');
+    setItem_sales_Othertax_type(selectedsaltax ? selectedsaltax.value : "");
   };
 
   const handleToggleTable = (table) => {
@@ -179,43 +181,41 @@ const Product = () => {
   const handleDelete = (params) => {
     const ItemSno = params.data.ItemSno;
 
-    const updatedRowData = rowData.filter(row => row.ItemSno !== ItemSno);
+    const updatedRowData = rowData.filter((row) => row.ItemSno !== ItemSno);
 
     setRowData(updatedRowData);
 
     if (updatedRowData.length === 0) {
       const newRow = {
         ItemSno: 1,
-        itemCode: '',
-        itemName: '',
-        warehouse: '',
-        supplier: '',
-        quantityReturned: '',
-        reasonForReturn: '',
-        condition: '',
-        processedBy: '',
-        approvalStatus: '',
-        actionTaken: '',
-        notes: '',
+        itemCode: "",
+        itemName: "",
+        warehouse: "",
+        supplier: "",
+        quantityReturned: "",
+        reasonForReturn: "",
+        condition: "",
+        processedBy: "",
+        approvalStatus: "",
+        actionTaken: "",
+        notes: "",
       };
       setRowData([newRow]);
-    }
-    else {
+    } else {
       const updatedRowDataWithNewSerials = updatedRowData.map((row, index) => ({
         ...row,
-        ItemSno: index + 1
+        ItemSno: index + 1,
       }));
       setRowData(updatedRowDataWithNewSerials);
     }
   };
-
 
   const handleCellValueChanged = (params) => {
     const { colDef, rowIndex, newValue } = params;
     const lastRowIndex = rowData.length - 1;
 
     // Check if the change occurred in the purchaseQty field
-    if (colDef.field === 'quantity') {
+    if (colDef.field === "quantity") {
       const quantity = parseFloat(newValue);
 
       // Check if the entered quantity is positive and the row is the last one
@@ -223,15 +223,15 @@ const Product = () => {
         const ItemSno = rowData.length + 1;
         const newRowData = {
           ItemSno,
-          itemCode: '',
-          itemName: '',
+          itemCode: "",
+          itemName: "",
           quantity: 0,
-          TotalTaxAmount: '',
-          TotalItemAmount: '',
-          description: '',
+          TotalTaxAmount: "",
+          TotalItemAmount: "",
+          description: "",
         };
 
-        setRowData(prevRowData => [...prevRowData, newRowData]);
+        setRowData((prevRowData) => [...prevRowData, newRowData]);
       }
     }
   };
@@ -242,16 +242,19 @@ const Product = () => {
       const response = await fetch(`${config.apiBaseUrl}/getitemcodepurdata`, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({ Item_code: params.data.itemCode, company_code: sessionStorage.getItem("selectedCompanyCode") })
+        body: JSON.stringify({
+          Item_code: params.data.itemCode,
+          company_code: sessionStorage.getItem("selectedCompanyCode"),
+        }),
       });
 
       if (response.ok) {
         const searchData = await response.json();
-        const updatedRow = rowData.map(row => {
+        const updatedRow = rowData.map((row) => {
           if (row.itemCode === params.data.itemCode) {
-            const matchedItem = searchData.find(item => item.id === row.id);
+            const matchedItem = searchData.find((item) => item.id === row.id);
             if (matchedItem) {
               return {
                 ...row,
@@ -270,20 +273,20 @@ const Product = () => {
         setRowData(updatedRow);
         console.log(updatedRow);
       } else if (response.status === 404) {
-        toast.warning("Data Not Found")
+        toast.warning("Data Not Found");
 
         // Remove text from the field
-        const updatedRowData = rowData.map(row => {
+        const updatedRowData = rowData.map((row) => {
           if (row.itemCode === params.data.itemCode) {
             return {
               ...row,
-              itemCode: '', // Clear the itemCode field
-              itemName: '',
+              itemCode: "", // Clear the itemCode field
+              itemName: "",
               unitWeight: 0,
               purchaseAmt: 0,
-              taxType: '',
-              taxDetails: '',
-              taxPer: '',
+              taxType: "",
+              taxDetails: "",
+              taxPer: "",
             };
           }
           return row;
@@ -299,12 +302,12 @@ const Product = () => {
 
   //Item Popup
   const handleClickOpen = (params) => {
-    const GlobalSerialNumber = params.data.ItemSno
-    setGlobal(GlobalSerialNumber)
-    const GlobalItem = params.data.itemCode
-    setGlobalItem(GlobalItem)
+    const GlobalSerialNumber = params.data.ItemSno;
+    setGlobal(GlobalSerialNumber);
+    const GlobalItem = params.data.itemCode;
+    setGlobalItem(GlobalItem);
     setOpen(true);
-    console.log('Opening popup...');
+    console.log("Opening popup...");
   };
 
   //Item Name Popup
@@ -319,7 +322,6 @@ const Product = () => {
   };
 
   function qtyValueSetter(params) {
-
     if (!params.data.itemCode || params.data.itemCode.trim() === "") {
       toast.warning("Please select a itemCode before entering the quantity.");
       return false;
@@ -327,7 +329,11 @@ const Product = () => {
 
     const newValue = parseFloat(params.newValue);
 
-    if (isNaN(newValue) || params.newValue.toString().trim() === '' || params.newValue.toString().match(/[^0-9.]/)) {
+    if (
+      isNaN(newValue) ||
+      params.newValue.toString().trim() === "" ||
+      params.newValue.toString().match(/[^0-9.]/)
+    ) {
       toast.warning("Please enter a valid numeric quantity.");
       return false;
     }
@@ -341,31 +347,38 @@ const Product = () => {
     return true;
   }
 
-
   const columnDefs = [
     {
-      headerName: 'S.No',
-      field: 'ItemSno',
+      headerName: "S.No",
+      field: "ItemSno",
       minWidth: 80,
-      sortable: false
+      sortable: false,
     },
     {
-      headerName: '',
-      field: 'delete',
+      headerName: "",
+      field: "delete",
       editable: false,
       maxWidth: 50,
-      tooltipValueGetter: (p) =>
-        "Delete",
+      tooltipValueGetter: (p) => "Delete",
       onCellClicked: handleDelete,
       cellRenderer: function (params) {
-        return <FontAwesomeIcon icon="fa-solid fa-trash" style={{ cursor: 'pointer', marginRight: "12px" }} />
+        return (
+          <FontAwesomeIcon
+            icon="fa-solid fa-trash"
+            style={{ cursor: "pointer", marginRight: "12px" }}
+          />
+        );
       },
-      cellStyle: { display: 'flex', justifyContent: 'center', alignItems: 'center' },
-      sortable: false
+      cellStyle: {
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+      },
+      sortable: false,
     },
     {
-      headerName: 'Item Code',
-      field: 'itemCode',
+      headerName: "Item Code",
+      field: "itemCode",
       editable: true,
       filter: true,
       // minWidth: 300,
@@ -378,34 +391,42 @@ const Product = () => {
       sortable: false,
     },
     {
-      headerName: 'Item Name',
-      field: 'itemName',
+      headerName: "Item Name",
+      field: "itemName",
       editable: false,
       filter: true,
       // minWidth: 480,
       cellEditorParams: {
         maxLength: 40,
       },
-      sortable: false
+      sortable: false,
     },
     {
-      headerName: '',
-      field: 'Search',
+      headerName: "",
+      field: "Search",
       editable: true,
       maxWidth: 50,
-      tooltipValueGetter: (params) =>
-        "Item Help",
+      tooltipValueGetter: (params) => "Item Help",
       onCellClicked: handleClickOpen,
       cellRenderer: function () {
-        return <FontAwesomeIcon icon="fa-solid fa-magnifying-glass-plus" style={{ cursor: 'pointer', marginRight: "12px" }} />
+        return (
+          <FontAwesomeIcon
+            icon="fa-solid fa-magnifying-glass-plus"
+            style={{ cursor: "pointer", marginRight: "12px" }}
+          />
+        );
       },
-      cellStyle: { display: 'flex', justifyContent: 'center', alignItems: 'center' },
+      cellStyle: {
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+      },
       sortable: false,
-      filter: false
+      filter: false,
     },
     {
-      headerName: 'Qty',
-      field: 'quantity',
+      headerName: "Qty",
+      field: "quantity",
       editable: true,
       filter: true,
       // minWidth: 130,
@@ -444,10 +465,15 @@ const Product = () => {
   const handleItem = async (selectedData) => {
     console.log("Selected Data:", selectedData);
     let updatedRowDataCopy = [...rowData];
-    let highestSerialNumber = updatedRowDataCopy.reduce((max, row) => Math.max(max, row.ItemSno), 0);
+    let highestSerialNumber = updatedRowDataCopy.reduce(
+      (max, row) => Math.max(max, row.ItemSno),
+      0,
+    );
 
-    selectedData.map(item => {
-      const existingItemWithSameCode = updatedRowDataCopy.find(row => row.ItemSno === global && row.itemCode === globalItem);
+    selectedData.map((item) => {
+      const existingItemWithSameCode = updatedRowDataCopy.find(
+        (row) => row.ItemSno === global && row.itemCode === globalItem,
+      );
 
       if (existingItemWithSameCode) {
         console.log("if", existingItemWithSameCode);
@@ -458,8 +484,7 @@ const Product = () => {
         existingItemWithSameCode.TaxName = item.taxDetails;
         existingItemWithSameCode.TaxPercentage = item.taxPer;
         return true;
-      }
-      else {
+      } else {
         console.log("else");
         highestSerialNumber += 1;
         const newRow = {
@@ -469,7 +494,7 @@ const Product = () => {
           unitWeight: item.unitWeight,
           TaxType: item.taxType,
           TaxName: item.taxDetails,
-          TaxPercentage: item.taxPer
+          TaxPercentage: item.taxPer,
         };
         updatedRowDataCopy.push(newRow); // Push the new row to the updatedRowDataCopy
         return true;
@@ -493,7 +518,7 @@ const Product = () => {
     }
 
     const filteredRowData = rowData.filter((row) => {
-      return row.itemCode && row.itemCode.trim() !== '' && row.quantity > 0;
+      return row.itemCode && row.itemCode.trim() !== "" && row.quantity > 0;
     });
 
     if (filteredRowData.length === 0) {
@@ -505,7 +530,10 @@ const Product = () => {
 
     try {
       const formData = new FormData();
-      formData.append("company_code", sessionStorage.getItem('selectedCompanyCode'));
+      formData.append(
+        "company_code",
+        sessionStorage.getItem("selectedCompanyCode"),
+      );
       formData.append("Product_Code", productCode);
       formData.append("Product_name", productName);
       formData.append("status", status);
@@ -514,7 +542,7 @@ const Product = () => {
       formData.append("tax_type", taxType);
       formData.append("Other_sales_taxtype", Item_sales_Othertax_type);
       formData.append("HSN_code", HSN);
-      formData.append("created_by", sessionStorage.getItem('selectedUserCode'));
+      formData.append("created_by", sessionStorage.getItem("selectedUserCode"));
 
       if (user_images) {
         formData.append("Product_img", user_images); // Appending the image file
@@ -529,40 +557,36 @@ const Product = () => {
         const [{ Datastatus }] = searchData;
         setDatastatus(Datastatus);
 
-
-        await productDetails(Datastatus);  // Ensure Datastatus is correctly passed here
+        await productDetails(Datastatus); // Ensure Datastatus is correctly passed here
 
         toast.success("Data Inserted Successfully");
 
         console.log("Product Data inserted successfully");
       } else {
         const errorResponse = await response.json();
-        toast.warning(errorResponse.message || "Failed to insert Purchase data");
+        toast.warning(
+          errorResponse.message || "Failed to insert Purchase data",
+        );
         console.error(errorResponse.details || errorResponse.message);
       }
     } catch (error) {
       console.error("Error inserting data:", error);
-      toast.error('Error inserting data: ' + error.message);
-    }
-    finally {
+      toast.error("Error inserting data: " + error.message);
+    } finally {
       setLoading(false);
     }
   };
 
-
-
-
   const productDetails = async (Datastatus) => {
-
     try {
-      const validRows = rowData.filter(row =>
-        row.itemCode && row.itemName && row.quantity > 0
+      const validRows = rowData.filter(
+        (row) => row.itemCode && row.itemName && row.quantity > 0,
       );
 
       for (const row of validRows) {
         const Details = {
-          company_code: sessionStorage.getItem('selectedCompanyCode'),
-          created_by: sessionStorage.getItem('selectedUserCode'),
+          company_code: sessionStorage.getItem("selectedCompanyCode"),
+          created_by: sessionStorage.getItem("selectedUserCode"),
           datastatus: Datastatus, // Ensure it's here
           item_code: row.itemCode,
           item_name: row.itemName,
@@ -570,7 +594,7 @@ const Product = () => {
           Product_name: productName,
           Product_Code: productCode,
           status: status,
-          Item_SNo: row.ItemSno
+          Item_SNo: row.ItemSno,
         };
 
         const response = await fetch(`${config.apiBaseUrl}/addProductDetail`, {
@@ -591,10 +615,9 @@ const Product = () => {
       }
     } catch (error) {
       console.error("Error inserting data:", error);
-      toast.error('Error inserting data: ' + error.message);
+      toast.error("Error inserting data: " + error.message);
     }
   };
-
 
   const handleDeleteButtonClick = async () => {
     if (!productCode) {
@@ -609,14 +632,13 @@ const Product = () => {
           const detailResult = await ProductDetailDelete();
           const headerResult = await ProductHeaderDelete();
 
-
           if (headerResult === true && detailResult === true) {
             console.log("All API calls completed successfully");
             toast.success("Data Deleted Successfully", {
               autoClose: true,
               onClose: () => {
                 window.location.reload();
-              }
+              },
             });
           } else {
             const errorMessage =
@@ -630,29 +652,41 @@ const Product = () => {
           }
         } catch (error) {
           console.error("Error executing API calls:", error);
-          toast.warning(error.message || "An Error occured while Deleting Data");
+          toast.warning(
+            error.message || "An Error occured while Deleting Data",
+          );
         }
       },
       () => {
         toast.info("Data deleted cancelled.");
-      }
+      },
     );
   };
 
   const ProductHeaderDelete = async () => {
     try {
-      const response = await fetch(`${config.apiBaseUrl}/productdeletehdrData`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
+      const response = await fetch(
+        `${config.apiBaseUrl}/productdeletehdrData`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            Product_Code: productCode,
+            company_code: sessionStorage.getItem("selectedCompanyCode"),
+          }),
         },
-        body: JSON.stringify({ Product_Code: productCode, company_code: sessionStorage.getItem('selectedCompanyCode') }),
-      });
+      );
       if (response.ok) {
-        return true
+        return true;
       } else {
         const errorResponse = await response.json();
-        return errorResponse.details || errorResponse.message || "Failed to delete header.";
+        return (
+          errorResponse.details ||
+          errorResponse.message ||
+          "Failed to delete header."
+        );
       }
     } catch (error) {
       return "Error deleting header: " + error.message;
@@ -661,18 +695,28 @@ const Product = () => {
 
   const ProductDetailDelete = async () => {
     try {
-      const response = await fetch(`${config.apiBaseUrl}/productDeleteDetails`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
+      const response = await fetch(
+        `${config.apiBaseUrl}/productDeleteDetails`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            Product_Code: productCode,
+            company_code: sessionStorage.getItem("selectedCompanyCode"),
+          }),
         },
-        body: JSON.stringify({ Product_Code: productCode, company_code: sessionStorage.getItem('selectedCompanyCode') })
-      });
+      );
       if (response.ok) {
-        return true
+        return true;
       } else {
         const errorResponse = await response.json();
-        return errorResponse.details || errorResponse.message || "Failed to delete detail.";
+        return (
+          errorResponse.details ||
+          errorResponse.message ||
+          "Failed to delete detail."
+        );
       }
     } catch (error) {
       return "Error deleting detail: " + error.message;
@@ -684,21 +728,24 @@ const Product = () => {
   };
 
   const handleKeyPress = (e) => {
-    if (e.key === 'Enter') {
-      handleProductCode(productCode)
+    if (e.key === "Enter") {
+      handleProductCode(productCode);
     }
   };
 
   const handleProductCode = async (code) => {
     try {
-      const companyCode = sessionStorage.getItem('selectedCompanyCode');
+      const companyCode = sessionStorage.getItem("selectedCompanyCode");
 
       const response = await fetch(`${config.apiBaseUrl}/ProductData`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ transaction_no: code, company_code: companyCode }),
+        body: JSON.stringify({
+          transaction_no: code,
+          company_code: companyCode,
+        }),
       });
 
       if (!response.ok) {
@@ -724,7 +771,9 @@ const Product = () => {
         setUnitPrice(item?.Product_price || "");
 
         if (item?.Product_img?.data) {
-          const imageBlob = new Blob([new Uint8Array(item.Product_img.data)], { type: "image/jpeg" });
+          const imageBlob = new Blob([new Uint8Array(item.Product_img.data)], {
+            type: "image/jpeg",
+          });
           const imageUrl = URL.createObjectURL(imageBlob);
 
           if (selectedImage) {
@@ -736,18 +785,25 @@ const Product = () => {
         } else {
           console.warn("No product image found");
           setuser_image(null);
-          setSelectedImage(null);
+          setSelectedImage(DefaultProductImage);
         }
 
-        const selectedStatus = filteredOptionStatus.find((option) => option.value === item.status) || null;
+        const selectedStatus =
+          filteredOptionStatus.find((option) => option.value === item.status) ||
+          null;
         setSelectedStatus(selectedStatus);
         setStatus(selectedStatus?.value || "");
 
-        const selectedSaltax = filteredOptionOthertaxitemsales.find((option) => option.value === item.Other_sales_taxtype) || null;
+        const selectedSaltax =
+          filteredOptionOthertaxitemsales.find(
+            (option) => option.value === item.Other_sales_taxtype,
+          ) || null;
         setselectedsaltax(selectedSaltax);
         setItem_sales_Othertax_type(selectedSaltax?.value || "");
 
-        const selectedTax = filteredOptionTax.find((option) => option.value === item.tax_type) || null;
+        const selectedTax =
+          filteredOptionTax.find((option) => option.value === item.tax_type) ||
+          null;
         setselectedTax(selectedTax);
         setTaxType(selectedTax?.value || "");
       } else {
@@ -790,7 +846,7 @@ const Product = () => {
     setHSNcode("");
     setUnitPrice("");
     setuser_image(null);
-    setSelectedImage(null);
+    setSelectedImage(DefaultProductImage);
     setSelectedStatus(null);
     setStatus("");
     setselectedsaltax(null);
@@ -800,17 +856,14 @@ const Product = () => {
     setRowData([{ ItemSno: 1, itemCode: "", itemName: "" }]);
   };
 
-
-
-
   const PrintHeaderData = async () => {
     try {
       const response = await fetch(`${config.apiBaseUrl}/ProductPrintHDR`, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({ transaction_no: productCode })
+        body: JSON.stringify({ transaction_no: productCode }),
       });
 
       if (response.ok) {
@@ -831,9 +884,9 @@ const Product = () => {
       const response = await fetch(`${config.apiBaseUrl}/ProductPrintDet`, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({ transaction_no: productCode })
+        body: JSON.stringify({ transaction_no: productCode }),
       });
 
       if (response.ok) {
@@ -850,94 +903,108 @@ const Product = () => {
   };
 
   const handleProduct = () => {
-    setShowExcelButton(true)
+    setShowExcelButton(true);
     setOpen1(true);
   };
 
   const ProductData = async (data) => {
     setUpdateButtonVisible(true);
-    setSaveButtonVisible(false)
+    setSaveButtonVisible(false);
 
-    console.log(data)
+    console.log(data);
 
     if (data && data.length > 0) {
-      const [{ productCode, productName, status, headerDescription, HSNcode, ProductPrice, TaxType, Other_sales_taxtype }] = data;
-
+      const [
+        {
+          productCode,
+          productName,
+          status,
+          headerDescription,
+          HSNcode,
+          ProductPrice,
+          TaxType,
+          Other_sales_taxtype,
+        },
+      ] = data;
 
       setSelectedImage(`data:image/jpeg;base64,${data[0].Product_img}`);
 
-
-      console.log(TaxType)
-      const productcode = document.getElementById('productCode');
+      console.log(TaxType);
+      const productcode = document.getElementById("productCode");
       if (productcode) {
         productcode.value = productCode;
         setProductCode(productCode);
       } else {
-        console.error('productCode element not found');
+        console.error("productCode element not found");
       }
 
-      const productname = document.getElementById('productName');
+      const productname = document.getElementById("productName");
       if (productname) {
         productname.value = productName;
         setProductName(productName);
       } else {
-        console.error('productName element not found');
+        console.error("productName element not found");
       }
 
-      const HSN = document.getElementById('HSN');
+      const HSN = document.getElementById("HSN");
       if (HSN) {
         HSN.value = HSNcode;
         setHSNcode(HSNcode);
       } else {
-        console.error('HSN element not found');
+        console.error("HSN element not found");
       }
 
-      const Productprice = document.getElementById('Productprice');
+      const Productprice = document.getElementById("Productprice");
       if (Productprice) {
         Productprice.value = ProductPrice;
         setUnitPrice(ProductPrice);
       } else {
-        console.error('HSN element not found');
+        console.error("HSN element not found");
       }
 
-      const headerdescription = document.getElementById('description');
+      const headerdescription = document.getElementById("description");
       if (headerdescription) {
         headerdescription.value = headerDescription;
         setDescription(headerDescription);
       } else {
-        console.error('description element not found');
+        console.error("description element not found");
       }
 
-      const Status = document.getElementById('status');
+      const Status = document.getElementById("status");
       if (Status) {
-        const selectedStatus = filteredOptionStatus.find(option => option.value === status);
+        const selectedStatus = filteredOptionStatus.find(
+          (option) => option.value === status,
+        );
         setSelectedStatus(selectedStatus);
-        setStatus(selectedStatus.value)
+        setStatus(selectedStatus.value);
       } else {
-        console.error('Tax Type  not found');
+        console.error("Tax Type  not found");
       }
 
-      const other = document.getElementById('OthertaxType');
+      const other = document.getElementById("OthertaxType");
       if (other) {
-        const selectedtax = filteredOptionOthertaxitemsales.find(option => option.value === Other_sales_taxtype);
+        const selectedtax = filteredOptionOthertaxitemsales.find(
+          (option) => option.value === Other_sales_taxtype,
+        );
         setselectedsaltax(selectedtax);
-        setItem_sales_Othertax_type(selectedtax.value)
+        setItem_sales_Othertax_type(selectedtax.value);
       } else {
-        console.error('Tax Type  not found');
+        console.error("Tax Type  not found");
       }
 
-      const taxType = document.getElementById('taxType');
+      const taxType = document.getElementById("taxType");
       if (taxType) {
-        const selectedTax = filteredOptionTax.find(option => option.value === TaxType);
-        console.log(filteredOptionTax)
+        const selectedTax = filteredOptionTax.find(
+          (option) => option.value === TaxType,
+        );
+        console.log(filteredOptionTax);
         setselectedTax(selectedTax);
         // setTaxType(selectedTax.value)
       } else {
-        console.error('Tax Type  not found');
+        console.error("Tax Type  not found");
       }
 
       await ProductDetail(productCode);
-
     } else {
       console.log("Data not fetched...!");
     }
@@ -948,17 +1015,30 @@ const Product = () => {
       const response = await fetch(`${config.apiBaseUrl}/ProductDetail`, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({ transaction_no: productCode, company_code: sessionStorage.getItem('selectedCompanyCode') })
+        body: JSON.stringify({
+          transaction_no: productCode,
+          company_code: sessionStorage.getItem("selectedCompanyCode"),
+        }),
       });
 
       if (response.ok) {
         const searchData = await response.json();
         const newRowData = [];
-        console.log(searchData)
+        console.log(searchData);
         searchData.forEach((item, index) => {
-          const { item_Code, item_name, quantity, Tax, Tot_amt, description, tax_name_details, tax_percentage, tax_type } = item;
+          const {
+            item_Code,
+            item_name,
+            quantity,
+            Tax,
+            Tot_amt,
+            description,
+            tax_name_details,
+            tax_percentage,
+            tax_type,
+          } = item;
           newRowData.push({
             ItemSno: index + 1,
             itemCode: item_Code,
@@ -969,10 +1049,10 @@ const Product = () => {
             description: description,
             TaxName: tax_name_details,
             TaxPercentage: tax_percentage,
-            TaxType: tax_type
+            TaxType: tax_type,
           });
         });
-        setRowData(newRowData)
+        setRowData(newRowData);
       } else if (response.status === 404) {
         console.log("Data not found");
       } else {
@@ -982,7 +1062,6 @@ const Product = () => {
       console.error("Error fetching search data:", error);
     }
   };
-
 
   const handleUpdateButtonClick = async () => {
     if (!productCode || !taxType || !unitPrice) {
@@ -1003,33 +1082,31 @@ const Product = () => {
     }
 
     try {
-
       const headerResult = await updateHeader();
       const detailResult = await updateDetails();
 
       if (headerResult && detailResult) {
         console.log("All API calls completed successfully");
         setShowExcelButton(true);
-        toast.success("Product  Data updated  Successfully")
+        toast.success("Product  Data updated  Successfully");
       }
     } catch (error) {
       console.error("Error inserting data:", error);
-      toast.error('Error inserting data: ' + error.message);
+      toast.error("Error inserting data: " + error.message);
     }
   };
 
   const updateHeader = async () => {
-
     try {
       const Header = {
-        company_code: sessionStorage.getItem('selectedCompanyCode'),
+        company_code: sessionStorage.getItem("selectedCompanyCode"),
         Product_Code: productCode,
         Product_name: productName,
         description: description,
         status: status,
         Product_price: unitPrice,
         tax_type: taxType,
-        modified_by: sessionStorage.getItem('selectedUserCode'),
+        modified_by: sessionStorage.getItem("selectedUserCode"),
       };
 
       const response = await fetch(`${config.apiBaseUrl}/UpdateProducthdr`, {
@@ -1042,7 +1119,6 @@ const Product = () => {
 
       if (response.ok) {
         return true;
-
       } else {
         const errorResponse = await response.json();
         toast.warning(errorResponse.message || "Failed to insert sales data");
@@ -1050,13 +1126,13 @@ const Product = () => {
       }
     } catch (error) {
       console.error("Error inserting data:", error);
-      toast.error('Error inserting data: ' + error.message);
+      toast.error("Error inserting data: " + error.message);
     }
   };
   const updateDetails = async () => {
     try {
-      const validRows = rowData.filter(row =>
-        row.itemCode && row.itemName && row.quantity > 0
+      const validRows = rowData.filter(
+        (row) => row.itemCode && row.itemName && row.quantity > 0,
       );
 
       for (const row of validRows) {
@@ -1069,21 +1145,26 @@ const Product = () => {
           quantity: Number(row.quantity),
           status: status,
           Item_SNo: row.ItemSno,
-          modified_by: sessionStorage.getItem('selectedUserCode'),
+          modified_by: sessionStorage.getItem("selectedUserCode"),
         };
 
-        const response = await fetch(`${config.apiBaseUrl}/UpdateProductdetails`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
+        const response = await fetch(
+          `${config.apiBaseUrl}/UpdateProductdetails`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(Details),
           },
-          body: JSON.stringify(Details),
-        });
+        );
 
         if (!response.ok) {
           const errorResponse = await response.json();
           console.error(errorResponse.message); // Log error message
-          toast.error(`Failed to update item: ${row.itemName} (${errorResponse.message})`);
+          toast.error(
+            `Failed to update item: ${row.itemName} (${errorResponse.message})`,
+          );
           throw new Error(`Error updating row: ${row.itemName}`);
         }
       }
@@ -1097,41 +1178,46 @@ const Product = () => {
     }
   };
 
-
-
   const transformRowData = (data) => {
-    return data.map(row => ({
+    return data.map((row) => ({
       "S.No": row.ItemSno,
       "Item Code": row.itemCode.toString(),
       "Item Name": row.itemName.toString(),
-      "Quantity": row.quantity.toString(),
-
+      Quantity: row.quantity.toString(),
     }));
   };
 
-
   const handleExcelDownload = () => {
-
-    const filteredRowData = rowData.filter(row => row.quantity > 0);
-    console.log(selectedStatus)
-    console.log(productCode)
-    console.log(productName)
-    console.log(description)
-    if (rowData.length === 0 || !productCode || !productName || !description || !selectedStatus || !HSN || !unitPrice) {
-      toast.warning('There is no data to export.');
+    const filteredRowData = rowData.filter((row) => row.quantity > 0);
+    console.log(selectedStatus);
+    console.log(productCode);
+    console.log(productName);
+    console.log(description);
+    if (
+      rowData.length === 0 ||
+      !productCode ||
+      !productName ||
+      !description ||
+      !selectedStatus ||
+      !HSN ||
+      !unitPrice
+    ) {
+      toast.warning("There is no data to export.");
       return;
     }
 
-    const headerData = [{
-      "company code": sessionStorage.getItem('selectedCompanyCode'),
-      "Product Code": productCode,
-      "Product Name": productName,
-      "Description": description,
-      "Status": selectedStatus.value,
-      "Tax type": selectedTax.value,
-      "HSN Code": HSN,
-      "Product Price": unitPrice,
-    }];
+    const headerData = [
+      {
+        "company code": sessionStorage.getItem("selectedCompanyCode"),
+        "Product Code": productCode,
+        "Product Name": productName,
+        Description: description,
+        Status: selectedStatus.value,
+        "Tax type": selectedTax.value,
+        "HSN Code": HSN,
+        "Product Price": unitPrice,
+      },
+    ];
 
     const transformedData = transformRowData(filteredRowData);
     const rowDataSheet = XLSX.utils.json_to_sheet(transformedData);
@@ -1143,7 +1229,6 @@ const Product = () => {
 
     XLSX.writeFile(workbook, "Product.xlsx");
   };
-
 
   const handleInputChange = (e) => {
     const inputValue = e.target.value;
@@ -1157,7 +1242,7 @@ const Product = () => {
 
   const handleAddRow = () => {
     const ItemSno = rowData.length + 1;
-    const newRow = { ItemSno, itemCode: '', itemName: '', quantity: 0 };
+    const newRow = { ItemSno, itemCode: "", itemName: "", quantity: 0 };
     setRowData([...rowData, newRow]);
   };
 
@@ -1165,7 +1250,7 @@ const Product = () => {
     if (rowData.length > 0) {
       const updatedRowData = rowData.slice(0, -1);
       if (updatedRowData.length === 0) {
-        setRowData([{ ItemSno: 1, itemCode: '', itemName: '', quantity: 0 }]);
+        setRowData([{ ItemSno: 1, itemCode: "", itemName: "", quantity: 0 }]);
       } else {
         setRowData(updatedRowData);
       }
@@ -1177,7 +1262,7 @@ const Product = () => {
     if (file) {
       const maxSize = 1 * 1024 * 1024;
       if (file.size > maxSize) {
-        toast.warning('File size exceeds 1MB. Please upload a smaller file.');
+        toast.warning("File size exceeds 1MB. Please upload a smaller file.");
         event.target.value = null;
         return;
       }
@@ -1189,21 +1274,34 @@ const Product = () => {
   };
 
   return (
-    <div className='container-fluid Topnav-screen'>
-      <ToastContainer position="top-right" className="toast-design" theme="colored" />
+    <div className="container-fluid Topnav-screen">
+      <ToastContainer
+        position="top-right"
+        className="toast-design"
+        theme="colored"
+      />
       {loading && <LoadingScreen />}
       <div>
         <div className="shadow-lg p-1 bg-body-tertiary rounded  mb-2 mt-2">
           <div class="d-flex justify-content-between">
-            <h1 align="left" className='purbut'>Product</h1>
+            <h1 align="left" className="purbut">
+              Product
+            </h1>
             <div class="purbut">
               <div class="d-flex justify-content-end me-5 mt-3">
                 <div>
-                  {saveButtonVisible && ['add', 'all permission'].some(permission => returnPermission.includes(permission)) && (
-                    <savebutton class="px-4 mt-2 mb-1" title='save' onClick={handleSaveButtonClick}>
-                      <i class="fa-regular fa-floppy-disk"></i>
-                    </savebutton>
-                  )}
+                  {saveButtonVisible &&
+                    ["add", "all permission"].some((permission) =>
+                      returnPermission.includes(permission),
+                    ) && (
+                      <savebutton
+                        class="px-4 mt-2 mb-1"
+                        title="save"
+                        onClick={handleSaveButtonClick}
+                      >
+                        <i class="fa-regular fa-floppy-disk"></i>
+                      </savebutton>
+                    )}
                 </div>
                 {/* <div>
                 {updateButtonVisible &&['update', 'all permission'].some(permission => returnPermission.includes(permission)) && (
@@ -1213,8 +1311,14 @@ const Product = () => {
               )}
                 </div> */}
                 <div>
-                  {['delete', 'all permission'].some(permission => returnPermission.includes(permission)) && (
-                    <delbutton class="px-4 mt-2 mb-1" onClick={handleDeleteButtonClick} title='delete' >
+                  {["delete", "all permission"].some((permission) =>
+                    returnPermission.includes(permission),
+                  ) && (
+                    <delbutton
+                      class="px-4 mt-2 mb-1"
+                      onClick={handleDeleteButtonClick}
+                      title="delete"
+                    >
                       <i class="fa-solid fa-trash"></i>
                     </delbutton>
                   )}
@@ -1226,12 +1330,22 @@ const Product = () => {
                   )}
                 </div> */}
                 <div>
-                  <icon className={`icon px-4 ${showExcelButton ? '' : 'hidden'}`} title='excel' onClick={handleExcelDownload} style={{ display: showExcelButton ? 'block' : 'none' }}>
+                  <icon
+                    className={`icon px-4 ${showExcelButton ? "" : "hidden"}`}
+                    title="excel"
+                    onClick={handleExcelDownload}
+                    style={{ display: showExcelButton ? "block" : "none" }}
+                  >
                     <i className="fa-solid fa-file-excel"></i>
                   </icon>
                 </div>
                 <div>
-                  <icon className="icon px-4" onClick={handleReload} title="Reload" style={{ cursor: "pointer" }}>
+                  <icon
+                    className="icon px-4"
+                    onClick={handleReload}
+                    title="Reload"
+                    style={{ cursor: "pointer" }}
+                  >
                     <i className="fa-solid fa-arrow-rotate-right"></i>
                   </icon>
                 </div>
@@ -1239,23 +1353,35 @@ const Product = () => {
             </div>
           </div>
           <div class="mobileview">
-            <div className='d-flex justify-content-between  ms-4'>
-              <div className='d-flex justify-content-start'>
-                <h1 align="left" className='h1'>Product</h1>
+            <div className="d-flex justify-content-between  ms-4">
+              <div className="d-flex justify-content-start">
+                <h1 align="left" className="h1">
+                  Product
+                </h1>
               </div>
-              <div className='d-flex justify-content-end'>
+              <div className="d-flex justify-content-end">
                 <div class="dropdown mt-1">
-                  <button class="btn btn-primary dropdown-toggle p-1 fs-6" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  <button
+                    class="btn btn-primary dropdown-toggle p-1 fs-6"
+                    type="button"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                  >
                     <i class="fa-solid fa-list"></i>
                   </button>
-                  <ul class="dropdown-menu menu" >
-
-                    <li class="iconbutton  d-flex justify-content-center text-success " style={{ padding: "8px" }}>
-                      {saveButtonVisible && ['add', 'all permission'].some(permission => returnPermission.includes(permission)) && (
-                        <icon class="icon" onClick={handleSaveButtonClick}>
-                          <i class="fa-regular fa-floppy-disk"></i>
-                        </icon>
-                      )}
+                  <ul class="dropdown-menu menu">
+                    <li
+                      class="iconbutton  d-flex justify-content-center text-success "
+                      style={{ padding: "8px" }}
+                    >
+                      {saveButtonVisible &&
+                        ["add", "all permission"].some((permission) =>
+                          returnPermission.includes(permission),
+                        ) && (
+                          <icon class="icon" onClick={handleSaveButtonClick}>
+                            <i class="fa-regular fa-floppy-disk"></i>
+                          </icon>
+                        )}
                     </li>
 
                     {/* <li class="iconbutton d-flex justify-content-center text-success">
@@ -1266,8 +1392,13 @@ const Product = () => {
               )}
                </li> */}
 
-                    <li class="iconbutton  d-flex justify-content-center text-danger ms-1" style={{ padding: "8px" }}>
-                      {['delete', 'all permission'].some(permission => returnPermission.includes(permission)) && (
+                    <li
+                      class="iconbutton  d-flex justify-content-center text-danger ms-1"
+                      style={{ padding: "8px" }}
+                    >
+                      {["delete", "all permission"].some((permission) =>
+                        returnPermission.includes(permission),
+                      ) && (
                         <icon class="icon" onClick={handleDeleteButtonClick}>
                           <i class="fa-solid fa-trash"></i>
                         </icon>
@@ -1280,26 +1411,44 @@ const Product = () => {
                         </icon>
                       )}
                     </li> */}
-                    <li class="iconbutton  d-flex justify-content-center  mb-0 " style={{ padding: "8px" }}>
-                      <icon class=" icon" onClick={handleExcelDownload} style={{ display: showExcelButton ? 'block' : 'none' }}><i class="fa-solid fa-file-excel"></i></icon>
+                    <li
+                      class="iconbutton  d-flex justify-content-center  mb-0 "
+                      style={{ padding: "8px" }}
+                    >
+                      <icon
+                        class=" icon"
+                        onClick={handleExcelDownload}
+                        style={{ display: showExcelButton ? "block" : "none" }}
+                      >
+                        <i class="fa-solid fa-file-excel"></i>
+                      </icon>
                     </li>
-                    <li class="iconbutton  d-flex justify-content-center mt-0 pt-0" style={{ padding: "8px" }}>
-                      <icon class="icon" onClick={handleReload} ><i className="fa-solid fa-arrow-rotate-right"></i></icon>
+                    <li
+                      class="iconbutton  d-flex justify-content-center mt-0 pt-0"
+                      style={{ padding: "8px" }}
+                    >
+                      <icon class="icon" onClick={handleReload}>
+                        <i className="fa-solid fa-arrow-rotate-right"></i>
+                      </icon>
                     </li>
                   </ul>
                 </div>
               </div>
             </div>
-            <div>
-            </div>
+            <div></div>
           </div>
         </div>
       </div>
-      <div >
+      <div>
         <div className="shadow-lg p-1 bg-body-tertiary rounded  mb-2 pb-4 mt-2">
           <div className="row ms-4 mt-3 me-4">
             <div className="col-md-3 form-group mb-2">
-              <label htmlFor="party_code" className={`${error && !productCode ? 'red' : ''}`}>Product Code<span className="text-danger">*</span></label>
+              <label
+                htmlFor="party_code"
+                className={`${error && !productCode ? "red" : ""}`}
+              >
+                Product Code<span className="text-danger">*</span>
+              </label>
               <div className="exp-form-floating">
                 <div class="d-flex justify-content-end">
                   <input
@@ -1312,10 +1461,12 @@ const Product = () => {
                     onChange={(e) => setProductCode(e.target.value)}
                     onKeyPress={handleKeyPress}
                     maxLength={50}
-                    autoComplete='off'
+                    autoComplete="off"
                   />
-                  <div className='position-absolute mt-1 me-2'>
-                    <icon className="icon searchIcon" onClick={handleProduct}><i class="fa fa-search"></i></icon>
+                  <div className="position-absolute mt-1 me-2">
+                    <icon className="icon searchIcon" onClick={handleProduct}>
+                      <i class="fa fa-search"></i>
+                    </icon>
                   </div>
                 </div>
               </div>
@@ -1333,7 +1484,7 @@ const Product = () => {
                     value={productName}
                     onChange={(e) => setProductName(e.target.value)}
                     maxLength={50}
-                    autoComplete='off'
+                    autoComplete="off"
                   />
                 </div>
               </div>
@@ -1355,13 +1506,17 @@ const Product = () => {
                   />
                 </div>
               </div>
-
             </div>
             <div className="col-md-3 form-group mb-2">
               <div class="exp-form-floating">
                 <div class="d-flex justify-content-start">
                   <div>
-                    <label for="state" className={`${error && !unitPrice ? 'red' : ''}`}>Unit Price<span className="text-danger">*</span> </label>
+                    <label
+                      for="state"
+                      className={`${error && !unitPrice ? "red" : ""}`}
+                    >
+                      Unit Price<span className="text-danger">*</span>{" "}
+                    </label>
                   </div>
                 </div>
                 <input
@@ -1375,8 +1530,8 @@ const Product = () => {
                   onChange={(e) => setUnitPrice(e.target.value)}
                   onInput={(e) => {
                     e.target.value = e.target.value
-                      .replace(/[^0-9.]/g, '')
-                      .replace(/(\..*?)\..*/g, '$1')
+                      .replace(/[^0-9.]/g, "")
+                      .replace(/(\..*?)\..*/g, "$1")
                       .slice(0, 12);
                   }}
                   maxLength={12}
@@ -1385,7 +1540,13 @@ const Product = () => {
             </div>
             <div className="col-md-3 form-group mb-2">
               <div class="exp-form-floating">
-                <label for="state" className={`${error && !taxType ? 'red' : ''}`}> Local Tax Type<span className="text-danger">*</span> </label>
+                <label
+                  for="state"
+                  className={`${error && !taxType ? "red" : ""}`}
+                >
+                  {" "}
+                  Local Tax Type<span className="text-danger">*</span>{" "}
+                </label>
                 <div title="Select the Local Tax Type">
                   <Select
                     id="taxType"
@@ -1396,14 +1557,19 @@ const Product = () => {
                     className="exp-input-field"
                     placeholder=""
                     maxLength={50}
-
                   />
                 </div>
               </div>
             </div>
             <div className="col-md-3 form-group mb-2">
               <div class="exp-form-floating">
-                <label for="state" className={`${error && !Item_sales_Othertax_type ? 'red' : ''}`}> Other Tax Type<span className="text-danger">*</span> </label>
+                <label
+                  for="state"
+                  className={`${error && !Item_sales_Othertax_type ? "red" : ""}`}
+                >
+                  {" "}
+                  Other Tax Type<span className="text-danger">*</span>{" "}
+                </label>
                 <div title="Select the Other Tax Type">
                   <Select
                     id="OthertaxType"
@@ -1418,8 +1584,8 @@ const Product = () => {
                 </div>
               </div>
             </div>
-            <div className="col-md-3 form-group mb-2" >
-              <div class="exp-form-floating" >
+            <div className="col-md-3 form-group mb-2">
+              <div class="exp-form-floating">
                 <label for=""> Description</label>
                 <input
                   id="description"
@@ -1434,10 +1600,9 @@ const Product = () => {
               </div>
             </div>
             <div className="col-md-3 form-group mb-2">
-              <label for="" >Status</label>
+              <label for="">Status</label>
               <div class="exp-form-floating">
                 <div title="Select the Status">
-
                   <Select
                     id="status"
                     isClearable
@@ -1457,36 +1622,41 @@ const Product = () => {
               <div className="exp-form-floating">
                 <div className="d-flex justify-content-start">
                   <div>
-                    <label htmlFor="state" className="exp-form-labels">Photo</label>
+                    <label htmlFor="state" className="exp-form-labels">
+                      Photo
+                    </label>
                   </div>
                 </div>
-                <div className='input-group mb-5'>
+                <div className="input-group mb-5">
                   <input
                     type="file"
                     className="exp-input-field form-control position-relative"
                     accept="image/*"
                     onChange={handleFileSelect1}
                   />
-                  <div className='purbut'>
-                    <div className="col-md-12 form-group  ms-4 d-flex justify-content-start position-absolute" >
+                  <div className="purbut">
+                    <div className="col-md-12 form-group  ms-4 d-flex justify-content-start position-absolute">
                       <div className="exp-form-floating">
-                        <div className="image-frame" style={{
-                          width: "100px",
-                          height: "100px",
-                          border: "2px solid #ccc",
-                          padding: "10px",
-                          textAlign: "center",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                        }}>
+                        <div
+                          className="image-frame"
+                          style={{
+                            width: "100px",
+                            height: "100px",
+                            border: "2px solid #ccc",
+                            padding: "10px",
+                            textAlign: "center",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                          }}
+                        >
                           <img
-                            src={selectedImage || 'default-placeholder.png'}
+                            src={selectedImage || DefaultProductImage}
                             alt="Preview"
                             style={{
                               height: "120%",
                               width: "120%",
-                              objectFit: "fill"
+                              objectFit: "fill",
                             }}
                             onClick={handleClick}
                           />
@@ -1494,26 +1664,29 @@ const Product = () => {
                       </div>
                     </div>
                   </div>
-                  <div className='mobileview mobile-only'>
-                    <div className=" col-12 form-group mt-3 d-flex justify-content-start" >
+                  <div className="mobileview mobile-only">
+                    <div className=" col-12 form-group mt-3 d-flex justify-content-start">
                       <div className="exp-form-floating">
-                        <div className="image-frame" style={{
-                          width: "150px",
-                          height: "150px",
-                          border: "2px solid #ccc",
-                          padding: "10px",
-                          textAlign: "center",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                        }}>
+                        <div
+                          className="image-frame"
+                          style={{
+                            width: "150px",
+                            height: "150px",
+                            border: "2px solid #ccc",
+                            padding: "10px",
+                            textAlign: "center",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                          }}
+                        >
                           <img
-                            src={selectedImage || 'default-placeholder.png'}
+                            src={selectedImage || DefaultProductImage}
                             alt="Preview"
                             style={{
                               height: "120%",
                               width: "120%",
-                              objectFit: "fill"
+                              objectFit: "fill",
                             }}
                           />
                         </div>
@@ -1524,31 +1697,44 @@ const Product = () => {
               </div>
             </div>
           </div>
-          <div class="d-flex justify-content-between ms-2" style={{ marginBlock: "", marginTop: "20px" }} >
-            <div align="left" class="d-flex justify-content-start" style={{ marginLeft: "25px" }}>
+          <div
+            class="d-flex justify-content-between ms-2"
+            style={{ marginBlock: "", marginTop: "20px" }}
+          >
+            <div
+              align="left"
+              class="d-flex justify-content-start"
+              style={{ marginLeft: "25px" }}
+            >
               <purButton
                 type="button"
-                className={`"toggle-btn"  ${activeTable === 'myTable' ? 'active' : ''}`}
-                onClick={() => handleToggleTable('myTable')}>
+                className={`"toggle-btn"  ${activeTable === "myTable" ? "active" : ""}`}
+                onClick={() => handleToggleTable("myTable")}
+              >
                 Item Details
               </purButton>
             </div>
-            <div align="" class="d-flex justify-content-end" style={{ marginRight: "50px" }}>
-              <icon
-                type="button"
-                className="popups-btn"
-                onClick={handleAddRow}>
+            <div
+              align=""
+              class="d-flex justify-content-end"
+              style={{ marginRight: "50px" }}
+            >
+              <icon type="button" className="popups-btn" onClick={handleAddRow}>
                 <FontAwesomeIcon icon={faPlus} />
               </icon>
               <icon
                 type="button"
                 className="popups-btn"
-                onClick={handleRemoveRow}>
+                onClick={handleRemoveRow}
+              >
                 <FontAwesomeIcon icon={faMinus} />
               </icon>
             </div>
           </div>
-          <div className="ag-theme-alpine " style={{ height: 430, width: "100%" }} >
+          <div
+            className="ag-theme-alpine "
+            style={{ height: 430, width: "100%" }}
+          >
             <AgGridReact
               columnDefs={columnDefs}
               rowData={rowData}
@@ -1558,24 +1744,39 @@ const Product = () => {
               }}
             />
           </div>
-          <div>
-          </div>
+          <div></div>
         </div>
-        <ProductItemPopup open={open} handleClose={handleClose} handleItem={handleItem} />
-        <ProductPopup open={open1} handleClose={handleClose} ProductData={ProductData} />
-        <ProductImagePopup open={open2} handleClose={handleClose} productCode={productCode} ProductImage={user_images} />
+        <ProductItemPopup
+          open={open}
+          handleClose={handleClose}
+          handleItem={handleItem}
+        />
+        <ProductPopup
+          open={open1}
+          handleClose={handleClose}
+          ProductData={ProductData}
+        />
+        <ProductImagePopup
+          open={open2}
+          handleClose={handleClose}
+          productCode={productCode}
+          ProductImage={user_images}
+        />
       </div>
       <div className="shadow-lg p-2 bg-body-tertiary rounded mt-2 mb-2">
         <div className="row ms-2">
           <div className="d-flex justify-content-start">
-            <p className="col-md-6">{labels.createdBy}: {additionalData.created_by}</p>
+            <p className="col-md-6">
+              {labels.createdBy}: {additionalData.created_by}
+            </p>
             <p className="col-md-">
               {labels.createdDate}: {additionalData.created_date}
             </p>
           </div>
           <div className="d-flex justify-content-start">
             <p className="col-md-6">
-              {labels.modifiedBy}: {additionalData.modified_by}{""}
+              {labels.modifiedBy}: {additionalData.modified_by}
+              {""}
             </p>
             <p className="col-md-6">
               {labels.modifiedDate}: {additionalData.modified_date}
@@ -1584,7 +1785,7 @@ const Product = () => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Product;   
+export default Product;
