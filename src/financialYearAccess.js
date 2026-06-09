@@ -229,6 +229,7 @@ function Grid() {
       headerName: "Start Year",
       field: "start_year",
       editable: true,
+      cellClass: "ag-link-cell",  
       cellStyle: { textAlign: "left" },
       checkboxSelection: true,
       cellEditorParams: {

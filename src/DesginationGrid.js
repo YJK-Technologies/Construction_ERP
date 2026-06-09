@@ -151,6 +151,7 @@ function Desgination() {
       headerCheckboxSelection: true,
       headerName: "Department ID",
       field: "dept_id",
+      cellClass: "ag-link-cell",
       cellStyle: { textAlign: "left" },
       // minWidth: 180,
       checkboxSelection: true,

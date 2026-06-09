@@ -185,6 +185,7 @@ function UserScreenMapGrid() {
       checkboxSelection: true,
       headerName: "Role Id",
       field: "role_id",
+      cellClass: "ag-link-cell",
       editable: true,
       cellStyle: { textAlign: "left" },
       cellEditor: "agSelectCellEditor",

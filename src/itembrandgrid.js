@@ -396,6 +396,7 @@ function ItemBrandGrid() {
       checkboxSelection: true,
       headerName: "Code",
       field: "Item_code",
+      cellClass: "ag-link-cell",
       //editable: true,
       cellStyle: { textAlign: "center" },
       cellEditorParams: {

@@ -97,6 +97,7 @@ function IntermediaryGrid() {
       checkboxSelection: true,
       headerName: "Header Code",
       field: "Code",
+      cellClass: "ag-link-cell",
       //editable: true,
       cellStyle: { textAlign: "center" },
       // minWidth: 250,

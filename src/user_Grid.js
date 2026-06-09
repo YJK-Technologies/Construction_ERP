@@ -367,6 +367,7 @@ function UserGrid() {
       cellEditorParams: {
         maxLength: 18,
       },
+      cellClass: "ag-link-cell",
       cellRenderer: (params) => {
         const handleClick = () => {
           handleNavigateWithRowData(params.data);
