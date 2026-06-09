@@ -170,6 +170,7 @@ import QuotationPrint from "./PrintScreens/Template2/QuotationPrint.js";
 import PurchaseOrderPrint from "./PrintScreens/Template1/PurchaseOrderPrint.js";
 import DCPrint from "./PrintScreens/Template2/DcPrint.js";
 import TaxInvoicePrint from "./PrintScreens/Template2/TaxInvoicePrint.js";
+import ItemSettings from "./ItemSettings.js";
 
 
 function Main() {
@@ -389,11 +390,11 @@ function Main() {
       <Route path="/DeliveryChallanTemplate2" element={<DeliveryChallanTemplate2 />} />
       <Route path="/ExpensesTrackingPrint" element={<ExpensesTrackingPrint  />} />
       <Route path="/ExpensesSummaryPrint" element={<ExpensesSummaryPrint   />} />
-      <Route  path= "/JournalPrint" element={<JournalPrint/>} />
-      <Route  path= "/QuotationPrint" element={<QuotationPrint/>} />
-      <Route  path= "/PurchaseOrderPrint" element={<PurchaseOrderPrint/>} />
-      <Route  path= "/DCPrint" element={<DCPrint/>} />
-      <Route  path= "/TaxInvoicePrint" element={<TaxInvoicePrint/>} />
+      <Route path= "/JournalPrint" element={<JournalPrint/>} />
+      <Route path= "/QuotationPrint" element={<QuotationPrint/>} />
+      <Route path= "/PurchaseOrderPrint" element={<PurchaseOrderPrint/>} />
+      <Route path= "/DCPrint" element={<DCPrint/>} />
+      <Route path= "/TaxInvoicePrint" element={<TaxInvoicePrint/>} />
 
 
       <Route
@@ -405,6 +406,21 @@ function Main() {
               <SideBar className="sidebar"/>
               <div className=" container-fluid ">
                 <AccountInformation />
+              </div>
+            </div>
+          </div>
+        }
+      />
+
+      <Route
+        path="/ItemSettings"
+        element={
+          <div>
+            <Topbar />
+            <div className="layout-container ">
+              <SideBar className="sidebar"/>
+              <div className=" container-fluid ">
+                <ItemSettings />
               </div>
             </div>
           </div>

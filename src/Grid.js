@@ -298,6 +298,7 @@ function Grid() {
       headerCheckboxSelection: true,
       headerName: "Company No",
       field: "company_no",
+      cellClass: "ag-link-cell",
       cellStyle: { textAlign: "left" },
       checkboxSelection: true,
       cellEditorParams: {
@@ -527,7 +528,7 @@ function Grid() {
 
   const defaultColDef = {
     resizable: true,
-    wrapText: true,
+    wrapText: false,
   };
 
   const onGridReady = (params) => {

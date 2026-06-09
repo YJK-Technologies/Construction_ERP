@@ -449,8 +449,13 @@ const AddAddSiteMasterScreen = () => {
     };
 
     const handleNavigate = () => {
-        navigate("/SiteMaster   ");
-    };
+  navigate("/SiteMaster", {
+    state: {
+      preservedRowData: location.state?.preservedRowData,
+      preservedInputs: location.state?.preservedInputs
+    }
+  });
+};
 
     // Total Budget
     const handleTotalBudgetChange = (e) => {

@@ -192,8 +192,13 @@ function TaxDetInput({ }) {
   };
 
   const handleNavigate = () => {
-    navigate("/Tax", { selectedRows });
-  };
+  navigate("/Tax", {
+    state: {
+      preservedRowData: location.state?.preservedRowData,
+      preservedInputs: location.state?.preservedInputs
+    }
+  });
+};
 
   const handleInsert = async () => {
     if (

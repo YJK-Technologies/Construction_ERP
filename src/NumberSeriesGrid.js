@@ -4,7 +4,7 @@ import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
 import "ag-grid-enterprise";
 import "./apps.css";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { ToastContainer, toast } from 'react-toastify';
@@ -35,6 +35,8 @@ function NumberSeriesGrid() {
   const [createdDate, setCreatedDate] = useState("");
   const [modifiedDate, setModifiedDate] = useState("");
 
+  const location = useLocation();
+
   //code added by Haraish purpose of set user permisssion
   const permissions = JSON.parse(sessionStorage.getItem("permissions")) || {};
   const numberSeriesPermission = permissions
@@ -43,7 +45,22 @@ function NumberSeriesGrid() {
 
   console.log(numberSeriesPermission);
 
-
+  useEffect(() => {
+    if (location.state?.preservedRowData) {
+      setRowData(location.state.preservedRowData);
+    }
+  
+    if (location.state?.preservedInputs) {
+      setScreen_Type(location.state.preservedInputs.Screen_Type || "");
+  
+      if (location.state.preservedInputs.Screen_Type) {
+        setselectedscreentype({
+          label: location.state.preservedInputs.Screen_Type,
+          value: location.state.preservedInputs.Screen_Type,
+        });
+      }
+    }
+  }, [location.state]);
 
   useEffect(() => {
     const company_code = sessionStorage.getItem('selectedCompanyCode');
@@ -155,6 +172,7 @@ function NumberSeriesGrid() {
       checkboxSelection: true,
       headerName: "Screen Type",
       field: "Screen_Type",
+      cellClass: "ag-link-cell",
       //  editable: true,
       cellStyle: { textAlign: "left" },
 
@@ -392,9 +410,21 @@ function NumberSeriesGrid() {
   const handleNavigatesToForm = () => {
     navigate("/AddNumberSeries", { state: { mode: "create" } }); // Pass selectedRows as props to the Input component
   };
+  
   const handleNavigateWithRowData = (selectedRow) => {
-    navigate("/AddNumberSeries", { state: { mode: "update", selectedRow } });
-  };
+  navigate("/AddNumberSeries", {
+    state: {
+      mode: "update",
+      selectedRow,
+
+      preservedRowData: rowData,
+
+      preservedInputs: {
+        Screen_Type,
+      },
+    },
+  });
+};
 
   const onSelectionChanged = () => {
     const selectedNodes = gridApi.getSelectedNodes();
