@@ -367,6 +367,7 @@ function Main() {
      { path: "/MaterialUsage", component: <MaterialUsage /> },
      { path: "/ExpensesTracking", component: <ExpensesTracking /> },
      { path: "/ExpenseSummary", component: <ExpenseSummary /> },
+     { path: "/ItemSettings", component: <ItemSettings /> },
   ];
  
   return (
