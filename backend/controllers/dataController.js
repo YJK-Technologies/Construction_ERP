@@ -16653,7 +16653,7 @@ const getadjustmentdata = async (req, res) => {
 
 //code added by pavun 08-10-2024
 const CustomerUpdate = async (req, res) => {
-  const { customer_code, company_code, customer_name, customer_gst_no, customer_addr_1, customer_addr_2, customer_addr_3,
+  const { customer_code, company_code, customer_name, status, panno, customer_gst_no, customer_addr_1, customer_addr_2, customer_addr_3,
     customer_addr_4, customer_area, customer_state, customer_country, customer_imex_no, customer_office_no, customer_resi_no,
     customer_mobile_no, customer_fax_no, customer_email_id, customer_credit_limit, customer_transport_code, customer_salesman_code,
     customer_broker_code, customer_weekday_code, contact_person, office_type, default_customer, keyfield, modified_by, opening_balance, balance_type
@@ -16667,6 +16667,8 @@ const CustomerUpdate = async (req, res) => {
       .input("customer_code", sql.NVarChar, customer_code)
       .input("company_code", sql.NVarChar, company_code)
       .input("customer_name", sql.NVarChar, customer_name)
+      .input("status", sql.NVarChar, status)
+      .input("panno", sql.NVarChar, panno)
       .input("customer_gst_no", sql.NVarChar, customer_gst_no)
       .input("customer_addr_1", sql.NVarChar, customer_addr_1)
       .input("customer_addr_2", sql.NVarChar, customer_addr_2)
@@ -16693,7 +16695,7 @@ const CustomerUpdate = async (req, res) => {
       .input("default_customer", sql.NVarChar, default_customer)
       .input("keyfield", sql.NVarChar, keyfield)
       .input("modified_by", sql.NVarChar, modified_by)
-      .query(`EXEC sp_customer_details_info @mode,@customer_code,@company_code,@customer_name,'','',@customer_gst_no,
+      .query(`EXEC sp_customer_details_info @mode,@customer_code,@company_code,@customer_name,@status,@panno,@customer_gst_no,
           @customer_addr_1,@customer_addr_2,@customer_addr_3,@customer_addr_4,@customer_area,@customer_state ,@customer_country,
           @customer_imex_no,@customer_office_no,@customer_resi_no,@customer_mobile_no,@customer_fax_no,@customer_email_id,@customer_credit_limit,@opening_balance,@balance_type,@customer_transport_code,
           @customer_salesman_code,@customer_broker_code,@customer_weekday_code,@contact_person,@office_type,@default_customer,@keyfield,'', @modified_by, '', '', '', '', '',

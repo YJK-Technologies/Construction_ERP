@@ -66,6 +66,9 @@ function CustomerDetInput({ }) {
   const [selectedBT, setSelectedBT] = useState("");
   const [balance_type, setbalance_type] = useState("");
   const [balance_typeDrop, setbalance_typeDrop] = useState([]);
+  const [status, setStatus] = useState("");
+  const [panNo, setPanNo] = useState("");
+  const [customerGstNo, setCustomerGstNo] = useState("");
 
   const Country = useRef(null);
   const IMEx = useRef(null);
@@ -133,6 +136,9 @@ function CustomerDetInput({ }) {
     setSelectedBT('');
     setbalance_type('');
     setkeyfield('');
+    setStatus('');
+    setPanNo('');
+    setCustomerGstNo('');
   };
 
   const fetchHdrCode = () => {
@@ -286,6 +292,9 @@ function CustomerDetInput({ }) {
       setOfficeType(selectedRow.office_type || "");
       setdefaultCust(selectedRow.default_customer || "");
       setkeyfield(selectedRow.keyfield || "");
+      setStatus(selectedRow.status || "");
+      setPanNo(selectedRow.panno || "");
+      setCustomerGstNo(selectedRow.customer_gst_no || "");
       setSelectedCode({
         label: selectedRow.customer_code,
         value: selectedRow.customer_code,
@@ -590,6 +599,9 @@ function CustomerDetInput({ }) {
           office_type,
           default_customer,
           keyfield,
+          status,
+          panno: panNo,
+          customer_gst_no: customerGstNo,
           modified_by: sessionStorage.getItem('selectedUserCode')
         }),
       });
