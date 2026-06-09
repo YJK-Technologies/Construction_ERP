@@ -162,6 +162,7 @@ function WarehouseGrid() {
       checkboxSelection: true,
       headerName: "Warehouse Code",
       field: "warehouse_code",
+      cellClass: "ag-link-cell",
       cellStyle: { textAlign: "left" },
       // minWidth: 250,
       // maxWidth: 250,

@@ -113,6 +113,7 @@ function AttriDetGrid() {
       headerCheckboxSelection: true,
       checkboxSelection: true,
       headerName: "Code",
+      cellClass: "ag-link-cell",
       field: "attributeheader_code",
       //editable: true,
       cellStyle: { textAlign: "center" },

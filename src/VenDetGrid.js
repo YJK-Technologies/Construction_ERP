@@ -414,6 +414,7 @@ function VenDetGrid() {
       checkboxSelection: true,
       headerName: "Code",
       field: "vendor_code",
+      cellClass: "ag-link-cell",
       //editable: true,
       cellStyle: { textAlign: "left" },
       // minWidth: 250,

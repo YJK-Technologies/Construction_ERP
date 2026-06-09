@@ -876,9 +876,9 @@ function ItemInput({}) {
     setBarcode(value);
 
     if (value) {
-      setBarcodeValue(true); // Show the barcode when there's input
+      setBarcodeValue(true); 
     } else {
-      setBarcodeValue(false); // Hide barcode when input is empty
+      setBarcodeValue(false); 
     }
   };
 

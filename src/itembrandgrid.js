@@ -434,6 +434,7 @@ function ItemBrandGrid() {
       checkboxSelection: true,
       headerName: "Code",
       field: "Item_code",
+      cellClass: "ag-link-cell",
       //editable: true,
       cellStyle: { textAlign: "center" },
       cellEditorParams: {
@@ -1130,6 +1131,10 @@ function ItemBrandGrid() {
     }
   };
 
+  const handleOpenSettings = () => {
+    navigate("/ItemSettings"); 
+  };
+
   return (
     <div className="container-fluid Topnav-screen">
       <div>
@@ -1145,30 +1150,28 @@ function ItemBrandGrid() {
 
             <div className="d-flex justify-content-end purbut me-3">
               {['add', 'all permission'].some(permission => itemBrandPermission.includes(permission)) && (
-                <addbutton className="purbut" onClick={handleNavigateToForm}
-                  required title="Add Item"> <i class="fa-solid fa-user-plus"></i> </addbutton>
+                <addbutton className="purbut" onClick={handleNavigateToForm} required title="Add Item">
+                  <i class="fa-solid fa-user-plus"></i>
+                </addbutton>
               )}
               {['delete', 'all permission'].some(permission => itemBrandPermission.includes(permission)) && (
-                <delbutton
-                  className="purbut" onClick={deleteSelectedRows} required title="Delete">
+                <delbutton className="purbut" onClick={deleteSelectedRows} required title="Delete">
                   <i class="fa-solid fa-user-minus"></i>
                 </delbutton>
               )}
               {['update', 'all permission'].some(permission => itemBrandPermission.includes(permission)) && (
-                <savebutton class="purbut" onClick={saveEditedData} required title="Update"><i class="fa-solid fa-floppy-disk"></i></savebutton>
+                <savebutton class="purbut" onClick={saveEditedData} required title="Update">
+                  <i class="fa-solid fa-floppy-disk"></i>
+                </savebutton>
               )}
-
-
               {['all permission', 'view'].some(permission => itemBrandPermission.includes(permission)) && (
-                <printbutton
-                  class="purbut"
-                  onClick={generateReport}
-                  required
-                  title="Generate Report"
-                >
+                <printbutton class="purbut" onClick={generateReport} required title="Generate Report">
                   <i class="fa-solid fa-print"></i>
                 </printbutton>
               )}
+              <printbutton className="purbut" onClick={handleOpenSettings} required title="Settings" >
+                <i className="fa-solid fa-gear"></i>
+              </printbutton>
             </div>
 
 
@@ -1183,55 +1186,37 @@ function ItemBrandGrid() {
                   </button>
                   <ul class="dropdown-menu menu">
                     <li class="iconbutton d-flex justify-content-center text-success">
-                      {["add", "all permission"].some((permission) =>
-                        itemBrandPermission.includes(permission)
-                      ) && (
-                          <icon
-                            class="icon"
-                            onClick={handleNavigateToForm}
-                          >
-                            <i class="fa-solid fa-user-plus"></i>
-                            {" "}
-                          </icon>
-                        )}
+                      {["add", "all permission"].some((permission) => itemBrandPermission.includes(permission)) && (
+                        <icon class="icon" onClick={handleNavigateToForm}>
+                          <i class="fa-solid fa-user-plus"></i>
+                        </icon>
+                      )}
                     </li>
                     <li class="iconbutton  d-flex justify-content-center text-danger">
-                      {["delete", "all permission"].some((permission) =>
-                        itemBrandPermission.includes(permission)
-                      ) && (
-                          <icon
-                            class="icon"
-                            onClick={deleteSelectedRows}
-                          >
-
-                            <i class="fa-solid fa-user-minus"></i>
-                          </icon>
-                        )}
+                      {["delete", "all permission"].some((permission) => itemBrandPermission.includes(permission)) && (
+                        <icon class="icon" onClick={deleteSelectedRows}>
+                          <i class="fa-solid fa-user-minus"></i>
+                        </icon>
+                      )}
                     </li>
                     <li class="iconbutton  d-flex justify-content-center text-primary ">
-                      {["update", "all permission"].some((permission) =>
-                        itemBrandPermission.includes(permission)
-                      ) && (
-                          <icon
-                            class="icon"
-                            onClick={saveEditedData}
-                          >
-                            <i class="fa-solid fa-floppy-disk"></i>
-                          </icon>
-                        )}{" "}
+                      {["update", "all permission"].some((permission) => itemBrandPermission.includes(permission)) && (
+                        <icon class="icon" onClick={saveEditedData}>
+                          <i class="fa-solid fa-floppy-disk"></i>
+                        </icon>
+                      )}
                     </li>
                     <li class="iconbutton  d-flex justify-content-center ">
-                      {["all permission", "view"].some((permission) =>
-                        itemBrandPermission.includes(permission)
-                      ) && (
-                          <icon
-                            class="icon"
-                            onClick={generateReport}
-                          >
-
-                            <i class="fa-solid fa-print"></i>
-                          </icon>
-                        )}
+                      {["all permission", "view"].some((permission) => itemBrandPermission.includes(permission)) && (
+                        <icon class="icon" onClick={generateReport}>
+                          <i class="fa-solid fa-print"></i>
+                        </icon>
+                      )}
+                    </li>
+                    <li className="iconbutton d-flex justify-content-center">
+                      <icon className="icon" onClick={handleOpenSettings}>
+                        <i className="fa-solid fa-gear"></i>
+                      </icon>
                     </li>
                   </ul>
                 </div>

@@ -28762,9 +28762,7 @@ const AddPrintTemplate = async (req, res) => {
         .input("Template_name", insertRow.Template_name)
         .input("created_by", insertRow.created_by)
         .input("modified_by", insertRow.modified_by)
-        .query(
-          `EXEC sp_Print_templates @mode, @Templates, 0, @Screens, @Template_name, '', @created_by, '', null, null, null, null, null, null, null, null`
-        );
+        .query(`EXEC sp_Print_templates @mode, @Templates, 0, @Screens, @Template_name, '', @created_by, '', null, null, null, null, null, null, null, null`);
     }
     return res.status(200).json({ success: true, message: 'Data inserted successfully' });
   } catch (err) {

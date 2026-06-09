@@ -172,6 +172,7 @@ function NumberSeriesGrid() {
       checkboxSelection: true,
       headerName: "Screen Type",
       field: "Screen_Type",
+      cellClass: "ag-link-cell",
       //  editable: true,
       cellStyle: { textAlign: "left" },
 

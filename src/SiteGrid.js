@@ -404,6 +404,7 @@ const AddSiteMasterScreen = () => {
             checkboxSelection: true,
             headerName: "Site ID",
             field: "site_id",
+            cellClass: "ag-link-cell",
             cellRenderer: (params) => {
                 const handleClick = () => {
                     handleNavigateWithRowData(params.data);

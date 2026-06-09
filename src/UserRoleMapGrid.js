@@ -150,6 +150,7 @@ function UserRoleGrid() {
       headerName: "User Code",
       field: "user_code",
       editable: true,
+      cellClass: "ag-link-cell",
       cellStyle: { textAlign: "center" },
       cellEditor: "agSelectCellEditor",
       cellEditorParams: {

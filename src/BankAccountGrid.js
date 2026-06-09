@@ -234,6 +234,7 @@ function BankAccGrid() {
       checkboxSelection: true,
       headerName: "Accountant Code",
       field: "account_code",
+      cellClass: "ag-link-cell",
       //editable: true,
       cellStyle: { textAlign: "left" },
       // minWidth: 250,

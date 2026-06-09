@@ -178,6 +178,7 @@ function TaxDetGrid() {
       checkboxSelection: true,
       headerName: "Tax Type Header",
       field: "tax_type_header",
+      cellClass: "ag-link-cell",
       //  editable: true,
       cellStyle: { textAlign: "center" },
       cellRenderer: (params) => {

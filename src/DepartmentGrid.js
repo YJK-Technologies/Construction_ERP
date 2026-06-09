@@ -93,6 +93,7 @@ function Department() {
     {
       headerCheckboxSelection: true,
       checkboxSelection: true,
+      cellClass: "ag-link-cell",
       headerName: "Department Code",
       field: "dept_id",
       cellStyle: { textAlign: "center" },

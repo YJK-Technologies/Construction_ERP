@@ -394,6 +394,7 @@ function CustomerDetGrid() {
       headerCheckboxSelection: true,
       checkboxSelection: true,
       headerName: "Code",
+      cellClass: "ag-link-cell",
       field: "customer_code",
       //editable: true,
       cellStyle: { textAlign: "left" },
