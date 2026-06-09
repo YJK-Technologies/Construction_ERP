@@ -311,8 +311,13 @@ function IntermediaryDetailInput({ }) {
   }
 
   const handleNavigate = () => {
-    navigate("/Intermediary");
-  };
+  navigate("/Intermediary", {
+    state: {
+      preservedRowData: location.state?.preservedRowData,
+      preservedInputs: location.state?.preservedInputs
+    }
+  });
+};
 
   const handleKeyDown = async (e, nextFieldRef, value, hasValueChanged, setHasValueChanged) => {
     if (e.key === 'Enter') {

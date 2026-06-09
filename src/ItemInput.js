@@ -772,7 +772,12 @@ function ItemInput({}) {
   };
 
   const handleNavigate = () => {
-    navigate("/Item"); // Pass selectedRows as props to the Input component
+    navigate("/Item", {
+      state: {
+        preservedRowData: location.state?.preservedRowData,
+        preservedInputs: location.state?.preservedInputs
+      }
+    });
   };
 
   const handleUpdate = async () => {

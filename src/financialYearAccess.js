@@ -43,6 +43,8 @@ function Grid() {
   const [createdDate, setCreatedDate] = useState("");
   const [modifiedDate, setModifiedDate] = useState("");
 
+  const location = useLocation();
+
   //code added by Pavun purpose of set user permisssion
   const permissions = JSON.parse(sessionStorage.getItem('permissions')) || {};
   const companyPermissions = permissions
@@ -68,6 +70,32 @@ function Grid() {
       label: option.attributedetails_name,
     }))
     : [];
+
+    useEffect(() => {
+      if (location.state?.preservedRowData) {
+        setRowData(location.state.preservedRowData);
+      }
+    
+      if (location.state?.preservedInputs) {
+        setstart_year(location.state.preservedInputs.start_year || "");
+        setend_year(location.state.preservedInputs.end_year || "");
+        setTransactionType(location.state.preservedInputs.transactionType || "");
+        setLockType(location.state.preservedInputs.LockType || "");
+    
+        if (location.state.preservedInputs.transactionType) {
+          setSelectedTransaction({
+            label: location.state.preservedInputs.transactionType,
+            value: location.state.preservedInputs.transactionType,
+          });
+        }
+        if (location.state.preservedInputs.LockType) {
+          setSelectedLockType({
+            label: location.state.preservedInputs.LockType,
+            value: location.state.preservedInputs.LockType,
+          });
+        }
+      }
+    }, [location.state]);
 
   useEffect(() => {
     const company_code = sessionStorage.getItem('selectedCompanyCode');
@@ -447,8 +475,22 @@ function Grid() {
   };
 
   const handleNavigateWithRowData = (selectedRow) => {
-    navigate("/AddFYA", { state: { mode: "update", selectedRow } });
-  };
+  navigate("/AddFYA", {
+    state: {
+      mode: "update",
+      selectedRow,
+
+      preservedRowData: rowData,
+
+      preservedInputs: {
+        start_year,
+        end_year,
+        transactionType,
+        LockType,
+      },
+    },
+  });
+};
 
   const onSelectionChanged = () => {
     const selectedNodes = gridApi.getSelectedNodes();

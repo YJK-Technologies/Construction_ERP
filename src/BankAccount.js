@@ -353,8 +353,13 @@ function BankAccInput({ }) {
   };
 
   const handleNavigate = () => {
-    navigate("/BankAccount", { selectedRows });
-  };
+  navigate("/BankAccount", {
+    state: {
+      preservedRowData: location.state?.preservedRowData,
+      preservedInputs: location.state?.preservedInputs
+    }
+  });
+};
 
   const handleInsert = async () => {
     if (!account_code ||
