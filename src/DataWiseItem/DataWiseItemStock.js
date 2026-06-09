@@ -401,24 +401,21 @@ function Grid() {
 
     const reportData = selectedRows.map((row) => {
       return {
-        "Company No": row.company_no,
-        "Company Name": row.company_name,
-        "Short Name": row.short_name,
-        Address: `
-          ${row.address1 || ''},
-          ${row.address2 || ''},  
-          ${row.address3 || ''},<br>
-          ${row.city || ''},<br>
-          ${row.pincode || ''},<br>
-          ${row.state || ''},<br>
-          ${row.country || ''}`,
-        "Email Id": row.email_id,
-        Status: row.status,
-        "Founded Date": row.FoundedDate,
-        "Website URL": row.WebsiteURL,
-        "Contact No": row.contact_no,
-        "CEO Name": row.CEOName,
-        "Annual Report URL": row.AnnualReportURL
+        "Date": row.transaction_date,
+        "Item Code": row.Item_code,
+        "item_variant": row.item_variant,
+        "Item Name": row.Item_name,
+        "Opening Item Qty": row.openingItemQty,
+        "Purchase Qty": row.PurchaseQty,
+        "Received Goods Qty": row.ReceivedGoodsQty,
+        "Sales Return Qty": row.SalesReturnQty,
+        "Total Received": row.TotalRecQty,
+        "Sales": row.SalesQty,
+        "Purchase Return": row.PurchaseReturnQty,
+        "Tax Invoice": row.TaxInvoiceQty,
+        "DC": row.DCItemQty,
+        "Total Issued": row.TotalIssQty,
+        "Closing": row.ClosingStock
       };
     });
 
@@ -488,7 +485,7 @@ function Grid() {
       }
     `);
     reportWindow.document.write("</style></head><body>");
-    reportWindow.document.write("<h1><u>Company Information</u></h1>");
+    reportWindow.document.write("<h1><u>Date Wise Item Stock</u></h1>");
 
     // Create table with headers
     reportWindow.document.write("<table><thead><tr>");

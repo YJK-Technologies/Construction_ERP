@@ -170,7 +170,6 @@ import QuotationPrint from "./PrintScreens/Template2/QuotationPrint.js";
 import PurchaseOrderPrint from "./PrintScreens/Template1/PurchaseOrderPrint.js";
 import DCPrint from "./PrintScreens/Template2/DcPrint.js";
 import TaxInvoicePrint from "./PrintScreens/Template2/TaxInvoicePrint.js";
-import ItemSettings from "./ItemSettings.js";
 
 
 function Main() {
@@ -225,7 +224,7 @@ function Main() {
     { path: "/", component: <Home /> },
     { path: "/Login", component: <Login /> },
     { path: "/signup", component: <Signup /> },
-    { path: "/PurchasePrint", component: <Template /> },
+    // { path: "/PurchasePrint", component: <Template /> },
     { path: "/SalesPrint", component: <SalesPrint /> },
     { path: "/PurchaseReturnPrint", component: <PurchaseReturnPrint /> },
     { path: "/SalesReturnPrint", component: <SalesReturnPrint /> },
@@ -391,11 +390,12 @@ function Main() {
       <Route path="/DeliveryChallanTemplate2" element={<DeliveryChallanTemplate2 />} />
       <Route path="/ExpensesTrackingPrint" element={<ExpensesTrackingPrint  />} />
       <Route path="/ExpensesSummaryPrint" element={<ExpensesSummaryPrint   />} />
-      <Route path= "/JournalPrint" element={<JournalPrint/>} />
-      <Route path= "/QuotationPrint" element={<QuotationPrint/>} />
-      <Route path= "/PurchaseOrderPrint" element={<PurchaseOrderPrint/>} />
-      <Route path= "/DCPrint" element={<DCPrint/>} />
-      <Route path= "/TaxInvoicePrint" element={<TaxInvoicePrint/>} />
+      <Route  path= "/JournalPrint" element={<JournalPrint/>} />
+      <Route  path= "/QuotationPrint" element={<QuotationPrint/>} />
+      <Route  path= "/PurchaseOrderPrint" element={<PurchaseOrderPrint/>} />
+      <Route  path= "/DCPrint" element={<DCPrint/>} />
+      <Route  path= "/TaxInvoicePrint" element={<TaxInvoicePrint/>} />
+      <Route  path= "/PurchasePrint" element={<Template/>} />
 
 
       <Route
