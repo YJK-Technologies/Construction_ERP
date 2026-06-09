@@ -134,7 +134,12 @@ function AttriDetInput({ }) {
   };
 
   const handleNavigate = () => {
-    navigate("/Attribute");
+    navigate("/Attribute", {
+    state: {
+      preservedRowData: location.state?.preservedRowData,
+      preservedInputs: location.state?.preservedInputs
+    }
+  });
   };
 
   const handleKeyDown = async (e, nextFieldRef, value, hasValueChanged, setHasValueChanged) => {
@@ -181,7 +186,6 @@ function AttriDetInput({ }) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          company_code: sessionStorage.getItem("selectedCompanyCode"),
           attributeheader_code,
           attributedetails_code,
           attributedetails_name,
