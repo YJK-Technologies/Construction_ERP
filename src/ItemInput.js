@@ -1499,10 +1499,7 @@ function ItemInput({}) {
 
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
-                    <label
-                      for="state"
-                      className={`exp-form-labels ${error && !status ? "text-danger" : ""}`}
-                    >
+                    <label for="state"className={`exp-form-labels ${error && !status ? "text-danger" : ""}`}>
                       Status<span className="text-danger">*</span>
                     </label>
                     <div title="Select the Our Brand ">
@@ -1524,9 +1521,7 @@ function ItemInput({}) {
 
                 <div className="col-md-3 form-group mb-2 ">
                   <div class="exp-form-floating">
-                    <label for="locno" class="exp-form-labels">
-                      Image
-                    </label>
+                    <label for="locno" class="exp-form-labels">Image</label>
                     <input
                       type="file"
                       class="exp-input-field form-control"
@@ -1541,13 +1536,11 @@ function ItemInput({}) {
                 <div className="col-md-3 form-group mb-2">
                     
                   <div className="image-preview-frame">
-                          
                     <img
                       src={selectedImage || DefaultProductImage}
                       alt="Selected Preview"
                       className="preview-image"
                     />
-                      
                   </div>
                 </div>
 
