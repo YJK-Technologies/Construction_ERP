@@ -466,8 +466,13 @@ function CustomerDetInput({ }) {
   };
 
   const handleNavigate = () => {
-    navigate("/Customer", { selectedRows });
-  };
+  navigate("/Customer", {
+    state: {
+      preservedRowData: location.state?.preservedRowData,
+      preservedInputs: location.state?.preservedInputs
+    }
+  });
+};
 
   const handleInsert = async () => {
     if (
@@ -591,6 +596,7 @@ function CustomerDetInput({ }) {
           customer_fax_no,
           customer_email_id,
           customer_credit_limit,
+          opening_balance,
           customer_transport_code,
           customer_salesman_code,
           customer_broker_code,

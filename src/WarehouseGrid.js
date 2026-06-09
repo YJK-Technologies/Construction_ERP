@@ -5,7 +5,7 @@ import "ag-grid-community/styles/ag-theme-quartz.css";
 import "ag-grid-enterprise";
 import "./apps.css";
 import Select from 'react-select';
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import labels from "./Labels";
@@ -39,11 +39,34 @@ function WarehouseGrid() {
   const [createdDate, setCreatedDate] = useState("");
   const [modifiedDate, setModifiedDate] = useState("");
 
+  const location = useLocation();
+
   //code added by Harish purpose of set user permisssion
   const permissions = JSON.parse(sessionStorage.getItem('permissions')) || {};
   const warehouseGridPermision = permissions
     .filter(permission => permission.screen_type === 'Warehouse')
     .map(permission => permission.permission_type.toLowerCase());
+
+    useEffect(() => {
+      if (location.state?.preservedRowData) {
+        setRowData(location.state.preservedRowData);
+      }
+    
+      if (location.state?.preservedInputs) {
+        setwarehouse_code(location.state.preservedInputs.warehouse_code || "");
+        setwarehouse_name(location.state.preservedInputs.warehouse_name || "");
+        setstatus(location.state.preservedInputs.status || "");
+        setlocation_no(location.state.preservedInputs.location_no || "");
+    
+        if (location.state.preservedInputs.status) {
+          setSelectedStatus({
+            label: location.state.preservedInputs.status,
+            value: location.state.preservedInputs.status,
+          });
+        }
+      }
+    }, [location.state]);
+    
 
   useEffect(() => {
     fetch(`${config.apiBaseUrl}/locationno`)
@@ -326,9 +349,24 @@ function WarehouseGrid() {
   const handleNavigateToForm = () => {
     navigate("/AddWarehouse", { state: { mode: "create" } }); // Pass selectedRows as props to the Input component
   };
+
   const handleNavigateWithRowData = (selectedRow) => {
-    navigate("/AddWarehouse", { state: { mode: "update", selectedRow } });
-  };
+  navigate("/AddWarehouse", {
+    state: {
+      mode: "update",
+      selectedRow,
+
+      preservedRowData: rowData,
+
+      preservedInputs: {
+        warehouse_code,
+        warehouse_name,
+        status,
+        location_no,
+      },
+    },
+  });
+};
 
   const onSelectionChanged = () => {
     const selectedNodes = gridApi.getSelectedNodes();

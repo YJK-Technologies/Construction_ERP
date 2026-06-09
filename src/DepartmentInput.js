@@ -113,8 +113,13 @@ function DepartmentInput({ }) {
   };
 
   const handleNavigatesToForm = () => {
-    navigate("/Department");
-  };
+  navigate("/Department", {
+    state: {
+      preservedRowData: location.state?.preservedRowData,
+      preservedInputs: location.state?.preservedInputs
+    }
+  });
+};
 
   const handleUpdate = async () => {
     if (!departmentCode || !departmenntName) {

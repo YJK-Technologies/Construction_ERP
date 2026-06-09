@@ -10,7 +10,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { showConfirmationToast } from "./ToastConfirmation";
 import LoadingScreen from "./Loading";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import labels from "./Labels";
 
 const AddSiteMasterScreen = () => {
@@ -66,6 +66,67 @@ const AddSiteMasterScreen = () => {
     const [modifiedBy, setModifiedBy] = useState("");
     const [createdDate, setCreatedDate] = useState("");
     const [modifiedDate, setModifiedDate] = useState("");
+
+    const location = useLocation();
+
+    useEffect(() => {
+      if (location.state?.preservedRowData) {
+        setRowData(location.state.preservedRowData);
+      }
+    
+      if (location.state?.preservedInputs) {
+        setSiteId(location.state.preservedInputs.siteId || "");
+        setSiteName(location.state.preservedInputs.siteName || "");
+        setSiteLocation(location.state.preservedInputs.siteLocation || "");
+        setCustomerCode(location.state.preservedInputs.customerCode || "");
+        setProjectType(location.state.preservedInputs.projectType || "");
+        setStartDate(location.state.preservedInputs.startDate || "");
+        setEndDate(location.state.preservedInputs.endDate || "");
+        setSiteStatus(location.state.preservedInputs.siteStatus || "");
+        setTotalBudget(location.state.preservedInputs.totalBudget || "");
+        setToleranceType(location.state.preservedInputs.toleranceType || "");
+        setToleranceValues(location.state.preservedInputs.toleranceValues || "");
+        setWarehouse(location.state.preservedInputs.warehouse || "");
+        setStatus(location.state.preservedInputs.status || "");
+    
+        if (location.state.preservedInputs.customerCode) {
+          setSelectedCustomerCode({
+            label: location.state.preservedInputs.customerCode,
+            value: location.state.preservedInputs.customerCode,
+          });
+        }
+        if (location.state.preservedInputs.projectType) {
+          setSelectedProjectType({
+            label: location.state.preservedInputs.projectType,
+            value: location.state.preservedInputs.projectType,
+          });
+        }
+        if (location.state.preservedInputs.siteStatus) {
+          setSelectedSiteStatus({
+            label: location.state.preservedInputs.siteStatus,
+            value: location.state.preservedInputs.siteStatus,
+          });
+        }
+        if (location.state.preservedInputs.toleranceType) {
+          setSelectedToleranceType({
+            label: location.state.preservedInputs.toleranceType,
+            value: location.state.preservedInputs.toleranceType,
+          });
+        }
+        if (location.state.preservedInputs.warehouse) {
+          setSelectedWarehouse({
+            label: location.state.preservedInputs.warehouse,
+            value: location.state.preservedInputs.warehouse,
+          });
+        }
+        if (location.state.preservedInputs.status) {
+          setSelectedStatus({
+            label: location.state.preservedInputs.status,
+            value: location.state.preservedInputs.status,
+          });
+        }
+      }
+    }, [location.state]);
 
     useEffect(() => {
         const company_code = sessionStorage.getItem("selectedCompanyCode");
@@ -453,8 +514,31 @@ const AddSiteMasterScreen = () => {
     };
 
     const handleNavigateWithRowData = (selectedRow) => {
-        navigate("/AddSiteMaster", { state: { mode: "update", selectedRow } });
-    };
+  navigate("/AddSiteMaster", {
+    state: {
+      mode: "update",
+      selectedRow,
+
+      preservedRowData: rowData,
+
+      preservedInputs: {
+        siteId,
+        siteName,
+        siteLocation,
+        customerCode,
+        projectType,
+        startDate,
+        endDate,
+        siteStatus,
+        totalBudget,
+        toleranceType,
+        toleranceValues,
+        warehouse,
+        status
+      },
+    },
+  });
+};
 
     const handleSearch = async () => {
         setLoading(true);

@@ -258,8 +258,13 @@ function StdAccInput({ }) {
   };
 
   const handleNavigate = () => {
-    navigate("/FinancialYearAccess");
-  };
+  navigate("/FinancialYearAccess", {
+    state: {
+      preservedRowData: location.state?.preservedRowData,
+      preservedInputs: location.state?.preservedInputs
+    }
+  });
+};
 
   const handleKeyDown = async (e, nextFieldRef, value, hasValueChanged, setHasValueChanged) => {
     if (e.key === 'Enter') {

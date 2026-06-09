@@ -4,7 +4,7 @@ import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
 import "ag-grid-enterprise";
 import "./apps.css";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import "./test.css"
@@ -32,11 +32,25 @@ function Department() {
   const [createdDate, setCreatedDate] = useState("");
   const [modifiedDate, setModifiedDate] = useState("");
 
+  const location = useLocation();
+
   //code added by Harish purpose of set user permisssion
   const permissions = JSON.parse(sessionStorage.getItem("permissions")) || {};
   const attributePermission = permissions
     .filter((permission) => permission.screen_type === "Attribute")
     .map((permission) => permission.permission_type.toLowerCase());
+
+    useEffect(() => {
+      if (location.state?.preservedRowData) {
+        setRowData(location.state.preservedRowData);
+      }
+    
+      if (location.state?.preservedInputs) {
+        setdept_id(location.state.preservedInputs.dept_id || "");
+        setdept_name(location.state.preservedInputs.dept_name || "");
+      }
+    }, [location.state]);
+    
 
   const reloadGridData = () => {
     window.location.reload();
@@ -242,9 +256,24 @@ function Department() {
   const handleNavigatesToForm = () => {
     navigate("/AddDepartment", { state: { mode: "create" } }); // Pass selectedRows as props to the Input component
   };
+  // const handleNavigateWithRowData = (selectedRow) => {
+  //   navigate("/AddDepartment", { state: { mode: "update", selectedRow } });
+  // };
   const handleNavigateWithRowData = (selectedRow) => {
-    navigate("/AddDepartment", { state: { mode: "update", selectedRow } });
-  };
+  navigate("/AddDepartment", {
+    state: {
+      mode: "update",
+      selectedRow,
+
+      preservedRowData: rowData,
+
+      preservedInputs: {
+        dept_id,
+        dept_name,
+      },
+    },
+  });
+};
 
   const onSelectionChanged = () => {
     const selectedNodes = gridApi.getSelectedNodes();

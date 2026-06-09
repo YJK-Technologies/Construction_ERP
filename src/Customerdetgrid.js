@@ -4,7 +4,7 @@ import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
 import "ag-grid-enterprise";
 import "./apps.css";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Dropdown, DropdownButton } from "react-bootstrap";
@@ -61,11 +61,54 @@ function CustomerDetGrid() {
   const [balance_typeDrop, setbalance_typeDrop] = useState([]);
   const [balance_typeAGDrop, setbalance_typeAGDrop] = useState([]);
 
+  const location = useLocation();
+
   //code added by Harish purpose of set user permisssion
   const permissions = JSON.parse(sessionStorage.getItem("permissions")) || {};
   const customerdetPermission = permissions
     .filter((permission) => permission.screen_type === "Customer")
     .map((permission) => permission.permission_type.toLowerCase());
+
+    useEffect(() => {
+      if (location.state?.preservedRowData) {
+        setRowData(location.state.preservedRowData);
+      }
+    
+      if (location.state?.preservedInputs) {
+        setcustomer_code(location.state.preservedInputs.customer_code || "");
+        setcustomer_name(location.state.preservedInputs.customer_name || "");
+        setpanno(location.state.preservedInputs.panno || "");
+        setcustomer_gst_no(location.state.preservedInputs.customer_gst_no || "");
+        setcustomer_addr_1(location.state.preservedInputs.customer_addr_1 || "");
+        setcustomer_area(location.state.preservedInputs.customer_area || "");
+        setcustomer_state(location.state.preservedInputs.customer_state || "");
+        setcustomer_country(location.state.preservedInputs.customer_country || "");
+        setcustomer_mobile_no(location.state.preservedInputs.customer_mobile_no || "");
+        setopening_balanceSC(location.state.preservedInputs.opening_balanceSC || "");
+        setbalance_type(location.state.preservedInputs.balance_type || "");
+        setstatus(location.state.preservedInputs.status || "");
+        setdefaultCust(location.state.preservedInputs.default_customer || "");
+    
+        if (location.state.preservedInputs.balance_type) {
+          setSelectedBT({
+            label: location.state.preservedInputs.balance_type,
+            value: location.state.preservedInputs.balance_type,
+          });
+        }
+        if (location.state.preservedInputs.status) {
+          setSelectedStatus({
+            label: location.state.preservedInputs.status,
+            value: location.state.preservedInputs.status,
+          });
+        }
+        if (location.state.preservedInputs.default_customer) {
+          setselectedCust({
+            label: location.state.preservedInputs.default_customer,
+            value: location.state.preservedInputs.default_customer,
+          });
+        }
+      }
+    }, [location.state]);
 
   useEffect(() => {
     const company_code = sessionStorage.getItem("selectedCompanyCode");
@@ -320,6 +363,8 @@ function CustomerDetGrid() {
           customer_state,
           customer_country,
           customer_mobile_no,
+          opening_balanceSC,
+          balance_type,
           status,
           default_customer,
         }),
@@ -860,9 +905,35 @@ function CustomerDetGrid() {
   const handleNavigatesToForm = () => {
     navigate("/AddCustomerDetails", { state: { mode: "create" } }); // Pass selectedRows as props to the Input component
   };
+  // const handleNavigateWithRowData = (selectedRow) => {
+  //   navigate("/AddCustomerDetails", { state: { mode: "update", selectedRow } });
+  // };
   const handleNavigateWithRowData = (selectedRow) => {
-    navigate("/AddCustomerDetails", { state: { mode: "update", selectedRow } });
-  };
+  navigate("/AddCustomerDetails", {
+    state: {
+      mode: "update",
+      selectedRow,
+
+      preservedRowData: rowData,
+
+      preservedInputs: {
+        customer_code,
+        customer_name,
+        panno,
+        customer_gst_no,
+        customer_addr_1,
+        customer_area,
+        customer_state,
+        customer_country,
+        customer_mobile_no,
+        opening_balanceSC,
+        balance_type,
+        status,
+        default_customer
+      },
+    },
+  });
+};
 
   const onSelectionChanged = () => {
     const selectedNodes = gridApi.getSelectedNodes();
