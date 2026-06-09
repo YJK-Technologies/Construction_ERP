@@ -6995,7 +6995,7 @@ const updcustomerdetData = async (req, res) => {
 
 // CUSTOMER SEARCH CRITERIA 07/07/2024 DHANA //
 const customerSearchdata = async (req, res) => {
-  const { company_code, customer_code, customer_name, panno, customer_gst_no, customer_addr_1, customer_area, customer_state, customer_country, customer_mobile_no, status, default_customer, opening_balance, balance_type } = req.body;
+  const { company_code, customer_code, customer_name, panno, customer_gst_no, customer_addr_1, customer_area, customer_state, customer_country, customer_mobile_no, status, default_customer, opening_balanceSC, balance_type } = req.body;
 
   try {
     // Connect to the database
@@ -7016,7 +7016,7 @@ const customerSearchdata = async (req, res) => {
       .input("customer_state", sql.NVarChar, customer_state)
       .input("customer_country", sql.NVarChar, customer_country)
       .input("customer_mobile_no", sql.NVarChar, customer_mobile_no)
-      .input("opening_balance", sql.Decimal(18, 2), opening_balance)
+      .input("opening_balance", sql.Decimal(18, 2), opening_balanceSC || null)
       .input("balance_type", sql.VarChar(50), balance_type)
       .input("default_customer", sql.NVarChar, default_customer)
       .query(`EXEC sp_customer_details_info @mode,@customer_code,@company_code,@customer_name,@status,@panno,@customer_gst_no,@customer_addr_1,'','','',@customer_area,@customer_state,

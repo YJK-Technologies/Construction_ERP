@@ -454,9 +454,13 @@ function VenDetInput({ }) {
   };
 
   const handleNavigate = () => {
-    navigate("/Vendor", { selectedRows });
-  };
-
+  navigate("/Vendor", {
+    state: {
+      preservedRowData: location.state?.preservedRowData,
+      preservedInputs: location.state?.preservedInputs
+    }
+  });
+};
   const handleInsert = async () => {
     if (
       !vendor_code ||

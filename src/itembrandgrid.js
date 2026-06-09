@@ -5,7 +5,7 @@ import "ag-grid-community/styles/ag-theme-quartz.css";
 import "ag-grid-enterprise";
 import "./apps.css";
 import Select from 'react-select';
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import ItemImagePopup from './ItemImageHelp'
@@ -63,6 +63,8 @@ function ItemBrandGrid() {
   const [otherSalesDropGrid, setOtherSalesDropGrid] = useState([]);
   const [salesDropGrid, setSalesDropGrid] = useState([]);
 
+  const location = useLocation();
+
   const handleClose = () => {
     setOpen(false);
   };
@@ -80,6 +82,42 @@ function ItemBrandGrid() {
   const itemBrandPermission = permissions
     .filter(permission => permission.screen_type === 'Item')
     .map(permission => permission.permission_type.toLowerCase());
+
+  useEffect(() => {
+    if (location.state?.preservedRowData) {
+      setRowData(location.state.preservedRowData);
+    }
+
+    if (location.state?.preservedInputs) {
+      setItem_code(location.state.preservedInputs.Item_code || "");
+      setItem_variant(location.state.preservedInputs.Item_variant || "");
+      setItem_name(location.state.preservedInputs.Item_name || "");
+      setItem_short_name(location.state.preservedInputs.Item_short_name || "");
+      setItem_Our_Brand(location.state.preservedInputs.Item_Our_Brand || "");
+      setstatus(location.state.preservedInputs.status || "");
+      setStandardCost(location.state.preservedInputs.standardCost || "");
+      setCostingMethod(location.state.preservedInputs.costingMethod || "");
+
+      if (location.state.preservedInputs.Item_Our_Brand) {
+        setSelectedBrand({
+          label: location.state.preservedInputs.Item_Our_Brand,
+          value: location.state.preservedInputs.Item_Our_Brand,
+        });
+      }
+      if (location.state.preservedInputs.status) {
+        setSelectedStatus({
+          label: location.state.preservedInputs.status,
+          value: location.state.preservedInputs.status,
+        });
+      }
+      if (location.state.preservedInputs.costingMethod) {
+        setSelectedCostingMethod({
+          label: location.state.preservedInputs.costingMethod,
+          value: location.state.preservedInputs.costingMethod,
+        });
+      }
+    }
+  }, [location.state]);
 
   useEffect(() => {
     const company_code = sessionStorage.getItem('selectedCompanyCode');
@@ -904,8 +942,27 @@ function ItemBrandGrid() {
   const handleNavigateToForm = () => {
     navigate("/AddItem", { state: { mode: "create" } }); // Pass selectedRows as props to the Input component
   };
+
   const handleNavigateWithRowData = (selectedRow) => {
-    navigate("/AddItem", { state: { mode: "update", selectedRow } });
+    navigate("/AddItem", {
+      state: {
+        mode: "update",
+        selectedRow,
+
+        preservedRowData: rowData,
+
+        preservedInputs: {
+          Item_code,
+          Item_variant,
+          Item_name,
+          Item_short_name,
+          Item_Our_Brand,
+          status,
+          standardCost,
+          costingMethod,
+        },
+      },
+    });
   };
 
   const onSelectionChanged = () => {
