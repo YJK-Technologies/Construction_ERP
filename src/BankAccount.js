@@ -9,6 +9,8 @@ import { useLocation } from 'react-router-dom';
 import 'react-toastify/dist/ReactToastify.css';
 import LoadingScreen from './Loading';
 import { ToastContainer, toast } from 'react-toastify';
+import DefaultProductImage from "./DefaultIMG/Product.png";
+
 const config = require('./Apiconfig');
 
 
@@ -977,7 +979,17 @@ function BankAccInput({ }) {
                     />
                   </div>
                 </div>
-                {selectedImage && (
+                                <div className="col-md-3 form-group mb-2">
+                    
+                  <div className="image-preview-frame">
+                    <img
+                      src={selectedImage || DefaultProductImage}
+                      alt="Selected Preview"
+                      className="preview-image"
+                    />
+                  </div>
+                </div>
+                {/* {selectedImage && (
                   <div className="col-md-3 form-group mb-2">
                     <div class="exp-form-floating">
                       <img
@@ -988,8 +1000,9 @@ function BankAccInput({ }) {
                       />
                     </div>
                   </div>
-                )}
-                <div class="col-md-3  d-flex justify-content-start p-2">
+                )} */}
+                <div class="col-md-3 form-group">
+                  <div class="d-flex justify-content-start ">
                   {mode === "create" ? (
                     <button onClick={handleInsert} className="mt-3 " title="Save">
                       <i class="fa-solid fa-floppy-disk"></i>
@@ -999,6 +1012,7 @@ function BankAccInput({ }) {
                       <i class="fa-solid fa-pen-to-square"></i>
                     </button>
                   )}
+                </div>
                 </div>
               </div>
             </div>
