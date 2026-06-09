@@ -166,6 +166,10 @@ import ExpensesTracking from "./Reports/ExpensesTracking.js";
 import ExpenseSummary from "./Reports/ExpenseSummary.js";
 import ExpensesTrackingPrint from "./InventoryPrintTemplates/ExpensesTrackingPrint.js";
 import ExpensesSummaryPrint from "./InventoryPrintTemplates/ExpensesSummaryPrint.js";
+import QuotationPrint from "./PrintScreens/Template2/QuotationPrint.js";
+import PurchaseOrderPrint from "./PrintScreens/Template1/PurchaseOrderPrint.js";
+import DCPrint from "./PrintScreens/Template2/DcPrint.js";
+import TaxInvoicePrint from "./PrintScreens/Template2/TaxInvoicePrint.js";
 
 
 function Main() {
@@ -386,6 +390,10 @@ function Main() {
       <Route path="/ExpensesTrackingPrint" element={<ExpensesTrackingPrint  />} />
       <Route path="/ExpensesSummaryPrint" element={<ExpensesSummaryPrint   />} />
       <Route  path= "/JournalPrint" element={<JournalPrint/>} />
+      <Route  path= "/QuotationPrint" element={<QuotationPrint/>} />
+      <Route  path= "/PurchaseOrderPrint" element={<PurchaseOrderPrint/>} />
+      <Route  path= "/DCPrint" element={<DCPrint/>} />
+      <Route  path= "/TaxInvoicePrint" element={<TaxInvoicePrint/>} />
 
 
       <Route
