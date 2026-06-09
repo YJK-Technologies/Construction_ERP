@@ -170,6 +170,7 @@ import QuotationPrint from "./PrintScreens/Template2/QuotationPrint.js";
 import PurchaseOrderPrint from "./PrintScreens/Template1/PurchaseOrderPrint.js";
 import DCPrint from "./PrintScreens/Template2/DcPrint.js";
 import TaxInvoicePrint from "./PrintScreens/Template2/TaxInvoicePrint.js";
+import ItemSettings from "./ItemSettings.js";
 
 
 function Main() {
