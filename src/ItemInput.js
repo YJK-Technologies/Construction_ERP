@@ -13,7 +13,7 @@ import LoadingScreen from "./Loading";
 
 const config = require("./Apiconfig");
 
-function ItemInput({}) {
+function ItemInput({ }) {
   const [Item_code, setItem_code] = useState("");
   const inputRef = useRef(null);
   const [Item_variant, setItem_variant] = useState("");
@@ -107,6 +107,10 @@ function ItemInput({}) {
   const [selectedCostingMethod, setSelectedCostingMethod] = useState("");
   const [costingMethod, setCostingMethod] = useState("");
   const [standardCost, setStandardCost] = useState("");
+
+  const [barcodeSetting, setBarcodeSetting] = useState("");
+  const company_code = sessionStorage.getItem("selectedCompanyCode");
+  const Location_Code = sessionStorage.getItem("selectedLocationCode");
 
   const location = useLocation();
   const { mode, selectedRow } = location.state || {};
@@ -254,6 +258,40 @@ function ItemInput({}) {
       clearInputFields();
     }
   }, [mode, selectedRow]);
+
+  const getItemBarcodeSetting = async () => {
+    try {
+      const response = await fetch(`${config.apiBaseUrl}/getItemSettings`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            company_code,
+            Location_Code,
+          }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (data.length > 0) {
+        setBarcodeSetting(
+          data[0].Generate_Barcode_From_ItemCode
+        );
+      } else {
+        setBarcodeSetting("No");
+      }
+    } catch (err) {
+      console.error(err);
+      setBarcodeSetting("No");
+    }
+  };
+
+  useEffect(() => {
+    getItemBarcodeSetting();
+  }, []);
 
   const base64ToFile = (base64Data, fileName) => {
     if (!base64Data || !base64Data.startsWith("data:")) {
@@ -518,79 +556,79 @@ function ItemInput({}) {
 
   const filteredOptionOthertaxitemsales = Array.isArray(Othersaltaxdrop)
     ? Othersaltaxdrop.map((option) => ({
-        value: option.Other_Sales_tax_type,
-        label: option.Other_Sales_tax_type,
-      }))
+      value: option.Other_Sales_tax_type,
+      label: option.Other_Sales_tax_type,
+    }))
     : [];
 
   const filteredOptionRegister = Array.isArray(regbranddrop)
     ? regbranddrop.map((option) => ({
-        value: option.attributedetails_name,
-        label: option.attributedetails_name,
-      }))
+      value: option.attributedetails_name,
+      label: option.attributedetails_name,
+    }))
     : [];
 
   const filteredOptionBrand = Array.isArray(ourbranddrop)
     ? ourbranddrop.map((option) => ({
-        value: option.attributedetails_name,
-        label: option.attributedetails_name,
-      }))
+      value: option.attributedetails_name,
+      label: option.attributedetails_name,
+    }))
     : [];
 
   const filteredOptionStatus = Array.isArray(statusdrop)
     ? statusdrop.map((option) => ({
-        value: option.attributedetails_name,
-        label: option.attributedetails_name,
-      }))
+      value: option.attributedetails_name,
+      label: option.attributedetails_name,
+    }))
     : [];
 
   const filteredOptionuom = Array.isArray(uomdrop)
     ? uomdrop.map((option) => ({
-        value: option.attributedetails_name,
-        label: option.attributedetails_name,
-      }))
+      value: option.attributedetails_name,
+      label: option.attributedetails_name,
+    }))
     : [];
 
   const filteredOptionSuom = Array.isArray(suomdrop)
     ? suomdrop.map((option) => ({
-        value: option.attributedetails_name,
-        label: option.attributedetails_name,
-      }))
+      value: option.attributedetails_name,
+      label: option.attributedetails_name,
+    }))
     : [];
 
   const filteredOptionVariant = Array.isArray(variantdrop)
     ? variantdrop.map((option) => ({
-        value: option.attributedetails_name,
-        label: option.attributedetails_name,
-      }))
+      value: option.attributedetails_name,
+      label: option.attributedetails_name,
+    }))
     : [];
 
   const filteredOptiontaxitemsales = Array.isArray(saltaxdrop)
     ? saltaxdrop.map((option) => ({
-        value: option.tax_type,
-        label: option.tax_type,
-      }))
+      value: option.tax_type,
+      label: option.tax_type,
+    }))
     : [];
 
   const filteredOptiontaxitempur = Array.isArray(purtaxdrop)
     ? purtaxdrop.map((option) => ({
-        value: option.tax_type,
-        label: option.tax_type,
-      }))
+      value: option.tax_type,
+      label: option.tax_type,
+    }))
     : [];
 
   const filteredOptionothertaxitempur = Array.isArray(otherpurtaxdrop)
     ? otherpurtaxdrop.map((option) => ({
-        value: option.Other_purch_tax_type,
-        label: option.Other_purch_tax_type,
-      }))
+      value: option.Other_purch_tax_type,
+      label: option.Other_purch_tax_type,
+    }))
     : [];
 
   const filteredOptionCostingMethod = Array.isArray(costingMethodDrop)
     ? costingMethodDrop.map((option) => ({
-        value: option.attributedetails_name,
-        label: option.attributedetails_name,
-      }))
+      value: option.attributedetails_name,
+      label: option.attributedetails_name,
+    }))
     : [];
 
   const handleChangeRegister = (selectedRegister) => {
@@ -876,9 +914,9 @@ function ItemInput({}) {
     setBarcode(value);
 
     if (value) {
-      setBarcodeValue(true); 
+      setBarcodeValue(true);
     } else {
-      setBarcodeValue(false); 
+      setBarcodeValue(false);
     }
   };
 
@@ -921,6 +959,17 @@ function ItemInput({}) {
     // Numeric + positive only
     if (/^\d{0,10}(\.\d{0,2})?$/.test(value)) {
       setStandardCost(value);
+    }
+  };
+
+  const handleItemCodeChange = (e) => {
+    const value = e.target.value;
+
+    setItem_code(value);
+
+    if (barcodeSetting === "Yes") {
+      setBarcode(value);
+      setBarcodeValue(value.trim() !== "");
     }
   };
 
@@ -974,7 +1023,7 @@ function ItemInput({}) {
                       required
                       title="Please enter the code"
                       value={Item_code}
-                      onChange={(e) => setItem_code(e.target.value)}
+                      onChange={handleItemCodeChange}
                       maxLength={18}
                       ref={inputRef}
                       readOnly={mode === "update"}
@@ -1062,7 +1111,7 @@ function ItemInput({}) {
                       for="state"
                       className={`exp-form-labels ${error && !Item_BaseUOM ? "text-danger" : ""}`}
                     >
-                      Base UOM <span className="text-danger">*</span>
+                      Base UOM<span className="text-danger">*</span>
                     </label>
                     <div title="Select the Base UOM">
                       <Select
@@ -1504,7 +1553,7 @@ function ItemInput({}) {
 
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
-                    <label for="state"className={`exp-form-labels ${error && !status ? "text-danger" : ""}`}>
+                    <label for="state" className={`exp-form-labels ${error && !status ? "text-danger" : ""}`}>
                       Status<span className="text-danger">*</span>
                     </label>
                     <div title="Select the Our Brand ">
@@ -1539,7 +1588,7 @@ function ItemInput({}) {
                 </div>
 
                 <div className="col-md-3 form-group mb-2">
-                    
+
                   <div className="image-preview-frame">
                     <img
                       src={selectedImage || DefaultProductImage}
@@ -1561,6 +1610,7 @@ function ItemInput({}) {
                       type="text"
                       value={barcode}
                       onChange={handleInputChange}
+                      readOnly={barcodeSetting === "Yes"}
                       maxLength={18}
                       placeholder=""
                       required

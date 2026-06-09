@@ -368,6 +368,7 @@ function Main() {
      { path: "/MaterialUsage", component: <MaterialUsage /> },
      { path: "/ExpensesTracking", component: <ExpensesTracking /> },
      { path: "/ExpenseSummary", component: <ExpenseSummary /> },
+     { path: "/ItemSettings", component: <ItemSettings /> },
   ];
  
   return (
@@ -406,21 +407,6 @@ function Main() {
               <SideBar className="sidebar"/>
               <div className=" container-fluid ">
                 <AccountInformation />
-              </div>
-            </div>
-          </div>
-        }
-      />
-
-      <Route
-        path="/ItemSettings"
-        element={
-          <div>
-            <Topbar />
-            <div className="layout-container ">
-              <SideBar className="sidebar"/>
-              <div className=" container-fluid ">
-                <ItemSettings />
               </div>
             </div>
           </div>
