@@ -10,7 +10,7 @@ import { ToastContainer, toast } from "react-toastify";
 
 const config = require("./Apiconfig");
 
-function UserInput({}) {
+function UserInput({ }) {
   const [user_code, setUser_code] = useState("");
   const [user_name, setUser_name] = useState("");
   const [first_name, setFirst_name] = useState("");
@@ -54,6 +54,8 @@ function UserInput({}) {
   const modified_by = sessionStorage.getItem("selectedUserCode");
 
   const [isUpdated, setIsUpdated] = useState(false);
+
+  const [superAdmin, setSuperAdmin] = useState(false);
 
   const location = useLocation();
   const { mode, selectedRow } = location.state || {};
@@ -255,30 +257,30 @@ function UserInput({}) {
 
   const filteredOptionStatus = Array.isArray(statusdrop)
     ? statusdrop.map((option) => ({
-        value: option.attributedetails_name,
-        label: option.attributedetails_name,
-      }))
+      value: option.attributedetails_name,
+      label: option.attributedetails_name,
+    }))
     : [];
 
   const filteredOptionRole = Array.isArray(roleDrop)
     ? roleDrop.map((option) => ({
-        value: option.role_id,
-        label: option.role_name,
-      }))
+      value: option.role_id,
+      label: option.role_name,
+    }))
     : [];
 
   const filteredOptionLog = Array.isArray(Loginoroutdrop)
     ? Loginoroutdrop.map((option) => ({
-        value: option.attributedetails_name,
-        label: option.attributedetails_name,
-      }))
+      value: option.attributedetails_name,
+      label: option.attributedetails_name,
+    }))
     : [];
 
   const filteredOptionGender = Array.isArray(Genderdrop)
     ? Genderdrop.map((option) => ({
-        value: option.attributedetails_name,
-        label: option.attributedetails_name,
-      }))
+      value: option.attributedetails_name,
+      label: option.attributedetails_name,
+    }))
     : [];
 
   const handleChangeStatus = (selectedStatus) => {
@@ -342,15 +344,16 @@ function UserInput({}) {
       formData.append("dob", dob);
       formData.append("role_id", role_id);
       formData.append("gender", gender);
+      formData.append("super_admin", superAdmin ? "Yes" : "No");
       formData.append("created_by", sessionStorage.getItem("selectedUserCode"));
 
       if (user_images) {
-        formData.append("user_img", user_images); // Appending the image file
+        formData.append("user_img", user_images);
       }
 
       const response = await fetch(`${config.apiBaseUrl}/useradd`, {
         method: "POST",
-        body: formData, // Sending formData
+        body: formData, 
       });
 
       if (response.ok) {
@@ -822,6 +825,21 @@ function UserInput({}) {
                       </div>
                     </div>
                   )}
+                  <div className="col-md-3 form-group mb-2 mt-3">
+                    <div className="form-check">
+                      <input
+                        className="form-check-input"
+                        type="checkbox"
+                        id="superAdmin"
+                        checked={superAdmin}
+                        onChange={(e) => setSuperAdmin(e.target.checked)}
+                      />
+
+                      <label className="form-check-label" htmlFor="superAdmin">
+                        Super Admin
+                      </label>
+                    </div>
+                  </div>
                   <div class="col-md-3 form-group ">
                     {mode === "create" ? (
                       <button
