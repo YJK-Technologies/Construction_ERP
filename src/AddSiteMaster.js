@@ -432,7 +432,7 @@ const AddAddSiteMasterScreen = () => {
             });
             if (response.ok) {
                 toast.success("Data inserted Successfully", {
-                    onClose: () => clearInputFields()
+                    // onClose: () => clearInputFields()
                 });
             } else {
                 const errorResponse = await response.json();
@@ -449,8 +449,13 @@ const AddAddSiteMasterScreen = () => {
     };
 
     const handleNavigate = () => {
-        navigate("/SiteMaster   ");
-    };
+  navigate("/SiteMaster", {
+    state: {
+      preservedRowData: location.state?.preservedRowData,
+      preservedInputs: location.state?.preservedInputs
+    }
+  });
+};
 
     // Total Budget
     const handleTotalBudgetChange = (e) => {

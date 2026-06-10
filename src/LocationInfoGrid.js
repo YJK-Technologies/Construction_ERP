@@ -7,7 +7,7 @@ import "./apps.css";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Select from 'react-select';
-import { useNavigate } from "react-router-dom";
+import { useNavigate , useLocation } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import labels from "./Labels";
@@ -55,11 +55,37 @@ function LocInfoGrid() {
   const [createdDate, setCreatedDate] = useState("");
   const [modifiedDate, setModifiedDate] = useState("");
 
+  const location = useLocation();
+
   //code added by Harish purpose of set user permisssion
   const permissions = JSON.parse(sessionStorage.getItem('permissions')) || {};
   const LocationPermissions = permissions
     .filter(permission => permission.screen_type === 'Location')
     .map(permission => permission.permission_type.toLowerCase());
+
+  useEffect(() => {
+  if (location.state?.preservedRowData) {
+    setRowData(location.state.preservedRowData);
+  }
+  if (location.state?.preservedInputs) {
+    const inputs = location.state.preservedInputs;
+    setlocation_no(inputs.location_no || "");
+    setlocation_name(inputs.location_name || "");
+    setcity(inputs.city || "");
+    setstate(inputs.state || "");
+    setpincode(inputs.pincode || "");
+    setcountry(inputs.country || "");
+    setstatus(inputs.status || "");
+    if (inputs.status) {
+      setSelectedStatus({
+        label: inputs.status,
+        value: inputs.status,
+      });
+    } else {
+      setSelectedStatus(null);
+    }
+  }
+}, [location.state]);
 
 
   useEffect(() => {
@@ -206,6 +232,7 @@ function LocInfoGrid() {
       checkboxSelection: true,
       headerName: "Location No",
       field: "location_no",
+      cellClass: "ag-link-cell",
       cellStyle: { textAlign: "center" },
       cellEditorParams: {
         maxLength: 150,
@@ -509,7 +536,8 @@ function LocInfoGrid() {
   };
 
   const handleNavigateWithRowData = (selectedRow) => {
-    navigate("/AddLocation", { state: { mode: "update", selectedRow } });
+  navigate("/AddLocation", { state: { mode: "update", selectedRow, preservedRowData: rowData, 
+      preservedInputs: { location_no, location_name, city, state, pincode, country, status, }, }, }); 
   };
 
   const onSelectionChanged = () => {

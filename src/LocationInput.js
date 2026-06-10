@@ -349,7 +349,7 @@ function LocInfoInput({ }) {
       });
       if (response.ok) {
         toast.success("Data updated successfully", {
-          onClose: () => clearInputFields()
+          // onClose: () => clearInputFields()
         });
       } else if (response.status === 400) {
         const errorResponse = await response.json();
@@ -373,8 +373,13 @@ function LocInfoInput({ }) {
   }
 
   const handleNavigate = () => {
-    navigate("/Location"); // Pass selectedRows as props to the Input component
-  };
+  navigate("/Location", {
+    state: {
+      preservedRowData: location.state?.preservedRowData,
+      preservedInputs: location.state?.preservedInputs,
+    },
+  });
+};
 
   const handleKeyDown = async (
     e,

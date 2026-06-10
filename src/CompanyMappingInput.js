@@ -42,7 +42,10 @@ function UserComMap_input({ }) {
   const [keyfiels, setKeyfiels] = useState('');
 
   const location = useLocation();
-  const { mode, selectedRow } = location.state || {};
+  const locationState = location.state || {};
+
+const mode = locationState.mode || "create";
+const selectedRow = locationState.selectedRow || null;
 
   console.log(selectedRow);
 
@@ -213,9 +216,15 @@ function UserComMap_input({ }) {
     }
   };
 
-  const handleNavigate = () => {
-    navigate("/CompanyMapping"); // Pass selectedRows as props to the Input component
-  };
+const handleNavigate = () => {
+  navigate("/CompanyMapping", {
+    state: {
+      preservedRowData: location.state?.preservedRowData,
+
+      preservedInputs: location.state?.preservedInputs
+    }
+  });
+};
 
   const handleKeyDown = async (
     e,
@@ -277,7 +286,7 @@ function UserComMap_input({ }) {
       });
       if (response.ok) {
         toast.success("Data updated successfully", {
-          onClose: () => clearInputFields()
+          // onClose: () => clearInputFields()
         });
       } else {
         const errorResponse = await response.json();

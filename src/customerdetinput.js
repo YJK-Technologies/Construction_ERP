@@ -66,6 +66,9 @@ function CustomerDetInput({ }) {
   const [selectedBT, setSelectedBT] = useState("");
   const [balance_type, setbalance_type] = useState("");
   const [balance_typeDrop, setbalance_typeDrop] = useState([]);
+  const [status, setStatus] = useState("");
+  const [panNo, setPanNo] = useState("");
+  const [customerGstNo, setCustomerGstNo] = useState("");
 
   const Country = useRef(null);
   const IMEx = useRef(null);
@@ -133,6 +136,9 @@ function CustomerDetInput({ }) {
     setSelectedBT('');
     setbalance_type('');
     setkeyfield('');
+    setStatus('');
+    setPanNo('');
+    setCustomerGstNo('');
   };
 
   const fetchHdrCode = () => {
@@ -286,6 +292,9 @@ function CustomerDetInput({ }) {
       setOfficeType(selectedRow.office_type || "");
       setdefaultCust(selectedRow.default_customer || "");
       setkeyfield(selectedRow.keyfield || "");
+      setStatus(selectedRow.status || "");
+      setPanNo(selectedRow.panno || "");
+      setCustomerGstNo(selectedRow.customer_gst_no || "");
       setSelectedCode({
         label: selectedRow.customer_code,
         value: selectedRow.customer_code,
@@ -457,8 +466,13 @@ function CustomerDetInput({ }) {
   };
 
   const handleNavigate = () => {
-    navigate("/Customer", { selectedRows });
-  };
+  navigate("/Customer", {
+    state: {
+      preservedRowData: location.state?.preservedRowData,
+      preservedInputs: location.state?.preservedInputs
+    }
+  });
+};
 
   const handleInsert = async () => {
     if (
@@ -582,6 +596,7 @@ function CustomerDetInput({ }) {
           customer_fax_no,
           customer_email_id,
           customer_credit_limit,
+          opening_balance,
           customer_transport_code,
           customer_salesman_code,
           customer_broker_code,
@@ -590,12 +605,15 @@ function CustomerDetInput({ }) {
           office_type,
           default_customer,
           keyfield,
+          status,
+          panno: panNo,
+          customer_gst_no: customerGstNo,
           modified_by: sessionStorage.getItem('selectedUserCode')
         }),
       });
       if (response.ok) {
         toast.success("Data updated successfully", {
-          onClose: () => clearInputFields()
+          // onClose: () => clearInputFields()
         });
       } else {
         const errorResponse = await response.json();
@@ -952,48 +970,6 @@ function CustomerDetInput({ }) {
                   </div>
                 </div>
 
-                <div className="col-md-3 form-group mb-2">
-                  <div class="exp-form-floating">
-                    <label for="rid" className={`exp-form-labels ${error && !customer_credit_limit ? 'text-danger' : ''}`}>
-                      Credit Limit<span className="text-danger">*</span>
-                    </label>
-                    <input
-                      id="cuscre"
-                      class="exp-input-field form-control"
-                      type="number"
-                      placeholder=""
-                      required title="Please enter the credit limit"
-                      value={customer_credit_limit}
-                      onChange={(e) => setcustomer_credit_limit(e.target.value)}
-                      maxLength={18}
-                      ref={Credit}
-                      onKeyDown={(e) => handleKeyDown(e, Transport, Credit)}
-                    />
-                  </div>
-                </div>
-
-                <div className="col-md-3 form-group mb-2">
-                  <div class="exp-form-floating">
-                    <label for="rid" className={`exp-form-labels ${error && !opening_balance ? 'text-danger' : ''}`}>
-                      Opening Balance<span className="text-danger">*</span>
-                    </label>
-                    <input
-                      id="vencre"
-                      class="exp-input-field form-control"
-                      type="number"
-                      placeholder=""
-                      required
-                      title="Please enter the opening balance"
-                      value={opening_balance}
-                      onChange={(e) => setopening_balance(e.target.value)}
-                      maxLength={18}
-                      ref={openingbalance}
-                      onKeyDown={(e) =>
-                        handleKeyDown(e, Transport, openingbalance)
-                      }
-                    />
-                  </div>
-                </div>
 
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
@@ -1016,25 +992,6 @@ function CustomerDetInput({ }) {
                   </div>
                 </div>
 
-                <div className="col-md-3 form-group mb-2">
-                  <div class="exp-form-floating">
-                    <label for="ventrans" className={`exp-form-labels ${error && !balance_type ? 'text-danger' : ''}`}>
-                      Balance Type<span className="text-danger">*</span>
-                    </label>
-                    <div title="Select the Balance Type">
-                      <Select
-                        id="ventrans"
-                        value={selectedBT}
-                        onChange={handleChangeBT}
-                        options={filteredOptionBT}
-                        className="exp-input-field"
-                        placeholder=""
-                        ref={BalanceType}
-                        onKeyDown={(e) => handleKeyDown(e, Salesman, BalanceType)}
-                      />
-                    </div>
-                  </div>
-                </div>
 
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
@@ -1165,6 +1122,81 @@ function CustomerDetInput({ }) {
                   </div>
                 </div>
 
+                <div>
+                  <CustomerHdrInputPopup open={open2} handleClose={handleClose} />
+                </div>
+
+              </div>
+            </div>
+
+            <div className="shadow-lg p-3 bg-body-tertiary rounded  mb-2">
+                <div className="col-md-3 form-group mb-3 mt-3" style={{ width: "150px" }}>
+                    <h6 className=""><strong>Financial Year:</strong></h6>
+                </div>
+                                  <div className="row mb-3 ">
+                  <div className="col-md-3 form-group mb-2">
+                  <div class="exp-form-floating">
+                    <label for="ventrans" className={`exp-form-labels ${error && !balance_type ? 'text-danger' : ''}`}>
+                      Balance Type<span className="text-danger">*</span>
+                    </label>
+                    <div title="Select the Balance Type">
+                      <Select
+                        id="ventrans"
+                        value={selectedBT}
+                        onChange={handleChangeBT}
+                        options={filteredOptionBT}
+                        className="exp-input-field"
+                        placeholder=""
+                        ref={BalanceType}
+                        onKeyDown={(e) => handleKeyDown(e, Salesman, BalanceType)}
+                      />
+                    </div>
+                  </div>
+                  </div>
+
+                <div className="col-md-3 form-group mb-2">
+                  <div class="exp-form-floating">
+                    <label for="rid" className={`exp-form-labels ${error && !customer_credit_limit ? 'text-danger' : ''}`}>
+                      Credit Limit<span className="text-danger">*</span>
+                    </label>
+                    <input
+                      id="cuscre"
+                      class="exp-input-field form-control"
+                      type="number"
+                      placeholder=""
+                      required title="Please enter the credit limit"
+                      value={customer_credit_limit}
+                      onChange={(e) => setcustomer_credit_limit(e.target.value)}
+                      maxLength={18}
+                      ref={Credit}
+                      onKeyDown={(e) => handleKeyDown(e, Transport, Credit)}
+                    />
+                  </div>
+                </div>
+
+                <div className="col-md-3 form-group mb-2">
+                  <div class="exp-form-floating">
+                    <label for="rid" className={`exp-form-labels ${error && !opening_balance ? 'text-danger' : ''}`}>
+                      Opening Balance<span className="text-danger">*</span>
+                    </label>
+                    <input
+                      id="vencre"
+                      class="exp-input-field form-control"
+                      type="number"
+                      placeholder=""
+                      required
+                      title="Please enter the opening balance"
+                      value={opening_balance}
+                      onChange={(e) => setopening_balance(e.target.value)}
+                      maxLength={18}
+                      ref={openingbalance}
+                      onKeyDown={(e) =>
+                        handleKeyDown(e, Transport, openingbalance)
+                      }
+                    />
+                  </div>
+                </div>
+
                 <div class="col-md-3 form-group d-flex justify-content-start p-2">
                   {mode === "create" ? (
                     <button onClick={handleInsert} className="mt-3" title="Save">
@@ -1177,12 +1209,10 @@ function CustomerDetInput({ }) {
                   )}
                 </div>
 
-                <div>
-                  <CustomerHdrInputPopup open={open2} handleClose={handleClose} />
                 </div>
 
-              </div>
             </div>
+            
           </div>
         </div>
       </div>

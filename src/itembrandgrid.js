@@ -5,7 +5,7 @@ import "ag-grid-community/styles/ag-theme-quartz.css";
 import "ag-grid-enterprise";
 import "./apps.css";
 import Select from 'react-select';
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import ItemImagePopup from './ItemImageHelp'
@@ -63,6 +63,8 @@ function ItemBrandGrid() {
   const [otherSalesDropGrid, setOtherSalesDropGrid] = useState([]);
   const [salesDropGrid, setSalesDropGrid] = useState([]);
 
+  const location = useLocation();
+
   const handleClose = () => {
     setOpen(false);
   };
@@ -80,6 +82,42 @@ function ItemBrandGrid() {
   const itemBrandPermission = permissions
     .filter(permission => permission.screen_type === 'Item')
     .map(permission => permission.permission_type.toLowerCase());
+
+  useEffect(() => {
+    if (location.state?.preservedRowData) {
+      setRowData(location.state.preservedRowData);
+    }
+
+    if (location.state?.preservedInputs) {
+      setItem_code(location.state.preservedInputs.Item_code || "");
+      setItem_variant(location.state.preservedInputs.Item_variant || "");
+      setItem_name(location.state.preservedInputs.Item_name || "");
+      setItem_short_name(location.state.preservedInputs.Item_short_name || "");
+      setItem_Our_Brand(location.state.preservedInputs.Item_Our_Brand || "");
+      setstatus(location.state.preservedInputs.status || "");
+      setStandardCost(location.state.preservedInputs.standardCost || "");
+      setCostingMethod(location.state.preservedInputs.costingMethod || "");
+
+      if (location.state.preservedInputs.Item_Our_Brand) {
+        setSelectedBrand({
+          label: location.state.preservedInputs.Item_Our_Brand,
+          value: location.state.preservedInputs.Item_Our_Brand,
+        });
+      }
+      if (location.state.preservedInputs.status) {
+        setSelectedStatus({
+          label: location.state.preservedInputs.status,
+          value: location.state.preservedInputs.status,
+        });
+      }
+      if (location.state.preservedInputs.costingMethod) {
+        setSelectedCostingMethod({
+          label: location.state.preservedInputs.costingMethod,
+          value: location.state.preservedInputs.costingMethod,
+        });
+      }
+    }
+  }, [location.state]);
 
   useEffect(() => {
     const company_code = sessionStorage.getItem('selectedCompanyCode');
@@ -396,6 +434,7 @@ function ItemBrandGrid() {
       checkboxSelection: true,
       headerName: "Code",
       field: "Item_code",
+      cellClass: "ag-link-cell",
       //editable: true,
       cellStyle: { textAlign: "center" },
       cellEditorParams: {
@@ -903,8 +942,27 @@ function ItemBrandGrid() {
   const handleNavigateToForm = () => {
     navigate("/AddItem", { state: { mode: "create" } }); // Pass selectedRows as props to the Input component
   };
+
   const handleNavigateWithRowData = (selectedRow) => {
-    navigate("/AddItem", { state: { mode: "update", selectedRow } });
+    navigate("/AddItem", {
+      state: {
+        mode: "update",
+        selectedRow,
+
+        preservedRowData: rowData,
+
+        preservedInputs: {
+          Item_code,
+          Item_variant,
+          Item_name,
+          Item_short_name,
+          Item_Our_Brand,
+          status,
+          standardCost,
+          costingMethod,
+        },
+      },
+    });
   };
 
   const onSelectionChanged = () => {
@@ -1073,6 +1131,10 @@ function ItemBrandGrid() {
     }
   };
 
+  const handleOpenSettings = () => {
+    navigate("/ItemSettings"); 
+  };
+
   return (
     <div className="container-fluid Topnav-screen">
       <div>
@@ -1088,30 +1150,28 @@ function ItemBrandGrid() {
 
             <div className="d-flex justify-content-end purbut me-3">
               {['add', 'all permission'].some(permission => itemBrandPermission.includes(permission)) && (
-                <addbutton className="purbut" onClick={handleNavigateToForm}
-                  required title="Add Item"> <i class="fa-solid fa-user-plus"></i> </addbutton>
+                <addbutton className="purbut" onClick={handleNavigateToForm} required title="Add Item">
+                  <i class="fa-solid fa-user-plus"></i>
+                </addbutton>
               )}
               {['delete', 'all permission'].some(permission => itemBrandPermission.includes(permission)) && (
-                <delbutton
-                  className="purbut" onClick={deleteSelectedRows} required title="Delete">
+                <delbutton className="purbut" onClick={deleteSelectedRows} required title="Delete">
                   <i class="fa-solid fa-user-minus"></i>
                 </delbutton>
               )}
               {['update', 'all permission'].some(permission => itemBrandPermission.includes(permission)) && (
-                <savebutton class="purbut" onClick={saveEditedData} required title="Update"><i class="fa-solid fa-floppy-disk"></i></savebutton>
+                <savebutton class="purbut" onClick={saveEditedData} required title="Update">
+                  <i class="fa-solid fa-floppy-disk"></i>
+                </savebutton>
               )}
-
-
               {['all permission', 'view'].some(permission => itemBrandPermission.includes(permission)) && (
-                <printbutton
-                  class="purbut"
-                  onClick={generateReport}
-                  required
-                  title="Generate Report"
-                >
+                <printbutton class="purbut" onClick={generateReport} required title="Generate Report">
                   <i class="fa-solid fa-print"></i>
                 </printbutton>
               )}
+              <printbutton className="purbut" onClick={handleOpenSettings} required title="Settings" >
+                <i className="fa-solid fa-gear"></i>
+              </printbutton>
             </div>
 
 
@@ -1126,55 +1186,37 @@ function ItemBrandGrid() {
                   </button>
                   <ul class="dropdown-menu menu">
                     <li class="iconbutton d-flex justify-content-center text-success">
-                      {["add", "all permission"].some((permission) =>
-                        itemBrandPermission.includes(permission)
-                      ) && (
-                          <icon
-                            class="icon"
-                            onClick={handleNavigateToForm}
-                          >
-                            <i class="fa-solid fa-user-plus"></i>
-                            {" "}
-                          </icon>
-                        )}
+                      {["add", "all permission"].some((permission) => itemBrandPermission.includes(permission)) && (
+                        <icon class="icon" onClick={handleNavigateToForm}>
+                          <i class="fa-solid fa-user-plus"></i>
+                        </icon>
+                      )}
                     </li>
                     <li class="iconbutton  d-flex justify-content-center text-danger">
-                      {["delete", "all permission"].some((permission) =>
-                        itemBrandPermission.includes(permission)
-                      ) && (
-                          <icon
-                            class="icon"
-                            onClick={deleteSelectedRows}
-                          >
-
-                            <i class="fa-solid fa-user-minus"></i>
-                          </icon>
-                        )}
+                      {["delete", "all permission"].some((permission) => itemBrandPermission.includes(permission)) && (
+                        <icon class="icon" onClick={deleteSelectedRows}>
+                          <i class="fa-solid fa-user-minus"></i>
+                        </icon>
+                      )}
                     </li>
                     <li class="iconbutton  d-flex justify-content-center text-primary ">
-                      {["update", "all permission"].some((permission) =>
-                        itemBrandPermission.includes(permission)
-                      ) && (
-                          <icon
-                            class="icon"
-                            onClick={saveEditedData}
-                          >
-                            <i class="fa-solid fa-floppy-disk"></i>
-                          </icon>
-                        )}{" "}
+                      {["update", "all permission"].some((permission) => itemBrandPermission.includes(permission)) && (
+                        <icon class="icon" onClick={saveEditedData}>
+                          <i class="fa-solid fa-floppy-disk"></i>
+                        </icon>
+                      )}
                     </li>
                     <li class="iconbutton  d-flex justify-content-center ">
-                      {["all permission", "view"].some((permission) =>
-                        itemBrandPermission.includes(permission)
-                      ) && (
-                          <icon
-                            class="icon"
-                            onClick={generateReport}
-                          >
-
-                            <i class="fa-solid fa-print"></i>
-                          </icon>
-                        )}
+                      {["all permission", "view"].some((permission) => itemBrandPermission.includes(permission)) && (
+                        <icon class="icon" onClick={generateReport}>
+                          <i class="fa-solid fa-print"></i>
+                        </icon>
+                      )}
+                    </li>
+                    <li className="iconbutton d-flex justify-content-center">
+                      <icon className="icon" onClick={handleOpenSettings}>
+                        <i className="fa-solid fa-gear"></i>
+                      </icon>
                     </li>
                   </ul>
                 </div>

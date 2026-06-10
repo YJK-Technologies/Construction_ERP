@@ -454,9 +454,13 @@ function VenDetInput({ }) {
   };
 
   const handleNavigate = () => {
-    navigate("/Vendor", { selectedRows });
-  };
-
+  navigate("/Vendor", {
+    state: {
+      preservedRowData: location.state?.preservedRowData,
+      preservedInputs: location.state?.preservedInputs
+    }
+  });
+};
   const handleInsert = async () => {
     if (
       !vendor_code ||
@@ -587,7 +591,7 @@ function VenDetInput({ }) {
       });
       if (response.ok) {
         toast.success("Data updated successfully", {
-          onClose: () => clearInputFields(),
+          // onClose: () => clearInputFields(),
         });
       } else {
         const errorResponse = await response.json();
@@ -978,51 +982,6 @@ function VenDetInput({ }) {
                     />
                   </div>
                 </div>
-                <div className="col-md-3 form-group mb-2">
-                  <div class="exp-form-floating">
-                    <label for="rid" className={`exp-form-labels ${error && !vendor_credit_limit ? 'text-danger' : ''}`}>
-                      Credit Limit<span className="text-danger">*</span>
-                    </label>
-                    <input
-                      id="vencre"
-                      class="exp-input-field form-control"
-                      type="number"
-                      placeholder=""
-                      required
-                      title="Please enter the credit limit"
-                      value={vendor_credit_limit}
-                      onChange={(e) => setvendor_credit_limit(e.target.value)}
-                      maxLength={18}
-                      ref={Credit}
-                      onKeyDown={(e) =>
-                        handleKeyDown(e, openingbalance, Credit)
-                      }
-                    />
-                  </div>
-                </div>
-
-                <div className="col-md-3 form-group mb-2">
-                  <div class="exp-form-floating">
-                    <label for="rid" className={`exp-form-labels ${error && !opening_balance ? 'text-danger' : ''}`}>
-                      Opening Balance<span className="text-danger">*</span>
-                    </label>
-                    <input
-                      id="vencre"
-                      class="exp-input-field form-control"
-                      type="number"
-                      placeholder=""
-                      required
-                      title="Please enter the opening balance"
-                      value={opening_balance}
-                      onChange={(e) => setopening_balance(e.target.value)}
-                      maxLength={18}
-                      ref={openingbalance}
-                      onKeyDown={(e) =>
-                        handleKeyDown(e, TRansport, openingbalance)
-                      }
-                    />
-                  </div>
-                </div>
 
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
@@ -1045,26 +1004,6 @@ function VenDetInput({ }) {
                   </div>
                 </div>
 
-                <div className="col-md-3 form-group mb-2">
-                  <div class="exp-form-floating">
-                    <label for="ventrans" className={`exp-form-labels ${error && !balance_type ? 'text-danger' : ''}`}>
-                      Balance Type<span className="text-danger">*</span>
-                    </label>
-                    <div title="Select the Balance Type">
-                      <Select
-                        id="ventrans"
-                        isClearable
-                        value={selectedBT}
-                        onChange={handleChangeBT}
-                        options={filteredOptionBT}
-                        className="exp-input-field"
-                        placeholder=""
-                        ref={BalanceType}
-                        onKeyDown={(e) => handleKeyDown(e, Sales, BalanceType)}
-                      />
-                    </div>
-                  </div>
-                </div>
 
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
@@ -1173,6 +1112,83 @@ function VenDetInput({ }) {
                     />
                   </div>
                 </div>
+
+              </div>
+            </div>
+
+            <div className="shadow-lg p-3 bg-body-tertiary rounded  mb-2">
+                <div className="col-md-3 form-group mb-3 mt-3" style={{ width: "150px" }}>
+                    <h6 className=""><strong>Financial Year:</strong></h6>
+                </div>
+                                  <div className="row mb-3 ">
+
+                <div className="col-md-3 form-group mb-2">
+                  <div class="exp-form-floating">
+                    <label for="ventrans" className={`exp-form-labels ${error && !balance_type ? 'text-danger' : ''}`}>
+                      Balance Type<span className="text-danger">*</span>
+                    </label>
+                    <div title="Select the Balance Type">
+                      <Select
+                        id="ventrans"
+                        isClearable
+                        value={selectedBT}
+                        onChange={handleChangeBT}
+                        options={filteredOptionBT}
+                        className="exp-input-field"
+                        placeholder=""
+                        ref={BalanceType}
+                        onKeyDown={(e) => handleKeyDown(e, Sales, BalanceType)}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="col-md-3 form-group mb-2">
+                  <div class="exp-form-floating">
+                    <label for="rid" className={`exp-form-labels ${error && !vendor_credit_limit ? 'text-danger' : ''}`}>
+                      Credit Limit<span className="text-danger">*</span>
+                    </label>
+                    <input
+                      id="vencre"
+                      class="exp-input-field form-control"
+                      type="number"
+                      placeholder=""
+                      required
+                      title="Please enter the credit limit"
+                      value={vendor_credit_limit}
+                      onChange={(e) => setvendor_credit_limit(e.target.value)}
+                      maxLength={18}
+                      ref={Credit}
+                      onKeyDown={(e) =>
+                        handleKeyDown(e, openingbalance, Credit)
+                      }
+                    />
+                  </div>
+                </div>
+
+                <div className="col-md-3 form-group mb-2">
+                  <div class="exp-form-floating">
+                    <label for="rid" className={`exp-form-labels ${error && !opening_balance ? 'text-danger' : ''}`}>
+                      Opening Balance<span className="text-danger">*</span>
+                    </label>
+                    <input
+                      id="vencre"
+                      class="exp-input-field form-control"
+                      type="number"
+                      placeholder=""
+                      required
+                      title="Please enter the opening balance"
+                      value={opening_balance}
+                      onChange={(e) => setopening_balance(e.target.value)}
+                      maxLength={18}
+                      ref={openingbalance}
+                      onKeyDown={(e) =>
+                        handleKeyDown(e, TRansport, openingbalance)
+                      }
+                    />
+                  </div>
+                </div>
+
                 <div class="col-md-3 form-group ">
                   {mode === "create" ? (
                     <button
@@ -1192,9 +1208,9 @@ function VenDetInput({ }) {
                     </button>
                   )}
                   <VenHdrInputPopup open={open2} handleClose={handleClose} />
-                </div>
-              </div>
-            </div>
+                </div>                </div>
+
+            </div>            
           </div>
         </div>
       </div>

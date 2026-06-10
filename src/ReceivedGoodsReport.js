@@ -258,15 +258,21 @@ function ReceivedGoodsRt() {
 
         const reportData = selectedRows.map((row) => {
             return {
-                "Transaction Date": formatDate(row.transaction_date),
-                "Item Code": row.Item_code,
-                "Item Name": row.Item_name,
-                "Qty": row.bill_qty
+                "Transaction Date": formatDate(row.bill_date),
+                "Transaction No": row.bill_no,
+                "Item S.No": row.item_sno,
+                "Item Code": row.item_code,
+                "Item Name": row.item_name,
+                "Bill Qty": row.bill_qty,
+                "Received Qty": row.rec_qty,
+                "Balance Qty": row.bal_qty,
+                "Pending": row.pending,
+                "Description": row.description,
             };
         });
 
         const reportWindow = window.open("", "_blank");
-        reportWindow.document.write("<html><head><title>Opening Item</title>");
+        reportWindow.document.write("<html><head><title>Received Goods Analysis</title>");
         reportWindow.document.write("<style>");
         reportWindow.document.write(`
       body {
@@ -329,7 +335,7 @@ function ReceivedGoodsRt() {
       }
     `);
         reportWindow.document.write("</style></head><body>");
-        reportWindow.document.write("<h1><u>Opening Item</u></h1>");
+        reportWindow.document.write("<h1><u>Received Goods Analysis</u></h1>");
 
         reportWindow.document.write("<table><thead><tr>");
         Object.keys(reportData[0]).forEach((key) => {
@@ -571,10 +577,10 @@ function ReceivedGoodsRt() {
                         </div>
                         <div className="purbut">
                             <div className="d-flex justify-content-end me-5">
-                                <button className="btn btn-dark mt-3 mb-3 rounded-3" onClick={generateReport}>
+                                <button className="btn btn-dark mt-3 mb-3 rounded-3" title="Generate Report" onClick={generateReport}>
                                     <i className="fa-solid fa-print"></i>
                                 </button>
-                                <button class="btn btn-dark mt-3 mb-3 rounded-3" onClick={handleExportToExcel}>
+                                <button class="btn btn-dark mt-3 mb-3 rounded-3" title="Excel" onClick={handleExportToExcel}>
                                     <i class="fa-solid fa-file-excel"></i>
                                 </button>
                             </div>

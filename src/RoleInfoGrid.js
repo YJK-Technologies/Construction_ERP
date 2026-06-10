@@ -4,16 +4,16 @@ import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
 import "ag-grid-enterprise";
 import "./apps.css";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import labels from "./Labels";
-import { showConfirmationToast } from './ToastConfirmation';
-import LoadingScreen from './Loading';
+import { showConfirmationToast } from "./ToastConfirmation";
+import LoadingScreen from "./Loading";
 
-const config = require('./Apiconfig');
+const config = require("./Apiconfig");
 
 function RoleInfoGrid() {
   const [rowData, setRowData] = useState([]);
@@ -31,33 +31,48 @@ function RoleInfoGrid() {
   const [createdDate, setCreatedDate] = useState("");
   const [modifiedDate, setModifiedDate] = useState("");
 
+  const location = useLocation();
   //code added by Pavun purpose of set user permisssion
-  const permissions = JSON.parse(sessionStorage.getItem('permissions')) || {};
+  const permissions = JSON.parse(sessionStorage.getItem("permissions")) || {};
   const roleInfoPermission = permissions
-    .filter(permission => permission.screen_type === 'Role')
-    .map(permission => permission.permission_type.toLowerCase());
+    .filter((permission) => permission.screen_type === "Role")
+    .map((permission) => permission.permission_type.toLowerCase());
 
+  useEffect(() => {
+    if (location.state?.preservedRowData) {
+      setRowData(location.state.preservedRowData);
+    }
+    if (location.state?.preservedInputs) {
+      const inputs = location.state.preservedInputs;
+      setrole_id(inputs.role_id || "");
+      setrole_name(inputs.role_name || "");
+
+    }
+  }, [location.state]);
 
   const handleSearch = async () => {
     setLoading(true);
     try {
-      const company_code = sessionStorage.getItem('selectedCompanyCode');
+      const company_code = sessionStorage.getItem("selectedCompanyCode");
       const response = await fetch(`${config.apiBaseUrl}/Rolesearchdata`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "company_code": company_code
+          company_code: company_code,
         },
-        body: JSON.stringify({ company_code: company_code, role_id, role_name }) // Send company_no and company_name as search criteria
+        body: JSON.stringify({
+          company_code: company_code,
+          role_id,
+          role_name,
+        }), // Send company_no and company_name as search criteria
       });
       if (response.ok) {
         const searchData = await response.json();
         setRowData(searchData);
-        console.log("data fetched successfully")
-
+        console.log("data fetched successfully");
       } else if (response.status === 404) {
         console.log("Data not found");
-        toast.warning("Data not found")
+        toast.warning("Data not found");
         setRowData([]);
       } else {
         const errorResponse = await response.json();
@@ -72,8 +87,27 @@ function RoleInfoGrid() {
   };
 
   const reloadGridData = () => {
-    window.location.reload();
-  };
+  setrole_id("");
+  setrole_name("");
+
+  setRowData([]);
+  setEditedData([]);
+  setSelectedRows([]);
+
+  setCreatedBy("");
+  setModifiedBy("");
+  setCreatedDate("");
+  setModifiedDate("");
+
+  if (gridApi) {
+    gridApi.deselectAll();
+  }
+
+  navigate(location.pathname, {
+    replace: true,
+    state: null,
+  });
+};
 
   const columnDefs = [
     {
@@ -81,6 +115,7 @@ function RoleInfoGrid() {
       checkboxSelection: true,
       headerName: "Role ID",
       field: "role_id",
+      cellClass: "ag-link-cell",
       cellStyle: { textAlign: "left" },
       cellEditorParams: {
         maxLength: 18,
@@ -91,16 +126,13 @@ function RoleInfoGrid() {
         };
 
         return (
-          <span
-            style={{ cursor: "pointer" }}
-            onClick={handleClick}
-          >
+          <span style={{ cursor: "pointer" }} onClick={handleClick}>
             {params.value}
           </span>
         );
       },
       valueFormatter: (params) => {
-        return params.value ? params.value.toUpperCase() : '';
+        return params.value ? params.value.toUpperCase() : "";
       },
     },
     {
@@ -112,7 +144,7 @@ function RoleInfoGrid() {
         maxLength: 50,
       },
       valueFormatter: (params) => {
-        return params.value ? params.value.toUpperCase() : '';
+        return params.value ? params.value.toUpperCase() : "";
       },
     },
     {
@@ -124,20 +156,20 @@ function RoleInfoGrid() {
         maxLength: 255,
       },
       valueFormatter: (params) => {
-        return params.value ? params.value.toUpperCase() : '';
+        return params.value ? params.value.toUpperCase() : "";
       },
     },
     {
       headerName: "Keyfield",
       field: "Keyfield",
-       hide: true, 
+      hide: true,
       editable: false,
       cellStyle: { textAlign: "left" },
       cellEditorParams: {
         maxLength: 255,
       },
       valueFormatter: (params) => {
-        return params.value ? params.value.toUpperCase() : '';
+        return params.value ? params.value.toUpperCase() : "";
       },
     },
   ];
@@ -155,16 +187,16 @@ function RoleInfoGrid() {
   const generateReport = () => {
     if (selectedRows.length === 0) {
       toast.warning("Please select at least one row to generate a report");
-      return
-    };
+      return;
+    }
 
     const reportData = selectedRows.map((row) => {
-      const safeValue = (val) => (val !== undefined && val !== null ? val : '');
+      const safeValue = (val) => (val !== undefined && val !== null ? val : "");
 
       return {
         "Role ID": safeValue(row.role_id),
         "Role Name": safeValue(row.role_name),
-        "Description": safeValue(row.description),
+        Description: safeValue(row.description),
       };
     });
 
@@ -267,20 +299,30 @@ function RoleInfoGrid() {
     reportWindow.document.write("</tbody></table>");
 
     reportWindow.document.write(
-      '<button class="report-button" title="Print" onclick="window.print()">Print</button>'
+      '<button class="report-button" title="Print" onclick="window.print()">Print</button>',
     );
     reportWindow.document.write("</body></html>");
     reportWindow.document.close();
   };
-
 
   const handleNavigateToForm = () => {
     navigate("/AddRole", { state: { mode: "create" } }); // Pass selectedRows as props to the Input component
   };
 
   const handleNavigateWithRowData = (selectedRow) => {
-    navigate("/AddRole", { state: { mode: "update", selectedRow } })
-  }
+    navigate("/AddRole", {
+      state: {
+        mode: "update",
+        selectedRow,
+        preservedRowData: rowData,
+        preservedInputs: {
+          role_id,
+          role_name,
+
+        },
+      },
+    });
+  };
 
   const onSelectionChanged = () => {
     const selectedNodes = gridApi.getSelectedNodes();
@@ -292,7 +334,7 @@ function RoleInfoGrid() {
   // const onCellValueChanged = (params) => {
   //   const updatedRowData = [...rowData];
   //   const rowIndex = updatedRowData.findIndex(
-  //     (row) => row.role_id === params.data.role_id // Use the unique identifier 
+  //     (row) => row.role_id === params.data.role_id // Use the unique identifier
   //   );
   //   if (rowIndex !== -1) {
   //     updatedRowData[rowIndex][params.colDef.field] = params.newValue;
@@ -306,7 +348,7 @@ function RoleInfoGrid() {
   const onCellValueChanged = (params) => {
     const updatedRowData = [...rowData];
     const rowIndex = updatedRowData.findIndex(
-      (row) => row.role_id === params.data.role_id
+      (row) => row.role_id === params.data.role_id,
     );
 
     if (rowIndex !== -1) {
@@ -315,7 +357,7 @@ function RoleInfoGrid() {
 
       setEditedData((prevData) => {
         const existingIndex = prevData.findIndex(
-          (item) => item.role_id === params.data.role_id
+          (item) => item.role_id === params.data.role_id,
         );
 
         if (existingIndex !== -1) {
@@ -330,7 +372,9 @@ function RoleInfoGrid() {
   };
 
   const saveEditedData = async () => {
-    const selectedRowsData = editedData.filter(row => selectedRows.some(selectedRow => selectedRow.role_id === row.role_id));
+    const selectedRowsData = editedData.filter((row) =>
+      selectedRows.some((selectedRow) => selectedRow.role_id === row.role_id),
+    );
     if (selectedRowsData.length === 0) {
       toast.warning("Please select a row to update its data");
       return;
@@ -339,17 +383,16 @@ function RoleInfoGrid() {
     showConfirmationToast(
       "Are you sure you want to update the data in the selected rows?",
       async () => {
-
         try {
-          const company_code = sessionStorage.getItem('selectedCompanyCode');
-          const modified_by = sessionStorage.getItem('selectedUserCode');
+          const company_code = sessionStorage.getItem("selectedCompanyCode");
+          const modified_by = sessionStorage.getItem("selectedUserCode");
 
           const response = await fetch(`${config.apiBaseUrl}/Roleupdate`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
-              "company_code": company_code,
-              "modified-by": modified_by
+              company_code: company_code,
+              "modified-by": modified_by,
             },
             body: JSON.stringify({ editedData: selectedRowsData }),
           });
@@ -357,13 +400,14 @@ function RoleInfoGrid() {
           if (response.ok) {
             console.log("Data saved successfully!");
             toast.success("Data Updated Successfully!", {
-              onClose: () => handleSearch()
+              onClose: () => handleSearch(),
             });
             return;
-
           } else {
             const errorResponse = await response.json();
-            toast.warning(errorResponse.message || "Failed to insert sales data");
+            toast.warning(
+              errorResponse.message || "Failed to insert sales data",
+            );
           }
         } catch (error) {
           console.error("Error saving data:", error);
@@ -372,7 +416,7 @@ function RoleInfoGrid() {
       },
       () => {
         toast.info("Data updated cancelled.");
-      }
+      },
     );
   };
 
@@ -428,53 +472,52 @@ function RoleInfoGrid() {
   // };
 
   const deleteSelectedRows = async () => {
-  const selectedRows = gridApi.getSelectedRows();
+    const selectedRows = gridApi.getSelectedRows();
 
-  if (selectedRows.length === 0) {
-    toast.warning("Please select at least one row to delete");
-    return;
-  }
-
-  const company_code = sessionStorage.getItem("selectedCompanyCode");
-  const modified_by = sessionStorage.getItem("selectedUserCode");
-
-  // ?? Build payload exactly as Node expects
-  const keyfieldsToDelete = selectedRows.map(row => ({
-    Keyfield: row.Keyfield,
-    modified_by: modified_by,
-    company_code: company_code
-  }));
-
-  showConfirmationToast(
-    "Are you sure you want to delete the selected rows?",
-    async () => {
-      try {
-        const response = await fetch(`${config.apiBaseUrl}/roledelete`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({ keyfieldsToDelete })
-        });
-
-        if (response.ok) {
-          toast.success("Data Deleted Successfully");
-          handleSearch();
-        } else {
-          const errorResponse = await response.json();
-          toast.warning(errorResponse.message || "Delete failed");
-        }
-      } catch (error) {
-        console.error("Delete error:", error);
-        toast.error("Error Deleting Data: " + error.message);
-      }
-    },
-    () => {
-      toast.info("Data delete cancelled.");
+    if (selectedRows.length === 0) {
+      toast.warning("Please select at least one row to delete");
+      return;
     }
-  );
-};
 
+    const company_code = sessionStorage.getItem("selectedCompanyCode");
+    const modified_by = sessionStorage.getItem("selectedUserCode");
+
+    // ?? Build payload exactly as Node expects
+    const keyfieldsToDelete = selectedRows.map((row) => ({
+      Keyfield: row.Keyfield,
+      modified_by: modified_by,
+      company_code: company_code,
+    }));
+
+    showConfirmationToast(
+      "Are you sure you want to delete the selected rows?",
+      async () => {
+        try {
+          const response = await fetch(`${config.apiBaseUrl}/roledelete`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ keyfieldsToDelete }),
+          });
+
+          if (response.ok) {
+            toast.success("Data Deleted Successfully");
+            handleSearch();
+          } else {
+            const errorResponse = await response.json();
+            toast.warning(errorResponse.message || "Delete failed");
+          }
+        } catch (error) {
+          console.error("Delete error:", error);
+          toast.error("Error Deleting Data: " + error.message);
+        }
+      },
+      () => {
+        toast.info("Data delete cancelled.");
+      },
+    );
+  };
 
   const formatDate = (dateString) => {
     if (!dateString) return ""; // Return 'N/A' if the date is missing
@@ -504,84 +547,124 @@ function RoleInfoGrid() {
     }
   };
 
-
   return (
     <div className="container-fluid Topnav-screen">
       <div>
         {loading && <LoadingScreen />}
-        <ToastContainer position="top-right" className="toast-design" theme="colored" />
+        <ToastContainer
+          position="top-right"
+          className="toast-design"
+          theme="colored"
+        />
         <div className="shadow-lg p-1 bg-body-tertiary rounded mb-2 mt-2">
           <div className=" d-flex justify-content-between">
             <div class="d-flex justify-content-start">
-              <h1 align="left" className="purbut">Role</h1>
+              <h1 align="left" className="purbut">
+                Role
+              </h1>
             </div>
             <div className="d-flex justify-content-end purbut me-3">
-              {['add', 'all permission'].some(permission => roleInfoPermission.includes(permission)) && (
-                <addbutton className="purbut" onClick={handleNavigateToForm} required title="Add Role">
+              {["add", "all permission"].some((permission) =>
+                roleInfoPermission.includes(permission),
+              ) && (
+                <addbutton
+                  className="purbut"
+                  onClick={handleNavigateToForm}
+                  required
+                  title="Add Role"
+                >
                   <i class="fa-solid fa-user-plus"></i>
                 </addbutton>
               )}
-              {['delete', 'all permission'].some(permission => roleInfoPermission.includes(permission)) && (
-                <delbutton className="purbut" onClick={deleteSelectedRows} required title="Delete">
+              {["delete", "all permission"].some((permission) =>
+                roleInfoPermission.includes(permission),
+              ) && (
+                <delbutton
+                  className="purbut"
+                  onClick={deleteSelectedRows}
+                  required
+                  title="Delete"
+                >
                   <i class="fa-solid fa-user-minus"></i>
                 </delbutton>
               )}
-              {['update', 'all permission'].some(permission => roleInfoPermission.includes(permission)) && (
-                <savebutton className="purbut" onClick={saveEditedData} required title="Update" >
+              {["update", "all permission"].some((permission) =>
+                roleInfoPermission.includes(permission),
+              ) && (
+                <savebutton
+                  className="purbut"
+                  onClick={saveEditedData}
+                  required
+                  title="Update"
+                >
                   <i class="fa-solid fa-floppy-disk"></i>
                 </savebutton>
               )}
-              {['all permission', 'view'].some(permission => roleInfoPermission.includes(permission)) && (
-                <printbutton className="purbut" onClick={generateReport} required title="Generate Report" ><i class="fa-solid fa-print"></i></printbutton>
+              {["all permission", "view"].some((permission) =>
+                roleInfoPermission.includes(permission),
+              ) && (
+                <printbutton
+                  className="purbut"
+                  onClick={generateReport}
+                  required
+                  title="Generate Report"
+                >
+                  <i class="fa-solid fa-print"></i>
+                </printbutton>
               )}
             </div>
             <div class="mobileview">
               <div class="d-flex justify-content-between ms-0 me-5">
-                <div className=""><h1 align="left" className="h1 ms-0 d-flex justify-content-start " >
-                  Role
-                </h1>
+                <div className="">
+                  <h1
+                    align="left"
+                    className="h1 ms-0 d-flex justify-content-start "
+                  >
+                    Role
+                  </h1>
                 </div>
-                <div class="dropdown me-5 ms-5  " >
-                  <button class="btn btn-primary dropdown-toggle p-1" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <div class="dropdown me-5 ms-5  ">
+                  <button
+                    class="btn btn-primary dropdown-toggle p-1"
+                    type="button"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                  >
                     <i class="fa-solid fa-list"></i>
                   </button>
                   <ul class="dropdown-menu ">
                     <li class="iconbutton d-flex justify-content-center text-success">
-                      {['add', 'all permission'].some(permission => roleInfoPermission.includes(permission)) && (
-                        <icon
-                          class="icon"
-                          onClick={handleNavigateToForm}
-                        >
+                      {["add", "all permission"].some((permission) =>
+                        roleInfoPermission.includes(permission),
+                      ) && (
+                        <icon class="icon" onClick={handleNavigateToForm}>
                           <i class="fa-solid fa-user-plus"></i>
                         </icon>
                       )}
                     </li>
                     <li class="iconbutton  d-flex justify-content-center text-danger">
-                      {['delete', 'all permission'].some(permission => roleInfoPermission.includes(permission)) && (
-                        <icon
-                          class="icon"
-                          onClick={deleteSelectedRows}
-                        >
+                      {["delete", "all permission"].some((permission) =>
+                        roleInfoPermission.includes(permission),
+                      ) && (
+                        <icon class="icon" onClick={deleteSelectedRows}>
                           <i class="fa-solid fa-user-minus"></i>
                         </icon>
                       )}
                     </li>
                     <li class="iconbutton  d-flex justify-content-center text-primary ">
-                      {['update', 'all permission'].some(permission => roleInfoPermission.includes(permission)) && (
-                        <icon
-                          class="icon"
-                          onClick={saveEditedData}
-                        >
+                      {["update", "all permission"].some((permission) =>
+                        roleInfoPermission.includes(permission),
+                      ) && (
+                        <icon class="icon" onClick={saveEditedData}>
                           <i class="fa-solid fa-floppy-disk"></i>
                         </icon>
                       )}
                     </li>
                     <li class="iconbutton  d-flex justify-content-center ">
-                      {['all permission', 'view'].some(permission => roleInfoPermission.includes(permission)) && (
-                        <icon
-                          class="icon"
-                          onClick={generateReport}
-                        >
+                      {["all permission", "view"].some((permission) =>
+                        roleInfoPermission.includes(permission),
+                      ) && (
+                        <icon class="icon" onClick={generateReport}>
                           <i class="fa-solid fa-print"></i>
                         </icon>
                       )}
@@ -598,16 +681,18 @@ function RoleInfoGrid() {
               <div class="exp-form-floating">
                 <label for="rolid" class="exp-form-labels">
                   Role ID
-                </label><input
+                </label>
+                <input
                   id="rolid"
                   className="exp-input-field form-control"
                   type="text"
                   placeholder=""
-                  required title="Please fill the role ID here"
+                  required
+                  title="Please fill the role ID here"
                   value={role_id}
                   maxLength={18}
                   onChange={(e) => setrole_id(e.target.value)}
-                  onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                  onKeyDown={(e) => e.key === "Enter" && handleSearch()}
                 />
               </div>
             </div>
@@ -621,24 +706,35 @@ function RoleInfoGrid() {
                   className="exp-input-field form-control"
                   type="text"
                   placeholder=""
-                  required title="Please fill the role name here"
+                  required
+                  title="Please fill the role name here"
                   value={role_name}
                   maxLength={50}
                   onChange={(e) => setrole_name(e.target.value)}
-                  onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                  onKeyDown={(e) => e.key === "Enter" && handleSearch()}
                 />
               </div>
             </div>
             <div className="col-md-3 form-group mt-4">
               <div class="exp-form-floating">
                 <div class=" d-flex  justify-content-center">
-                  <div class=''>
-                    <icon className="popups-btn fs-6 p-3" onClick={handleSearch} required title="Search">
+                  <div class="">
+                    <icon
+                      className="popups-btn fs-6 p-3"
+                      onClick={handleSearch}
+                      required
+                      title="Search"
+                    >
                       <i className="fas fa-search"></i>
                     </icon>
                   </div>
                   <div>
-                    <icon className="popups-btn fs-6 p-3" onClick={reloadGridData} required title="Reload">
+                    <icon
+                      className="popups-btn fs-6 p-3"
+                      onClick={reloadGridData}
+                      required
+                      title="Reload"
+                    >
                       <FontAwesomeIcon icon="fa-solid fa-arrow-rotate-right" />
                     </icon>
                   </div>
@@ -646,7 +742,7 @@ function RoleInfoGrid() {
               </div>
             </div>
           </div>
-          <div class="ag-theme-alpine" style={{ height: 520, width: "100%", }}>
+          <div class="ag-theme-alpine" style={{ height: 520, width: "100%" }}>
             <AgGridReact
               rowData={rowData}
               columnDefs={columnDefs}
@@ -665,7 +761,9 @@ function RoleInfoGrid() {
       <div className="shadow-lg p-2 bg-body-tertiary rounded mt-2 mb-2">
         <div className="row ms-2">
           <div className="d-flex justify-content-start">
-            <p className="col-md-6">{labels.createdBy}: {createdBy}</p>
+            <p className="col-md-6">
+              {labels.createdBy}: {createdBy}
+            </p>
             <p className="col-md-">
               {labels.createdDate}: {createdDate}
             </p>

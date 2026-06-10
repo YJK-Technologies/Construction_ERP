@@ -4,7 +4,7 @@ import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
 import "ag-grid-enterprise";
 import "./apps.css";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Select from "react-select";
@@ -60,11 +60,54 @@ function VenDetGrid() {
   const [selectedVendorType, setselectedVendorType] = useState("");
   const [vendorType, setVendorType] = useState("");
 
+  const location = useLocation();
+
   //code added by Pavun purpose of set user permisssion
   const permissions = JSON.parse(sessionStorage.getItem("permissions")) || {};
   const vendorDetPermission = permissions
     .filter((permission) => permission.screen_type === "Vendor")
     .map((permission) => permission.permission_type.toLowerCase());
+
+    useEffect(() => {
+      if (location.state?.preservedRowData) {
+        setRowData(location.state.preservedRowData);
+      }
+    
+      if (location.state?.preservedInputs) {
+        setvendor_code(location.state.preservedInputs.vendor_code || "");
+        setvendor_name(location.state.preservedInputs.vendor_name || "");
+        setpanno(location.state.preservedInputs.panno || "");
+        setvendor_gst_no(location.state.preservedInputs.vendor_gst_no || "");
+        setvendor_addr_1(location.state.preservedInputs.vendor_addr_1 || "");
+        setvendor_area_code(location.state.preservedInputs.vendor_area_code || "");
+        setvendor_state_code(location.state.preservedInputs.vendor_state_code || "");
+        setvendor_country_code(location.state.preservedInputs.vendor_country_code || "");
+        setvendor_mobile_no(location.state.preservedInputs.vendor_mobile_no || "");
+        setopening_balanceSC(location.state.preservedInputs.opening_balanceSC || "");
+        setbalance_type(location.state.preservedInputs.balance_type || "");
+        setstatus(location.state.preservedInputs.status || "");
+        setVendorType(location.state.preservedInputs.vendorType || "");
+    
+        if (location.state.preservedInputs.balance_type) {
+          setSelectedBT({
+            label: location.state.preservedInputs.balance_type,
+            value: location.state.preservedInputs.balance_type,
+          });
+        }
+        if (location.state.preservedInputs.status) {
+          setSelectedStatus({
+            label: location.state.preservedInputs.status,
+            value: location.state.preservedInputs.status,
+          });
+        }
+        if (location.state.preservedInputs.vendorType) {
+          setselectedVendorType({
+            label: location.state.preservedInputs.vendorType,
+            value: location.state.preservedInputs.vendorType,
+          });
+        }
+      }
+    }, [location.state]);
 
   useEffect(() => {
     const company_code = sessionStorage.getItem("selectedCompanyCode");
@@ -371,6 +414,7 @@ function VenDetGrid() {
       checkboxSelection: true,
       headerName: "Code",
       field: "vendor_code",
+      cellClass: "ag-link-cell",
       //editable: true,
       cellStyle: { textAlign: "left" },
       // minWidth: 250,
@@ -847,9 +891,33 @@ function VenDetGrid() {
   const handleNavigatesToForm = () => {
     navigate("/AddVendorDetails", { state: { mode: "create" } }); // Pass selectedRows as props to the Input component
   };
+
   const handleNavigateWithRowData = (selectedRow) => {
-    navigate("/AddVendorDetails", { state: { mode: "update", selectedRow } });
-  };
+  navigate("/AddVendorDetails", {
+    state: {
+      mode: "update",
+      selectedRow,
+
+      preservedRowData: rowData,
+
+      preservedInputs: {
+        vendor_code,
+        vendor_name,
+        panno,
+        vendor_gst_no,
+        vendor_addr_1,
+        vendor_area_code,
+        vendor_state_code,
+        vendor_country_code,
+        vendor_mobile_no,
+        opening_balanceSC,
+        balance_type,
+        status,
+        vendorType
+      },
+    },
+  });
+};
 
   const onSelectionChanged = () => {
     const selectedNodes = gridApi.getSelectedNodes();

@@ -159,8 +159,13 @@ function WareHouseInput({ }) {
   };
 
   const handleNavigate = () => {
-    navigate("/WareHouse");
-  };
+  navigate("/WareHouse", {
+    state: {
+      preservedRowData: location.state?.preservedRowData,
+      preservedInputs: location.state?.preservedInputs
+    }
+  });
+};
 
   const handleKeyDown = async (e, nextFieldRef, value, hasValueChanged, setHasValueChanged) => {
     if (e.key === 'Enter') {
@@ -216,7 +221,7 @@ function WareHouseInput({ }) {
       if (response.ok) {
         console.log("Data Updated successfully");
         toast.success("Data updated successfully", {
-          onClose: () => clearInputFields(),
+          // onClose: () => clearInputFields(),
         });
       } else {
         const errorResponse = await response.json();

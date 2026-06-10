@@ -203,10 +203,10 @@ function Grid() {
   };
 
   const handleSearch = async () => {
-    if (!month ||
-      !item_code ||
-      !item_variant
-    )
+    if (!month) {
+  toast.warning("Please select a month");
+  return;
+}
       setLoading(true);
     try {
       const response = await fetch(`${config.apiBaseUrl}/getDateWiseItemStock`, {
@@ -218,7 +218,8 @@ function Grid() {
           month,
           item_code: item,
           item_variant: item_variant,
-          company_code: sessionStorage.getItem('selectedCompanyCode')
+          company_code: sessionStorage.getItem('selectedCompanyCode'),
+          Location_Code: sessionStorage.getItem("selectedLocationCode"),
         })
       });
       if (response.ok) {
@@ -400,24 +401,21 @@ function Grid() {
 
     const reportData = selectedRows.map((row) => {
       return {
-        "Company No": row.company_no,
-        "Company Name": row.company_name,
-        "Short Name": row.short_name,
-        Address: `
-          ${row.address1 || ''},
-          ${row.address2 || ''},  
-          ${row.address3 || ''},<br>
-          ${row.city || ''},<br>
-          ${row.pincode || ''},<br>
-          ${row.state || ''},<br>
-          ${row.country || ''}`,
-        "Email Id": row.email_id,
-        Status: row.status,
-        "Founded Date": row.FoundedDate,
-        "Website URL": row.WebsiteURL,
-        "Contact No": row.contact_no,
-        "CEO Name": row.CEOName,
-        "Annual Report URL": row.AnnualReportURL
+        "Date": row.transaction_date,
+        "Item Code": row.Item_code,
+        "item_variant": row.item_variant,
+        "Item Name": row.Item_name,
+        "Opening Item Qty": row.openingItemQty,
+        "Purchase Qty": row.PurchaseQty,
+        "Received Goods Qty": row.ReceivedGoodsQty,
+        "Sales Return Qty": row.SalesReturnQty,
+        "Total Received": row.TotalRecQty,
+        "Sales": row.SalesQty,
+        "Purchase Return": row.PurchaseReturnQty,
+        "Tax Invoice": row.TaxInvoiceQty,
+        "DC": row.DCItemQty,
+        "Total Issued": row.TotalIssQty,
+        "Closing": row.ClosingStock
       };
     });
 
@@ -487,7 +485,7 @@ function Grid() {
       }
     `);
     reportWindow.document.write("</style></head><body>");
-    reportWindow.document.write("<h1><u>Company Information</u></h1>");
+    reportWindow.document.write("<h1><u>Date Wise Item Stock</u></h1>");
 
     // Create table with headers
     reportWindow.document.write("<table><thead><tr>");
@@ -588,14 +586,14 @@ function Grid() {
               </h1>
             </div>
             <div className="d-flex justify-content-end purbut me-3">
-              <printbutton className="purbut btn btn-dark mt-3 mb-3 rounded-3" title='excel' onClick={handleExcelDownload}>
-                <i class="fa-solid fa-file-excel"></i>
-              </printbutton>
               {['all permission', 'view'].some(permission => companyPermissions.includes(permission)) && (
                 <printbutton className="purbut btn btn-dark mt-3 mb-3 rounded-3" onClick={generateReport} required title="Generate Report">
                   <i class="fa-solid fa-print"></i>
                 </printbutton>
               )}
+              <printbutton className="purbut btn btn-dark mt-3 mb-3 rounded-3" title='excel' onClick={handleExcelDownload}>
+                <i class="fa-solid fa-file-excel"></i>
+              </printbutton>
             </div>
           </div>
           <div class="mobileview">
@@ -612,16 +610,6 @@ function Grid() {
                     {['all permission', 'view'].some(permission => companyPermissions.includes(permission)) && (
                       <icon
                         class="icon"
-                        onClick={handleExcelDownload}
-                      >
-                        <i class="fa-solid fa-file-excel"></i>
-                      </icon>
-                    )}
-                  </li>
-                  <li class="iconbutton  d-flex justify-content-center ">
-                    {['all permission', 'view'].some(permission => companyPermissions.includes(permission)) && (
-                      <icon
-                        class="icon"
                         onClick={generateReport}
                       >
                         <i class="fa-solid fa-print"></i>
@@ -629,6 +617,16 @@ function Grid() {
                     )}
                   </li>
                 </ul>
+                <li class="iconbutton  d-flex justify-content-center ">
+                    {['all permission', 'view'].some(permission => companyPermissions.includes(permission)) && (
+                      <icon
+                        class="icon"
+                        onClick={handleExcelDownload}
+                      >
+                        <i class="fa-solid fa-file-excel"></i>
+                      </icon>
+                    )}
+                  </li>
               </div>
             </div>
           </div>

@@ -134,7 +134,12 @@ function AttriDetInput({ }) {
   };
 
   const handleNavigate = () => {
-    navigate("/Attribute");
+    navigate("/Attribute", {
+    state: {
+      preservedRowData: location.state?.preservedRowData,
+      preservedInputs: location.state?.preservedInputs
+    }
+  });
   };
 
   const handleKeyDown = async (e, nextFieldRef, value, hasValueChanged, setHasValueChanged) => {
@@ -191,7 +196,7 @@ function AttriDetInput({ }) {
       });
       if (response.ok) {
         toast.success("Data updated successfully", {
-          onClose: () => clearInputFields()
+          // onClose: () => clearInputFields()
         });
       } else {
         const errorResponse = await response.json();

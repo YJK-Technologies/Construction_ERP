@@ -5,7 +5,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer, toast } from 'react-toastify';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlass, faPlus, faMinus, faRotateRight } from '@fortawesome/free-solid-svg-icons';
-
+import DefaultProductImage from "./DefaultIMG/Product.png"; 
 const config = require('./Apiconfig');
 
 function PrintTemplate() {
@@ -355,6 +355,7 @@ function PrintTemplate() {
                     }, []);
                     setAcademic(updatedTemplateMembers);
                     setSaveButtonVisible(false);
+                    setIsAcademicDataLoaded(true);
                     setShowAsterisk(false);
                 } else {
                     toast.warning("No matching data found");
@@ -373,195 +374,204 @@ function PrintTemplate() {
 
 
     return (
-          <div className="container-fluid Topnav-screen">
-        <ToastContainer position="top-right" className="toast-design" theme="colored" />
-                    <div className="shadow-lg p-1 bg-light rounded">
-                        <div className=" mb-0 d-flex justify-content-between" >
-                            <div class="d-flex justify-content-start">
-                                <h1 class="">Print Templates</h1>
-                            </div>
-                            <div className='d-flex justify-content-end me-4'>
-                                <div onClick={handleSave} className='col-md-2'><a className='border-none text-success p-1' title="Save" style={{ cursor: "pointer" }}><svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" fill="currentColor" class="bi bi-floppy2" viewBox="0 0 16 16">
-                                    <path d="M1.5 0h11.586a1.5 1.5 0 0 1 1.06.44l1.415 1.414A1.5 1.5 0 0 1 16 2.914V14.5a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 0 14.5v-13A1.5 1.5 0 0 1 1.5 0M1 1.5v13a.5.5 0 0 0 .5.5H2v-4.5A1.5 1.5 0 0 1 3.5 9h9a1.5 1.5 0 0 1 1.5 1.5V15h.5a.5.5 0 0 0 .5-.5V2.914a.5.5 0 0 0-.146-.353l-1.415-1.415A.5.5 0 0 0 13.086 1H13v3.5A1.5 1.5 0 0 1 11.5 6h-7A1.5 1.5 0 0 1 3 4.5V1H1.5a.5.5 0 0 0-.5.5m9.5-.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5z" />
-                                </svg>
-                                </a>
-                                </div>
-                            </div>
-                        </div>
-
+        <div className="container-fluid Topnav-screen">
+            <ToastContainer position="top-right" className="toast-design" theme="colored" />
+            <div className="shadow-lg p-1 bg-light rounded">
+                <div className=" mb-0 d-flex justify-content-between" >
+                    <div class="d-flex justify-content-start">
+                        <h1 class="">Print Templates</h1>
                     </div>
+                    <div className='d-flex justify-content-end me-4'>
+                        <div onClick={handleSave} className='col-md-2'><a className='border-none text-success p-1' title="Save" style={{ cursor: "pointer" }}><svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" fill="currentColor" class="bi bi-floppy2" viewBox="0 0 16 16">
+                            <path d="M1.5 0h11.586a1.5 1.5 0 0 1 1.06.44l1.415 1.414A1.5 1.5 0 0 1 16 2.914V14.5a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 0 14.5v-13A1.5 1.5 0 0 1 1.5 0M1 1.5v13a.5.5 0 0 0 .5.5H2v-4.5A1.5 1.5 0 0 1 3.5 9h9a1.5 1.5 0 0 1 1.5 1.5V15h.5a.5.5 0 0 0 .5-.5V2.914a.5.5 0 0 0-.146-.353l-1.415-1.415A.5.5 0 0 0 13.086 1H13v3.5A1.5 1.5 0 0 1 11.5 6h-7A1.5 1.5 0 0 1 3 4.5V1H1.5a.5.5 0 0 0-.5.5m9.5-.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5z" />
+                        </svg>
+                        </a>
+                        </div>
+                    </div>
+                </div>
 
-                    <div className="shadow-lg bg-light rounded mt-2 p-3">
-                        <div class="row">
-                            <div className="col-md-3 form-group mb-2 me-1">
-                                <label className='fw-bold'>Screens</label>
-                                <div class="exp-form-floating">
-                                    <div class="d-flex justify-content-end">
-                                        <input
-                                            id="employeeId"
-                                            className="exp-input-field form-control"
-                                            type="text"
-                                            placeholder=""
-                                            required
-                                            value={Screens}
-                                            ref={employeeIdRef}
-                                            onChange={(e) => setScreens(e.target.value)}
-                                            maxLength={18}
-                                            onKeyPress={handleKeyPress}
-                                            autoComplete="off"
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="col-md-3 form-group mb-2 me-1">
-                                <label className='fw-bold' >Template Name</label>
-                                <div class="exp-form-floating">
-                                    <div class="d-flex justify-content-end">
-                                        <input
-                                            id="employeeId"
-                                            className="exp-input-field form-control"
-                                            type="text"
-                                            placeholder=""
-                                            required
-                                            title="Please enter the EmployeeId"
-                                            value={templatename}
-                                            ref={employeeIdRef}
-                                            onChange={(e) => settemplatename(e.target.value)}
-                                            maxLength={18}
-                                            onKeyPress={handleKeyPress}
-                                            autoComplete="off"
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="col-md-2 mb-2 mt-4">
-                                <button className="button2" onClick={handleSearch} title="Search">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
-                                        className="bi bi-search" viewBox="0 0 16 16">
-                                        <path
-                                            d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
-                                    </svg>
-                                </button>
+            </div>
+
+            <div className="shadow-lg bg-light rounded mt-2 p-3">
+                <div class="row">
+                    <div className="col-md-3 form-group mb-2 me-1">
+                        <label className='fw-bold'>Screens</label>
+                        <div class="exp-form-floating">
+                            <div class="d-flex justify-content-end">
+                                <input
+                                    id="employeeId"
+                                    className="exp-input-field form-control"
+                                    type="text"
+                                    placeholder=""
+                                    required
+                                    value={Screens}
+                                    ref={employeeIdRef}
+                                    onChange={(e) => setScreens(e.target.value)}
+                                    maxLength={18}
+                                    onKeyPress={handleKeyPress}
+                                    autoComplete="off"
+                                />
                             </div>
                         </div>
                     </div>
-                    <div class="mb-4 mt-2">
-                        {Academic.map((relationGroup, relationIndex) => (
-                            <div key={relationIndex} className="shadow-sm p-1 bg-light rounded-0 ">
-                                {relationGroup.members.map((member, index) => (
-                                    <div key={index} className="row  mt-3">
-                                        <div className="col-md-1 mt-4">
-                                            <button type="button" className="btn btn-primary ms-3" onClick={() => addRow(relationGroup.relation)}>
-                                                <FontAwesomeIcon icon={faPlus} />
+                    <div className="col-md-3 form-group mb-2 me-1">
+                        <label className='fw-bold' >Template Name</label>
+                        <div class="exp-form-floating">
+                            <div class="d-flex justify-content-end">
+                                <input
+                                    id="employeeId"
+                                    className="exp-input-field form-control"
+                                    type="text"
+                                    placeholder=""
+                                    required
+                                    title="Please enter the EmployeeId"
+                                    value={templatename}
+                                    ref={employeeIdRef}
+                                    onChange={(e) => settemplatename(e.target.value)}
+                                    maxLength={18}
+                                    onKeyPress={handleKeyPress}
+                                    autoComplete="off"
+                                />
+                            </div>
+                        </div>
+                    </div>
+                    <div className="col-md-2 mb-2 mt-4">
+                        <button className="button2" onClick={handleSearch} title="Search">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                                className="bi bi-search" viewBox="0 0 16 16">
+                                <path
+                                    d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="mb-4 mt-2">
+                {Academic.map((relationGroup, relationIndex) => (
+                    <div key={relationIndex} className="shadow-sm p-1 bg-light rounded-0 ">
+                        {relationGroup.members.map((member, index) => (
+                            <div key={index} className="row  mt-3">
+                                <div className="col-md-1 mt-4">
+                                    <button type="button" className="btn btn-primary ms-3" onClick={() => addRow(relationGroup.relation)}>
+                                        <FontAwesomeIcon icon={faPlus} />
+                                    </button>
+                                    {relationGroup.members.length > 1 && (
+                                        <button type="button" className="btn btn-danger ms-2"
+                                            onClick={() => deleteRow(relationGroup.relation, index)}>
+                                            <FontAwesomeIcon icon={faMinus} />
+                                        </button>
+                                    )}
+                                </div>
+                                <div className="col-md-2 form-group mb-2">
+                                    <label className={`${error && !member.screenName ? 'red' : ''}`}>Screens{showAsterisk && <span className="text-danger">*</span>}</label>
+                                    <input
+                                        type="text"
+                                        className="exp-input-field form-control"
+                                        value={member.screenName}
+                                        maxLength={50}
+                                        title="Please enter the Academic Name"
+                                        onChange={(e) => RelationInputChange(relationGroup.relation, index, 'screenName', e.target.value)}
+                                    />
+                                </div>
+                                <div className="col-md-2 form-group mb-2">
+                                    <label className={`${error && !member.templatename ? 'red' : ''}`}>Template Name {showAsterisk && <span className="text-danger">*</span>}</label>
+                                    <input
+                                        type="text"
+                                        className="exp-input-field form-control"
+                                        value={member.templatename}
+                                        maxLength={125}
+                                        title="Please enter the Major"
+                                        onChange={(e) => RelationInputChange(relationGroup.relation, index, 'templatename', e.target.value)}
+                                    />
+                                </div>
+                                <div className="col-md-2 form-group mb-2">
+                                    <div className="exp-form-floating">
+                                        <label className="exp-form-labels">Templates</label>
+                                        <input
+                                            type="file"
+                                            className="exp-input-field form-control"
+                                            accept=".pdf,.jpeg,.jpg,.png"
+                                            onChange={(e) => handleFileChange(e, index)}
+                                        />
+                                    </div>
+                                </div>
+                                <div className="col-md-1 mt-4">
+                                    {isAcademicDataLoaded && (
+                                        <>
+                                            <button
+                                                type="button"
+                                                className="btn btn-success"
+                                                title="Update"
+                                                onClick={() => handleUpdate(relationGroup.relation, index)}
+                                            >
+                                                <i className="fa-solid fa-floppy-disk"></i>
                                             </button>
-                                            {relationGroup.members.length > 1 && (
-                                                <button type="button" className="btn btn-danger ms-2"
-                                                    onClick={() => deleteRow(relationGroup.relation, index)}>
-                                                    <FontAwesomeIcon icon={faMinus} />
-                                                </button>
-                                            )}
-                                        </div>
-                                        <div className="col-md-2 form-group mb-2">
-                                            <label className={`${error && !member.screenName ? 'red' : ''}`}>Screens{showAsterisk && <span className="text-danger">*</span>}</label>
-                                            <input
-                                                type="text"
-                                                className="exp-input-field form-control"
-                                                value={member.screenName}
-                                                maxLength={50}
-                                                title="Please enter the Academic Name"
-                                                onChange={(e) => RelationInputChange(relationGroup.relation, index, 'screenName', e.target.value)}
-                                            />
-                                        </div>
-                                        <div className="col-md-2 form-group mb-2">
-                                            <label className={`${error && !member.templatename ? 'red' : ''}`}>Template Name {showAsterisk && <span className="text-danger">*</span>}</label>
-                                            <input
-                                                type="text"
-                                                className="exp-input-field form-control"
-                                                value={member.templatename}
-                                                maxLength={125}
-                                                title="Please enter the Major"
-                                                onChange={(e) => RelationInputChange(relationGroup.relation, index, 'templatename', e.target.value)}
-                                            />
-                                        </div>
-                                        <div className="col-md-2 form-group mb-2">
-                                            <div className="exp-form-floating">
-                                                <label className="exp-form-labels">Templates</label>
-                                                <input
-                                                    type="file"
-                                                    className="exp-input-field form-control"
-                                                    accept=".pdf,.jpeg,.jpg,.png"
-                                                    onChange={(e) => handleFileChange(e, index)}
-                                                />
-                                            </div>
-                                        </div>
-                                        <div className="col-md-1 mt-4">
-                                            {isAcademicDataLoaded && (
-                                                <>
-                                                    <button
-                                                        type="button"
-                                                        className="btn btn-success"
-                                                        title="Update"
-                                                        onClick={() => handleUpdate(relationGroup.relation, index)}
-                                                    >
-                                                        <i className="fa-solid fa-floppy-disk"></i>
-                                                    </button>
-                                                    <button
-                                                        type="button"
-                                                        className="btn btn-danger"
-                                                        title="Delete"
-                                                        onClick={() => handleDelete(relationGroup.relation, index)}>
-                                                        <i className="fa-solid fa-trash"></i>
-                                                    </button>
-                                                </>
-                                            )}
-                                        </div>
-                                        <div className="d-flex col-md-1 mt-4 justify-content-end">
-                                            <div className="exp-form-floating">
-                                                <div
-                                                    className="pdf-frame"
+                                            <button
+                                                type="button"
+                                                className="btn btn-danger"
+                                                title="Delete"
+                                                onClick={() => handleDelete(relationGroup.relation, index)}>
+                                                <i className="fa-solid fa-trash"></i>
+                                            </button>
+                                        </>
+                                    )}
+                                </div>
+                                <div className="d-flex col-md-1 mt-4 justify-content-end">
+                                    <div className="exp-form-floating">
+                                        <div
+                                            className="pdf-frame"
+                                            style={{
+                                                width: "200px",
+                                                height: "200px",
+                                                border: "2px solid #ccc",
+                                                padding: "10px",
+                                                textAlign: "center",
+                                                display: "flex",
+                                                alignItems: "center",
+                                                justifyContent: "center",
+                                                overflow: "hidden",
+                                            }}
+                                            onClick={() => handlePdfClick(member.documentUrl)}
+                                        >
+                                            {member.documentUrl ? (
+                                                member.Templates?.type?.includes("pdf") || member.Templates?.name?.endsWith(".pdf") ? (
+                                                    <iframe
+                                                        src={member.documentUrl}
+                                                        title="PDF Preview"
+                                                        style={{ width: "100%", height: "100%", border: "none" }}
+                                                    />
+                                                ) : (
+                                                    <img
+                                                        src={member.documentUrl}
+                                                        alt="Preview"
+                                                        style={{
+                                                            maxWidth: "100%",
+                                                            maxHeight: "100%",
+                                                            objectFit: "contain",
+                                                        }}
+                                                    />
+                                                )
+                                            ) : (
+                                                <img
+                                                    src={DefaultProductImage}
+                                                    alt="Default Preview"
                                                     style={{
-                                                        width: "200px",
-                                                        height: "200px",
-                                                        border: "2px solid #ccc",
-                                                        padding: "10px",
-                                                        textAlign: "center",
-                                                        display: "flex",
-                                                        alignItems: "center",
-                                                        justifyContent: "center",
-                                                        overflow: "hidden",
+                                                        maxWidth: "100%",
+                                                        maxHeight: "100%",
+                                                        objectFit: "contain",
+                                                        opacity: 0.8,
                                                     }}
-                                                    onClick={() => handlePdfClick(member.documentUrl)}
-                                                >
-                                                    {member.documentUrl ? (
-                                                        member.Templates?.type?.includes("pdf") || member.Templates?.name?.endsWith(".pdf") ? (
-                                                            <iframe
-                                                                src={member.documentUrl}
-                                                                title="PDF Preview"
-                                                                style={{ width: "100%", height: "100%", border: "none" }}
-                                                            />
-                                                        ) : (
-                                                            <img
-                                                                src={member.documentUrl}
-                                                                alt="Preview"
-                                                                style={{
-                                                                    maxWidth: "100%",
-                                                                    maxHeight: "100%",
-                                                                    objectFit: "contain",
-                                                                }}
-                                                            />
-                                                        )
-                                                    ) : (
-                                                        <span>Preview</span>
-                                                    )}
-                                                </div>
-                                            </div>
+                                                />
+                                            )}
                                         </div>
-
                                     </div>
-                                ))}
+                                </div>
+
                             </div>
                         ))}
                     </div>
+                ))}
+            </div>
         </div>
     );
 }

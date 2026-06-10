@@ -9,6 +9,8 @@ import { useLocation } from 'react-router-dom';
 import 'react-toastify/dist/ReactToastify.css';
 import LoadingScreen from './Loading';
 import { ToastContainer, toast } from 'react-toastify';
+import DefaultProductImage from "./DefaultIMG/Product.png";
+
 const config = require('./Apiconfig');
 
 
@@ -351,12 +353,30 @@ function BankAccInput({ }) {
   };
 
   const handleNavigate = () => {
-    navigate("/BankAccount", { selectedRows });
-  };
+  navigate("/BankAccount", {
+    state: {
+      preservedRowData: location.state?.preservedRowData,
+      preservedInputs: location.state?.preservedInputs
+    }
+  });
+};
 
   const handleInsert = async () => {
-    if (!account_code) {
+    if (!account_code ||
+      !selectedUser ||
+      !account_name ||
+      !account_number ||
+      !IFSC_code ||
+      !account_type ||
+      !branch ||
+      !acc_addr_1 ||
+      !acc_addr_2 ||
+      !acc_area_code ||
+      !acc_state_code ||
+      !acc_country_code
+    ) {
       setError(" ");
+      toast.warning("Missing Required Fields");
       return;
     }
     setLoading(true);
@@ -459,7 +479,7 @@ function BankAccInput({ }) {
       if (response.ok) {
         console.log("Data Updated successfully");
         setIsUpdated(true);
-        clearInputFields();
+        // clearInputFields();
         toast.success("Data Updated successfully!");
       } else {
         const errorResponse = await response.json();
@@ -595,9 +615,10 @@ function BankAccInput({ }) {
           <div class="pt-2 mb-4">
             <div className="shadow-lg p-3 bg-body-tertiary rounded  mb-2">
               <div class="row">
+
                 <div className="col-md-3 form-group mb-2">
                   <div>
-                    <label htmlFor="rid" className="exp-form-labels">
+                    <label for="rid" className={`exp-form-labels ${error && !account_code ? 'text-danger' : ''}`}>
                       Accountant code<span className="text-danger">*</span>
                     </label>
                     <input
@@ -615,11 +636,12 @@ function BankAccInput({ }) {
                     />
                   </div>
                 </div>
+
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
                     <div class="d-flex justify-content-start">
                       <div>
-                        <label for="rid" className={`exp-form-labels ${error && !user_accgroup_code ? 'text-danger' : ''}`}>
+                        <label for="rid" className={`exp-form-labels ${error && !selectedUser ? 'text-danger' : ''}`}>
                       User Account Code<span className="text-danger">*</span>
                     </label>
                       </div>
@@ -691,9 +713,10 @@ function BankAccInput({ }) {
                   <div class="exp-form-floating">
                     <div class="d-flex justify-content-start">
                       <div>
-                        <label for="rid" class="exp-form-labels">IFSC code</label>
+                        <label for="rid" className={`exp-form-labels ${error && !IFSC_code ? 'text-danger' : ''}`}>
+                      IFSC code<span className="text-danger">*</span>
+                    </label>
                       </div>
-                      <div><span className="text-danger">*</span></div>
                     </div>
                     <input
                       id="bnkifsc"
@@ -707,16 +730,17 @@ function BankAccInput({ }) {
                       ref={IFSc}
                       onKeyDown={(e) => handleKeyDown(e, Account, IFSc)}
                     />
-                    {error && !IFSC_code && <div className="text-danger">IFSC Code should not be blank</div>}
                   </div>
                 </div>
+
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
                     <div class="d-flex justify-content-start">
                       <div>
-                        <label for="rid" class="exp-form-labels">Account Type</label>
+                        <label for="rid" className={`exp-form-labels ${error && !account_type ? 'text-danger' : ''}`}>
+                      Account Type<span className="text-danger">*</span>
+                    </label>
                       </div>
-                      <div><span className="text-danger">*</span></div>
                     </div>
                     <div title="Select the Account Type ">
                       <Select
@@ -731,13 +755,15 @@ function BankAccInput({ }) {
                         onKeyDown={(e) => handleKeyDown(e, Branch, Account)}
                         required title="Please select the Account Type "
                       />
-                      {error && !account_type && <div className="text-danger">Account Type should not be blank</div>}
                     </div>
                   </div>
                 </div>
+
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
-                    <label for="cusad4" class="exp-form-labels">Branch<div><span className="text-danger">*</span></div></label>
+                    <label for="rid" className={`exp-form-labels ${error && !branch ? 'text-danger' : ''}`}>
+                      Branch<span className="text-danger">*</span>
+                    </label>
                     <input
                       id="bnkbra"
                       class="exp-input-field form-control"
@@ -750,16 +776,17 @@ function BankAccInput({ }) {
                       ref={Branch}
                       onKeyDown={(e) => handleKeyDown(e, Address1, Branch)}
                     />
-                    {error && !branch && <div className="text-danger">Branch Code should not be blank</div>}
                   </div>
                 </div>
+                
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
                     <div class="d-flex justify-content-start">
                       <div>
-                        <label for="rid" class="exp-form-labels">Address 1</label>
+                        <label for="rid" className={`exp-form-labels ${error && !acc_addr_1 ? 'text-danger' : ''}`}>
+                      Address 1<span className="text-danger">*</span>
+                    </label>
                       </div>
-                      <div><span className="text-danger">*</span></div>
                     </div>
                     <input
                       id="cusad1"
@@ -773,16 +800,17 @@ function BankAccInput({ }) {
                       ref={Address1}
                       onKeyDown={(e) => handleKeyDown(e, Address2, Address1)}
                     />
-                    {error && !acc_addr_1 && <div className="text-danger">Address should not be blank</div>}
                   </div>
                 </div>
+
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
                     <div class="d-flex justify-content-start">
                       <div>
-                        <label for="rid" class="exp-form-labels">Address 2</label>
+                        <label for="rid" className={`exp-form-labels ${error && !acc_addr_2 ? 'text-danger' : ''}`}>
+                      Address 2<span className="text-danger">*</span>
+                    </label>
                       </div>
-                      <div><span className="text-danger">*</span></div>
                     </div>
                     <input
                       id="cusad2"
@@ -796,9 +824,9 @@ function BankAccInput({ }) {
                       ref={Address2}
                       onKeyDown={(e) => handleKeyDown(e, Address3, Address2)}
                     />
-                    {error && !acc_addr_2 && <div className="text-danger">Address should not be blank</div>}
                   </div>
                 </div>
+                
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
                     <label for="cusad3" class="exp-form-labels">
@@ -835,13 +863,15 @@ function BankAccInput({ }) {
                     />
                   </div>
                 </div>
+
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
                     <div class="d-flex justify-content-start">
                       <div>
-                        <label for="rid" class="exp-form-labels">City</label>
+                        <label for="rid" className={`exp-form-labels ${error && !acc_area_code ? 'text-danger' : ''}`}>
+                      City<span className="text-danger">*</span>
+                    </label>
                       </div>
-                      <div><span className="text-danger">*</span></div>
                     </div>
                     <div title="Select the City ">
                       <Select
@@ -855,14 +885,14 @@ function BankAccInput({ }) {
                         ref={City}
                         onKeyDown={(e) => handleKeyDown(e, State, City)}
                       />
-                      {error && !acc_area_code && <div className="text-danger">City should not be blank</div>}
                     </div>
                   </div>
                 </div>
+
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
-                    <label for="rid" class="exp-form-labels">
-                      State<div><span className="text-danger">*</span></div>
+                    <label for="rid" className={`exp-form-labels ${error && !acc_state_code ? 'text-danger' : ''}`}>
+                      State<span className="text-danger">*</span>
                     </label>
                     <div title="Select the State">
                       <Select
@@ -876,17 +906,18 @@ function BankAccInput({ }) {
                         ref={State}
                         onKeyDown={(e) => handleKeyDown(e, Country, State)}
                       />
-                      {error && !acc_state_code && <div className="text-danger">State should not be blank</div>}
                     </div>
                   </div>
                 </div>
+
                 <div className="col-md-3 form-group mb-2">
                   <div class="exp-form-floating">
                     <div class="d-flex justify-content-start">
                       <div>
-                        <label for="rid" class="exp-form-labels">Country</label>
+                        <label for="rid" className={`exp-form-labels ${error && !acc_country_code ? 'text-danger' : ''}`}>
+                      Country<span className="text-danger">*</span>
+                    </label>
                       </div>
-                      <div><span className="text-danger">*</span></div>
                     </div>
                     <div title="Select the Country">
                       <Select
@@ -900,10 +931,10 @@ function BankAccInput({ }) {
                         ref={Country}
                         onKeyDown={(e) => handleKeyDown(e, defaultbank, Country)}
                       />
-                      {error && !acc_country_code && <div className="text-danger">Country should not be blank</div>}
                     </div>
                   </div>
                 </div>
+                
                 <div className="col-md-3 form-group mb-2 ">
                   <div class="exp-form-floating">
                     <label for="cusweek" class="exp-form-labels">
@@ -948,7 +979,17 @@ function BankAccInput({ }) {
                     />
                   </div>
                 </div>
-                {selectedImage && (
+                                <div className="col-md-3 form-group mb-2">
+                    
+                  <div className="image-preview-frame">
+                    <img
+                      src={selectedImage || DefaultProductImage}
+                      alt="Selected Preview"
+                      className="preview-image"
+                    />
+                  </div>
+                </div>
+                {/* {selectedImage && (
                   <div className="col-md-3 form-group mb-2">
                     <div class="exp-form-floating">
                       <img
@@ -959,8 +1000,9 @@ function BankAccInput({ }) {
                       />
                     </div>
                   </div>
-                )}
-                <div class="col-md-3  d-flex justify-content-start p-2">
+                )} */}
+                <div class="col-md-3 form-group">
+                  <div class="d-flex justify-content-start ">
                   {mode === "create" ? (
                     <button onClick={handleInsert} className="mt-3 " title="Save">
                       <i class="fa-solid fa-floppy-disk"></i>
@@ -970,6 +1012,7 @@ function BankAccInput({ }) {
                       <i class="fa-solid fa-pen-to-square"></i>
                     </button>
                   )}
+                </div>
                 </div>
               </div>
             </div>

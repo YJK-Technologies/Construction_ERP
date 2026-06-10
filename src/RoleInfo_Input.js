@@ -2,14 +2,14 @@ import React, { useState, useEffect, useRef } from "react";
 import "./input.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useLocation } from "react-router-dom";
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
-import LoadingScreen from './Loading';
+import LoadingScreen from "./Loading";
 
-const config = require('./Apiconfig');
+const config = require("./Apiconfig");
 
-function Role_input({ }) {
+function Role_input({}) {
   const [role_id, setRole_id] = useState("");
   const [Keyfield, setKeyfield] = useState("");
   const [role_name, setRole_name] = useState("");
@@ -24,12 +24,11 @@ function Role_input({ }) {
   const [hasValueChanged, setHasValueChanged] = useState(false);
   const [loading, setLoading] = useState(false);
 
-
-  const created_by = sessionStorage.getItem('selectedUserCode')
+  const created_by = sessionStorage.getItem("selectedUserCode");
 
   const [isUpdated, setIsUpdated] = useState(false);
   const location = useLocation();
-  const { mode, selectedRow } = location.state || {};
+  const { mode, selectedRow, searchData } = location.state || {};
   const modified_by = sessionStorage.getItem("selectedUserCode");
   console.log(selectedRow);
 
@@ -45,17 +44,13 @@ function Role_input({ }) {
       setRole_name(selectedRow.role_name || "");
       setDescription(selectedRow.description || "");
       setKeyfield(selectedRow.Keyfield || "");
-    }
-    else if (mode === "create") {
+    } else if (mode === "create") {
       clearInputFields();
     }
   }, [mode, selectedRow, isUpdated]);
 
   const handleInsert = async () => {
-    if (
-      !role_id ||
-      !role_name
-    ) {
+    if (!role_id || !role_name) {
       setError(true);
       toast.warning("Error: Missing required fields");
       return;
@@ -70,17 +65,17 @@ function Role_input({ }) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          company_code: sessionStorage.getItem('selectedCompanyCode'),
+          company_code: sessionStorage.getItem("selectedCompanyCode"),
 
           role_id,
           role_name,
           description,
-          created_by: sessionStorage.getItem('selectedUserCode')
+          created_by: sessionStorage.getItem("selectedUserCode"),
         }),
       });
       if (response.ok) {
         toast.success("Data inserted Successfully", {
-          onClose: () => clearInputFields()
+          onClose: () => clearInputFields(),
         });
       } else {
         const errorResponse = await response.json();
@@ -89,18 +84,29 @@ function Role_input({ }) {
       }
     } catch (error) {
       console.error("Error inserting data:", error);
-      toast.error('Error inserting data: ' + error.message);
+      toast.error("Error inserting data: " + error.message);
     } finally {
       setLoading(false);
     }
   };
 
   const handleNavigate = () => {
-    navigate("/Role", { state: { mode: "create" } }); // Pass selectedRows as props to the Input component
+    navigate("/Role", {
+      state: {
+        preservedRowData: location.state?.preservedRowData,
+        preservedInputs: location.state?.preservedInputs,
+      },
+    });
   };
 
-  const handleKeyDown = async (e, nextFieldRef, value, hasValueChanged, setHasValueChanged) => {
-    if (e.key === 'Enter') {
+  const handleKeyDown = async (
+    e,
+    nextFieldRef,
+    value,
+    hasValueChanged,
+    setHasValueChanged,
+  ) => {
+    if (e.key === "Enter") {
       // Check if the value has changed and handle the search logic
       if (hasValueChanged) {
         await handleKeyDownStatus(e); // Trigger the search function
@@ -117,17 +123,15 @@ function Role_input({ }) {
   };
 
   const handleKeyDownStatus = async (e) => {
-    if (e.key === 'Enter' && hasValueChanged) { // Only trigger search if the value has changed
+    if (e.key === "Enter" && hasValueChanged) {
+      // Only trigger search if the value has changed
       // Trigger the search function
       setHasValueChanged(false); // Reset the flag after search
     }
   };
 
   const handleUpdate = async () => {
-    if (
-      !role_id ||
-      !role_name
-    ) {
+    if (!role_id || !role_name) {
       setError(true);
       toast.warning("Error: Missing required fields");
       return;
@@ -142,18 +146,18 @@ function Role_input({ }) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          company_code: sessionStorage.getItem('selectedCompanyCode'),
+          company_code: sessionStorage.getItem("selectedCompanyCode"),
           role_id,
           role_name,
           description,
           created_by,
           modified_by,
-          Keyfield
+          Keyfield,
         }),
       });
       if (response.ok) {
         toast.success("Data updated successfully", {
-          onClose: () => clearInputFields()
+          // onClose: () => clearInputFields()
         });
       } else {
         const errorResponse = await response.json();
@@ -162,7 +166,7 @@ function Role_input({ }) {
       }
     } catch (error) {
       console.error("Error Update data:", error);
-      toast.error('Error inserting data: ' + error.message);
+      toast.error("Error inserting data: " + error.message);
     } finally {
       setLoading(false);
     }
@@ -171,14 +175,27 @@ function Role_input({ }) {
   return (
     <div class="container-fluid Topnav-screen ">
       <div className="">
-        <div class=""  >
+        <div class="">
           {loading && <LoadingScreen />}
-          <ToastContainer position="top-right" className="toast-design" theme="colored" />
+          <ToastContainer
+            position="top-right"
+            className="toast-design"
+            theme="colored"
+          />
           <div className="shadow-lg  bg-body-tertiary rounded ">
-            <div className=" mb-0 d-flex justify-content-between" >
-              <h1 align="left" class="purbut">{mode === "update" ? 'Update Role' : 'Add Role'}  </h1>
-              <h1 align="left" class="fs-4 mobileview">{mode === "update" ? 'Update Role' : 'Add Role'}  </h1>
-              <button onClick={handleNavigate} className=" btn btn-danger shadow-none rounded-0 h-70 fs-5" required title="Close">
+            <div className=" mb-0 d-flex justify-content-between">
+              <h1 align="left" class="purbut">
+                {mode === "update" ? "Update Role" : "Add Role"}{" "}
+              </h1>
+              <h1 align="left" class="fs-4 mobileview">
+                {mode === "update" ? "Update Role" : "Add Role"}{" "}
+              </h1>
+              <button
+                onClick={handleNavigate}
+                className=" btn btn-danger shadow-none rounded-0 h-70 fs-5"
+                required
+                title="Close"
+              >
                 <i class="fa-solid fa-xmark"></i>
               </button>
             </div>
@@ -190,7 +207,11 @@ function Role_input({ }) {
                   <div class="exp-form-floating">
                     <div class="d-flex justify-content-start">
                       <div>
-                        <label for="rid" class="exp-form-labels" className={`${error && !role_id ? 'text-danger' : ''}`}>
+                        <label
+                          for="rid"
+                          class="exp-form-labels"
+                          className={`${error && !role_id ? "text-danger" : ""}`}
+                        >
                           Role ID<span className="text-danger">*</span>
                         </label>
                       </div>
@@ -200,7 +221,8 @@ function Role_input({ }) {
                       class="exp-input-field form-control"
                       type="text"
                       placeholder=""
-                      required title="please enter the role ID"
+                      required
+                      title="please enter the role ID"
                       value={role_id}
                       onChange={(e) => setRole_id(e.target.value)}
                       maxLength={18}
@@ -215,7 +237,11 @@ function Role_input({ }) {
                   <div class="exp-form-floating">
                     <div class="d-flex justify-content-start">
                       <div>
-                        <label for="rid" class="exp-form-labels" className={`${error && !role_name ? 'text-danger' : ''}`}>
+                        <label
+                          for="rid"
+                          class="exp-form-labels"
+                          className={`${error && !role_name ? "text-danger" : ""}`}
+                        >
                           Role Name<span className="text-danger">*</span>
                         </label>
                       </div>
@@ -225,7 +251,8 @@ function Role_input({ }) {
                       class="exp-input-field form-control"
                       type="text"
                       placeholder=""
-                      required title="please enter the role name"
+                      required
+                      title="please enter the role name"
                       value={role_name}
                       onChange={(e) => setRole_name(e.target.value)}
                       maxLength={50}
@@ -239,7 +266,9 @@ function Role_input({ }) {
                   <div class="exp-form-floating">
                     <div class="d-flex justify-content-start">
                       <div>
-                        <label for="rid" class="exp-form-labels">Description</label>
+                        <label for="rid" class="exp-form-labels">
+                          Description
+                        </label>
                       </div>
                     </div>
                     <input
@@ -247,14 +276,15 @@ function Role_input({ }) {
                       class="exp-input-field form-control"
                       type="text"
                       placeholder=""
-                      required title="please enter the description"
+                      required
+                      title="please enter the description"
                       value={description}
                       onChange={(e) => setDescription(e.target.value)}
                       maxLength={255}
                       ref={Description}
                       // onKeyDown={(e) => handleKeyDown(e, Description)}
                       onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
+                        if (e.key === "Enter") {
                           if (mode === "create") {
                             handleInsert();
                           } else {
@@ -308,11 +338,19 @@ function Role_input({ }) {
                 </div> */}
                 <div class="col-md-3 form-group  d-flex justify-content-start">
                   {mode === "create" ? (
-                    <button onClick={handleInsert} className="mt-4" title="Save">
+                    <button
+                      onClick={handleInsert}
+                      className="mt-4"
+                      title="Save"
+                    >
                       <i class="fa-solid fa-floppy-disk"></i>
                     </button>
                   ) : (
-                    <button onClick={handleUpdate} className="mt-4" title="Update">
+                    <button
+                      onClick={handleUpdate}
+                      className="mt-4"
+                      title="Update"
+                    >
                       <i class="fa-solid fa-pen-to-square"></i>
                     </button>
                   )}
