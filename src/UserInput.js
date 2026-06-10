@@ -105,6 +105,9 @@ function UserInput({ }) {
       setLog_in_out(selectedRow.log_in_out || "");
       setUser_status(selectedRow.user_status || "");
       setGender(selectedRow.gender || "");
+      setSuperAdmin(
+        selectedRow.super_admin?.toLowerCase() === "yes"
+      );
       setSelectedStatus({
         label: selectedRow.user_status,
         value: selectedRow.user_status,
@@ -353,7 +356,7 @@ function UserInput({ }) {
 
       const response = await fetch(`${config.apiBaseUrl}/useradd`, {
         method: "POST",
-        body: formData, 
+        body: formData,
       });
 
       if (response.ok) {
