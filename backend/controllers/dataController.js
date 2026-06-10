@@ -7681,7 +7681,7 @@ const getCustomerCode = async (req, res) => {
 };
 
 
-const getCustomerSearchdata = async (req, res) => {
+const     getCustomerSearchdata = async (req, res) => {
   const { customer_code, company_code, customer_name, status, panno, customer_gst_no, customer_addr_1, customer_addr_2, customer_addr_3,
     customer_addr_4, customer_area, customer_state, customer_country, customer_mobile_no, customer_resi_no, customer_office_no, customer_fax_no, opening_balance, balance_type } = req.body;
 
