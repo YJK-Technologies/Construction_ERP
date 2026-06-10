@@ -1204,6 +1204,7 @@ const userAddData = async (req, res) => {
     dob,
     gender,
     role_id,
+    uper_admin,
     created_by,
     modified_by,
     tempstr1,
@@ -1241,6 +1242,7 @@ const userAddData = async (req, res) => {
       .input("gender", sql.NVarChar, gender)
       .input("role_id", sql.NVarChar, role_id)
       .input("user_img", sql.VarBinary, user_img)
+      .input("@super_admin  ", sql.NVarChar, super_admin )
       .input("created_by", sql.NVarChar, created_by)
       .input("modified_by", sql.NVarChar, modified_by)
       .input("tempstr1", sql.NVarChar, tempstr1)
@@ -1255,7 +1257,7 @@ const userAddData = async (req, res) => {
         `EXEC SP_user_info_hdr @mode,@company_code,@user_code,@user_name,
         @first_name,@last_name,@user_password,
         @user_status,@log_in_out,@user_type,
-        @email_id,@dob,@gender,@role_id,@user_img,@created_by,@modified_by,
+        @email_id,@dob,@gender,@role_id,@user_img,"uper_admin,@created_by,@modified_by,
         @tempstr1, @tempstr2, @tempstr3, @tempstr4,    
         @datetime1, @datetime2, @datetime3, @datetime4`
       );
@@ -1304,6 +1306,7 @@ const UsersaveEditedData = async (req, res) => {
         .input("dob", sql.NVarChar, updatedRow.dob)
         .input("gender", sql.NVarChar, updatedRow.gender)
         .input("role_id", sql.NVarChar, updatedRow.role_id)
+        .input("super_admin", sql.NVarChar, updatedRow.super_admin)
         .input("created_by", sql.NVarChar, updatedRow.created_by)
         .input("modified_by", sql.NVarChar, req.headers['modified-by'])
         .input("tempstr1", sql.NVarChar, updatedRow.tempstr1)
@@ -1318,7 +1321,7 @@ const UsersaveEditedData = async (req, res) => {
           `EXEC SP_user_info_hdr 
             'U',@company_code, @user_code, @user_name, @first_name, @last_name, 
             @user_password, @user_status, @log_in_out, @user_type, 
-            @email_id, @dob, @gender,@role_id,'', @created_by,  
+            @email_id, @dob, @gender,@role_id,'', super_admin,@created_by,  
             @modified_by, @tempstr1, @tempstr2, @tempstr3, 
             @tempstr4, @datetime1, @datetime2, @datetime3, @datetime4`
         );
