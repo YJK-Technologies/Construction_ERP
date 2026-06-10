@@ -419,9 +419,9 @@ function UserInput({ }) {
       !first_name ||
       !last_name ||
       !user_password ||
-      !selectedRole ||
+      !role_id ||
       !email_id ||
-      !selectedStatus ||
+      !user_status ||
       !dob
     ) {
       setError(true);
@@ -447,13 +447,13 @@ function UserInput({ }) {
       formData.append("first_name", first_name);
       formData.append("last_name", last_name);
       formData.append("user_password", user_password);
-      formData.append("user_status", selectedStatus.value);
-      formData.append("log_in_out", selectedLog.value);
+      formData.append("user_status", user_status);
+      formData.append("log_in_out", log_in_out);
       formData.append("email_id", email_id);
       formData.append("dob", dob);
-      formData.append("status", selectedStatus.value);
-      formData.append("gender", selectedGender.value);
-      formData.append("role_id", selectedRole.value);
+      formData.append("gender", gender);
+      formData.append("role_id", role_id);
+      formData.append("super_admin", superAdmin ? "Yes" : "No");
       formData.append("modified_by", modified_by);
 
       if (user_images) {
