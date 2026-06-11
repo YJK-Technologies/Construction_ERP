@@ -257,9 +257,7 @@ function Department() {
   const handleNavigatesToForm = () => {
     navigate("/AddDepartment", { state: { mode: "create" } }); // Pass selectedRows as props to the Input component
   };
-  // const handleNavigateWithRowData = (selectedRow) => {
-  //   navigate("/AddDepartment", { state: { mode: "update", selectedRow } });
-  // };
+
   const handleNavigateWithRowData = (selectedRow) => {
   navigate("/AddDepartment", {
     state: {

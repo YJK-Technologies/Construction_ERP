@@ -36245,13 +36245,15 @@ const Expenses_HdrInsert = async (req, res) => {
       .input("created_date", sql.DateTime, created_date)
       .input("modified_by", sql.NVarChar, modified_by)
       .query(`EXEC sp_Expenses_Hdr @mode, @expense_no, @expense_date, @keyfield, @data_deleted, @company_code, @Location_Code, @created_by, ''`);
-
+      console.log("Header SP Result:");
+      console.log(result.recordset);
     // SP returned ErrorNumber/ErrorMessage
     if (result.recordset.length > 0) {
       res.status(200).json(result.recordset);
     } else {
       res.status(404).json(err.message);
     }
+    return res.status(200).json(result.recordset);
   } catch (err) {
     console.error("Error", err);
     res.status(500).json({ message: err.message || 'Internal Server Error' });

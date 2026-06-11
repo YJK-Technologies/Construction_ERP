@@ -186,6 +186,7 @@ function AttriDetInput({ }) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
+          company_code: sessionStorage.getItem("selectedCompanyCode"),
           attributeheader_code,
           attributedetails_code,
           attributedetails_name,
