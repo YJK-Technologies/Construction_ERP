@@ -61,28 +61,65 @@ function Grid() {
   const [open, setOpen] = React.useState(false);
 
   useEffect(() => {
-  if (location.state?.preservedRowData) {
-    setRowData(location.state.preservedRowData);
-  }
+    const handleKeyDown = (event) => {
+      const isReloadShortcut =
+        (event.ctrlKey && event.key.toLowerCase() === "r") ||
+        (event.altKey && event.key.toLowerCase() === "r") ||
+        event.key === "F5";
 
-  if (location.state?.preservedInputs) {
-    setCompany_no(location.state.preservedInputs.company_no || "");
-    setCompany_name(location.state.preservedInputs.company_name || "");
-    setCity(location.state.preservedInputs.city || "");
-    setPincode(location.state.preservedInputs.pincode || "");
-    setCountry(location.state.preservedInputs.country || "");
-    setcompany_gst_no(location.state.preservedInputs.company_gst_no || "");
-    setState(location.state.preservedInputs.state || "");
-    setStatus(location.state.preservedInputs.status || "");
+      if (isReloadShortcut) {
+        event.preventDefault();
+        clearInputFields();
+      }
+    };
 
-    if (location.state.preservedInputs.status) {
-      setSelectedStatus({
-        label: location.state.preservedInputs.status,
-        value: location.state.preservedInputs.status,
-      });
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
+  useEffect(() => {
+    // if (location.state?.preservedRowData) {
+    //   setRowData(location.state.preservedRowData);
+    // }
+
+    if (location.state?.preservedInputs) {
+      const inputs = location.state.preservedInputs;
+
+      setCompany_no(inputs.company_no || "");
+      setCompany_name(inputs.company_name || "");
+      setCity(inputs.city || "");
+      setPincode(inputs.pincode || "");
+      setCountry(inputs.country || "");
+      setcompany_gst_no(inputs.company_gst_no || "");
+      setState(inputs.state || "");
+      setStatus(inputs.status || "");
+
+      if (inputs.status) {
+        setSelectedStatus({
+          label: inputs.status,
+          value: inputs.status,
+        });
+      }
+
+      if (location.state?.refreshGrid) {
+        handleSearch(inputs); 
+      }
     }
-  }
-}, [location.state]);
+  }, [location.state]);
+
+  const clearInputFields = () => {
+    setCompany_no("");
+    setCompany_name("");
+    setCity("");
+    setState("");
+    setPincode("");
+    setCountry("");
+    setcompany_gst_no("");
+    setSelectedStatus("");
+    setStatus("");
+    setRowData([]);
+  };
 
   const handleClose = () => {
     setOpen(false);
@@ -187,9 +224,9 @@ function Grid() {
 
   const filteredOptionStatus = Array.isArray(statusdrop)
     ? statusdrop.map((option) => ({
-        value: option.attributedetails_name,
-        label: option.attributedetails_name,
-      }))
+      value: option.attributedetails_name,
+      label: option.attributedetails_name,
+    }))
     : [];
 
   const handleChangeStatus = (selectedStatus) => {
@@ -206,26 +243,25 @@ function Grid() {
     setCompany_name(event.target.value);
   };
 
-  const handleSearch = async () => {
+  const handleSearch = async (searchParams = null) => {
     setLoading(true);
     try {
-      const response = await fetch(
-        `${config.apiBaseUrl}/companysearchcriteria`,
+      const response = await fetch(`${config.apiBaseUrl}/companysearchcriteria`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            company_no,
-            company_name,
-            city,
-            state,
-            pincode,
-            country,
-            status,
-            company_gst_no,
-          }), // Send company_no and company_name as search criteria
+            company_no: searchParams?.company_no ?? company_no,
+            company_name: searchParams?.company_name ?? company_name,
+            city: searchParams?.city ?? city,
+            state: searchParams?.state ?? state,
+            pincode: searchParams?.pincode ?? pincode,
+            country: searchParams?.country ?? country,
+            status: searchParams?.status ?? status,
+            company_gst_no: searchParams?.company_gst_no ?? company_gst_no
+          }),
         },
       );
       if (response.ok) {
@@ -691,27 +727,47 @@ function Grid() {
     navigate("/AddCompany", { state: { mode: "create" } }); // Pass selectedRows as props to the Input component
   };
 
-const handleNavigateWithRowData = (selectedRow) => {
-  navigate("/AddCompany", {
-    state: {
-      mode: "update",
-      selectedRow,
+  // const handleNavigateWithRowData = (selectedRow) => {
+  //   navigate("/AddCompany", {
+  //     state: {
+  //       mode: "update",
+  //       selectedRow,
 
-      preservedRowData: rowData,
+  //       preservedRowData: rowData,
 
-      preservedInputs: {
-        company_no,
-        company_name,
-        city,
-        state,
-        pincode,
-        country,
-        company_gst_no,
-        status,
+  //       preservedInputs: {
+  //         company_no,
+  //         company_name,
+  //         city,
+  //         state,
+  //         pincode,
+  //         country,
+  //         company_gst_no,
+  //         status,
+  //       },
+  //     },
+  //   });
+  // };
+
+  const handleNavigateWithRowData = (selectedRow) => {
+    navigate("/AddCompany", {
+      state: {
+        mode: "update",
+        company_no: selectedRow.company_no,
+
+        preservedInputs: {
+          company_no,
+          company_name,
+          city,
+          state,
+          pincode,
+          country,
+          company_gst_no,
+          status,
+        },
       },
-    },
-  });
-};
+    });
+  };
 
   const onSelectionChanged = () => {
     const selectedNodes = gridApi.getSelectedNodes();
@@ -873,50 +929,50 @@ const handleNavigateWithRowData = (selectedRow) => {
               {["add", "all permission"].some((permission) =>
                 companyPermissions.includes(permission),
               ) && (
-                <addbutton
-                  className="purbut"
-                  onClick={handleNavigateToForm}
-                  title="Add"
-                >
-                  <i class="fa-solid fa-user-plus"></i>
-                </addbutton>
-              )}
+                  <addbutton
+                    className="purbut"
+                    onClick={handleNavigateToForm}
+                    title="Add"
+                  >
+                    <i class="fa-solid fa-user-plus"></i>
+                  </addbutton>
+                )}
               {["delete", "all permission"].some((permission) =>
                 companyPermissions.includes(permission),
               ) && (
-                <delbutton
-                  className="purbut"
-                  onClick={deleteSelectedRows}
-                  required
-                  title="Delete"
-                >
-                  <i class="fa-solid fa-user-minus"></i>
-                </delbutton>
-              )}
+                  <delbutton
+                    className="purbut"
+                    onClick={deleteSelectedRows}
+                    required
+                    title="Delete"
+                  >
+                    <i class="fa-solid fa-user-minus"></i>
+                  </delbutton>
+                )}
               {["update", "all permission"].some((permission) =>
                 companyPermissions.includes(permission),
               ) && (
-                <savebutton
-                  className="purbut"
-                  onClick={saveEditedData}
-                  required
-                  title="Update"
-                >
-                  <i class="fa-solid fa-floppy-disk"></i>
-                </savebutton>
-              )}
+                  <savebutton
+                    className="purbut"
+                    onClick={saveEditedData}
+                    required
+                    title="Update"
+                  >
+                    <i class="fa-solid fa-floppy-disk"></i>
+                  </savebutton>
+                )}
               {["all permission", "view"].some((permission) =>
                 companyPermissions.includes(permission),
               ) && (
-                <printbutton
-                  className="purbut"
-                  onClick={generateReport}
-                  required
-                  title="Generate Report"
-                >
-                  <i class="fa-solid fa-print"></i>
-                </printbutton>
-              )}
+                  <printbutton
+                    className="purbut"
+                    onClick={generateReport}
+                    required
+                    title="Generate Report"
+                  >
+                    <i class="fa-solid fa-print"></i>
+                  </printbutton>
+                )}
             </div>
           </div>
           <div class="mobileview">
@@ -940,38 +996,38 @@ const handleNavigateWithRowData = (selectedRow) => {
                     {["add", "all permission"].some((permission) =>
                       companyPermissions.includes(permission),
                     ) && (
-                      <icon class="icon" onClick={handleNavigateToForm}>
-                        <i class="fa-solid fa-user-plus"></i>
-                      </icon>
-                    )}
+                        <icon class="icon" onClick={handleNavigateToForm}>
+                          <i class="fa-solid fa-user-plus"></i>
+                        </icon>
+                      )}
                   </li>
                   <li class="iconbutton  d-flex justify-content-center text-danger">
                     {["delete", "all permission"].some((permission) =>
                       companyPermissions.includes(permission),
                     ) && (
-                      <icon class="icon" onClick={deleteSelectedRows}>
-                        <i class="fa-solid fa-user-minus"></i>
-                      </icon>
-                    )}
+                        <icon class="icon" onClick={deleteSelectedRows}>
+                          <i class="fa-solid fa-user-minus"></i>
+                        </icon>
+                      )}
                   </li>
                   <li class="iconbutton  d-flex justify-content-center text-primary ">
                     {" "}
                     {["update", "all permission"].some((permission) =>
                       companyPermissions.includes(permission),
                     ) && (
-                      <icon class="icon" onClick={saveEditedData}>
-                        <i class="fa-solid fa-floppy-disk"></i>
-                      </icon>
-                    )}
+                        <icon class="icon" onClick={saveEditedData}>
+                          <i class="fa-solid fa-floppy-disk"></i>
+                        </icon>
+                      )}
                   </li>
                   <li class="iconbutton  d-flex justify-content-center ">
                     {["all permission", "view"].some((permission) =>
                       companyPermissions.includes(permission),
                     ) && (
-                      <icon class="icon" onClick={generateReport}>
-                        <i class="fa-solid fa-print"></i>
-                      </icon>
-                    )}
+                        <icon class="icon" onClick={generateReport}>
+                          <i class="fa-solid fa-print"></i>
+                        </icon>
+                      )}
                   </li>
                 </ul>
               </div>
@@ -1144,7 +1200,7 @@ const handleNavigateWithRowData = (selectedRow) => {
                 <div>
                   <icon
                     className=" popups-btn text-dark fs-6"
-                    onClick={reloadGridData}
+                    onClick={clearInputFields}
                     required
                     title="Reload"
                   >

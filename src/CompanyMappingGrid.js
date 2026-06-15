@@ -12,7 +12,7 @@ import Select from "react-select";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import labels from "./Labels";
 import { showConfirmationToast } from './ToastConfirmation';
-import {  useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import LoadingScreen from './Loading';
 
 const config = require("./Apiconfig");
@@ -51,26 +51,58 @@ function CompanyMappingGrid() {
     .filter((permission) => permission.screen_type === "Company Mapping")
     .map((permission) => permission.permission_type.toLowerCase());
 
-    useEffect(() => {
-  if (location.state?.preservedRowData) {
-    setRowData(location.state.preservedRowData);
-  }
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      const isReloadShortcut =
+        (event.ctrlKey && event.key.toLowerCase() === "r") ||
+        (event.altKey && event.key.toLowerCase() === "r") ||
+        event.key === "F5";
 
-  if (location.state?.preservedInputs) {
-    setuser_code(location.state.preservedInputs.user_code || "");
-    setcompany_no(location.state.preservedInputs.company_no || "");
-    setlocation_no(location.state.preservedInputs.location_no || "");
-    setstatus(location.state.preservedInputs.status || "");
+      if (isReloadShortcut) {
+        event.preventDefault();
+        clearInputFields();
+      }
+    };
 
-    if (location.state.preservedInputs.status) {
-      setSelectedStatus({
-        label: location.state.preservedInputs.status,
-        value: location.state.preservedInputs.status,
-      });
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
+  useEffect(() => {
+    // if (location.state?.preservedRowData) {
+    //   setRowData(location.state.preservedRowData);
+    // }
+
+    if (location.state?.preservedInputs) {
+      const inputs = location.state.preservedInputs;
+
+      setuser_code(inputs.user_code || "");
+      setcompany_no(inputs.company_no || "");
+      setlocation_no(inputs.location_no || "");
+      setstatus(inputs.status || "");
+
+      if (inputs.status) {
+        setSelectedStatus({
+          label: inputs.status,
+          value: inputs.status,
+        });
+      }
+
+      if (location.state?.refreshGrid) {
+        handleSearch(inputs);
+      }
     }
-  }
-}, [location.state]);
+  }, [location.state]);
 
+  const clearInputFields = () => {
+    setuser_code("");
+    setcompany_no("");
+    setlocation_no("");
+    setSelectedStatus("");
+    setstatus("");
+    setRowData([]);
+  };
 
   useEffect(() => {
     fetch(`${config.apiBaseUrl}/usercode`)
@@ -146,23 +178,22 @@ function CompanyMappingGrid() {
     setHasValueChanged(true);
   };
 
-  const handleSearch = async () => {
+  const handleSearch = async (searchParams = null) => {
     setLoading(true);
     try {
       const company_code = sessionStorage.getItem("selectedCompanyCode");
-      const response = await fetch(
-        `${config.apiBaseUrl}/companymappingsearchdata`,
+      const response = await fetch(`${config.apiBaseUrl}/companymappingsearchdata`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            company_no,
-            user_code,
+            company_no: searchParams?.company_no ?? company_no,
+            user_code: searchParams?.user_code ?? user_code,
             company_code,
-            location_no,
-            status,
+            location_no: searchParams?.location_no ?? location_no,
+            status: searchParams?.status ?? status,
           }),
         }
       );
@@ -187,18 +218,18 @@ function CompanyMappingGrid() {
   };
 
   const reloadGridData = () => {
-  setuser_code("");
-  setcompany_no("");
-  setlocation_no("");
-  setstatus("");
-  setSelectedStatus(null);
-  setRowData([]);
+    setuser_code("");
+    setcompany_no("");
+    setlocation_no("");
+    setstatus("");
+    setSelectedStatus(null);
+    setRowData([]);
 
-  navigate("/CompanyMapping", {
-    replace: true,
-    state: {}
-  });
-};
+    navigate("/CompanyMapping", {
+      replace: true,
+      state: {}
+    });
+  };
 
   const columnDefs = [
     {
@@ -427,24 +458,28 @@ function CompanyMappingGrid() {
     navigate("/AddCompanyMapping", { state: { mode: "create" } }); // Pass selectedRows as props to the Input component
   };
 
-const handleNavigateWithRowData = (selectedRow) => {
-  navigate("/AddCompanyMapping", { state: { mode: "update", selectedRow, preservedRowData: rowData, 
-      preservedInputs: { user_code, company_no, location_no, status } } });
-};
-
-  // const onCellValueChanged = (params) => {
-  //   const updatedRowData = [...rowData];
-  //   const rowIndex = updatedRowData.findIndex(
-  //     (row) => row.keyfiels === params.data.keyfiels // Use the unique identifier
-  //   );
-  //   if (rowIndex !== -1) {
-  //     updatedRowData[rowIndex][params.colDef.field] = params.newValue;
-  //     setRowData(updatedRowData);
-
-  //     // Add the edited row data to the state
-  //     setEditedData((prevData) => [...prevData, updatedRowData[rowIndex]]);
-  //   }
+  // const handleNavigateWithRowData = (selectedRow) => {
+  //   navigate("/AddCompanyMapping", {
+  //     state: {
+  //       mode: "update", selectedRow, preservedRowData: rowData,
+  //       preservedInputs: { user_code, company_no, location_no, status }
+  //     }
+  //   });
   // };
+
+  const handleNavigateWithRowData = (selectedRow) => {
+    navigate("/AddCompanyMapping", {
+      state: {
+        mode: "update", keyfiels: selectedRow.keyfiels,
+        preservedInputs: {
+          user_code,
+          company_no,
+          location_no,
+          status
+        }
+      }
+    });
+  };
 
   const onCellValueChanged = (params) => {
     const updatedRowData = [...rowData];
@@ -800,7 +835,7 @@ const handleNavigateWithRowData = (selectedRow) => {
                   </icon>
                   <icon
                     className="popups-btn fs-6p-3"
-                    onClick={reloadGridData}
+                    onClick={clearInputFields}
                     required
                     title="Refresh"
                   >
@@ -810,9 +845,6 @@ const handleNavigateWithRowData = (selectedRow) => {
               </div>
             </div>
           </div>
-
-          {/* <p>Result Set</p> */}
-
 
           <div class="ag-theme-alpine" style={{ height: 450, width: "100%" }}>
             <AgGridReact

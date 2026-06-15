@@ -44,17 +44,49 @@ function UserRoleGrid() {
     .map((permission) => permission.permission_type.toLowerCase());
 
   useEffect(() => {
-    if (location.state?.preservedRowData) {
-      setRowData(location.state.preservedRowData);
-    }
+    const handleKeyDown = (event) => {
+      const isReloadShortcut =
+        (event.ctrlKey && event.key.toLowerCase() === "r") ||
+        (event.altKey && event.key.toLowerCase() === "r") ||
+        event.key === "F5";
+
+      if (isReloadShortcut) {
+        event.preventDefault();
+        clearInputFields();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
+  useEffect(() => {
+    // if (location.state?.preservedRowData) {
+    //   setRowData(location.state.preservedRowData);
+    // }
 
     if (location.state?.preservedInputs) {
-      setuser_code(location.state.preservedInputs.user_code || "");
-      setuser_name(location.state.preservedInputs.user_name || "");
-      setrole_id(location.state.preservedInputs.role_id || "");
-      setrole_name(location.state.preservedInputs.role_name || "");
+      const inputs = location.state.preservedInputs;
+
+      setuser_code(inputs.user_code || "");
+      setuser_name(inputs.user_name || "");
+      setrole_id(inputs.role_id || "");
+      setrole_name(inputs.role_name || "");
+
+      if (location.state?.refreshGrid) {
+        handleSearch(inputs);
+      }
     }
   }, [location.state]);
+
+  const clearInputFields = () => {
+    setuser_code("");
+    setuser_name("");
+    setrole_id("");
+    setrole_name("");
+    setRowData([]);
+  };
 
   useEffect(() => {
     fetch(`${config.apiBaseUrl}/usercode`)
@@ -105,7 +137,7 @@ function UserRoleGrid() {
     }
   };
 
-  const handleSearch = async () => {
+  const handleSearch = async (searchParams = null) => {
     setLoading(true);
     try {
       const company_code = sessionStorage.getItem("selectedCompanyCode");
@@ -117,11 +149,11 @@ function UserRoleGrid() {
         },
         body: JSON.stringify({
           company_code,
-          user_code,
-          user_name,
-          role_id,
-          role_name,
-        }), // Send user_no and user_name as search criteria
+          user_code: searchParams?.user_code ?? user_code,
+          user_name: searchParams?.user_name ?? user_name,
+          role_id: searchParams?.role_id ?? role_id,
+          role_name: searchParams?.role_name ?? role_name,
+        }),
       });
       if (response.ok) {
         const searchData = await response.json();
@@ -352,14 +384,29 @@ function UserRoleGrid() {
   //   navigate("/AddUserRoleMapping", { state: { mode: "update", selectedRow } });
   // };
 
+  // const handleNavigateWithRowData = (selectedRow) => {
+  //   navigate("/AddUserRoleMapping", {
+  //     state: {
+  //       mode: "update",
+  //       selectedRow,
+
+  //       preservedRowData: rowData,
+
+  //       preservedInputs: {
+  //         user_code,
+  //         user_name,
+  //         role_id,
+  //         role_name,
+  //       },
+  //     },
+  //   });
+  // };
+
   const handleNavigateWithRowData = (selectedRow) => {
     navigate("/AddUserRoleMapping", {
       state: {
         mode: "update",
-        selectedRow,
-
-        preservedRowData: rowData,
-
+        keyfield: selectedRow.keyfield,
         preservedInputs: {
           user_code,
           user_name,
@@ -571,52 +618,52 @@ function UserRoleGrid() {
               {["add", "all permission"].some((permission) =>
                 userRoleMapPermission.includes(permission),
               ) && (
-                <addbutton
-                  className="purbut"
-                  onClick={handleNavigateToForm}
-                  required
-                  title="Add Role Mapping"
-                >
-                  {" "}
-                  <i class="fa-solid fa-user-plus"></i>{" "}
-                </addbutton>
-              )}
+                  <addbutton
+                    className="purbut"
+                    onClick={handleNavigateToForm}
+                    required
+                    title="Add Role Mapping"
+                  >
+                    {" "}
+                    <i class="fa-solid fa-user-plus"></i>{" "}
+                  </addbutton>
+                )}
               {["delete", "all permission"].some((permission) =>
                 userRoleMapPermission.includes(permission),
               ) && (
-                <delbutton
-                  className="purbut"
-                  onClick={deleteSelectedRows}
-                  required
-                  title="Delete"
-                >
-                  <i class="fa-solid fa-user-minus"></i>
-                </delbutton>
-              )}
+                  <delbutton
+                    className="purbut"
+                    onClick={deleteSelectedRows}
+                    required
+                    title="Delete"
+                  >
+                    <i class="fa-solid fa-user-minus"></i>
+                  </delbutton>
+                )}
               {["update", "all permission"].some((permission) =>
                 userRoleMapPermission.includes(permission),
               ) && (
-                <savebutton
-                  className="purbut"
-                  onClick={saveEditedData}
-                  required
-                  title="Update"
-                >
-                  <i class="fa-solid fa-floppy-disk"></i>
-                </savebutton>
-              )}
+                  <savebutton
+                    className="purbut"
+                    onClick={saveEditedData}
+                    required
+                    title="Update"
+                  >
+                    <i class="fa-solid fa-floppy-disk"></i>
+                  </savebutton>
+                )}
               {["all permission", "view"].some((permission) =>
                 userRoleMapPermission.includes(permission),
               ) && (
-                <printbutton
-                  class="purbut"
-                  onClick={generateReport}
-                  required
-                  title="Generate Report"
-                >
-                  <i class="fa-solid fa-print"></i>
-                </printbutton>
-              )}
+                  <printbutton
+                    class="purbut"
+                    onClick={generateReport}
+                    required
+                    title="Generate Report"
+                  >
+                    <i class="fa-solid fa-print"></i>
+                  </printbutton>
+                )}
             </div>
             <div class="mobileview">
               <div class="d-flex justify-content-between">
@@ -637,37 +684,37 @@ function UserRoleGrid() {
                       {["add", "all permission"].some((permission) =>
                         userRoleMapPermission.includes(permission),
                       ) && (
-                        <icon class="icon" onClick={handleNavigateToForm}>
-                          <i class="fa-solid fa-user-plus"></i>
-                        </icon>
-                      )}
+                          <icon class="icon" onClick={handleNavigateToForm}>
+                            <i class="fa-solid fa-user-plus"></i>
+                          </icon>
+                        )}
                     </li>
                     <li class="iconbutton  d-flex justify-content-center text-danger">
                       {["delete", "all permission"].some((permission) =>
                         userRoleMapPermission.includes(permission),
                       ) && (
-                        <icon class="icon" onClick={deleteSelectedRows}>
-                          <i class="fa-solid fa-user-minus"></i>
-                        </icon>
-                      )}
+                          <icon class="icon" onClick={deleteSelectedRows}>
+                            <i class="fa-solid fa-user-minus"></i>
+                          </icon>
+                        )}
                     </li>
                     <li class="iconbutton  d-flex justify-content-center text-primary ">
                       {["update", "all permission"].some((permission) =>
                         userRoleMapPermission.includes(permission),
                       ) && (
-                        <icon class="icon" onClick={saveEditedData}>
-                          <i class="fa-solid fa-floppy-disk"></i>
-                        </icon>
-                      )}
+                          <icon class="icon" onClick={saveEditedData}>
+                            <i class="fa-solid fa-floppy-disk"></i>
+                          </icon>
+                        )}
                     </li>
                     <li class="iconbutton  d-flex justify-content-center ">
                       {["all permission", "view"].some((permission) =>
                         userRoleMapPermission.includes(permission),
                       ) && (
-                        <icon class="icon" onClick={generateReport}>
-                          <i class="fa-solid fa-print"></i>
-                        </icon>
-                      )}
+                          <icon class="icon" onClick={generateReport}>
+                            <i class="fa-solid fa-print"></i>
+                          </icon>
+                        )}
                     </li>
                   </ul>
                 </div>
@@ -769,7 +816,7 @@ function UserRoleGrid() {
                   <div>
                     <icon
                       className="popups-btn fs-6 p-3"
-                      onClick={reloadGridData}
+                      onClick={clearInputFields}
                       required
                       title="Refresh"
                     >
