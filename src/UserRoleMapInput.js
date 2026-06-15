@@ -27,38 +27,93 @@ function UserRoleInput({ }) {
   const created_by = sessionStorage.getItem('selectedUserCode')
   const modified_by = sessionStorage.getItem("selectedUserCode");
 
-  const [isUpdated, setIsUpdated] = useState(false);
   const [keyfield, setKeyfield] = useState('');
+  
   const location = useLocation();
-  const { mode, selectedRow } = location.state || {};
+  const locationState = location.state || {};
+  const mode = locationState.mode || "create"; // ✅ default fallback
+  const selectedRow = locationState.selectedRow || null;
+  const keyfields = location.state?.keyfield;
+  const company_code = sessionStorage.getItem('selectedCompanyCode');
 
-  console.log(selectedRow);
+  useEffect(() => {
+    if (!location.state) {
+      clearInputFields(); // ensure fresh create mode
+    }
+  }, []);
+
+  useEffect(() => {
+    if (mode === "update" && keyfields) {
+      fetchRoleMappingData();
+    }
+  }, [mode, keyfields]);
+
+  const fetchRoleMappingData = async () => {
+    try {
+      setLoading(true);
+
+      const response = await fetch(`${config.apiBaseUrl}/getRoleMappingData`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          keyfield: keyfields,
+          company_code
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.length > 0) {
+        const roleMapping = data[0];
+
+        setuser_code(roleMapping.user_code || "");
+        setrole_id(roleMapping.role_id || "");
+        setKeyfield(roleMapping.keyfield || "");
+        setSelectedUser({
+          label: roleMapping.user_code,
+          value: roleMapping.user_code,
+        });
+        setSelectedRole({
+          label: roleMapping.role_id,
+          value: roleMapping.role_id,
+        });
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to fetch role mapping details");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const clearInputFields = () => {
     setSelectedUser("");
     setuser_code("");
     setSelectedRole("");
     setrole_id("");
+    setKeyfield("");
   };
 
-  useEffect(() => {
-    if (mode === "update" && selectedRow && !isUpdated) {
-      setuser_code(selectedRow.user_code || "");
-      setrole_id(selectedRow.role_id || "");
-      setKeyfield(selectedRow.keyfield || "");
-      setSelectedUser({
-        label: selectedRow.user_code,
-        value: selectedRow.user_code,
-      });
-      setSelectedRole({
-        label: selectedRow.role_id,
-        value: selectedRow.role_id,
-      });
+  // useEffect(() => {
+  //   if (mode === "update" && selectedRow) {
+  //     setuser_code(selectedRow.user_code || "");
+  //     setrole_id(selectedRow.role_id || "");
+  //     setKeyfield(selectedRow.keyfield || "");
+  //     setSelectedUser({
+  //       label: selectedRow.user_code,
+  //       value: selectedRow.user_code,
+  //     });
+  //     setSelectedRole({
+  //       label: selectedRow.role_id,
+  //       value: selectedRow.role_id,
+  //     });
 
-    } else if (mode === "create") {
-      clearInputFields();
-    }
-  }, [mode, selectedRow, isUpdated]);
+  //   } else if (mode === "create") {
+  //     clearInputFields();
+  //   }
+  // }, [mode, selectedRow]);
 
   useEffect(() => {
     fetch(`${config.apiBaseUrl}/usercode`)
@@ -149,12 +204,13 @@ function UserRoleInput({ }) {
   };
 
   const handleNavigate = () => {
-     navigate("/UserRoleMapping", {
-    state: {
-      preservedRowData: location.state?.preservedRowData,
-      preservedInputs: location.state?.preservedInputs
-    }
-  });
+    navigate("/UserRoleMapping", {
+      state: {
+        refreshGrid: true,
+        // preservedRowData: location.state?.preservedRowData,
+        preservedInputs: location.state?.preservedInputs
+      }
+    });
   };
 
   const handleKeyDown = async (e, nextFieldRef, value, hasValueChanged, setHasValueChanged) => {

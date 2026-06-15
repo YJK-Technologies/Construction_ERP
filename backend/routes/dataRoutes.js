@@ -1259,6 +1259,13 @@ router.post("/SiteMaterialBalanceReport", dataController.SiteMaterialBalanceRepo
 router.post("/getYorN", dataController.getYorN)
 router.post("/getItemSettings", dataController.getItemSettings)
 router.post("/itemSettingsInsert", dataController.itemSettingsInsert)
+router.post("/getCompanyData", dataController.getCompanyData)
+router.post("/getCompanyMappingData", dataController.getCompanyMappingData)
+router.post("/getLocationData", dataController.getLocationData)
+router.post("/getRoleData", dataController.getRoleData)
+router.post("/getRoleMappingData", dataController.getRoleMappingData)
+router.post("/getRoleRightsData", dataController.getRoleRightsData)
+router.post("/getUserData", dataController.getUserData)
 
 
 module.exports = router;

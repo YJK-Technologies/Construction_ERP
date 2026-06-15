@@ -7,7 +7,7 @@ import "./apps.css";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Select from 'react-select';
-import { useNavigate , useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import labels from "./Labels";
@@ -64,29 +64,61 @@ function LocInfoGrid() {
     .map(permission => permission.permission_type.toLowerCase());
 
   useEffect(() => {
-  if (location.state?.preservedRowData) {
-    setRowData(location.state.preservedRowData);
-  }
-  if (location.state?.preservedInputs) {
-    const inputs = location.state.preservedInputs;
-    setlocation_no(inputs.location_no || "");
-    setlocation_name(inputs.location_name || "");
-    setcity(inputs.city || "");
-    setstate(inputs.state || "");
-    setpincode(inputs.pincode || "");
-    setcountry(inputs.country || "");
-    setstatus(inputs.status || "");
-    if (inputs.status) {
-      setSelectedStatus({
-        label: inputs.status,
-        value: inputs.status,
-      });
-    } else {
-      setSelectedStatus(null);
-    }
-  }
-}, [location.state]);
+    const handleKeyDown = (event) => {
+      const isReloadShortcut =
+        (event.ctrlKey && event.key.toLowerCase() === "r") ||
+        (event.altKey && event.key.toLowerCase() === "r") ||
+        event.key === "F5";
 
+      if (isReloadShortcut) {
+        event.preventDefault();
+        clearInputFields();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
+  useEffect(() => {
+    // if (location.state?.preservedRowData) {
+    //   setRowData(location.state.preservedRowData);
+    // }
+    if (location.state?.preservedInputs) {
+      const inputs = location.state.preservedInputs;
+
+      setlocation_no(inputs.location_no || "");
+      setlocation_name(inputs.location_name || "");
+      setcity(inputs.city || "");
+      setstate(inputs.state || "");
+      setpincode(inputs.pincode || "");
+      setcountry(inputs.country || "");
+      setstatus(inputs.status || "");
+      if (inputs.status) {
+        setSelectedStatus({
+          label: inputs.status,
+          value: inputs.status,
+        });
+      }
+
+      if (location.state?.refreshGrid) {
+        handleSearch(inputs);
+      }
+    }
+  }, [location.state]);
+
+  const clearInputFields = () => {
+    setlocation_no("");
+    setlocation_name("");
+    setcity("");
+    setstate("");
+    setpincode("");
+    setcountry("");
+    setSelectedStatus("");
+    setstatus("");
+    setRowData([]);
+  };
 
   useEffect(() => {
     const company_code = sessionStorage.getItem('selectedCompanyCode');
@@ -187,7 +219,7 @@ function LocInfoGrid() {
     window.location.reload();
   };
 
-  const handleSearch = async () => {
+  const handleSearch = async (searchParams = null) => {
     setLoading(true);
     try {
       const response = await fetch(`${config.apiBaseUrl}/locationSearchdata`, {
@@ -196,13 +228,13 @@ function LocInfoGrid() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          location_no,
-          location_name,
-          city,
-          state,
-          pincode,
-          country,
-          status,
+          location_no: searchParams?.location_no ?? location_no,
+          location_name: searchParams?.location_name ?? location_name,
+          city: searchParams?.city ?? city,
+          state: searchParams?.state ?? state,
+          pincode: searchParams?.pincode ?? pincode,
+          country: searchParams?.country ?? country,
+          status: searchParams?.status ?? status,
         }),
       });
 
@@ -535,9 +567,31 @@ function LocInfoGrid() {
     navigate("/AddLocation", { state: { mode: "create" } });
   };
 
+  // const handleNavigateWithRowData = (selectedRow) => {
+  //   navigate("/AddLocation", {
+  //     state: {
+  //       mode: "update", selectedRow, preservedRowData: rowData,
+  //       preservedInputs: { location_no, location_name, city, state, pincode, country, status, },
+  //     },
+  //   });
+  // };
+
   const handleNavigateWithRowData = (selectedRow) => {
-  navigate("/AddLocation", { state: { mode: "update", selectedRow, preservedRowData: rowData, 
-      preservedInputs: { location_no, location_name, city, state, pincode, country, status, }, }, }); 
+    navigate("/AddLocation", {
+      state: {
+        mode: "update", 
+        location_no: selectedRow.location_no, 
+        preservedInputs: { 
+          location_no, 
+          location_name, 
+          city, 
+          state, 
+          pincode,
+          country, 
+          status, 
+        },
+      },
+    });
   };
 
   const onSelectionChanged = () => {
@@ -545,19 +599,6 @@ function LocInfoGrid() {
     const selectedData = selectedNodes.map((node) => node.data);
     setSelectedRows(selectedData);
   };
-
-  // const onCellValueChanged = (params) => {
-  //   const updatedRowData = [...rowData];
-  //   const rowIndex = updatedRowData.findIndex(
-  //     (row) => row.location_no === params.data.location_no // Use the unique identifier 
-  //   );
-  //   if (rowIndex !== -1) {
-  //     updatedRowData[rowIndex][params.colDef.field] = params.newValue;
-  //     setRowData(updatedRowData);
-
-  //     setEditedData((prevData) => [...prevData, updatedRowData[rowIndex]]);
-  //   }
-  // };
 
   const onCellValueChanged = (params) => {
     const updatedRowData = [...rowData];
@@ -954,7 +995,7 @@ function LocInfoGrid() {
                     </icon>
                   </div>
                   <div>
-                    <icon className="popups-btn fs-6 p-3" onClick={reloadGridData} required title="Reload">
+                    <icon className="popups-btn fs-6 p-3" onClick={clearInputFields} required title="Reload">
                       <FontAwesomeIcon icon="fa-solid fa-arrow-rotate-right" /></icon>
                   </div>
                 </div>

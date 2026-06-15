@@ -37504,8 +37504,8 @@ const itemSettingsInsert = async (req, res) => {
 
   try {
     const pool = await connection.connectToDatabase();
-
-    await pool.request()
+    await pool
+    .request()
     .input("mode", sql.NVarChar, "I")
     .input("company_code", sql.NVarChar, company_code)
     .input("Location_Code", sql.NVarChar, Location_Code)
@@ -37520,6 +37520,164 @@ const itemSettingsInsert = async (req, res) => {
   }
 };
 //Code ended by pavun on 09-06-2026
+
+//Code added by pavun on 15-06-2026
+const getCompanyData = async (req, res) => {
+  const { company_no } = req.body;
+  try {
+    const pool = await connection.connectToDatabase();
+    const result = await pool
+      .request()
+      .input("mode", sql.NVarChar, "GC")
+      .input("company_no", sql.NVarChar, company_no)
+      .query(` EXEC sp_company_info @mode,@company_no,'','','','','','','','','','','','','','','','','','','','','','','','','','','','','' `);
+    if (result.recordset.length > 0) {
+      res.status(200).json(result.recordset);
+    } else {
+      res.status(404).json("Data not found");
+    }
+  } catch (err) {
+    console.error("Error", err);
+    res.status(500).json({ message: err.message || 'Internal Server Error' });
+  }
+};
+
+const getCompanyMappingData = async (req, res) => {
+  const { company_code, keyfiels } = req.body;
+
+  try {
+    const pool = await connection.connectToDatabase();
+    const result = await pool
+      .request()
+      .input("mode", sql.NVarChar, "GCM")
+      .input("company_code", sql.NVarChar, company_code)
+      .input("keyfiels", sql.NVarChar, keyfiels)
+      .query(`EXEC sp_user_company_mapping @mode,@company_code,'','','','',0,@keyfiels,'','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
+
+    if (result.recordset.length > 0) {
+      res.status(200).json(result.recordset); 
+    } else {
+      res.status(404).json("Data not found"); 
+    }
+  } catch (err) {
+    console.error("Error", err.message);
+    return res.status(500).json({ message: err.message || 'Internal Server Error' });
+  }
+};
+
+const getLocationData = async (req, res) => {
+  const { location_no } = req.body;
+
+  try {
+    const pool = await connection.connectToDatabase();
+    const result = await pool
+      .request()
+      .input("mode", sql.NVarChar, "GL")
+      .input("location_no", sql.NVarChar, location_no)
+      .query(`EXEC sp_location_info @mode,@location_no,'', '', '', '', '', '','', '', '', '', 
+      '', '', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL `);
+
+    if (result.recordset.length > 0) {
+      res.status(200).json(result.recordset); 
+    } else {
+      res.status(404).json("Data not found");
+    }
+  } catch (err) {
+    console.error("Error", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+};
+
+const getRoleData = async (req, res) => {
+  const { company_code, Keyfield } = req.body;
+
+  try {
+    const pool = await connection.connectToDatabase();
+    const result = await pool
+      .request()
+      .input("mode", sql.NVarChar, "GR")
+      .input("company_code", sql.NVarChar, company_code)
+      .input("Keyfield", sql.NVarChar, Keyfield)
+      .query(`EXEC sp_Role_Info @mode,@company_code,'','','','','',@Keyfield,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
+
+    if (result.recordset.length > 0) {
+      res.status(200).json(result.recordset); 
+    } else {
+      res.status(404).json("Data not found"); 
+    }
+  } catch (err) {
+    console.error("Error", err.message);
+    return res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+};
+
+const getRoleMappingData = async (req, res) => {
+  const { company_code, keyfield } = req.body;
+
+  try {
+    const pool = await connection.connectToDatabase();
+    const result = await pool
+      .request()
+      .input("mode", sql.NVarChar, "GRM")
+      .input("company_code", sql.NVarChar, company_code)
+      .input("keyfield", sql.NVarChar, keyfield)
+      .query(`EXEC sp_user_rolemapping @mode,@company_code,'','','','',@keyfield,'','',
+      null,null,null,null,null,null,null,null`);
+    if (result.recordset.length > 0) {
+      res.status(200).json(result.recordset);
+    } else {
+      res.status(404).json("Data not found"); 
+    }
+  } catch (err) {
+    console.error("Error", err.message);
+    return res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+};
+
+const getRoleRightsData = async (req, res) => {
+  const { company_code, keyfield } = req.body;
+
+  try {
+    const pool = await connection.connectToDatabase();
+    const result = await pool
+      .request()
+      .input("mode", sql.NVarChar, "GRSM")
+      .input("company_code", sql.VarChar, company_code)
+      .input("keyfield", sql.VarChar, keyfield)
+      .query(`EXEC sp_rolescreen_mapping @mode,@company_code,'','','',@keyfield,'','',null,null,null,null,null,null,null,null`);
+    if (result.recordset.length > 0) {
+      res.status(200).json(result.recordset); 
+    } else {
+      res.status(404).json("Data not found");
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: err.message || 'Internal Server Error' });
+  }
+};
+
+const getUserData = async (req, res) => {
+  const { company_code, user_code } = req.body;
+
+  try {
+    const pool = await connection.connectToDatabase();
+    const result = await pool
+      .request()
+      .input("mode", sql.NVarChar, "GUIH")
+      .input("company_code", sql.NVarChar, company_code)
+      .input("user_code", sql.NVarChar, user_code)
+      .query(` EXEC sp_user_info_hdr_Ramya @mode,@company_code,@user_code,'','','','','','','','','','','','','','','','','','','','','','',''`);
+    if (result.recordset.length > 0) {
+      res.status(200).json(result.recordset); 
+    } else {
+      res.status(404).json("Data not found");
+    }
+  } catch (err) {
+    console.error("Error", err.message);
+    return res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+};
+//Code ended by pavun on 15-06-2026
 
 module.exports = {
   login,
@@ -38748,7 +38906,14 @@ module.exports = {
   SiteMaterialBalanceReport,
   getYorN,
   getItemSettings,
-  itemSettingsInsert
+  itemSettingsInsert,
+  getCompanyData,
+  getCompanyMappingData,
+  getLocationData,
+  getRoleData,
+  getRoleMappingData,
+  getRoleRightsData,
+  getUserData
 
 
 };
