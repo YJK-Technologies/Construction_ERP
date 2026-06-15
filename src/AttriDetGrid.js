@@ -43,38 +43,57 @@ function AttriDetGrid() {
     .filter(permission => permission.screen_type === 'Attribute')
     .map(permission => permission.permission_type.toLowerCase());
 
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      const isReloadShortcut =
+        (event.ctrlKey && event.key.toLowerCase() === "r") ||
+        (event.altKey && event.key.toLowerCase() === "r") ||
+        event.key === "F5";
 
+      if (isReloadShortcut) {
+        event.preventDefault();
+        clearInputFields();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
 
   useEffect(() => {
-    if (location.state?.preservedRowData) {
-      setRowData(location.state.preservedRowData);
-    }
-  
+    // if (location.state?.preservedRowData) {
+    //   setRowData(location.state.preservedRowData);
+    // }
+
     if (location.state?.preservedInputs) {
-      setattributeheader_code(location.state.preservedInputs.attributeheader_code || "");
-      setattributedetails_code(location.state.preservedInputs.attributedetails_code || "");
-      setattributedetails_name(location.state.preservedInputs.attributedetails_name || "");
-      setdescriptions(location.state.preservedInputs.descriptions || "");
+      const inputs = location.state.preservedInputs;
+      setattributeheader_code(inputs.attributeheader_code || "");
+      setattributedetails_code(inputs.attributedetails_code || "");
+      setattributedetails_name(inputs.attributedetails_name || "");
+      setdescriptions(inputs.descriptions || "");
+
+      if (location.state?.refreshGrid) {
+        handleSearch(inputs);
+      }
 
     }
   }, [location.state]);
 
-  // const fetchData = async () => {
-  //   try {
-  //     const response = await fetch("http://localhost:5500/attributedetData");
-  //     const jsonData = await response.json();
-  //     setRowData(jsonData);
-  //   } catch (error) {
-  //     console.error("Error fetching data:", error);
-  //   }
-  // };   
-  // Define the function to reload the grid data
+  const clearInputFields = () => {
+    setattributeheader_code("");
+    setattributedetails_code("");
+    setattributedetails_name("");
+    setdescriptions("");
+    setRowData([]);
+  };
+
   const reloadGridData = () => {
     window.location.reload();
   };
 
 
-  const handleSearch = async () => {
+  const handleSearch = async (searchParams = null) => {
     setLoading(true);
 
     try {
@@ -83,7 +102,13 @@ function AttriDetGrid() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ company_code: sessionStorage.getItem("selectedCompanyCode"), attributeheader_code, attributedetails_code, attributedetails_name, descriptions }), // Send as search criteria
+        body: JSON.stringify({ 
+          company_code: sessionStorage.getItem("selectedCompanyCode"), 
+          attributeheader_code: searchParams?.attributeheader_code ?? attributeheader_code,
+          attributedetails_code: searchParams?.attributedetails_code ?? attributedetails_code,
+          attributedetails_name: searchParams?.attributedetails_name ?? attributedetails_name,
+          descriptions: searchParams?.descriptions ?? descriptions,
+        }), 
       });
 
       if (response.ok) {
@@ -92,7 +117,7 @@ function AttriDetGrid() {
       } else if (response.status === 404) {
         console.log("Data not found");
         setRowData([]);
-        toast.info("Data not found");
+        toast.warning("Data not found");
       } else {
         const errorResponse = await response.json();
         toast.warning(errorResponse.message || "Failed to fetch data");
@@ -108,7 +133,6 @@ function AttriDetGrid() {
 
 
   const columnDefs = [
-
     {
       headerCheckboxSelection: true,
       checkboxSelection: true,
@@ -340,23 +364,40 @@ function AttriDetGrid() {
   // const handleNavigateWithRowData = (selectedRow) => {
   //   navigate("/AddAttributeDetail", { state: { mode: "update", selectedRow } });
   // };
+
+  // const handleNavigateWithRowData = (selectedRow) => {
+  //   navigate("/AddAttributeDetail", {
+  //     state: {
+  //       mode: "update",
+  //       selectedRow,
+
+  //       preservedRowData: rowData,
+
+  //       preservedInputs: {
+  //         attributeheader_code,
+  //         attributedetails_code,
+  //         attributedetails_name,
+  //         descriptions,
+  //       },
+  //     },
+  //   });
+  // };
+
   const handleNavigateWithRowData = (selectedRow) => {
-  navigate("/AddAttributeDetail", {
-    state: {
-      mode: "update",
-      selectedRow,
-
-      preservedRowData: rowData,
-
-      preservedInputs: {
-        attributeheader_code,
-        attributedetails_code,
-        attributedetails_name,
-        descriptions,
+    navigate("/AddAttributeDetail", {
+      state: {
+        mode: "update",
+        attributeheader_code: selectedRow.attributeheader_code,
+        attributedetails_code: selectedRow.attributedetails_code,
+        preservedInputs: {
+          attributeheader_code,
+          attributedetails_code,
+          attributedetails_name,
+          descriptions,
+        },
       },
-    },
-  });
-};
+    });
+  };
 
   const onSelectionChanged = () => {
     const selectedNodes = gridApi.getSelectedNodes();
@@ -745,7 +786,7 @@ function AttriDetGrid() {
                   <div>
                     <icon
                       className="popups-btn fs-6 p-3"
-                      onClick={reloadGridData}
+                      onClick={clearInputFields}
                       required
                       title="Refresh"
                     >

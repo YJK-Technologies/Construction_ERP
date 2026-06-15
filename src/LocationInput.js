@@ -52,10 +52,80 @@ function LocInfoInput({ }) {
   const [hasValueChanged, setHasValueChanged] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const [isUpdated, setIsUpdated] = useState(false);
-
   const location = useLocation();
-  const { mode, selectedRow } = location.state || {};
+  const locationState = location.state || {};
+  const mode = locationState.mode || "create"; // ✅ default fallback
+  const selectedRow = locationState.selectedRow || null;
+  const locationNo = location.state?.location_no;
+
+  useEffect(() => {
+    if (!location.state) {
+      clearInputFields(); // ensure fresh create mode
+    }
+  }, []);
+
+  useEffect(() => {
+    if (mode === "update" && locationNo) {
+      fetchLocationData();
+    }
+  }, [mode, locationNo]);
+
+  const fetchLocationData = async () => {
+    try {
+      setLoading(true);
+
+      const response = await fetch(`${config.apiBaseUrl}/getLocationData`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          location_no: locationNo,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.length > 0) {
+        const location = data[0];
+
+        setlocation_no(location.location_no || "");
+        setlocation_name(location.location_name || "");
+        setshort_name(location.short_name || "");
+        setaddress1(location.address1 || "");
+        setaddress2(location.address2 || "");
+        setaddress3(location.address3 || "");
+        setcity(location.city || "");
+        setstate(location.state || "");
+        setcountry(location.country || "");
+        setstatus(location.status || "");;
+        setSelectedCity({
+          label: location.city,
+          value: location.city,
+        });
+        setselectedState({
+          label: location.state,
+          value: location.state,
+        });
+        setselectedCountry({
+          label: location.country,
+          value: location.country,
+        });
+        setselectedStatus({
+          label: location.status,
+          value: location.status,
+        });
+        setpincode(location.pincode || "");
+        setemail_id(location.email_id || "");
+        setcontact_no(location.contact_no || "");
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to fetch location details");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const clearInputFields = () => {
     setlocation_no("");
@@ -78,7 +148,7 @@ function LocInfoInput({ }) {
   };
 
   useEffect(() => {
-    if (mode === "update" && selectedRow && !isUpdated) {
+    if (mode === "update" && selectedRow) {
       setlocation_no(selectedRow.location_no || "");
       setlocation_name(selectedRow.location_name || "");
       setshort_name(selectedRow.short_name || "");
@@ -89,8 +159,6 @@ function LocInfoInput({ }) {
       setstate(selectedRow.state || "");
       setcountry(selectedRow.country || "");
       setstatus(selectedRow.status || "");;
-
-
       setSelectedCity({
         label: selectedRow.city,
         value: selectedRow.city,
@@ -113,7 +181,7 @@ function LocInfoInput({ }) {
     } else if (mode === "create") {
       clearInputFields();
     }
-  }, [mode, selectedRow, isUpdated]);
+  }, [mode, selectedRow]);
 
   const created_by = sessionStorage.getItem("selectedUserCode");
   const modified_by = sessionStorage.getItem("selectedUserCode");
@@ -373,13 +441,14 @@ function LocInfoInput({ }) {
   }
 
   const handleNavigate = () => {
-  navigate("/Location", {
-    state: {
-      preservedRowData: location.state?.preservedRowData,
-      preservedInputs: location.state?.preservedInputs,
-    },
-  });
-};
+    navigate("/Location", {
+      state: {
+        refreshGrid: true,
+        // preservedRowData: location.state?.preservedRowData,
+        preservedInputs: location.state?.preservedInputs,
+      },
+    });
+  };
 
   const handleKeyDown = async (
     e,

@@ -45,16 +45,46 @@ function UserScreenMapGrid() {
     .map((permission) => permission.permission_type.toLowerCase());
 
   useEffect(() => {
-    if (location.state?.preservedRowData) {
-      setRowData(location.state.preservedRowData);
-    }
+    const handleKeyDown = (event) => {
+      const isReloadShortcut =
+        (event.ctrlKey && event.key.toLowerCase() === "r") ||
+        (event.altKey && event.key.toLowerCase() === "r") ||
+        event.key === "F5";
+
+      if (isReloadShortcut) {
+        event.preventDefault();
+        clearInputFields();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
+  useEffect(() => {
+    // if (location.state?.preservedRowData) {
+    //   setRowData(location.state.preservedRowData);
+    // }
+
     if (location.state?.preservedInputs) {
       const inputs = location.state.preservedInputs;
       setrole_id(inputs.role_id || "");
       setscreen_type(inputs.screen_type || "");
       setpermission_type(inputs.permission_type || "");
+
+      if (location.state?.refreshGrid) {
+        handleSearch(inputs);
+      }
     }
   }, [location.state]);
+
+  const clearInputFields = () => {
+    setrole_id("");
+    setscreen_type("");
+    setpermission_type("");
+    setRowData([]);
+  };
 
   const reloadGridData = () => {
     setrole_id("");
@@ -139,12 +169,11 @@ function UserScreenMapGrid() {
       .catch((error) => console.error("Error fetching data:", error));
   }, []);
 
-  const handleSearch = async () => {
+  const handleSearch = async (searchParams = null) => {
     setLoading(true);
     try {
       const company_code = sessionStorage.getItem("selectedCompanyCode");
-      const response = await fetch(
-        `${config.apiBaseUrl}/userscreensearchdata`,
+      const response = await fetch(`${config.apiBaseUrl}/userscreensearchdata`,
         {
           method: "POST",
           headers: {
@@ -153,10 +182,10 @@ function UserScreenMapGrid() {
           },
           body: JSON.stringify({
             company_code: company_code,
-            role_id,
-            screen_type,
-            permission_type,
-          }), // Send company_no and company_name as search criteria
+            role_id: searchParams?.role_id ?? role_id,
+            screen_type: searchParams?.screen_type ?? screen_type,
+            permission_type: searchParams?.permission_type ?? permission_type,
+          }),
         },
       );
       if (response.ok) {
@@ -374,12 +403,26 @@ function UserScreenMapGrid() {
   //   navigate("/AddUserRights", { state: { mode: "update", selectedRow } });
   // };
 
+  // const handleNavigateWithRowData = (selectedRow) => {
+  //   navigate("/AddUserRights", {
+  //     state: {
+  //       mode: "update",
+  //       selectedRow,
+  //       preservedRowData: rowData,
+  //       preservedInputs: {
+  //         role_id,
+  //         screen_type,
+  //         permission_type,
+  //       },
+  //     },
+  //   });
+  // };
+
   const handleNavigateWithRowData = (selectedRow) => {
     navigate("/AddUserRights", {
       state: {
         mode: "update",
-        selectedRow,
-        preservedRowData: rowData,
+        keyfield: selectedRow.keyfield,
         preservedInputs: {
           role_id,
           screen_type,
@@ -587,51 +630,51 @@ function UserScreenMapGrid() {
               {["add", "all permission"].some((permission) =>
                 UserScreenPermission.includes(permission),
               ) && (
-                <addbutton
-                  className="purbut fs-7 ms-0 me-3 "
-                  onClick={handleNavigatesToForm}
-                  required
-                  title="Add User Rights"
-                >
-                  <i class="fa-solid fa-user-plus"></i>
-                </addbutton>
-              )}
+                  <addbutton
+                    className="purbut fs-7 ms-0 me-3 "
+                    onClick={handleNavigatesToForm}
+                    required
+                    title="Add User Rights"
+                  >
+                    <i class="fa-solid fa-user-plus"></i>
+                  </addbutton>
+                )}
               {["delete", "all permission"].some((permission) =>
                 UserScreenPermission.includes(permission),
               ) && (
-                <delbutton
-                  className="purbut fs-7 ms-0 me-3"
-                  onClick={deleteSelectedRows}
-                  required
-                  title="Delete"
-                >
-                  <i class="fa-solid fa-user-minus"></i>
-                </delbutton>
-              )}
+                  <delbutton
+                    className="purbut fs-7 ms-0 me-3"
+                    onClick={deleteSelectedRows}
+                    required
+                    title="Delete"
+                  >
+                    <i class="fa-solid fa-user-minus"></i>
+                  </delbutton>
+                )}
               {["update", "all permission"].some((permission) =>
                 UserScreenPermission.includes(permission),
               ) && (
-                <savebutton
-                  className="purbut fs-7  ms-0 me-3"
-                  onClick={saveEditedData}
-                  required
-                  title="Update"
-                >
-                  <i class="fa-solid fa-floppy-disk"></i>
-                </savebutton>
-              )}
+                  <savebutton
+                    className="purbut fs-7  ms-0 me-3"
+                    onClick={saveEditedData}
+                    required
+                    title="Update"
+                  >
+                    <i class="fa-solid fa-floppy-disk"></i>
+                  </savebutton>
+                )}
               {["all permission", "view"].some((permission) =>
                 UserScreenPermission.includes(permission),
               ) && (
-                <printbutton
-                  class="purbut fs-7 ms-0 me-3"
-                  onClick={generateReport}
-                  required
-                  title="Generate Report"
-                >
-                  <i class="fa-solid fa-print"></i>
-                </printbutton>
-              )}
+                  <printbutton
+                    class="purbut fs-7 ms-0 me-3"
+                    onClick={generateReport}
+                    required
+                    title="Generate Report"
+                  >
+                    <i class="fa-solid fa-print"></i>
+                  </printbutton>
+                )}
             </div>
             <div class="mobileview">
               <div class="d-flex justify-content-between ms-0 ">
@@ -652,37 +695,37 @@ function UserScreenMapGrid() {
                       {["add", "all permission"].some((permission) =>
                         UserScreenPermission.includes(permission),
                       ) && (
-                        <icon class="icon" onClick={handleNavigatesToForm}>
-                          <i class="fa-solid fa-user-plus"></i>
-                        </icon>
-                      )}
+                          <icon class="icon" onClick={handleNavigatesToForm}>
+                            <i class="fa-solid fa-user-plus"></i>
+                          </icon>
+                        )}
                     </li>
                     <li class="iconbutton  d-flex justify-content-center text-danger">
                       {["delete", "all permission"].some((permission) =>
                         UserScreenPermission.includes(permission),
                       ) && (
-                        <icon class="icon" onClick={deleteSelectedRows}>
-                          <i class="fa-solid fa-user-minus"></i>
-                        </icon>
-                      )}
+                          <icon class="icon" onClick={deleteSelectedRows}>
+                            <i class="fa-solid fa-user-minus"></i>
+                          </icon>
+                        )}
                     </li>
                     <li class="iconbutton  d-flex justify-content-center text-primary ">
                       {["update", "all permission"].some((permission) =>
                         UserScreenPermission.includes(permission),
                       ) && (
-                        <icon class="icon" onClick={saveEditedData}>
-                          <i class="fa-solid fa-floppy-disk"></i>
-                        </icon>
-                      )}
+                          <icon class="icon" onClick={saveEditedData}>
+                            <i class="fa-solid fa-floppy-disk"></i>
+                          </icon>
+                        )}
                     </li>
                     <li class="iconbutton  d-flex justify-content-center ">
                       {["all permission", "view"].some((permission) =>
                         UserScreenPermission.includes(permission),
                       ) && (
-                        <icon class="icon" onClick={generateReport}>
-                          <i class="fa-solid fa-print"></i>
-                        </icon>
-                      )}
+                          <icon class="icon" onClick={generateReport}>
+                            <i class="fa-solid fa-print"></i>
+                          </icon>
+                        )}
                     </li>
                   </ul>
                 </div>
@@ -765,7 +808,7 @@ function UserScreenMapGrid() {
                   <div>
                     <icon
                       className="popups-btn fs-6 p-3"
-                      onClick={reloadGridData}
+                      onClick={clearInputFields}
                       required
                       title="Reload"
                     >

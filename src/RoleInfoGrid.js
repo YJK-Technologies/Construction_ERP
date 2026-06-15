@@ -39,18 +39,46 @@ function RoleInfoGrid() {
     .map((permission) => permission.permission_type.toLowerCase());
 
   useEffect(() => {
-    if (location.state?.preservedRowData) {
-      setRowData(location.state.preservedRowData);
-    }
+    const handleKeyDown = (event) => {
+      const isReloadShortcut =
+        (event.ctrlKey && event.key.toLowerCase() === "r") ||
+        (event.altKey && event.key.toLowerCase() === "r") ||
+        event.key === "F5";
+
+      if (isReloadShortcut) {
+        event.preventDefault();
+        clearInputFields();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
+  useEffect(() => {
+    // if (location.state?.preservedRowData) {
+    //   setRowData(location.state.preservedRowData);
+    // }
+
     if (location.state?.preservedInputs) {
       const inputs = location.state.preservedInputs;
       setrole_id(inputs.role_id || "");
       setrole_name(inputs.role_name || "");
 
+      if (location.state?.refreshGrid) {
+        handleSearch(inputs);
+      }
     }
   }, [location.state]);
 
-  const handleSearch = async () => {
+  const clearInputFields = () => {
+    setrole_id("");
+    setrole_name("");
+    setRowData([]);
+  };
+
+  const handleSearch = async (searchParams = null) => {
     setLoading(true);
     try {
       const company_code = sessionStorage.getItem("selectedCompanyCode");
@@ -62,9 +90,9 @@ function RoleInfoGrid() {
         },
         body: JSON.stringify({
           company_code: company_code,
-          role_id,
-          role_name,
-        }), // Send company_no and company_name as search criteria
+          role_id: searchParams?.role_id ?? role_id,
+          role_name: searchParams?.role_name ?? role_name
+        }),
       });
       if (response.ok) {
         const searchData = await response.json();
@@ -87,27 +115,25 @@ function RoleInfoGrid() {
   };
 
   const reloadGridData = () => {
-  setrole_id("");
-  setrole_name("");
+    setrole_id("");
+    setrole_name("");
+    setRowData([]);
+    setEditedData([]);
+    setSelectedRows([]);
+    setCreatedBy("");
+    setModifiedBy("");
+    setCreatedDate("");
+    setModifiedDate("");
 
-  setRowData([]);
-  setEditedData([]);
-  setSelectedRows([]);
+    if (gridApi) {
+      gridApi.deselectAll();
+    }
 
-  setCreatedBy("");
-  setModifiedBy("");
-  setCreatedDate("");
-  setModifiedDate("");
-
-  if (gridApi) {
-    gridApi.deselectAll();
-  }
-
-  navigate(location.pathname, {
-    replace: true,
-    state: null,
-  });
-};
+    navigate(location.pathname, {
+      replace: true,
+      state: null,
+    });
+  };
 
   const columnDefs = [
     {
@@ -309,16 +335,28 @@ function RoleInfoGrid() {
     navigate("/AddRole", { state: { mode: "create" } }); // Pass selectedRows as props to the Input component
   };
 
+  // const handleNavigateWithRowData = (selectedRow) => {
+  //   navigate("/AddRole", {
+  //     state: {
+  //       mode: "update",
+  //       selectedRow,
+  //       preservedRowData: rowData,
+  //       preservedInputs: {
+  //         role_id,
+  //         role_name,
+  //       },
+  //     },
+  //   });
+  // };
+
   const handleNavigateWithRowData = (selectedRow) => {
     navigate("/AddRole", {
       state: {
         mode: "update",
-        selectedRow,
-        preservedRowData: rowData,
+        Keyfield: selectedRow.Keyfield,
         preservedInputs: {
           role_id,
           role_name,
-
         },
       },
     });
@@ -567,51 +605,51 @@ function RoleInfoGrid() {
               {["add", "all permission"].some((permission) =>
                 roleInfoPermission.includes(permission),
               ) && (
-                <addbutton
-                  className="purbut"
-                  onClick={handleNavigateToForm}
-                  required
-                  title="Add Role"
-                >
-                  <i class="fa-solid fa-user-plus"></i>
-                </addbutton>
-              )}
+                  <addbutton
+                    className="purbut"
+                    onClick={handleNavigateToForm}
+                    required
+                    title="Add Role"
+                  >
+                    <i class="fa-solid fa-user-plus"></i>
+                  </addbutton>
+                )}
               {["delete", "all permission"].some((permission) =>
                 roleInfoPermission.includes(permission),
               ) && (
-                <delbutton
-                  className="purbut"
-                  onClick={deleteSelectedRows}
-                  required
-                  title="Delete"
-                >
-                  <i class="fa-solid fa-user-minus"></i>
-                </delbutton>
-              )}
+                  <delbutton
+                    className="purbut"
+                    onClick={deleteSelectedRows}
+                    required
+                    title="Delete"
+                  >
+                    <i class="fa-solid fa-user-minus"></i>
+                  </delbutton>
+                )}
               {["update", "all permission"].some((permission) =>
                 roleInfoPermission.includes(permission),
               ) && (
-                <savebutton
-                  className="purbut"
-                  onClick={saveEditedData}
-                  required
-                  title="Update"
-                >
-                  <i class="fa-solid fa-floppy-disk"></i>
-                </savebutton>
-              )}
+                  <savebutton
+                    className="purbut"
+                    onClick={saveEditedData}
+                    required
+                    title="Update"
+                  >
+                    <i class="fa-solid fa-floppy-disk"></i>
+                  </savebutton>
+                )}
               {["all permission", "view"].some((permission) =>
                 roleInfoPermission.includes(permission),
               ) && (
-                <printbutton
-                  className="purbut"
-                  onClick={generateReport}
-                  required
-                  title="Generate Report"
-                >
-                  <i class="fa-solid fa-print"></i>
-                </printbutton>
-              )}
+                  <printbutton
+                    className="purbut"
+                    onClick={generateReport}
+                    required
+                    title="Generate Report"
+                  >
+                    <i class="fa-solid fa-print"></i>
+                  </printbutton>
+                )}
             </div>
             <div class="mobileview">
               <div class="d-flex justify-content-between ms-0 me-5">
@@ -637,37 +675,37 @@ function RoleInfoGrid() {
                       {["add", "all permission"].some((permission) =>
                         roleInfoPermission.includes(permission),
                       ) && (
-                        <icon class="icon" onClick={handleNavigateToForm}>
-                          <i class="fa-solid fa-user-plus"></i>
-                        </icon>
-                      )}
+                          <icon class="icon" onClick={handleNavigateToForm}>
+                            <i class="fa-solid fa-user-plus"></i>
+                          </icon>
+                        )}
                     </li>
                     <li class="iconbutton  d-flex justify-content-center text-danger">
                       {["delete", "all permission"].some((permission) =>
                         roleInfoPermission.includes(permission),
                       ) && (
-                        <icon class="icon" onClick={deleteSelectedRows}>
-                          <i class="fa-solid fa-user-minus"></i>
-                        </icon>
-                      )}
+                          <icon class="icon" onClick={deleteSelectedRows}>
+                            <i class="fa-solid fa-user-minus"></i>
+                          </icon>
+                        )}
                     </li>
                     <li class="iconbutton  d-flex justify-content-center text-primary ">
                       {["update", "all permission"].some((permission) =>
                         roleInfoPermission.includes(permission),
                       ) && (
-                        <icon class="icon" onClick={saveEditedData}>
-                          <i class="fa-solid fa-floppy-disk"></i>
-                        </icon>
-                      )}
+                          <icon class="icon" onClick={saveEditedData}>
+                            <i class="fa-solid fa-floppy-disk"></i>
+                          </icon>
+                        )}
                     </li>
                     <li class="iconbutton  d-flex justify-content-center ">
                       {["all permission", "view"].some((permission) =>
                         roleInfoPermission.includes(permission),
                       ) && (
-                        <icon class="icon" onClick={generateReport}>
-                          <i class="fa-solid fa-print"></i>
-                        </icon>
-                      )}
+                          <icon class="icon" onClick={generateReport}>
+                            <i class="fa-solid fa-print"></i>
+                          </icon>
+                        )}
                     </li>
                   </ul>
                 </div>
@@ -731,7 +769,7 @@ function RoleInfoGrid() {
                   <div>
                     <icon
                       className="popups-btn fs-6 p-3"
-                      onClick={reloadGridData}
+                      onClick={clearInputFields}
                       required
                       title="Reload"
                     >
