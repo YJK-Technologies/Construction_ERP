@@ -47,25 +47,78 @@ function WarehouseGrid() {
     .filter(permission => permission.screen_type === 'Warehouse')
     .map(permission => permission.permission_type.toLowerCase());
 
-    useEffect(() => {
-      if (location.state?.preservedRowData) {
-        setRowData(location.state.preservedRowData);
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      const isReloadShortcut =
+        (event.ctrlKey && event.key.toLowerCase() === "r") ||
+        (event.altKey && event.key.toLowerCase() === "r") ||
+        event.key === "F5";
+
+      if (isReloadShortcut) {
+        event.preventDefault();
+        clearInputFields();
       }
-    
-      if (location.state?.preservedInputs) {
-        setwarehouse_code(location.state.preservedInputs.warehouse_code || "");
-        setwarehouse_name(location.state.preservedInputs.warehouse_name || "");
-        setstatus(location.state.preservedInputs.status || "");
-        setlocation_no(location.state.preservedInputs.location_no || "");
-    
-        if (location.state.preservedInputs.status) {
-          setSelectedStatus({
-            label: location.state.preservedInputs.status,
-            value: location.state.preservedInputs.status,
-          });
-        }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
+  useEffect(() => {
+    // if (location.state?.preservedRowData) {
+    //   setRowData(location.state.preservedRowData);
+    // }
+
+    if (location.state?.preservedInputs) {
+      const inputs = location.state.preservedInputs;
+
+      setwarehouse_code(inputs.warehouse_code || "");
+      setwarehouse_name(inputs.warehouse_name || "");
+      setstatus(inputs.status || "");
+      setlocation_no(inputs.location_no || "");
+
+      if (inputs.status) {
+        setSelectedStatus({
+          label: inputs.status,
+          value: inputs.status,
+        });
       }
-    }, [location.state]);
+
+      if (location.state?.refreshGrid) {
+        handleSearch(inputs); 
+      }
+    }
+  }, [location.state]);
+
+  const clearInputFields = () => {
+    setwarehouse_code("");
+    setwarehouse_name("");
+    setstatus("");
+    setlocation_no("");
+    setSelectedStatus("");
+    setRowData([]);
+  };
+
+    // useEffect(() => {
+    //   if (location.state?.preservedRowData) {
+    //     setRowData(location.state.preservedRowData);
+    //   }
+    
+    //   if (location.state?.preservedInputs) {
+    //     setwarehouse_code(location.state.preservedInputs.warehouse_code || "");
+    //     setwarehouse_name(location.state.preservedInputs.warehouse_name || "");
+    //     setstatus(location.state.preservedInputs.status || "");
+    //     setlocation_no(location.state.preservedInputs.location_no || "");
+    
+    //     if (location.state.preservedInputs.status) {
+    //       setSelectedStatus({
+    //         label: location.state.preservedInputs.status,
+    //         value: location.state.preservedInputs.status,
+    //       });
+    //     }
+    //   }
+    // }, [location.state]);
     
 
   useEffect(() => {
@@ -119,8 +172,7 @@ function WarehouseGrid() {
     setSelectedStatus(selectedStatus);
     setstatus(selectedStatus ? selectedStatus.value : '');
   };
-
-  const handleSearch = async () => {
+  const handleSearch = async (searchParams = null) => {
     setLoading(true);
     try {
       const company_code = sessionStorage.getItem('selectedCompanyCode');
@@ -130,7 +182,13 @@ function WarehouseGrid() {
           "Content-Type": "application/json",
           "company_code": company_code
         },
-        body: JSON.stringify({ company_code: company_code, warehouse_code, warehouse_name, status, location_no }) // Send company_no and company_name as search criteria
+        body: JSON.stringify({ 
+          company_code,
+          warehouse_code: searchParams?.warehouse_code ?? warehouse_code, 
+          warehouse_name: searchParams?.warehouse_name ?? warehouse_name, 
+          status: searchParams?.status ?? status, 
+          location_no: searchParams?.location_no ?? location_no,  
+        }) 
       });
       if (response.ok) {
         const searchData = await response.json();
@@ -150,7 +208,40 @@ function WarehouseGrid() {
     } finally {
       setLoading(false);
     }
+
   };
+
+  // const handleSearch = async () => {
+  //   setLoading(true);
+  //   try {
+  //     const company_code = sessionStorage.getItem('selectedCompanyCode');
+  //     const response = await fetch(`${config.apiBaseUrl}/onlywarehsearchdata`, {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         "company_code": company_code
+  //       },
+  //       body: JSON.stringify({ company_code: company_code, warehouse_code, warehouse_name, status, location_no }) // Send company_no and company_name as search criteria
+  //     });
+  //     if (response.ok) {
+  //       const searchData = await response.json();
+  //       setRowData(searchData);
+  //       console.log("data fetched successfully")
+  //     } else if (response.status === 404) {
+  //       console.log("Data not found");
+  //       toast.warning("Data not found")
+  //       setRowData([]);
+  //     } else {
+  //       const errorResponse = await response.json();
+  //       toast.warning(errorResponse.message || "Failed to insert sales data");
+  //     }
+  //   } catch (error) {
+  //     console.error("Error saving data:", error);
+  //     toast.error("Error updating data: " + error.message);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   const reloadGridData = () => {
     window.location.reload();
@@ -351,23 +442,40 @@ function WarehouseGrid() {
     navigate("/AddWarehouse", { state: { mode: "create" } }); // Pass selectedRows as props to the Input component
   };
 
+//   const handleNavigateWithRowData = (selectedRow) => {
+//   navigate("/AddWarehouse", {
+//     state: {
+//       mode: "update",
+//       selectedRow,
+
+//       preservedRowData: rowData,
+
+//       preservedInputs: {
+//         warehouse_code,
+//         warehouse_name,
+//         status,
+//         location_no,
+//       },
+//     },
+//   });
+// };
+
   const handleNavigateWithRowData = (selectedRow) => {
-  navigate("/AddWarehouse", {
-    state: {
-      mode: "update",
-      selectedRow,
+    navigate("/AddWarehouse", {
+      state: {
+        mode: "update",
+        warehouse_code: selectedRow.warehouse_code,
+        location_no: selectedRow.location_no,
 
-      preservedRowData: rowData,
-
-      preservedInputs: {
-        warehouse_code,
-        warehouse_name,
-        status,
-        location_no,
+        preservedInputs: {
+          warehouse_code,
+          warehouse_name,
+          status,
+          location_no,
+        },
       },
-    },
-  });
-};
+    });
+  };
 
   const onSelectionChanged = () => {
     const selectedNodes = gridApi.getSelectedNodes();

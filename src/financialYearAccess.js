@@ -55,6 +55,68 @@ function Grid() {
   const [selectedCompanyLogo, setSelectedCompanyLogo] = useState(null);
   const [open, setOpen] = React.useState(false);
 
+    useEffect(() => {
+    const handleKeyDown = (event) => {
+      const isReloadShortcut =
+        (event.ctrlKey && event.key.toLowerCase() === "r") ||
+        (event.altKey && event.key.toLowerCase() === "r") ||
+        event.key === "F5";
+
+      if (isReloadShortcut) {
+        event.preventDefault();
+        clearInputFields();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
+  useEffect(() => {
+    // if (location.state?.preservedRowData) {
+    //   setRowData(location.state.preservedRowData);
+    // }
+
+    if (location.state?.preservedInputs) {
+      const inputs = location.state.preservedInputs;
+
+      setstart_year(inputs.start_year || "");
+      setend_year(inputs.end_year || "");
+      setTransactionType(inputs.transactionType || "");
+      setLockType(inputs.LockType || "");
+
+      if (inputs.transactionType) {
+        setSelectedTransaction({
+          label: inputs.transactionType,
+          value: inputs.transactionType,
+        });
+      }
+
+      if (inputs.LockType) {
+        setSelectedLockType({
+          label: inputs.LockType,
+          value: inputs.LockType,
+        });
+      }
+
+      if (location.state?.refreshGrid) {
+        handleSearch(inputs); 
+      }
+    }
+  }, [location.state]);
+
+  const clearInputFields = () => {
+    setstart_year("");
+    setend_year("");
+    setTransactionType("");
+    setLockType("");
+    setSelectedTransaction("");
+    setSelectedLockType("");
+    setRowData([]);
+  };
+
+
   const handleClose = () => {
     setOpen(false);
   };
@@ -71,31 +133,31 @@ function Grid() {
     }))
     : [];
 
-    useEffect(() => {
-      if (location.state?.preservedRowData) {
-        setRowData(location.state.preservedRowData);
-      }
+    // useEffect(() => {
+    //   if (location.state?.preservedRowData) {
+    //     setRowData(location.state.preservedRowData);
+    //   }
     
-      if (location.state?.preservedInputs) {
-        setstart_year(location.state.preservedInputs.start_year || "");
-        setend_year(location.state.preservedInputs.end_year || "");
-        setTransactionType(location.state.preservedInputs.transactionType || "");
-        setLockType(location.state.preservedInputs.LockType || "");
+    //   if (location.state?.preservedInputs) {
+    //     setstart_year(location.state.preservedInputs.start_year || "");
+    //     setend_year(location.state.preservedInputs.end_year || "");
+    //     setTransactionType(location.state.preservedInputs.transactionType || "");
+    //     setLockType(location.state.preservedInputs.LockType || "");
     
-        if (location.state.preservedInputs.transactionType) {
-          setSelectedTransaction({
-            label: location.state.preservedInputs.transactionType,
-            value: location.state.preservedInputs.transactionType,
-          });
-        }
-        if (location.state.preservedInputs.LockType) {
-          setSelectedLockType({
-            label: location.state.preservedInputs.LockType,
-            value: location.state.preservedInputs.LockType,
-          });
-        }
-      }
-    }, [location.state]);
+    //     if (location.state.preservedInputs.transactionType) {
+    //       setSelectedTransaction({
+    //         label: location.state.preservedInputs.transactionType,
+    //         value: location.state.preservedInputs.transactionType,
+    //       });
+    //     }
+    //     if (location.state.preservedInputs.LockType) {
+    //       setSelectedLockType({
+    //         label: location.state.preservedInputs.LockType,
+    //         value: location.state.preservedInputs.LockType,
+    //       });
+    //     }
+    //   }
+    // }, [location.state]);
 
   useEffect(() => {
     const company_code = sessionStorage.getItem('selectedCompanyCode');
@@ -171,7 +233,43 @@ function Grid() {
       .catch((error) => console.error('Error fetching data:', error));
   }, []);
 
-  const handleSearch = async () => {
+  // const handleSearch = async () => {
+  //   try {
+  //     const company_code = sessionStorage.getItem('selectedCompanyCode');
+  //     const response = await fetch(`${config.apiBaseUrl}/getFinacnialyearlockscreenSearchCriteria`, {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         "company_code": company_code,
+  //       },
+  //       body: JSON.stringify({
+  //         company_code: sessionStorage.getItem('selectedCompanyCode'),
+  //         start_year: start_year,
+  //         end_year: end_year,
+  //         transaction_type: transactionType,
+  //         locked: LockType
+  //       }) // Send company_no and company_name as search criteria
+  //     });
+  //     if (response.ok) {
+  //       const searchData = await response.json();
+  //       setRowData(searchData);
+  //       console.log(searchData)
+  //       console.log("data fetched successfully")
+  //     } else if (response.status === 404) {
+  //       console.log("Data not found");
+  //       toast.warning("Data not found");
+  //       setRowData([]);
+  //     } else {
+  //       const errorResponse = await response.json();
+  //       toast.warning(errorResponse.message || "Failed to insert sales data");
+  //     }
+  //   } catch (error) {
+  //     console.error("Error fetching search data:", error);
+  //     toast.error("Error fetching search data:", error);
+  //   }
+  // };
+
+    const handleSearch = async (searchParams = null) => {
     try {
       const company_code = sessionStorage.getItem('selectedCompanyCode');
       const response = await fetch(`${config.apiBaseUrl}/getFinacnialyearlockscreenSearchCriteria`, {
@@ -182,11 +280,11 @@ function Grid() {
         },
         body: JSON.stringify({
           company_code: sessionStorage.getItem('selectedCompanyCode'),
-          start_year: start_year,
-          end_year: end_year,
-          transaction_type: transactionType,
-          locked: LockType
-        }) // Send company_no and company_name as search criteria
+          start_year: searchParams?.start_year ?? start_year, 
+          end_year: searchParams?.end_year ?? end_year, 
+          transaction_type: searchParams?.transactionType ?? transactionType, 
+          locked: searchParams?.LockType ?? LockType, 
+        })
       });
       if (response.ok) {
         const searchData = await response.json();
@@ -475,23 +573,38 @@ function Grid() {
     navigate("/AddFYA", { state: { mode: "create" } });
   };
 
+//   const handleNavigateWithRowData = (selectedRow) => {
+//   navigate("/AddFYA", {
+//     state: {
+//       mode: "update",
+//       selectedRow,
+
+//       preservedRowData: rowData,
+
+//       preservedInputs: {
+//         start_year,
+//         end_year,
+//         transactionType,
+//         LockType,
+//       },
+//     },
+//   });
+// };
+
   const handleNavigateWithRowData = (selectedRow) => {
-  navigate("/AddFYA", {
-    state: {
-      mode: "update",
-      selectedRow,
-
-      preservedRowData: rowData,
-
-      preservedInputs: {
-        start_year,
-        end_year,
-        transactionType,
-        LockType,
+    navigate("/AddFYA", {
+      state: {
+        mode: "update",
+        keyfield: selectedRow.keyfield,
+        preservedInputs: {
+          start_year,
+          end_year,
+          transactionType,
+          LockType,
+        },
       },
-    },
-  });
-};
+    });
+  };
 
   const onSelectionChanged = () => {
     const selectedNodes = gridApi.getSelectedNodes();
@@ -806,7 +919,7 @@ function Grid() {
                   </icon>
                 </div>
                 <div>
-                  <icon className=" popups-btn text-dark fs-6" onClick={reloadGridData} required title="Refresh">
+                  <icon className=" popups-btn text-dark fs-6" onClick={clearInputFields} required title="Refresh">
                     <FontAwesomeIcon icon="fa-solid fa-arrow-rotate-right" />
                   </icon>
                 </div>
