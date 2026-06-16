@@ -84,40 +84,98 @@ function ItemBrandGrid() {
     .map(permission => permission.permission_type.toLowerCase());
 
   useEffect(() => {
-    if (location.state?.preservedRowData) {
-      setRowData(location.state.preservedRowData);
-    }
+    const handleKeyDown = (event) => {
+      const isReloadShortcut =
+        (event.ctrlKey && event.key.toLowerCase() === "r") ||
+        (event.altKey && event.key.toLowerCase() === "r") ||
+        event.key === "F5";
 
+      if (isReloadShortcut) {
+        event.preventDefault();
+        clearInputFields();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
+    useEffect(() => {
+      // if (location.state?.preservedRowData) {
+      //   setRowData(location.state.preservedRowData);
+      // }
+    
     if (location.state?.preservedInputs) {
-      setItem_code(location.state.preservedInputs.Item_code || "");
-      setItem_variant(location.state.preservedInputs.Item_variant || "");
-      setItem_name(location.state.preservedInputs.Item_name || "");
-      setItem_short_name(location.state.preservedInputs.Item_short_name || "");
-      setItem_Our_Brand(location.state.preservedInputs.Item_Our_Brand || "");
-      setstatus(location.state.preservedInputs.status || "");
-      setStandardCost(location.state.preservedInputs.standardCost || "");
-      setCostingMethod(location.state.preservedInputs.costingMethod || "");
+        const inputs = location.state.preservedInputs;
+      setItem_code(inputs.Item_code || "");
+      setItem_variant(inputs.Item_variant || "");
+      setItem_name(inputs.Item_name || "");
+      setItem_short_name(inputs.Item_short_name || "");
+      setItem_Our_Brand(inputs.Item_Our_Brand || "");
+      setstatus(inputs.status || "");
+      setStandardCost(inputs.standardCost || "");
+      setCostingMethod(inputs.costingMethod || "");
 
-      if (location.state.preservedInputs.Item_Our_Brand) {
+      if (inputs.Item_Our_Brand) {
         setSelectedBrand({
-          label: location.state.preservedInputs.Item_Our_Brand,
-          value: location.state.preservedInputs.Item_Our_Brand,
+          label: inputs.Item_Our_Brand,
+          value: inputs.Item_Our_Brand,
         });
       }
-      if (location.state.preservedInputs.status) {
+      if (inputs.status) {
         setSelectedStatus({
-          label: location.state.preservedInputs.status,
-          value: location.state.preservedInputs.status,
+          label: inputs.status,
+          value: inputs.status,
         });
       }
-      if (location.state.preservedInputs.costingMethod) {
+      if (inputs.costingMethod) {
         setSelectedCostingMethod({
-          label: location.state.preservedInputs.costingMethod,
-          value: location.state.preservedInputs.costingMethod,
+          label: inputs.costingMethod,
+          value: inputs.costingMethod,
         });
       }
-    }
-  }, [location.state]);
+        if (location.state?.refreshGrid) {
+        handleSearch(inputs); 
+      }
+      }
+    }, [location.state]);
+
+  // useEffect(() => {
+  //   if (location.state?.preservedRowData) {
+  //     setRowData(location.state.preservedRowData);
+  //   }
+
+  //   if (location.state?.preservedInputs) {
+  //     setItem_code(location.state.preservedInputs.Item_code || "");
+  //     setItem_variant(location.state.preservedInputs.Item_variant || "");
+  //     setItem_name(location.state.preservedInputs.Item_name || "");
+  //     setItem_short_name(location.state.preservedInputs.Item_short_name || "");
+  //     setItem_Our_Brand(location.state.preservedInputs.Item_Our_Brand || "");
+  //     setstatus(location.state.preservedInputs.status || "");
+  //     setStandardCost(location.state.preservedInputs.standardCost || "");
+  //     setCostingMethod(location.state.preservedInputs.costingMethod || "");
+
+  //     if (location.state.preservedInputs.Item_Our_Brand) {
+  //       setSelectedBrand({
+  //         label: location.state.preservedInputs.Item_Our_Brand,
+  //         value: location.state.preservedInputs.Item_Our_Brand,
+  //       });
+  //     }
+  //     if (location.state.preservedInputs.status) {
+  //       setSelectedStatus({
+  //         label: location.state.preservedInputs.status,
+  //         value: location.state.preservedInputs.status,
+  //       });
+  //     }
+  //     if (location.state.preservedInputs.costingMethod) {
+  //       setSelectedCostingMethod({
+  //         label: location.state.preservedInputs.costingMethod,
+  //         value: location.state.preservedInputs.costingMethod,
+  //       });
+  //     }
+  //   }
+  // }, [location.state]);
 
   useEffect(() => {
     const company_code = sessionStorage.getItem('selectedCompanyCode');
@@ -371,11 +429,22 @@ function ItemBrandGrid() {
     setCostingMethod(selectedCostingMethod ? selectedCostingMethod.value : '');
   };
 
-  const reloadGridData = () => {
-    window.location.reload();
+  const clearInputFields = () => {
+    setItem_code("");
+    setItem_variant("");
+    setItem_name("");
+    setItem_short_name("");
+    setItem_Our_Brand("");
+    setstatus("");
+    setStandardCost("");
+    setCostingMethod("");
+    setSelectedBrand(null);
+    setSelectedStatus(null);
+    setSelectedCostingMethod(null);
+    setRowData([]);
   };
 
-  const handleSearch = async () => {
+  const handleSearch = async (searchParams = null) => {
     const company_code = sessionStorage.getItem('selectedCompanyCode')
     setLoading(true);
     try {
@@ -386,14 +455,14 @@ function ItemBrandGrid() {
         },
         body: JSON.stringify({
           company_code,
-          Item_code,
-          Item_name,
-          Item_variant,
-          Item_short_name,
-          Item_Our_Brand,
-          status,
-          standard_cost: standardCost ? standardCost : 0,
-          costing_methods: costingMethod
+          Item_code: searchParams?.Item_code ?? Item_code,
+          Item_name: searchParams?.Item_name ?? Item_name,
+          Item_variant: searchParams?.Item_variant ?? Item_variant,
+          Item_short_name: searchParams?.Item_short_name ?? Item_short_name,
+          Item_Our_Brand: searchParams?.Item_Our_Brand ?? Item_Our_Brand,
+          status: searchParams?.status ?? status,
+          standard_cost: searchParams?.standardCost ?? standardCost ? standardCost : 0,
+          costing_methods: searchParams?.costingMethod ?? costingMethod
         })
       });
       if (response.ok) {
@@ -947,9 +1016,9 @@ function ItemBrandGrid() {
     navigate("/AddItem", {
       state: {
         mode: "update",
-        selectedRow,
+        Item_code: selectedRow.Item_code,
 
-        preservedRowData: rowData,
+        // preservedRowData: rowData,
 
         preservedInputs: {
           Item_code,
@@ -1385,7 +1454,7 @@ function ItemBrandGrid() {
                 <div class=" d-flex  justify-content-center">
 
                   <div class=''><icon className="popups-btn fs-6 p-3" onClick={handleSearch} required title="Search"><i className="fas fa-search"></i></icon></div>
-                  <div><icon className="popups-btn fs-6 p-3" onClick={reloadGridData} required title="Refresh"><FontAwesomeIcon icon="fa-solid fa-arrow-rotate-right" /></icon></div>
+                  <div><icon className="popups-btn fs-6 p-3" onClick={clearInputFields} required title="Refresh"><FontAwesomeIcon icon="fa-solid fa-arrow-rotate-right" /></icon></div>
                 </div> </div></div></div>
 
           {/* <p>Result Set</p> */}

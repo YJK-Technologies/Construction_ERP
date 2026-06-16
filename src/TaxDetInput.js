@@ -9,8 +9,6 @@ import 'react-toastify/dist/ReactToastify.css';
 import { useLocation } from "react-router-dom";
 import LoadingScreen from './Loading';
 
-
-
 function TaxDetInput({ }) {
   const [open2, setOpen2] = React.useState(false);
   const navigate = useNavigate();
@@ -45,8 +43,77 @@ function TaxDetInput({ }) {
   const [isUpdated, setIsUpdated] = useState(false);
 
   const location = useLocation();
-  const { mode, selectedRow } = location.state || {};
-  console.log(selectedRow);
+  const locationState = location.state || {};
+  const mode = locationState.mode || "create"; // ✅ default fallback
+  const selectedRow = locationState.selectedRow || null;
+  const keyfields = location.state?.keyfield;
+  const tax_type_headers = location.state?.tax_type_header;
+  const tax_name_detail = location.state?.tax_name_details;
+  const tax_accountcodes = location.state?.tax_accountcode;
+  const company_code = sessionStorage.getItem('selectedCompanyCode');
+
+  useEffect(() => { 
+    if (!location.state) {
+      clearInputFields(); // ensure fresh create mode
+    }
+  }, []);
+
+  useEffect(() => {
+    if (mode === "update" && tax_type_headers && tax_name_detail && tax_accountcodes) {
+      fetchTaxData();
+    }
+  }, [mode, tax_type_headers, tax_name_detail, tax_accountcodes]);
+
+  const fetchTaxData = async () => {
+    try {
+      setLoading(true);
+
+      const response = await fetch(`${config.apiBaseUrl}/getTaxData`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          tax_type_header: tax_type_headers,
+          tax_name_details: tax_name_detail,
+          tax_accountcode: tax_accountcodes,
+          company_code
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.length > 0) {
+        const Tax = data[0];
+
+      setSelectedTax({
+        label: Tax.tax_type_header,
+        value: Tax.tax_type_header,
+      });
+      settax_type_header(Tax.tax_type_header || "")
+      setSelectedTransaction({
+        label: Tax.transaction_type,
+        value: Tax.transaction_type,
+      });
+      settransaction_type(Tax.transaction_type || "")
+      setSelectedStatus({
+        label: Tax.status,
+        value: Tax.status,
+      });
+      setStatus(Tax.status || "")
+      settax_name_details(Tax.tax_name_details || "");
+      settax_percentage(Tax.tax_percentage || "");
+      settax_shortname(Tax.tax_shortname || "");
+      settax_accountcode(Tax.tax_accountcode || "");
+
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to fetch tax details");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const clearInputFields = () => {
     setSelectedTax("");
@@ -61,31 +128,31 @@ function TaxDetInput({ }) {
     setStatus("");
   };
 
-  useEffect(() => {
-    if (mode === "update" && selectedRow) {
-      setSelectedTax({
-        label: selectedRow.tax_type_header,
-        value: selectedRow.tax_type_header,
-      });
-      settax_type_header(selectedRow.tax_type_header || "")
-      setSelectedTransaction({
-        label: selectedRow.transaction_type,
-        value: selectedRow.transaction_type,
-      });
-      settransaction_type(selectedRow.transaction_type || "")
-      setSelectedStatus({
-        label: selectedRow.status,
-        value: selectedRow.status,
-      });
-      setStatus(selectedRow.status || "")
-      settax_name_details(selectedRow.tax_name_details || "");
-      settax_percentage(selectedRow.tax_percentage || "");
-      settax_shortname(selectedRow.tax_shortname || "");
-      settax_accountcode(selectedRow.tax_accountcode || "");
-    } else if (mode === "create") {
-      clearInputFields();
-    }
-  }, [mode, selectedRow]);
+  // useEffect(() => {
+  //   if (mode === "update" && selectedRow) {
+  //     setSelectedTax({
+  //       label: selectedRow.tax_type_header,
+  //       value: selectedRow.tax_type_header,
+  //     });
+  //     settax_type_header(selectedRow.tax_type_header || "")
+  //     setSelectedTransaction({
+  //       label: selectedRow.transaction_type,
+  //       value: selectedRow.transaction_type,
+  //     });
+  //     settransaction_type(selectedRow.transaction_type || "")
+  //     setSelectedStatus({
+  //       label: selectedRow.status,
+  //       value: selectedRow.status,
+  //     });
+  //     setStatus(selectedRow.status || "")
+  //     settax_name_details(selectedRow.tax_name_details || "");
+  //     settax_percentage(selectedRow.tax_percentage || "");
+  //     settax_shortname(selectedRow.tax_shortname || "");
+  //     settax_accountcode(selectedRow.tax_accountcode || "");
+  //   } else if (mode === "create") {
+  //     clearInputFields();
+  //   }
+  // }, [mode, selectedRow]);
 
   // useEffect(() => {
   //   fetch(`${config.apiBaseUrl}/taxtype`, {
@@ -194,7 +261,8 @@ function TaxDetInput({ }) {
   const handleNavigate = () => {
   navigate("/Tax", {
     state: {
-      preservedRowData: location.state?.preservedRowData,
+      refreshGrid: true,
+      // preservedRowData: location.state?.preservedRowData,
       preservedInputs: location.state?.preservedInputs
     }
   });

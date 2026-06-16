@@ -46,21 +46,67 @@ function NumberSeriesGrid() {
   console.log(numberSeriesPermission);
 
   useEffect(() => {
-    if (location.state?.preservedRowData) {
-      setRowData(location.state.preservedRowData);
-    }
-  
+    const handleKeyDown = (event) => {
+      const isReloadShortcut =
+        (event.ctrlKey && event.key.toLowerCase() === "r") ||
+        (event.altKey && event.key.toLowerCase() === "r") ||
+        event.key === "F5";
+
+      if (isReloadShortcut) {
+        event.preventDefault();
+        clearInputFields();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
+  useEffect(() => {
+    // if (location.state?.preservedRowData) {
+    //   setRowData(location.state.preservedRowData);
+    // }
+
     if (location.state?.preservedInputs) {
-      setScreen_Type(location.state.preservedInputs.Screen_Type || "");
-  
-      if (location.state.preservedInputs.Screen_Type) {
+      const inputs = location.state.preservedInputs;
+
+      setScreen_Type(inputs.Screen_Type || "");
+      if (inputs.Screen_Type) {
         setselectedscreentype({
-          label: location.state.preservedInputs.Screen_Type,
-          value: location.state.preservedInputs.Screen_Type,
+          label: inputs.Screen_Type,
+          value: inputs.Screen_Type,
         });
+      }
+
+      if (location.state?.refreshGrid) {
+        handleSearch(inputs); 
       }
     }
   }, [location.state]);
+
+  const clearInputFields = () => {
+    setScreen_Type("");
+    setselectedscreentype("");
+    setRowData([]);
+  }
+
+  // useEffect(() => {
+  //   if (location.state?.preservedRowData) {
+  //     setRowData(location.state.preservedRowData);
+  //   }
+  
+  //   if (location.state?.preservedInputs) {
+  //     setScreen_Type(location.state.preservedInputs.Screen_Type || "");
+  
+  //     if (location.state.preservedInputs.Screen_Type) {
+  //       setselectedscreentype({
+  //         label: location.state.preservedInputs.Screen_Type,
+  //         value: location.state.preservedInputs.Screen_Type,
+  //       });
+  //     }
+  //   }
+  // }, [location.state]);
 
   useEffect(() => {
     const company_code = sessionStorage.getItem('selectedCompanyCode');
@@ -130,7 +176,7 @@ function NumberSeriesGrid() {
     window.location.reload();
   };
 
-  const handleSearch = async () => {
+    const handleSearch = async (searchParams = null) => {
     setLoading(true);
     try {
       const company_code = sessionStorage.getItem("selectedCompanyCode");
@@ -139,10 +185,11 @@ function NumberSeriesGrid() {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            company_code: company_code,
-            Screen_Type: Screen_Type,
           },
-          body: JSON.stringify({ company_code: company_code, Screen_Type: Screen_Type }), // Send company_no and company_name as search criteria
+          body: JSON.stringify({ 
+            company_code,
+            Screen_Type: searchParams?.Screen_Type ?? Screen_Type, 
+          }), 
         }
       );
       if (response.ok) {
@@ -165,6 +212,42 @@ function NumberSeriesGrid() {
     }
 
   };
+
+  // const handleSearch = async () => {
+  //   setLoading(true);
+  //   try {
+  //     const company_code = sessionStorage.getItem("selectedCompanyCode");
+  //     const response = await fetch(`${config.apiBaseUrl}/numberseriessearchdata`,
+  //       {
+  //         method: "POST",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //           company_code: company_code,
+  //           Screen_Type: Screen_Type,
+  //         },
+  //         body: JSON.stringify({ company_code: company_code, Screen_Type: Screen_Type }), // Send company_no and company_name as search criteria
+  //       }
+  //     );
+  //     if (response.ok) {
+  //       const searchData = await response.json();
+  //       setRowData(searchData);
+  //       console.log("data fetched successfully");
+  //     } else if (response.status === 404) {
+  //       console.log("Data not found");
+  //       toast.warning("Data not found")
+  //       setRowData([]);
+  //     } else {
+  //       const errorResponse = await response.json();
+  //       toast.warning(errorResponse.message || "Failed to insert sales data");
+  //     }
+  //   } catch (error) {
+  //     console.error("Error saving data:", error);
+  //     toast.error("Error updating data: " + error.message);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+
+  // };
 
   const columnDefs = [
     {
@@ -411,20 +494,34 @@ function NumberSeriesGrid() {
     navigate("/AddNumberSeries", { state: { mode: "create" } }); // Pass selectedRows as props to the Input component
   };
   
+//   const handleNavigateWithRowData = (selectedRow) => {
+//   navigate("/AddNumberSeries", {
+//     state: {
+//       mode: "update",
+//       selectedRow,
+
+//       preservedRowData: rowData,
+
+//       preservedInputs: {
+//         Screen_Type,
+//       },
+//     },
+//   });
+// };
+
   const handleNavigateWithRowData = (selectedRow) => {
-  navigate("/AddNumberSeries", {
-    state: {
-      mode: "update",
-      selectedRow,
-
-      preservedRowData: rowData,
-
-      preservedInputs: {
-        Screen_Type,
+    navigate("/AddNumberSeries", {
+      state: {
+        mode: "update",
+        Screen_Type: selectedRow.Screen_Type,
+        Start_Year: selectedRow.Start_Year,
+        End_Year: selectedRow.End_Year,
+        preservedInputs: {
+          Screen_Type,
+        },
       },
-    },
-  });
-};
+    });
+  };
 
   const onSelectionChanged = () => {
     const selectedNodes = gridApi.getSelectedNodes();

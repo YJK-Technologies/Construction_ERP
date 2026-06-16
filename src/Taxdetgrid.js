@@ -54,28 +54,89 @@ function TaxDetGrid() {
     window.location.reload();
   };
 
-  useEffect(() => {
-    if (location.state?.preservedRowData) {
-      setRowData(location.state.preservedRowData);
-    }
+    useEffect(() => {
+      const handleKeyDown = (event) => {
+        const isReloadShortcut =
+          (event.ctrlKey && event.key.toLowerCase() === "r") ||
+          (event.altKey && event.key.toLowerCase() === "r") ||
+          event.key === "F5";
   
-    if (location.state?.preservedInputs) {
-      settax_type_header(location.state.preservedInputs.tax_type_header || "");
-      settax_name_details(location.state.preservedInputs.tax_name_details || "");
-      settax_percentage(location.state.preservedInputs.tax_percentage || 0);
-      settax_shortname(location.state.preservedInputs.tax_shortname || "");
-      settax_accountcode(location.state.preservedInputs.tax_accountcode || "");
-      settransaction_type(location.state.preservedInputs.transaction_type || "");
-      setstatus(location.state.preservedInputs.status || "");
+        if (isReloadShortcut) {
+          event.preventDefault();
+          clearInputFields();
+        }
+      };
   
-      if (location.state.preservedInputs.status) {
+      window.addEventListener("keydown", handleKeyDown);
+  
+      return () => window.removeEventListener("keydown", handleKeyDown);
+    }, []); 
+  
+      useEffect(() => {
+        // if (location.state?.preservedRowData) {
+        //   setRowData(location.state.preservedRowData);
+        // }
+      
+        if (location.state?.preservedInputs) {
+          const inputs = location.state.preservedInputs;
+  
+      settax_type_header(inputs.tax_type_header || "");
+      settax_name_details(inputs.tax_name_details || "");
+      settax_percentage(inputs.tax_percentage || 0);
+      settax_shortname(inputs.tax_shortname || "");
+      settax_accountcode(inputs.tax_accountcode || "");
+      settransaction_type(inputs.transaction_type || "");
+      setstatus(inputs.status || "");
+  
+      if (inputs.status) {
         setSelectedStatus({
-          label: location.state.preservedInputs.status,
-          value: location.state.preservedInputs.status,
+          label: inputs.status,
+          value: inputs.status,
         });
       }
-    }
-  }, [location.state]);
+
+          if (location.state?.refreshGrid) {
+          handleSearch(inputs); 
+        }
+        }
+      }, [location.state]);
+  
+    const clearInputFields = () => {
+      settax_type_header("");
+      settax_name_details("");
+      settax_percentage(0);
+      settax_shortname("");
+      settax_accountcode("");
+      settransaction_type("");
+      setstatus("");
+      setSelectedStatus(null);
+
+      setRowData([]);
+    };
+  
+
+  // useEffect(() => {
+  //   if (location.state?.preservedRowData) {
+  //     setRowData(location.state.preservedRowData);
+  //   }
+  
+  //   if (location.state?.preservedInputs) {
+  //     settax_type_header(location.state.preservedInputs.tax_type_header || "");
+  //     settax_name_details(location.state.preservedInputs.tax_name_details || "");
+  //     settax_percentage(location.state.preservedInputs.tax_percentage || 0);
+  //     settax_shortname(location.state.preservedInputs.tax_shortname || "");
+  //     settax_accountcode(location.state.preservedInputs.tax_accountcode || "");
+  //     settransaction_type(location.state.preservedInputs.transaction_type || "");
+  //     setstatus(location.state.preservedInputs.status || "");
+  
+  //     if (location.state.preservedInputs.status) {
+  //       setSelectedStatus({
+  //         label: location.state.preservedInputs.status,
+  //         value: location.state.preservedInputs.status,
+  //       });
+  //     }
+  //   }
+  // }, [location.state]);
 
   useEffect(() => {
     const company_code = sessionStorage.getItem('selectedCompanyCode');
@@ -138,7 +199,7 @@ function TaxDetGrid() {
     setstatus(selectedStatus ? selectedStatus.value : '');
   };
 
-  const handleSearch = async () => {
+  const handleSearch = async (searchParams = null) => {
     setLoading(true);
     try {
       const response = await fetch(`${config.apiBaseUrl}/taxSearchdata`, {
@@ -147,8 +208,14 @@ function TaxDetGrid() {
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          company_code: sessionStorage.getItem('selectedCompanyCode'), tax_type_header, tax_name_details, tax_percentage, tax_shortname,
-          transaction_type, status, tax_accountcode
+          company_code: sessionStorage.getItem('selectedCompanyCode'),
+          tax_type_header: searchParams?.tax_type_header || tax_type_header,
+          tax_name_details: searchParams?.tax_name_details || tax_name_details,
+          tax_percentage: searchParams?.tax_percentage || tax_percentage,
+          tax_shortname: searchParams?.tax_shortname || tax_shortname,
+          transaction_type: searchParams?.transaction_type || transaction_type,
+          status: searchParams?.status || status,
+          tax_accountcode: searchParams?.tax_accountcode || tax_accountcode
         })
       });
       if (response.ok) {
@@ -408,9 +475,11 @@ function TaxDetGrid() {
   navigate("/addTaxDetails", {
     state: {
       mode: "update",
-      selectedRow,
+        tax_type_header: selectedRow.tax_type_header,
+        tax_name_details: selectedRow.tax_name_details,
+        tax_accountcode: selectedRow.tax_accountcode,
 
-      preservedRowData: rowData,
+      // preservedRowData: rowData,
 
       preservedInputs: {
         tax_type_header,

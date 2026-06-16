@@ -47,7 +47,78 @@ function NumberSeriesInput({ }) {
   const modified_by = sessionStorage.getItem("selectedUserCode");
 
   const location = useLocation();
-  const { mode, selectedRow } = location.state || {};
+  const locationState = location.state || {};
+  const mode = locationState.mode || "create"; // ✅ default fallback
+  const selectedRow = locationState.selectedRow || null;
+  const screenType = location.state?.Screen_Type;
+  const startYear = location.state?.Start_Year;
+  const endYear = location.state?.End_Year;
+  const company_code = sessionStorage.getItem('selectedCompanyCode');
+
+  useEffect(() => {
+    if (!location.state) {
+      clearInputFields(); // ensure fresh create mode
+    }
+  }, []);
+
+  useEffect(() => {
+    if (mode === "update" && screenType && startYear && endYear) {
+      fetchNumberSeriesData();
+    }
+  }, [mode, screenType, startYear, endYear]);
+
+  const fetchNumberSeriesData = async () => {
+    try {
+      setLoading(true);
+
+      const response = await fetch(`${config.apiBaseUrl}/getNumberSeriesData`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          Screen_Type: screenType,
+          Start_Year: startYear,
+          End_Year: endYear,
+          company_code
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.length > 0) {
+        const numberSeries = data[0];
+
+        setStart_Year(numberSeries.Start_Year || "");
+        setEnd_Year(numberSeries.End_Year || "");
+        setStart_No(numberSeries.Start_No || "");
+        setRunning_No(numberSeries.Running_No || "");
+        setEnd_No(numberSeries.End_No || "");
+        secomtext(numberSeries.comtext || "");
+        setScreen_Type(numberSeries.Screen_Type || "");
+        setStatus(numberSeries.Status || "");
+        setNumber_prefix(numberSeries.number_prefix || "");
+        setselectedscreentype({
+          label: numberSeries.Screen_Type,
+          value: numberSeries.Screen_Type,
+        });
+        setselectedStatus({
+          label: numberSeries.Status,
+          value: numberSeries.Status,
+        });
+        setselectedBoolean({
+          label: numberSeries.number_prefix,
+          value: numberSeries.number_prefix,
+        });
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to fetch number series details");
+    } finally {
+      setLoading(false);
+    }
+  };
+
 
   const clearInputFields = () => {
     setStart_Year("");
@@ -64,34 +135,33 @@ function NumberSeriesInput({ }) {
     setselectedBoolean("");
   }
 
-  useEffect(() => {
-    if (mode === "update" && selectedRow) {
-      setStart_Year(selectedRow.Start_Year || "");
-      setEnd_Year(selectedRow.End_Year || "");
-      setStart_No(selectedRow.Start_No || "");
-      setRunning_No(selectedRow.Running_No || "0");
-      setEnd_No(selectedRow.End_No || "");
-      secomtext(selectedRow.comtext || "");
-      setScreen_Type(selectedRow.Screen_Type || "");
-      setStatus(selectedRow.Status || "");
-      setNumber_prefix(selectedRow.number_prefix || "");
-      setselectedscreentype({
-        label: selectedRow.Screen_Type,
-        value: selectedRow.Screen_Type,
-      });
-      setselectedStatus({
-        label: selectedRow.Status,
-        value: selectedRow.status,
-      });
-      setselectedBoolean({
-        label: selectedRow.number_prefix,
-        value: selectedRow.number_prefix,
-      });
-    } else if (mode === "create") {
-      clearInputFields();
-    }
-  }, [mode, selectedRow]);
-
+  // useEffect(() => {
+  //   if (mode === "update" && selectedRow) {
+  //     setStart_Year(selectedRow.Start_Year || "");
+  //     setEnd_Year(selectedRow.End_Year || "");
+  //     setStart_No(selectedRow.Start_No || "");
+  //     setRunning_No(selectedRow.Running_No || "0");
+  //     setEnd_No(selectedRow.End_No || "");
+  //     secomtext(selectedRow.comtext || "");
+  //     setScreen_Type(selectedRow.Screen_Type || "");
+  //     setStatus(selectedRow.Status || "");
+  //     setNumber_prefix(selectedRow.number_prefix || "");
+  //     setselectedscreentype({
+  //       label: selectedRow.Screen_Type,
+  //       value: selectedRow.Screen_Type,
+  //     });
+  //     setselectedStatus({
+  //       label: selectedRow.Status,
+  //       value: selectedRow.status,
+  //     });
+  //     setselectedBoolean({
+  //       label: selectedRow.number_prefix,
+  //       value: selectedRow.number_prefix,
+  //     });
+  //   } else if (mode === "create") {
+  //     clearInputFields();
+  //   }
+  // }, [mode, selectedRow]);
 
   const handleUpdate = async () => {
     if (
@@ -303,7 +373,8 @@ function NumberSeriesInput({ }) {
   const handleNavigate = () => {
   navigate("/NumberSeries", {
     state: {
-      preservedRowData: location.state?.preservedRowData,
+        refreshGrid: true,
+        // preservedRowData: location.state?.preservedRowData,
       preservedInputs: location.state?.preservedInputs
     }
   });

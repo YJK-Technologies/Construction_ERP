@@ -6808,6 +6808,7 @@ const addCustomerDetData = async (req, res) => {
     default_customer,
     created_by,
     modified_by,
+    Location_Code,
     tempstr1,
     tempstr2,
     tempstr3,
@@ -6856,6 +6857,7 @@ const addCustomerDetData = async (req, res) => {
       .input("default_customer", sql.NVarChar, default_customer)
       .input("created_by", sql.NVarChar, created_by)
       .input("modified_by", sql.NVarChar, modified_by)
+      .input("Location_Code", sql.NVarChar, Location_Code)
       .input("tempstr1", sql.NVarChar, tempstr1)
       .input("tempstr2", sql.NVarChar, tempstr2)
       .input("tempstr3", sql.NVarChar, tempstr3)
@@ -6865,7 +6867,7 @@ const addCustomerDetData = async (req, res) => {
       .input("datetime3", sql.NVarChar, datetime3)
       .input("datetime4", sql.NVarChar, datetime4)
       .query(
-        `EXEC sp_customer_details_info @mode, @customer_code, @company_code, '', '', '', '', @customer_addr_1, @customer_addr_2, @customer_addr_3, @customer_addr_4,@customer_area,
+        `EXEC sp_customer_details_info @mode, @customer_code, @company_code, @Location_Code, '', '', '','', @customer_addr_1, @customer_addr_2, @customer_addr_3, @customer_addr_4,@customer_area,
         @customer_state, @customer_country, @customer_imex_no, @customer_office_no, @customer_resi_no, @customer_mobile_no, @customer_fax_no, @customer_email_id, 
          @customer_credit_limit, @opening_balance, @balance_type, @customer_transport_code, @customer_salesman_code, @customer_broker_code, @customer_weekday_code, @contact_person,@office_type,@default_customer,'',@created_by, @modified_by,
           @tempstr1, @tempstr2, @tempstr3, @tempstr4, @datetime1, @datetime2, @datetime3, @datetime4`
@@ -6984,7 +6986,7 @@ const customerSearchdata = async (req, res) => {
       .input("opening_balance", sql.Decimal(18, 2), opening_balanceSC || null)
       .input("balance_type", sql.VarChar(50), balance_type)
       .input("default_customer", sql.NVarChar, default_customer)
-      .query(`EXEC sp_customer_details_info @mode,@customer_code,@company_code,@customer_name,@status,@panno,@customer_gst_no,@customer_addr_1,'','','',@customer_area,@customer_state,
+      .query(`EXEC sp_customer_details_info @mode,@customer_code,@company_code,'',@customer_name,@status,@panno,@customer_gst_no,@customer_addr_1,'','','',@customer_area,@customer_state,
       @customer_country,'','','',@customer_mobile_no,'' ,'',0,@opening_balance,@balance_type,'','','','','','',@default_customer,'','','',NULL,NULL,NULL,NULL,NULL,null,null,null`);
 
     // Send response
@@ -7677,7 +7679,7 @@ const     getCustomerSearchdata = async (req, res) => {
       .input("customer_fax_no", sql.NVarChar, customer_fax_no)
       .input("opening_balance", sql.Decimal(18, 2), opening_balance)
       .input("balance_type", sql.VarChar(50), balance_type)
-      .query(`EXEC sp_customer_details_info @mode,@customer_code,@company_code,@customer_name,@status,@panno,@customer_gst_no,@customer_addr_1,@customer_addr_2,@customer_addr_3,@customer_addr_4,
+      .query(`EXEC sp_customer_details_info @mode,@customer_code,@company_code,'',@customer_name,@status,@panno,@customer_gst_no,@customer_addr_1,@customer_addr_2,@customer_addr_3,@customer_addr_4,
           @customer_area,@customer_state,@customer_country,'','','',@customer_mobile_no,@customer_fax_no,'',0,@opening_balance,@balance_type,'','','','','','','','','','',NULL,NULL,NULL,null,null,null,null,null`);
 
     // Send response
@@ -16660,7 +16662,7 @@ const CustomerUpdate = async (req, res) => {
       .input("default_customer", sql.NVarChar, default_customer)
       .input("keyfield", sql.NVarChar, keyfield)
       .input("modified_by", sql.NVarChar, modified_by)
-      .query(`EXEC sp_customer_details_info @mode,@customer_code,@company_code,@customer_name,@status,@panno,@customer_gst_no,
+      .query(`EXEC sp_customer_details_info @mode,@customer_code,@company_code,'',@customer_name,@status,@panno,@customer_gst_no,
           @customer_addr_1,@customer_addr_2,@customer_addr_3,@customer_addr_4,@customer_area,@customer_state ,@customer_country,
           @customer_imex_no,@customer_office_no,@customer_resi_no,@customer_mobile_no,@customer_fax_no,@customer_email_id,@customer_credit_limit,@opening_balance,@balance_type,@customer_transport_code,
           @customer_salesman_code,@customer_broker_code,@customer_weekday_code,@contact_person,@office_type,@default_customer,@keyfield,'', @modified_by, '', '', '', '', '',
@@ -37679,6 +37681,319 @@ const getUserData = async (req, res) => {
 };
 //Code ended by pavun on 15-06-2026
 
+//Code added by sakthi on 16-06-2026
+const getAttributeData = async (req, res) => {
+  const { company_code, attributeheader_code, attributedetails_code } = req.body;
+
+  try {
+    const pool = await connection.connectToDatabase();
+    const result = await pool
+      .request()
+      .input("mode", sql.NVarChar, "GAI")
+      .input("company_code", sql.NVarChar, company_code)
+      .input("attributeheader_code", sql.NVarChar, attributeheader_code)
+      .input("attributedetails_code", sql.NVarChar, attributedetails_code)
+      .query(`EXEC sp_attribute_Info @mode,@company_code,@attributeheader_code,@attributedetails_code,'','','','','','','','','','','',''`);
+
+    if (result.recordset.length > 0) {
+      res.status(200).json(result.recordset); 
+    } else {
+      res.status(404).json("Data not found"); 
+    }
+  } catch (err) {
+    console.error("Error", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+};
+
+const getBankAccountData = async (req, res) => {
+  const { company_code,account_code } = req.body;
+
+  try {
+    const pool = await connection.connectToDatabase();
+    const result = await pool
+      .request()
+      .input("mode", sql.NVarChar, "GAN")
+      .input("company_code", sql.NVarChar, company_code)
+      .input("account_code", sql.NVarChar, account_code)
+      .query(`EXEC sp_account_name @mode,@company_code,@account_code,'','','','','','','',
+      '','','','','','' ,'',0,'','','','','','','','','','','','','','','','','','','','',NULL,NULL,NULL,NULL,NULL,null,null,null,''`);
+
+    if (result.recordset.length > 0) {
+      res.status(200).json(result.recordset); 
+    } else {
+      res.status(404).json("Data not found"); 
+    }
+  } catch (err) {
+    console.error("Error", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+};
+
+const getDepartmentData = async (req, res) => {
+  const { key_field, company_code } = req.body;
+
+  try {
+    const pool = await connection.connectToDatabase();
+    const result = await pool
+      .request()
+      .input("mode", sql.NVarChar, "GD")
+      .input("key_field", sql.NVarChar, key_field)
+      .input("company_code", sql.NVarChar, company_code)
+      .query(`EXEC sp_department @mode,'','',@company_code,@key_field,'','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
+
+    if (result.recordset.length > 0) {
+      res.status(200).json(result.recordset); 
+    } else {
+      res.status(404).json("Data not found"); 
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+};
+
+const getDesignationData = async (req, res) => {
+  const { keyfield, company_code } = req.body;
+
+  try {
+    const pool = await connection.connectToDatabase();
+    const result = await pool
+      .request()
+      .input("mode", sql.NVarChar, "GD")
+      .input("keyfield", sql.NVarChar, keyfield)
+      .input("company_code", sql.NVarChar, company_code)
+      .query(`EXEC sp_desgination @mode,'','','','',@company_code,@keyfield,'','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
+
+    if (result.recordset.length > 0) {
+      res.status(200).json(result.recordset); 
+    } else {
+      res.status(404).json("Data not found");
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+};
+
+const getIntermediaryData = async (req, res) => {
+  const { company_code, Code, codeDetails } = req.body;
+
+  try {
+    const pool = await connection.connectToDatabase();
+    const result = await pool
+      .request()
+      .input("mode", sql.NVarChar, "GID")
+      .input("company_code", sql.NVarChar, company_code)
+      .input("Code", sql.NVarChar, Code)
+      .input("codeDetails", sql.NVarChar, codeDetails)
+      .query(`EXEC sp_intermediary_details @mode,@company_code,@Code,@codeDetails,'','','','','','','','','','','','','','','',NULL,NULL,
+			NULL,NULL,NULL,NULL,NULL,NULL`);
+
+    if (result.recordset.length > 0) {
+      res.status(200).json(result.recordset);
+    } else {
+      res.status(404).json("Data not found"); 
+    }
+  } catch (err) {
+    console.error("Error", err.message);
+    return res
+      .status(500)
+      .json({ message: err.message || "Internal Server Error" });
+  }
+};
+
+const getNumberSeriesData = async (req, res) => {
+  const { company_code, Screen_Type, Start_Year, End_Year } = req.body; 
+
+  try {
+    const pool = await connection.connectToDatabase();
+    const result = await pool
+      .request()
+      .input("mode", sql.NVarChar, "GN")
+      .input("company_code", sql.NVarChar, company_code)
+      .input("Screen_Type", sql.NVarChar, Screen_Type) 
+      .input("Start_Year", sql.NVarChar, Start_Year) 
+      .input("End_Year", sql.NVarChar, End_Year) 
+      .query(`EXEC sp_numberseries @mode,@company_code,@Screen_Type,@Start_Year,@End_Year,0,0,0,'','','','','',
+      null,null,null,null,null,null,null,null,''`);
+    if (result.recordset.length > 0) {
+      res.status(200).json(result.recordset);
+    } else {
+      res.status(404).json("Data not found");
+    }
+  } catch (err) {
+    console.error("Error", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+};
+
+const getWarehouseData = async (req, res) => {
+  const { company_code, location_no, warehouse_code } = req.body;
+
+  try {
+    const pool = await connection.connectToDatabase();
+    const result = await pool
+      .request()
+      .input("mode", sql.NVarChar, "GW")
+      .input("company_code", sql.NVarChar, company_code)
+      .input("location_no", sql.NVarChar, location_no)
+      .input("warehouse_code", sql.NVarChar, warehouse_code)
+      .query(`EXEC sp_warehouse_info @mode,@company_code,@warehouse_code,'','',@location_no,'','',NULL,NULL,NULL,NULL,'','','',''`);
+
+    if (result.recordset.length > 0) {
+      res.status(200).json(result.recordset); 
+    } else {
+      res.status(404).json("Data not found");
+    }
+  } catch (err) {
+    console.error("Error", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+};
+
+const getCustomerData = async (req, res) => {
+  const { company_code, keyfield } = req.body;
+
+  try {
+    const pool = await connection.connectToDatabase();
+    const result = await pool
+      .request()
+      .input("mode", sql.NVarChar, "GCDI")
+      .input("company_code", sql.NVarChar, company_code)
+      .input("keyfield", sql.NVarChar, keyfield)
+      .query(`EXEC sp_customer_details_info @mode,'',@company_code,'','','','','','','','','','','',
+      '','','','','','' ,'',0,0,'','','','','','','','',@keyfield,'','',NULL,NULL,NULL,NULL,NULL,null,null,null`);
+
+    if (result.recordset.length > 0) {
+      res.status(200).json(result.recordset); 
+    } else {
+      res.status(404).json("Data not found");
+    }
+  } catch (err) {
+    console.error("Error", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+};
+
+const getItemData = async (req, res) => {
+  const { company_code, Item_code } = req.body;
+
+  try {
+    const pool = await connection.connectToDatabase();
+    const result = await pool
+      .request()
+      .input("mode", sql.NVarChar, "GIBI")
+      .input("company_code", sql.NVarChar, company_code)
+      .input("Item_code", sql.NVarChar, Item_code)
+      .query(`EXEC sp_item_brand_info @mode,@company_code,@Item_code,'','',0,'','','',0,0,0,0,'','','','','','','','','','','','','',0,0,'','','','','',
+      NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,''`);
+
+    if (result.recordset.length > 0) {
+      res.status(200).json(result.recordset); 
+    } else {
+      res.status(404).json("Data not found");
+    }
+  } catch (err) {
+    console.error("Error", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+};
+const getSiteData = async (req, res) => {
+  const { company_code, keyfield } = req.body;
+
+  try {
+    const pool = await connection.connectToDatabase();
+    const result = await pool
+      .request()
+      .input("mode", sql.NVarChar, "GSM")
+      .input("company_code", sql.NVarChar, company_code)
+      .input("keyfield", sql.NVarChar, keyfield)
+      .query(`EXEC sp_SiteMaster @mode, '', '', '', '', '', '', '', '', 0, '', @keyfield, '', '', 0, '', @company_code, '', ''`);
+
+    if (result.recordset.length > 0) {
+      res.status(200).json(result.recordset); 
+    } else {
+      res.status(404).json("Data not found");
+    }
+  } catch (err) {
+    console.error("Error", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+};
+const getTaxData = async (req, res) => {
+  const { company_code, tax_accountcode, tax_name_details, tax_type_header } = req.body;
+
+  try {
+    const pool = await connection.connectToDatabase();
+    const result = await pool
+      .request()
+      .input("mode", sql.NVarChar, "GTD")
+      .input("company_code", sql.NVarChar, company_code)
+      .input("tax_type_header", sql.NVarChar, tax_type_header)
+      .input("tax_name_details", sql.NVarChar, tax_name_details)
+      .input("tax_accountcode", sql.NVarChar, tax_accountcode)
+      .query(`sp_tax_name_details @mode,@company_code,@tax_type_header, @tax_name_details, 0, '', @tax_accountcode,
+               '', '','','', '', '', '', '', '', '','', ''`);
+
+    if (result.recordset.length > 0) {
+      res.status(200).json(result.recordset); 
+    } else {
+      res.status(404).json("Data not found");
+    }
+  } catch (err) {
+    console.error("Error", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+};
+
+const getVendorData = async (req, res) => {
+  const { company_code, keyfield } = req.body;
+
+  try {
+    const pool = await connection.connectToDatabase();
+    const result = await pool
+      .request()
+      .input("mode", sql.NVarChar, "GVIH")
+      .input("company_code", sql.NVarChar, company_code)
+      .input("keyfield", sql.NVarChar, keyfield)
+      .query(`EXEC sp_vendor_details_info_hdr @mode,'',@company_code,'','','','','','','','','','' ,'','','','','','','',0,
+      '','','','','','',@keyfield,'','',NULL,NULL,NULL,null,null,null,null,null`);
+
+    if (result.recordset.length > 0) {
+      res.status(200).json(result.recordset); 
+    } else {
+      res.status(404).json("Data not found");
+    }
+  } catch (err) {
+    console.error("Error", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+};
+
+const getFinancialYearAccessData = async (req, res) => {
+  const { keyfield, company_code } = req.body;
+  try {
+    const pool = await connection.connectToDatabase();
+    const result = await pool
+      .request()
+      .input("mode", sql.NVarChar, "SC")
+      .input("company_code", sql.NVarChar, company_code)
+      .input("keyfield", sql.NVarChar, keyfield)
+      .query(`EXEC sp_financial_year_accessing @mode,'','','','',@company_code,@keyfield,'','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
+    if (result.recordset.length > 0) {
+      res.status(200).json(result.recordset);
+    } else {
+      res.status(404).json("Data not found");
+    }
+  } catch (err) {
+    console.error("Error", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+};
+//Code ended by sakthi on 16-06-2026
+
+
 module.exports = {
   login,
   forgetPassword,
@@ -38913,7 +39228,20 @@ module.exports = {
   getRoleData,
   getRoleMappingData,
   getRoleRightsData,
-  getUserData
+  getUserData,
+  getAttributeData,
+  getBankAccountData,
+  getDepartmentData,
+  getDesignationData,
+  getIntermediaryData,
+  getNumberSeriesData,
+  getWarehouseData,
+  getCustomerData,
+  getItemData,
+  getSiteData,
+  getTaxData,
+  getVendorData,
+  getFinancialYearAccessData
 
 
 };
