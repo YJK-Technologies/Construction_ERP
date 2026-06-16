@@ -68,6 +68,7 @@ function AttriDetGrid() {
 
     if (location.state?.preservedInputs) {
       const inputs = location.state.preservedInputs;
+
       setattributeheader_code(inputs.attributeheader_code || "");
       setattributedetails_code(inputs.attributedetails_code || "");
       setattributedetails_name(inputs.attributedetails_name || "");
@@ -76,7 +77,6 @@ function AttriDetGrid() {
       if (location.state?.refreshGrid) {
         handleSearch(inputs);
       }
-
     }
   }, [location.state]);
 
@@ -102,13 +102,13 @@ function AttriDetGrid() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ 
-          company_code: sessionStorage.getItem("selectedCompanyCode"), 
+        body: JSON.stringify({
+          company_code: sessionStorage.getItem("selectedCompanyCode"),
           attributeheader_code: searchParams?.attributeheader_code ?? attributeheader_code,
           attributedetails_code: searchParams?.attributedetails_code ?? attributedetails_code,
           attributedetails_name: searchParams?.attributedetails_name ?? attributedetails_name,
           descriptions: searchParams?.descriptions ?? descriptions,
-        }), 
+        }),
       });
 
       if (response.ok) {
@@ -117,7 +117,7 @@ function AttriDetGrid() {
       } else if (response.status === 404) {
         console.log("Data not found");
         setRowData([]);
-        toast.warning("Data not found");
+        toast.info("Data not found");
       } else {
         const errorResponse = await response.json();
         toast.warning(errorResponse.message || "Failed to fetch data");
@@ -389,6 +389,7 @@ function AttriDetGrid() {
         mode: "update",
         attributeheader_code: selectedRow.attributeheader_code,
         attributedetails_code: selectedRow.attributedetails_code,
+
         preservedInputs: {
           attributeheader_code,
           attributedetails_code,

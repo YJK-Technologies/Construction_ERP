@@ -16,7 +16,6 @@ function VenDetInput({ }) {
   const [open2, setOpen2] = React.useState(false);
   const navigate = useNavigate();
   const [vendor_code, setvendor_code] = useState("");
-  const [company_code, setcompany_code] = useState("");
   const [vendor_addr_1, setvendor_addr_1] = useState("");
   const [vendor_addr_2, setvendor_addr_2] = useState("");
   const [vendor_addr_3, setvendor_addr_3] = useState("");
@@ -100,9 +99,122 @@ function VenDetInput({ }) {
   const [isUpdated, setIsUpdated] = useState(false);
 
   const location = useLocation();
-  const { mode, selectedRow } = location.state || {};
+  const locationState = location.state || {};
+  const mode = locationState.mode || "create"; // ✅ default fallback
+  const selectedRow = locationState.selectedRow || null;
+  const keyfields = location.state?.keyfield;
+  const company_code = sessionStorage.getItem('selectedCompanyCode');
 
-  console.log(selectedRow);
+  useEffect(() => { 
+    if (!location.state) {
+      clearInputFields(); // ensure fresh create mode
+    }
+  }, []);
+
+  useEffect(() => {
+    if (mode === "update" && keyfields) {
+      fetchVendorData();
+    }
+  }, [mode, keyfields]);
+
+  const fetchVendorData = async () => {
+    try {
+      setLoading(true);
+
+      const response = await fetch(`${config.apiBaseUrl}/getVendorData`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          keyfield: keyfields,
+          company_code
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.length > 0) {
+        const Vendor = data[0];
+      setvendor_code(Vendor.vendor_code || "");
+      setvendor_addr_1(Vendor.vendor_addr_1 || "");
+      setvendor_addr_2(Vendor.vendor_addr_2 || "");
+      setvendor_addr_3(Vendor.vendor_addr_3 || "");
+      setvendor_addr_4(Vendor.vendor_addr_4 || "");
+      setvendor_area_code(Vendor.vendor_area_code || "");
+      setvendor_state_code(Vendor.vendor_state_code || "");
+      setvendor_country_code(Vendor.vendor_country_code || "");
+      setvendor_imex_no(Vendor.vendor_imex_no || "");
+      setvendor_office_no(Vendor.vendor_office_no || "");
+      setvendor_resi_no(Vendor.vendor_resi_no || "");
+      setvendor_mobile_no(Vendor.vendor_mobile_no || "");
+      setvendor_fax_no(Vendor.vendor_fax_no || "");
+      setvendor_email_id(Vendor.vendor_email_id || "");
+      setvendor_credit_limit(Vendor.vendor_credit_limit || 0);
+      setopening_balance(Vendor.opening_balance || 0);
+      setvendor_transport_code(Vendor.vendor_transport_code || "");
+      setvendor_salesman_code(Vendor.vendor_salesman_code || "");
+      setvendor_broker_code(Vendor.vendor_broker_code || "");
+      setvendor_weekday_code(Vendor.vendor_weekday_code || "");
+      setOfficeType(Vendor.office_type || "");
+      setContact_person(Vendor.contact_person || "");
+      setkeyfield(Vendor.keyfield || "");
+      setvendor_area_code(Vendor.vendor_area_code || "");
+      setvendor_state_code(Vendor.vendor_state_code || "");
+      setvendor_country_code(Vendor.vendor_country_code || "");
+      setvendor_code(Vendor.vendor_code || "");
+      setvendor_transport_code(Vendor.vendor_transport_code || "");
+      setvendor_salesman_code(Vendor.vendor_salesman_code || "");
+      setvendor_broker_code(Vendor.vendor_broker_code || "");
+      setbalance_type(Vendor.balance_type || "");
+      setStatus(Vendor.status || "");
+      setVendorType(Vendor.vendor_type || "");
+
+      setSelectedCity({
+        label: Vendor.vendor_area_code,
+        value: Vendor.vendor_area_code,
+      });
+      setselectedState({
+        label: Vendor.vendor_state_code,
+        value: Vendor.vendor_state_code,
+      });
+      setselectedCountry({
+        label: Vendor.vendor_country_code,
+        value: Vendor.vendor_country_code,
+      });
+      setSelectedCode({
+        label: Vendor.vendor_code,
+        value: Vendor.vendor_code,
+      });
+      setSelectedTransport({
+        label: Vendor.vendor_transport_code,
+        value: Vendor.vendor_transport_code,
+      });
+      setSelectedBT({
+        label: Vendor.balance_type,
+        value: Vendor.balance_type,
+      });
+      setSelectedSales({
+        label: Vendor.vendor_salesman_code,
+        value: Vendor.vendor_salesman_code,
+      });
+      setSelectedBroker({
+        label: Vendor.vendor_broker_code,
+        value: Vendor.vendor_broker_code,
+      });
+      setselectedOffice({
+        label: Vendor.office_type,
+        value: Vendor.office_type,
+      });
+
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to fetch customer details");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const clearInputFields = () => {
     setSelectedCode("");
@@ -141,82 +253,82 @@ function VenDetInput({ }) {
     setVendorType("");
   };
 
-  useEffect(() => {
-    if (mode === "update" && selectedRow && !isUpdated) {
-      setvendor_code(selectedRow.vendor_code || "");
-      setvendor_addr_1(selectedRow.vendor_addr_1 || "");
-      setvendor_addr_2(selectedRow.vendor_addr_2 || "");
-      setvendor_addr_3(selectedRow.vendor_addr_3 || "");
-      setvendor_addr_4(selectedRow.vendor_addr_4 || "");
-      setvendor_area_code(selectedRow.vendor_area_code || "");
-      setvendor_state_code(selectedRow.vendor_state_code || "");
-      setvendor_country_code(selectedRow.vendor_country_code || "");
-      setvendor_imex_no(selectedRow.vendor_imex_no || "");
-      setvendor_office_no(selectedRow.vendor_office_no || "");
-      setvendor_resi_no(selectedRow.vendor_resi_no || "");
-      setvendor_mobile_no(selectedRow.vendor_mobile_no || "");
-      setvendor_fax_no(selectedRow.vendor_fax_no || "");
-      setvendor_email_id(selectedRow.vendor_email_id || "");
-      setvendor_credit_limit(selectedRow.vendor_credit_limit || 0);
-      setopening_balance(selectedRow.opening_balance || 0);
-      setvendor_transport_code(selectedRow.vendor_transport_code || "");
-      setvendor_salesman_code(selectedRow.vendor_salesman_code || "");
-      setvendor_broker_code(selectedRow.vendor_broker_code || "");
-      setvendor_weekday_code(selectedRow.vendor_weekday_code || "");
-      setOfficeType(selectedRow.office_type || "");
-      setContact_person(selectedRow.contact_person || "");
-      setkeyfield(selectedRow.keyfield || "");
-      setvendor_area_code(selectedRow.vendor_area_code || "");
-      setvendor_state_code(selectedRow.vendor_state_code || "");
-      setvendor_country_code(selectedRow.vendor_country_code || "");
-      setvendor_code(selectedRow.vendor_code || "");
-      setvendor_transport_code(selectedRow.vendor_transport_code || "");
-      setvendor_salesman_code(selectedRow.vendor_salesman_code || "");
-      setvendor_broker_code(selectedRow.vendor_broker_code || "");
-      setbalance_type(selectedRow.balance_type || "");
-      setStatus(selectedRow.status || "");
-      setVendorType(selectedRow.vendor_type || "");
+  // useEffect(() => {
+  //   if (mode === "update" && selectedRow && !isUpdated) {
+  //     setvendor_code(selectedRow.vendor_code || "");
+  //     setvendor_addr_1(selectedRow.vendor_addr_1 || "");
+  //     setvendor_addr_2(selectedRow.vendor_addr_2 || "");
+  //     setvendor_addr_3(selectedRow.vendor_addr_3 || "");
+  //     setvendor_addr_4(selectedRow.vendor_addr_4 || "");
+  //     setvendor_area_code(selectedRow.vendor_area_code || "");
+  //     setvendor_state_code(selectedRow.vendor_state_code || "");
+  //     setvendor_country_code(selectedRow.vendor_country_code || "");
+  //     setvendor_imex_no(selectedRow.vendor_imex_no || "");
+  //     setvendor_office_no(selectedRow.vendor_office_no || "");
+  //     setvendor_resi_no(selectedRow.vendor_resi_no || "");
+  //     setvendor_mobile_no(selectedRow.vendor_mobile_no || "");
+  //     setvendor_fax_no(selectedRow.vendor_fax_no || "");
+  //     setvendor_email_id(selectedRow.vendor_email_id || "");
+  //     setvendor_credit_limit(selectedRow.vendor_credit_limit || 0);
+  //     setopening_balance(selectedRow.opening_balance || 0);
+  //     setvendor_transport_code(selectedRow.vendor_transport_code || "");
+  //     setvendor_salesman_code(selectedRow.vendor_salesman_code || "");
+  //     setvendor_broker_code(selectedRow.vendor_broker_code || "");
+  //     setvendor_weekday_code(selectedRow.vendor_weekday_code || "");
+  //     setOfficeType(selectedRow.office_type || "");
+  //     setContact_person(selectedRow.contact_person || "");
+  //     setkeyfield(selectedRow.keyfield || "");
+  //     setvendor_area_code(selectedRow.vendor_area_code || "");
+  //     setvendor_state_code(selectedRow.vendor_state_code || "");
+  //     setvendor_country_code(selectedRow.vendor_country_code || "");
+  //     setvendor_code(selectedRow.vendor_code || "");
+  //     setvendor_transport_code(selectedRow.vendor_transport_code || "");
+  //     setvendor_salesman_code(selectedRow.vendor_salesman_code || "");
+  //     setvendor_broker_code(selectedRow.vendor_broker_code || "");
+  //     setbalance_type(selectedRow.balance_type || "");
+  //     setStatus(selectedRow.status || "");
+  //     setVendorType(selectedRow.vendor_type || "");
 
-      setSelectedCity({
-        label: selectedRow.vendor_area_code,
-        value: selectedRow.vendor_area_code,
-      });
-      setselectedState({
-        label: selectedRow.vendor_state_code,
-        value: selectedRow.vendor_state_code,
-      });
-      setselectedCountry({
-        label: selectedRow.vendor_country_code,
-        value: selectedRow.vendor_country_code,
-      });
-      setSelectedCode({
-        label: selectedRow.vendor_code,
-        value: selectedRow.vendor_code,
-      });
-      setSelectedTransport({
-        label: selectedRow.vendor_transport_code,
-        value: selectedRow.vendor_transport_code,
-      });
-      setSelectedBT({
-        label: selectedRow.balance_type,
-        value: selectedRow.balance_type,
-      });
-      setSelectedSales({
-        label: selectedRow.vendor_salesman_code,
-        value: selectedRow.vendor_salesman_code,
-      });
-      setSelectedBroker({
-        label: selectedRow.vendor_broker_code,
-        value: selectedRow.vendor_broker_code,
-      });
-      setselectedOffice({
-        label: selectedRow.office_type,
-        value: selectedRow.office_type,
-      });
-    } else if (mode === "create") {
-      clearInputFields();
-    }
-  }, [mode, selectedRow, isUpdated]);
+  //     setSelectedCity({
+  //       label: selectedRow.vendor_area_code,
+  //       value: selectedRow.vendor_area_code,
+  //     });
+  //     setselectedState({
+  //       label: selectedRow.vendor_state_code,
+  //       value: selectedRow.vendor_state_code,
+  //     });
+  //     setselectedCountry({
+  //       label: selectedRow.vendor_country_code,
+  //       value: selectedRow.vendor_country_code,
+  //     });
+  //     setSelectedCode({
+  //       label: selectedRow.vendor_code,
+  //       value: selectedRow.vendor_code,
+  //     });
+  //     setSelectedTransport({
+  //       label: selectedRow.vendor_transport_code,
+  //       value: selectedRow.vendor_transport_code,
+  //     });
+  //     setSelectedBT({
+  //       label: selectedRow.balance_type,
+  //       value: selectedRow.balance_type,
+  //     });
+  //     setSelectedSales({
+  //       label: selectedRow.vendor_salesman_code,
+  //       value: selectedRow.vendor_salesman_code,
+  //     });
+  //     setSelectedBroker({
+  //       label: selectedRow.vendor_broker_code,
+  //       value: selectedRow.vendor_broker_code,
+  //     });
+  //     setselectedOffice({
+  //       label: selectedRow.office_type,
+  //       value: selectedRow.office_type,
+  //     });
+  //   } else if (mode === "create") {
+  //     clearInputFields();
+  //   }
+  // }, [mode, selectedRow, isUpdated]);
 
   const fetchVendor = () => {
     const company_code = sessionStorage.getItem("selectedCompanyCode");
@@ -456,7 +568,8 @@ function VenDetInput({ }) {
   const handleNavigate = () => {
   navigate("/Vendor", {
     state: {
-      preservedRowData: location.state?.preservedRowData,
+      refreshGrid: true,
+      // preservedRowData: location.state?.preservedRowData,
       preservedInputs: location.state?.preservedInputs
     }
   });

@@ -12,8 +12,6 @@ import { ToastContainer, toast } from 'react-toastify';
 
 const AddAddSiteMasterScreen = () => {
 
-    const location = useLocation();
-    const { mode, selectedRow } = location.state || {};
     const navigate = useNavigate();
     const config = require("./Apiconfig");
     const [loading, setLoading] = useState(false);
@@ -46,6 +44,94 @@ const AddAddSiteMasterScreen = () => {
     const [error, setError] = useState(false);
     const [keyfield, setKeyfield] = useState("");
 
+      const location = useLocation();
+  const locationState = location.state || {};
+  const mode = locationState.mode || "create"; // ✅ default fallback
+  const selectedRow = locationState.selectedRow || null;
+  const keyfields = location.state?.keyfield;
+  const company_code = sessionStorage.getItem('selectedCompanyCode');
+
+  useEffect(() => { 
+    if (!location.state) {
+      clearInputFields(); // ensure fresh create mode
+    }
+  }, []);
+
+  useEffect(() => {
+    if (mode === "update" && keyfields) {
+      fetchSiteData();
+    }
+  }, [mode, keyfields]);
+
+  const fetchSiteData = async () => {
+    try {
+      setLoading(true);
+
+      const response = await fetch(`${config.apiBaseUrl}/getSiteData`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          keyfield: keyfields,
+          company_code
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.length > 0) {
+        const Site = data[0];
+
+            setSiteId(Site.site_id || "");
+            setSiteName(Site.site_name || "");
+            setSiteLocation(Site.site_location || "");
+            setSelectedCustomerCode({
+                label: Site.client_code,
+                value: Site.client_code,
+            });
+            setCustomerCode(Site.client_code || "");
+            setSelectedProjectType({
+                label: Site.project_type,
+                value: Site.project_type,
+            });
+            setProjectType(Site.project_type || "");
+            setStartDate(Site.start_date || "");
+            setEndDate(Site.end_date || "");
+            setSelectedSiteStatus({
+                label: Site.site_status,
+                value: Site.site_status,
+            });
+            setSiteStatus(Site.site_status || "");
+            setSelectedStatus({
+                label: Site.status,
+                value: Site.status,
+            });
+            setStatus(Site.status || "");
+            setTotalBudget(Site.total_budget || "");
+            setSelectedToleranceType({
+                label: Site.Tolerance_Type,
+                value: Site.Tolerance_Type,
+            });
+            setToleranceType(Site.Tolerance_Type || "");
+            setToleranceValues(Site.Tolerance_values || 0);
+            setSelectedWarehouse({
+                label: Site.Warehouses,
+                value: Site.Warehouses,
+            });
+            setWarehouse(Site.Warehouses || "");
+            setKeyfield(Site.keyfield || "");
+
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to fetch Site details");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
     const clearInputFields = () => {
         setSiteId("");
         setSiteName("");
@@ -77,51 +163,51 @@ const AddAddSiteMasterScreen = () => {
         return !isNaN(d) ? d.toISOString().split("T")[0] : "";
     };
 
-    useEffect(() => {
-        if (mode === "update" && selectedRow) {
-            setSiteId(selectedRow.site_id || "");
-            setSiteName(selectedRow.site_name || "");
-            setSiteLocation(selectedRow.site_location || "");
-            setSelectedCustomerCode({
-                label: selectedRow.client_code,
-                value: selectedRow.client_code,
-            });
-            setCustomerCode(selectedRow.client_code || "");
-            setSelectedProjectType({
-                label: selectedRow.project_type,
-                value: selectedRow.project_type,
-            });
-            setProjectType(selectedRow.project_type || "");
-            setStartDate(selectedRow.start_date || "");
-            setEndDate(selectedRow.end_date || "");
-            setSelectedSiteStatus({
-                label: selectedRow.site_status,
-                value: selectedRow.site_status,
-            });
-            setSiteStatus(selectedRow.site_status || "");
-            setSelectedStatus({
-                label: selectedRow.status,
-                value: selectedRow.status,
-            });
-            setStatus(selectedRow.status || "");
-            setTotalBudget(selectedRow.total_budget || "");
-            setSelectedToleranceType({
-                label: selectedRow.Tolerance_Type,
-                value: selectedRow.Tolerance_Type,
-            });
-            setToleranceType(selectedRow.Tolerance_Type || "");
-            setToleranceValues(selectedRow.Tolerance_values || 0);
-            setSelectedWarehouse({
-                label: selectedRow.Warehouses,
-                value: selectedRow.Warehouses,
-            });
-            setWarehouse(selectedRow.Warehouses || "");
-            setKeyfield(selectedRow.keyfield || "");
+    // useEffect(() => {
+    //     if (mode === "update" && selectedRow) {
+    //         setSiteId(selectedRow.site_id || "");
+    //         setSiteName(selectedRow.site_name || "");
+    //         setSiteLocation(selectedRow.site_location || "");
+    //         setSelectedCustomerCode({
+    //             label: selectedRow.client_code,
+    //             value: selectedRow.client_code,
+    //         });
+    //         setCustomerCode(selectedRow.client_code || "");
+    //         setSelectedProjectType({
+    //             label: selectedRow.project_type,
+    //             value: selectedRow.project_type,
+    //         });
+    //         setProjectType(selectedRow.project_type || "");
+    //         setStartDate(selectedRow.start_date || "");
+    //         setEndDate(selectedRow.end_date || "");
+    //         setSelectedSiteStatus({
+    //             label: selectedRow.site_status,
+    //             value: selectedRow.site_status,
+    //         });
+    //         setSiteStatus(selectedRow.site_status || "");
+    //         setSelectedStatus({
+    //             label: selectedRow.status,
+    //             value: selectedRow.status,
+    //         });
+    //         setStatus(selectedRow.status || "");
+    //         setTotalBudget(selectedRow.total_budget || "");
+    //         setSelectedToleranceType({
+    //             label: selectedRow.Tolerance_Type,
+    //             value: selectedRow.Tolerance_Type,
+    //         });
+    //         setToleranceType(selectedRow.Tolerance_Type || "");
+    //         setToleranceValues(selectedRow.Tolerance_values || 0);
+    //         setSelectedWarehouse({
+    //             label: selectedRow.Warehouses,
+    //             value: selectedRow.Warehouses,
+    //         });
+    //         setWarehouse(selectedRow.Warehouses || "");
+    //         setKeyfield(selectedRow.keyfield || "");
 
-        } else if (mode === "create") {
-            clearInputFields();
-        }
-    }, [mode, selectedRow]);
+    //     } else if (mode === "create") {
+    //         clearInputFields();
+    //     }
+    // }, [mode, selectedRow]);
 
     useEffect(() => {
         const company_code = sessionStorage.getItem("selectedCompanyCode");
@@ -451,7 +537,8 @@ const AddAddSiteMasterScreen = () => {
     const handleNavigate = () => {
   navigate("/SiteMaster", {
     state: {
-      preservedRowData: location.state?.preservedRowData,
+      refreshGrid: true,
+    //   preservedRowData: location.state?.preservedRowData,
       preservedInputs: location.state?.preservedInputs
     }
   });

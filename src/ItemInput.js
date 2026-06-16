@@ -109,11 +109,128 @@ function ItemInput({ }) {
   const [standardCost, setStandardCost] = useState("");
 
   const [barcodeSetting, setBarcodeSetting] = useState("");
-  const company_code = sessionStorage.getItem("selectedCompanyCode");
   const Location_Code = sessionStorage.getItem("selectedLocationCode");
 
   const location = useLocation();
-  const { mode, selectedRow } = location.state || {};
+  const locationState = location.state || {};
+  const mode = locationState.mode || "create"; // ✅ default fallback
+  const selectedRow = locationState.selectedRow || null;
+  const ItemCode = location.state?.Item_code;
+  const company_code = sessionStorage.getItem('selectedCompanyCode');
+
+  useEffect(() => { 
+    if (!location.state) {
+      clearInputFields(); // ensure fresh create mode
+    }
+  }, []);
+
+  useEffect(() => {
+    if (mode === "update" && ItemCode) {
+      fetchItemData();
+    }
+  }, [mode, ItemCode]);
+
+  const fetchItemData = async () => {
+    try {
+      setLoading(true);
+
+      const response = await fetch(`${config.apiBaseUrl}/getItemData`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          Item_code: ItemCode,
+          company_code
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.length > 0) {
+        const Item = data[0];
+      setBarcodeValue(Item.Barcode_Data || "");
+      setBarcode(Item.Barcode_Data || "");
+      setItem_code(Item.Item_code || "");
+      setItem_name(Item.Item_name || "");
+      setItem_wigh(Item.Item_wigh || 0);
+      sethsn(Item.hsn || "");
+      setItem_stock_type(Item.Item_stock_type || "");
+      setItem_stock_code(Item.Item_stock_code || "");
+      setItem_std_sales_price(Item.Item_std_sales_price || 0);
+      setItem_std_purch_price(Item.Item_std_purch_price || 0);
+      setItem_Last_salesRate_IncludingTax(
+        Item.Item_Last_salesRate_IncludingTax || 0,
+      );
+      setItem_Last_salesRate_ExTax(Item.Item_Last_salesRate_ExTax || 0);
+      setItem_short_name(Item.Item_short_name || "");
+      setMRPPrice(Item.MRP_Price || 0);
+      setDiscount(Item.discount_Percentage || 0);
+      setItem_BaseUOM(Item.Item_BaseUOM || "");
+      setItem_SecondaryUOM(Item.Item_SecondaryUOM || "");
+      setItem_Register_Brand(Item.Item_Register_Brand || "");
+      setItem_Our_Brand(Item.Item_Our_Brand || "");
+      setStatus(Item.status || "");
+      setItem_sales_Othertax_type(Item.Item_other_sales_taxtype || "");
+      setItem_sales_tax_type(Item.Item_sales_tax_type || "");
+      setItem_purch_tax_type(Item.Item_purch_tax_type || "");
+      setItem_purch_othertax_type(Item.Item_other_purch_taxtype || "");
+      setItem_variant(Item.Item_variant || "");
+      setStandardCost(Item.standard_cost || "");
+      setCostingMethod(Item.costing_methods || "");
+      setSelectedUom({
+        label: Item.Item_BaseUOM,
+        value: Item.Item_BaseUOM,
+      });
+      setSelectedSuom({
+        label: Item.Item_SecondaryUOM,
+        value: Item.Item_SecondaryUOM,
+      });
+      setSelectedRegister({
+        label: Item.Item_Register_Brand,
+        value: Item.Item_Register_Brand,
+      });
+      setSelectedBrand({
+        label: Item.Item_Our_Brand,
+        value: Item.Item_Our_Brand,
+      });
+      setSelectedStatus({
+        label: Item.status,
+        value: Item.status,
+      });
+      setselectedsaltax({
+        label: Item.Item_sales_tax_type,
+        value: Item.Item_sales_tax_type,
+      });
+      setselectedOthersaltax({
+        label: Item.Item_other_sales_taxtype,
+        value: Item.Item_other_sales_taxtype,
+      });
+      setselectedpurtax({
+        label: Item.Item_purch_tax_type,
+        value: Item.Item_purch_tax_type,
+      });
+      setselectedOtherpurtax({
+        label: Item.Item_other_purch_taxtype,
+        value: Item.Item_other_purch_taxtype,
+      });
+      setselectedvarient({
+        label: Item.Item_variant,
+        value: Item.Item_variant,
+      });
+      setSelectedCostingMethod({
+        label: Item.costing_methods,
+        value: Item.costing_methods,
+      });
+
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to fetch item details");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const clearInputFields = () => {
     setBarcodeValue("");
@@ -167,97 +284,97 @@ function ItemInput({ }) {
     return window.btoa(binary);
   };
 
-  useEffect(() => {
-    if (mode === "update" && selectedRow) {
-      setBarcodeValue(selectedRow.Barcode_Data || "");
-      setBarcode(selectedRow.Barcode_Data || "");
-      setItem_code(selectedRow.Item_code || "");
-      setItem_name(selectedRow.Item_name || "");
-      setItem_wigh(selectedRow.Item_wigh || 0);
-      sethsn(selectedRow.hsn || "");
-      setItem_stock_type(selectedRow.Item_stock_type || "");
-      setItem_stock_code(selectedRow.Item_stock_code || "");
-      setItem_std_sales_price(selectedRow.Item_std_sales_price || 0);
-      setItem_std_purch_price(selectedRow.Item_std_purch_price || 0);
-      setItem_Last_salesRate_IncludingTax(
-        selectedRow.Item_Last_salesRate_IncludingTax || 0,
-      );
-      setItem_Last_salesRate_ExTax(selectedRow.Item_Last_salesRate_ExTax || 0);
-      setItem_short_name(selectedRow.Item_short_name || "");
-      setMRPPrice(selectedRow.MRP_Price || 0);
-      setDiscount(selectedRow.discount_Percentage || 0);
-      setItem_BaseUOM(selectedRow.Item_BaseUOM || "");
-      setItem_SecondaryUOM(selectedRow.Item_SecondaryUOM || "");
-      setItem_Register_Brand(selectedRow.Item_Register_Brand || "");
-      setItem_Our_Brand(selectedRow.Item_Our_Brand || "");
-      setStatus(selectedRow.status || "");
-      setItem_sales_Othertax_type(selectedRow.Item_other_sales_taxtype || "");
-      setItem_sales_tax_type(selectedRow.Item_sales_tax_type || "");
-      setItem_purch_tax_type(selectedRow.Item_purch_tax_type || "");
-      setItem_purch_othertax_type(selectedRow.Item_other_purch_taxtype || "");
-      setItem_variant(selectedRow.Item_variant || "");
-      setStandardCost(selectedRow.standard_cost || "");
-      setCostingMethod(selectedRow.costing_methods || "");
-      setSelectedUom({
-        label: selectedRow.Item_BaseUOM,
-        value: selectedRow.Item_BaseUOM,
-      });
-      setSelectedSuom({
-        label: selectedRow.Item_SecondaryUOM,
-        value: selectedRow.Item_SecondaryUOM,
-      });
-      setSelectedRegister({
-        label: selectedRow.Item_Register_Brand,
-        value: selectedRow.Item_Register_Brand,
-      });
-      setSelectedBrand({
-        label: selectedRow.Item_Our_Brand,
-        value: selectedRow.Item_Our_Brand,
-      });
-      setSelectedStatus({
-        label: selectedRow.status,
-        value: selectedRow.status,
-      });
-      setselectedsaltax({
-        label: selectedRow.Item_sales_tax_type,
-        value: selectedRow.Item_sales_tax_type,
-      });
-      setselectedOthersaltax({
-        label: selectedRow.Item_other_sales_taxtype,
-        value: selectedRow.Item_other_sales_taxtype,
-      });
-      setselectedpurtax({
-        label: selectedRow.Item_purch_tax_type,
-        value: selectedRow.Item_purch_tax_type,
-      });
-      setselectedOtherpurtax({
-        label: selectedRow.Item_other_purch_taxtype,
-        value: selectedRow.Item_other_purch_taxtype,
-      });
-      setselectedvarient({
-        label: selectedRow.Item_variant,
-        value: selectedRow.Item_variant,
-      });
-      setSelectedCostingMethod({
-        label: selectedRow.costing_methods,
-        value: selectedRow.costing_methods,
-      });
+  // useEffect(() => {
+  //   if (mode === "update" && selectedRow) {
+  //     setBarcodeValue(selectedRow.Barcode_Data || "");
+  //     setBarcode(selectedRow.Barcode_Data || "");
+  //     setItem_code(selectedRow.Item_code || "");
+  //     setItem_name(selectedRow.Item_name || "");
+  //     setItem_wigh(selectedRow.Item_wigh || 0);
+  //     sethsn(selectedRow.hsn || "");
+  //     setItem_stock_type(selectedRow.Item_stock_type || "");
+  //     setItem_stock_code(selectedRow.Item_stock_code || "");
+  //     setItem_std_sales_price(selectedRow.Item_std_sales_price || 0);
+  //     setItem_std_purch_price(selectedRow.Item_std_purch_price || 0);
+  //     setItem_Last_salesRate_IncludingTax(
+  //       selectedRow.Item_Last_salesRate_IncludingTax || 0,
+  //     );
+  //     setItem_Last_salesRate_ExTax(selectedRow.Item_Last_salesRate_ExTax || 0);
+  //     setItem_short_name(selectedRow.Item_short_name || "");
+  //     setMRPPrice(selectedRow.MRP_Price || 0);
+  //     setDiscount(selectedRow.discount_Percentage || 0);
+  //     setItem_BaseUOM(selectedRow.Item_BaseUOM || "");
+  //     setItem_SecondaryUOM(selectedRow.Item_SecondaryUOM || "");
+  //     setItem_Register_Brand(selectedRow.Item_Register_Brand || "");
+  //     setItem_Our_Brand(selectedRow.Item_Our_Brand || "");
+  //     setStatus(selectedRow.status || "");
+  //     setItem_sales_Othertax_type(selectedRow.Item_other_sales_taxtype || "");
+  //     setItem_sales_tax_type(selectedRow.Item_sales_tax_type || "");
+  //     setItem_purch_tax_type(selectedRow.Item_purch_tax_type || "");
+  //     setItem_purch_othertax_type(selectedRow.Item_other_purch_taxtype || "");
+  //     setItem_variant(selectedRow.Item_variant || "");
+  //     setStandardCost(selectedRow.standard_cost || "");
+  //     setCostingMethod(selectedRow.costing_methods || "");
+  //     setSelectedUom({
+  //       label: selectedRow.Item_BaseUOM,
+  //       value: selectedRow.Item_BaseUOM,
+  //     });
+  //     setSelectedSuom({
+  //       label: selectedRow.Item_SecondaryUOM,
+  //       value: selectedRow.Item_SecondaryUOM,
+  //     });
+  //     setSelectedRegister({
+  //       label: selectedRow.Item_Register_Brand,
+  //       value: selectedRow.Item_Register_Brand,
+  //     });
+  //     setSelectedBrand({
+  //       label: selectedRow.Item_Our_Brand,
+  //       value: selectedRow.Item_Our_Brand,
+  //     });
+  //     setSelectedStatus({
+  //       label: selectedRow.status,
+  //       value: selectedRow.status,
+  //     });
+  //     setselectedsaltax({
+  //       label: selectedRow.Item_sales_tax_type,
+  //       value: selectedRow.Item_sales_tax_type,
+  //     });
+  //     setselectedOthersaltax({
+  //       label: selectedRow.Item_other_sales_taxtype,
+  //       value: selectedRow.Item_other_sales_taxtype,
+  //     });
+  //     setselectedpurtax({
+  //       label: selectedRow.Item_purch_tax_type,
+  //       value: selectedRow.Item_purch_tax_type,
+  //     });
+  //     setselectedOtherpurtax({
+  //       label: selectedRow.Item_other_purch_taxtype,
+  //       value: selectedRow.Item_other_purch_taxtype,
+  //     });
+  //     setselectedvarient({
+  //       label: selectedRow.Item_variant,
+  //       value: selectedRow.Item_variant,
+  //     });
+  //     setSelectedCostingMethod({
+  //       label: selectedRow.costing_methods,
+  //       value: selectedRow.costing_methods,
+  //     });
 
-      if (selectedRow.item_images && selectedRow.item_images.data) {
-        const base64Image = arrayBufferToBase64(selectedRow.item_images.data);
-        const file = base64ToFile(
-          `data:image/jpeg;base64,${base64Image}`,
-          "item_images.jpg",
-        );
-        setSelectedImage(`data:image/jpeg;base64,${base64Image}`);
-        setItem_image(file);
-      } else {
-        setSelectedImage(null);
-      }
-    } else if (mode === "create") {
-      clearInputFields();
-    }
-  }, [mode, selectedRow]);
+  //     if (selectedRow.item_images && selectedRow.item_images.data) {
+  //       const base64Image = arrayBufferToBase64(selectedRow.item_images.data);
+  //       const file = base64ToFile(
+  //         `data:image/jpeg;base64,${base64Image}`,
+  //         "item_images.jpg",
+  //       );
+  //       setSelectedImage(`data:image/jpeg;base64,${base64Image}`);
+  //       setItem_image(file);
+  //     } else {
+  //       setSelectedImage(null);
+  //     }
+  //   } else if (mode === "create") {
+  //     clearInputFields();
+  //   }
+  // }, [mode, selectedRow]);
 
   const getItemBarcodeSetting = async () => {
     try {
@@ -812,7 +929,8 @@ function ItemInput({ }) {
   const handleNavigate = () => {
     navigate("/Item", {
       state: {
-        preservedRowData: location.state?.preservedRowData,
+        refreshGrid: true,
+        // preservedRowData: location.state?.preservedRowData,
         preservedInputs: location.state?.preservedInputs
       }
     });

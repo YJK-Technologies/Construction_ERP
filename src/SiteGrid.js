@@ -69,64 +69,168 @@ const AddSiteMasterScreen = () => {
 
     const location = useLocation();
 
-    useEffect(() => {
-      if (location.state?.preservedRowData) {
-        setRowData(location.state.preservedRowData);
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      const isReloadShortcut =
+        (event.ctrlKey && event.key.toLowerCase() === "r") ||
+        (event.altKey && event.key.toLowerCase() === "r") ||
+        event.key === "F5";
+
+      if (isReloadShortcut) {
+        event.preventDefault();
+        clearInputFields();
       }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []); 
+
+    useEffect(() => {
+      // if (location.state?.preservedRowData) {
+      //   setRowData(location.state.preservedRowData);
+      // }
     
       if (location.state?.preservedInputs) {
-        setSiteId(location.state.preservedInputs.siteId || "");
-        setSiteName(location.state.preservedInputs.siteName || "");
-        setSiteLocation(location.state.preservedInputs.siteLocation || "");
-        setCustomerCode(location.state.preservedInputs.customerCode || "");
-        setProjectType(location.state.preservedInputs.projectType || "");
-        setStartDate(location.state.preservedInputs.startDate || "");
-        setEndDate(location.state.preservedInputs.endDate || "");
-        setSiteStatus(location.state.preservedInputs.siteStatus || "");
-        setTotalBudget(location.state.preservedInputs.totalBudget || "");
-        setToleranceType(location.state.preservedInputs.toleranceType || "");
-        setToleranceValues(location.state.preservedInputs.toleranceValues || "");
-        setWarehouse(location.state.preservedInputs.warehouse || "");
-        setStatus(location.state.preservedInputs.status || "");
+        const inputs = location.state.preservedInputs;
+        setSiteId(inputs.siteId || "");
+        setSiteName(inputs.siteName || "");
+        setSiteLocation(inputs.siteLocation || "");
+        setCustomerCode(inputs.customerCode || "");
+        setProjectType(inputs.projectType || "");
+        setStartDate(inputs.startDate || "");
+        setEndDate(inputs.endDate || "");
+        setSiteStatus(inputs.siteStatus || "");
+        setTotalBudget(inputs.totalBudget || "");
+        setToleranceType(inputs.toleranceType || "");
+        setToleranceValues(inputs.toleranceValues || "");
+        setWarehouse(inputs.warehouse || "");
+        setStatus(inputs.status || "");
     
-        if (location.state.preservedInputs.customerCode) {
+        if (inputs.customerCode) {
           setSelectedCustomerCode({
-            label: location.state.preservedInputs.customerCode,
-            value: location.state.preservedInputs.customerCode,
+            label: inputs.customerCode,
+            value: inputs.customerCode,
           });
         }
-        if (location.state.preservedInputs.projectType) {
+        if (inputs.projectType) {
           setSelectedProjectType({
-            label: location.state.preservedInputs.projectType,
-            value: location.state.preservedInputs.projectType,
+            label: inputs.projectType,
+            value: inputs.projectType,
           });
         }
-        if (location.state.preservedInputs.siteStatus) {
+        if (inputs.siteStatus) {
           setSelectedSiteStatus({
-            label: location.state.preservedInputs.siteStatus,
-            value: location.state.preservedInputs.siteStatus,
+            label: inputs.siteStatus,
+            value: inputs.siteStatus,
           });
         }
-        if (location.state.preservedInputs.toleranceType) {
+        if (inputs.toleranceType) {
           setSelectedToleranceType({
-            label: location.state.preservedInputs.toleranceType,
-            value: location.state.preservedInputs.toleranceType,
+            label: inputs.toleranceType,
+            value: inputs.toleranceType,
           });
         }
-        if (location.state.preservedInputs.warehouse) {
+        if (inputs.warehouse) {
           setSelectedWarehouse({
-            label: location.state.preservedInputs.warehouse,
-            value: location.state.preservedInputs.warehouse,
+            label: inputs.warehouse,
+            value: inputs.warehouse,
           });
         }
-        if (location.state.preservedInputs.status) {
+        if (inputs.status) {
           setSelectedStatus({
-            label: location.state.preservedInputs.status,
-            value: location.state.preservedInputs.status,
+            label: inputs.status,
+            value: inputs.status,
           });
         }
+
+        if (location.state?.refreshGrid) {
+        handleSearch(inputs); 
+      }
       }
     }, [location.state]);
+
+  const clearInputFields = () => {
+    setSiteId("");
+    setSiteName("");
+    setSiteLocation("");
+    setCustomerCode("");
+    setProjectType("");
+    setStartDate("");
+    setEndDate("");
+    setSiteStatus("");
+    setTotalBudget("");
+    setToleranceType("");
+    setToleranceValues("");
+    setWarehouse("");
+    setStatus("");
+    setSelectedStatus("");
+    setSelectedCustomerCode("");
+    setSelectedProjectType("");
+    setSelectedSiteStatus("");
+    setSelectedToleranceType("");
+    setRowData([]);
+  };
+
+    // useEffect(() => {
+    //   if (location.state?.preservedRowData) {
+    //     setRowData(location.state.preservedRowData);
+    //   }
+    
+    //   if (location.state?.preservedInputs) {
+    //     setSiteId(location.state.preservedInputs.siteId || "");
+    //     setSiteName(location.state.preservedInputs.siteName || "");
+    //     setSiteLocation(location.state.preservedInputs.siteLocation || "");
+    //     setCustomerCode(location.state.preservedInputs.customerCode || "");
+    //     setProjectType(location.state.preservedInputs.projectType || "");
+    //     setStartDate(location.state.preservedInputs.startDate || "");
+    //     setEndDate(location.state.preservedInputs.endDate || "");
+    //     setSiteStatus(location.state.preservedInputs.siteStatus || "");
+    //     setTotalBudget(location.state.preservedInputs.totalBudget || "");
+    //     setToleranceType(location.state.preservedInputs.toleranceType || "");
+    //     setToleranceValues(location.state.preservedInputs.toleranceValues || "");
+    //     setWarehouse(location.state.preservedInputs.warehouse || "");
+    //     setStatus(location.state.preservedInputs.status || "");
+    
+    //     if (location.state.preservedInputs.customerCode) {
+    //       setSelectedCustomerCode({
+    //         label: location.state.preservedInputs.customerCode,
+    //         value: location.state.preservedInputs.customerCode,
+    //       });
+    //     }
+    //     if (location.state.preservedInputs.projectType) {
+    //       setSelectedProjectType({
+    //         label: location.state.preservedInputs.projectType,
+    //         value: location.state.preservedInputs.projectType,
+    //       });
+    //     }
+    //     if (location.state.preservedInputs.siteStatus) {
+    //       setSelectedSiteStatus({
+    //         label: location.state.preservedInputs.siteStatus,
+    //         value: location.state.preservedInputs.siteStatus,
+    //       });
+    //     }
+    //     if (location.state.preservedInputs.toleranceType) {
+    //       setSelectedToleranceType({
+    //         label: location.state.preservedInputs.toleranceType,
+    //         value: location.state.preservedInputs.toleranceType,
+    //       });
+    //     }
+    //     if (location.state.preservedInputs.warehouse) {
+    //       setSelectedWarehouse({
+    //         label: location.state.preservedInputs.warehouse,
+    //         value: location.state.preservedInputs.warehouse,
+    //       });
+    //     }
+    //     if (location.state.preservedInputs.status) {
+    //       setSelectedStatus({
+    //         label: location.state.preservedInputs.status,
+    //         value: location.state.preservedInputs.status,
+    //       });
+    //     }
+    //   }
+    // }, [location.state]);
 
     useEffect(() => {
         const company_code = sessionStorage.getItem("selectedCompanyCode");
@@ -518,9 +622,9 @@ const AddSiteMasterScreen = () => {
   navigate("/AddSiteMaster", {
     state: {
       mode: "update",
-      selectedRow,
+        keyfield: selectedRow.keyfield,
 
-      preservedRowData: rowData,
+    //   preservedRowData: rowData,
 
       preservedInputs: {
         siteId,
@@ -541,7 +645,7 @@ const AddSiteMasterScreen = () => {
   });
 };
 
-    const handleSearch = async () => {
+    const handleSearch = async (searchParams = null) => {
         setLoading(true);
 
         try {
@@ -552,19 +656,19 @@ const AddSiteMasterScreen = () => {
                 },
                 body: JSON.stringify({
                     company_code: sessionStorage.getItem('selectedCompanyCode'),
-                    site_id: siteId,
-                    site_name: siteName,
-                    site_location: siteLocation,
-                    client_code: customerCode,
-                    project_type: projectType,
-                    start_date: startDate,
-                    end_date: endDate,
-                    site_status: siteStatus,
-                    total_budget: totalBudget ? totalBudget : 0,
-                    status: status,
-                    Warehouses: warehouse,
-                    Tolerance_Type: toleranceType,
-                    Tolerance_values: toleranceValues ? toleranceValues : 0,
+                    site_id: searchParams?.siteId ?? siteId,
+                    site_name: searchParams?.siteName ?? siteName,
+                    site_location:  searchParams?.siteLocation ?? siteLocation,
+                    client_code:  searchParams?.clientCode ?? customerCode,
+                    project_type:  searchParams?.projectType ?? projectType,
+                    start_date:  searchParams?.startDate ?? startDate,
+                    end_date: searchParams?.endDate ?? endDate,
+                    site_status:  searchParams?.siteStatus ?? siteStatus,
+                    total_budget: Number( searchParams?.totalBudget ?? totalBudget ?? 0) || 0,
+                    status: searchParams?.status ?? status,
+                    Warehouses:  searchParams?.warehouse ?? warehouse,
+                    Tolerance_Type:  searchParams?.toleranceType ?? toleranceType,
+                    Tolerance_values: Number( searchParams?.toleranceValues ?? toleranceValues ?? 0) || 0,
                 }),
             });
 
@@ -1240,7 +1344,7 @@ const AddSiteMasterScreen = () => {
                                         className="popups-btn fs-6 p-3"
                                         required
                                         title="Refresh"
-                                        onClick={reloadGridData}
+                                        onClick={clearInputFields}
                                     >
                                         <FontAwesomeIcon icon="fa-solid fa-arrow-rotate-right" />
                                     </icon>

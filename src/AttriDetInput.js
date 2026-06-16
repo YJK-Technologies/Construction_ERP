@@ -29,10 +29,68 @@ function AttriDetInput({ }) {
   const description = useRef(null);
   const [hasValueChanged, setHasValueChanged] = useState(false);
   const created_by = sessionStorage.getItem('selectedUserCode')
+  const [isSelectCode, setIsSelectCode] = useState(false);
+
   const modified_by = sessionStorage.getItem("selectedUserCode");
+  const [isUpdated, setIsUpdated] = useState(false);
 
   const location = useLocation();
-  const { mode, selectedRow } = location.state || {};
+  const locationState = location.state || {};
+  const mode = locationState.mode || "create"; // ✅ default fallback
+  const selectedRow = locationState.selectedRow || null;
+  const attributeHeaderCode = location.state?.attributeheader_code;
+  const attributeDetailsCode = location.state?.attributedetails_code;
+  const company_code = sessionStorage.getItem('selectedCompanyCode');
+
+  useEffect(() => {
+    if (!location.state) {
+      clearInputFields();
+    }
+  }, []);
+
+  useEffect(() => {
+    if (mode === "update" && attributeHeaderCode && attributeDetailsCode) {
+      fetchAttributeData();
+    }
+  }, [mode, attributeHeaderCode, attributeDetailsCode]);
+
+  const fetchAttributeData = async () => {
+    try {
+      setLoading(true);
+
+      const response = await fetch(`${config.apiBaseUrl}/getAttributeData`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          attributeheader_code: attributeHeaderCode,
+          attributedetails_code: attributeDetailsCode,
+          company_code
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.length > 0) {
+        const attribute = data[0];
+
+        setSelectedHeader({
+          label: attribute.attributeheader_code,
+          value: attribute.attributeheader_code,
+        });
+        setAttributeheader_Code(attribute.attributeheader_code || "");
+        setAttributedetails_code(attribute.attributedetails_code || "");
+        setAttributedetails_name(attribute.attributedetails_name || "");
+        setDescriptions(attribute.descriptions || "");
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to fetch attribute details");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const clearInputFields = () => {
     setSelectedHeader("");
@@ -42,20 +100,20 @@ function AttriDetInput({ }) {
     setDescriptions("");
   };
 
-  useEffect(() => {
-    if (mode === "update" && selectedRow) {
-      setSelectedHeader({
-        label: selectedRow.attributeheader_code,
-        value: selectedRow.attributeheader_code,
-      });
-      setAttributeheader_Code(selectedRow.attributeheader_code || "");
-      setAttributedetails_code(selectedRow.attributedetails_code || "");
-      setAttributedetails_name(selectedRow.attributedetails_name || "");
-      setDescriptions(selectedRow.descriptions || "");
-    } else if (mode === "create") {
-      clearInputFields();
-    }
-  }, [mode, selectedRow]);
+  // useEffect(() => {
+  //   if (mode === "update" && selectedRow) {
+  //     setSelectedHeader({
+  //       label: selectedRow.attributeheader_code,
+  //       value: selectedRow.attributeheader_code,
+  //     });
+  //     setAttributeheader_Code(selectedRow.attributeheader_code || "");
+  //     setAttributedetails_code(selectedRow.attributedetails_code || "");
+  //     setAttributedetails_name(selectedRow.attributedetails_name || "");
+  //     setDescriptions(selectedRow.descriptions || "");
+  //   } else if (mode === "create") {
+  //     clearInputFields();
+  //   }
+  // }, [mode, selectedRow]);
 
   const fetchHdrCode = () => {
     const company_code = sessionStorage.getItem("selectedCompanyCode");
@@ -136,7 +194,8 @@ function AttriDetInput({ }) {
   const handleNavigate = () => {
     navigate("/Attribute", {
     state: {
-      preservedRowData: location.state?.preservedRowData,
+      refreshGrid: true,
+      // preservedRowData: location.state?.preservedRowData,
       preservedInputs: location.state?.preservedInputs
     }
   });
