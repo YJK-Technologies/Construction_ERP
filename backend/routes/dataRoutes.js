@@ -1276,6 +1276,9 @@ router.post("/getWarehouseData",dataController.getWarehouseData)
 router.post("/getCustomerData",dataController.getCustomerData)
 router.post("/getFinancialYearAccessData",dataController.getFinancialYearAccessData)
 router.post("/getItemData",dataController.getItemData)
+router.post("/getSiteData",dataController.getSiteData)
+router.post("/getTaxData",dataController.getTaxData)
+router.post("/getVendorData",dataController.getVendorData)
 
 
 module.exports = router;

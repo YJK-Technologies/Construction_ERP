@@ -622,7 +622,7 @@ const AddSiteMasterScreen = () => {
   navigate("/AddSiteMaster", {
     state: {
       mode: "update",
-      selectedRow,
+        keyfield: selectedRow.keyfield,
 
     //   preservedRowData: rowData,
 
@@ -645,7 +645,7 @@ const AddSiteMasterScreen = () => {
   });
 };
 
-    const handleSearch = async () => {
+    const handleSearch = async (searchParams = null) => {
         setLoading(true);
 
         try {
@@ -656,19 +656,19 @@ const AddSiteMasterScreen = () => {
                 },
                 body: JSON.stringify({
                     company_code: sessionStorage.getItem('selectedCompanyCode'),
-                    site_id: siteId,
-                    site_name: siteName,
-                    site_location: siteLocation,
-                    client_code: customerCode,
-                    project_type: projectType,
-                    start_date: startDate,
-                    end_date: endDate,
-                    site_status: siteStatus,
-                    total_budget: totalBudget ? totalBudget : 0,
-                    status: status,
-                    Warehouses: warehouse,
-                    Tolerance_Type: toleranceType,
-                    Tolerance_values: toleranceValues ? toleranceValues : 0,
+                    site_id: searchParams?.siteId ?? siteId,
+                    site_name: searchParams?.siteName ?? siteName,
+                    site_location:  searchParams?.siteLocation ?? siteLocation,
+                    client_code:  searchParams?.clientCode ?? customerCode,
+                    project_type:  searchParams?.projectType ?? projectType,
+                    start_date:  searchParams?.startDate ?? startDate,
+                    end_date: searchParams?.endDate ?? endDate,
+                    site_status:  searchParams?.siteStatus ?? siteStatus,
+                    total_budget: Number( searchParams?.totalBudget ?? totalBudget ?? 0) || 0,
+                    status: searchParams?.status ?? status,
+                    Warehouses:  searchParams?.warehouse ?? warehouse,
+                    Tolerance_Type:  searchParams?.toleranceType ?? toleranceType,
+                    Tolerance_values: Number( searchParams?.toleranceValues ?? toleranceValues ?? 0) || 0,
                 }),
             });
 
@@ -1344,7 +1344,7 @@ const AddSiteMasterScreen = () => {
                                         className="popups-btn fs-6 p-3"
                                         required
                                         title="Refresh"
-                                        onClick={reloadGridData}
+                                        onClick={clearInputFields}
                                     >
                                         <FontAwesomeIcon icon="fa-solid fa-arrow-rotate-right" />
                                     </icon>

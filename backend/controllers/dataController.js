@@ -37899,6 +37899,77 @@ const getItemData = async (req, res) => {
     res.status(500).json({ message: err.message || "Internal Server Error" });
   }
 };
+const getSiteData = async (req, res) => {
+  const { company_code, keyfield } = req.body;
+
+  try {
+    const pool = await connection.connectToDatabase();
+    const result = await pool
+      .request()
+      .input("mode", sql.NVarChar, "GSM")
+      .input("company_code", sql.NVarChar, company_code)
+      .input("keyfield", sql.NVarChar, keyfield)
+      .query(`EXEC sp_SiteMaster @mode, '', '', '', '', '', '', '', '', 0, '', @keyfield, '', '', 0, '', @company_code, '', ''`);
+
+    if (result.recordset.length > 0) {
+      res.status(200).json(result.recordset); 
+    } else {
+      res.status(404).json("Data not found");
+    }
+  } catch (err) {
+    console.error("Error", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+};
+const getTaxData = async (req, res) => {
+  const { company_code, tax_accountcode, tax_name_details, tax_type_header } = req.body;
+
+  try {
+    const pool = await connection.connectToDatabase();
+    const result = await pool
+      .request()
+      .input("mode", sql.NVarChar, "GTD")
+      .input("company_code", sql.NVarChar, company_code)
+      .input("tax_type_header", sql.NVarChar, tax_type_header)
+      .input("tax_name_details", sql.NVarChar, tax_name_details)
+      .input("tax_accountcode", sql.NVarChar, tax_accountcode)
+      .query(`sp_tax_name_details @mode,@company_code,@tax_type_header, @tax_name_details, 0, '', @tax_accountcode,
+               '', '','','', '', '', '', '', '', '','', ''`);
+
+    if (result.recordset.length > 0) {
+      res.status(200).json(result.recordset); 
+    } else {
+      res.status(404).json("Data not found");
+    }
+  } catch (err) {
+    console.error("Error", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+};
+
+const getVendorData = async (req, res) => {
+  const { company_code, keyfield } = req.body;
+
+  try {
+    const pool = await connection.connectToDatabase();
+    const result = await pool
+      .request()
+      .input("mode", sql.NVarChar, "GVIH")
+      .input("company_code", sql.NVarChar, company_code)
+      .input("keyfield", sql.NVarChar, keyfield)
+      .query(`EXEC sp_vendor_details_info_hdr @mode,'',@company_code,'','','','','','','','','','' ,'','','','','','','',0,
+      '','','','','','',@keyfield,'','',NULL,NULL,NULL,null,null,null,null,null`);
+
+    if (result.recordset.length > 0) {
+      res.status(200).json(result.recordset); 
+    } else {
+      res.status(404).json("Data not found");
+    }
+  } catch (err) {
+    console.error("Error", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+};
 
 const getFinancialYearAccessData = async (req, res) => {
   const { keyfield, company_code } = req.body;
@@ -39167,6 +39238,9 @@ module.exports = {
   getWarehouseData,
   getCustomerData,
   getItemData,
+  getSiteData,
+  getTaxData,
+  getVendorData,
   getFinancialYearAccessData
 
 

@@ -68,46 +68,131 @@ function VenDetGrid() {
     .filter((permission) => permission.screen_type === "Vendor")
     .map((permission) => permission.permission_type.toLowerCase());
 
-    useEffect(() => {
-      if (location.state?.preservedRowData) {
-        setRowData(location.state.preservedRowData);
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      const isReloadShortcut =
+        (event.ctrlKey && event.key.toLowerCase() === "r") ||
+        (event.altKey && event.key.toLowerCase() === "r") ||
+        event.key === "F5";
+
+      if (isReloadShortcut) {
+        event.preventDefault();
+        clearInputFields();
       }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []); 
+
+    useEffect(() => {
+      // if (location.state?.preservedRowData) {
+      //   setRowData(location.state.preservedRowData);
+      // }
     
       if (location.state?.preservedInputs) {
-        setvendor_code(location.state.preservedInputs.vendor_code || "");
-        setvendor_name(location.state.preservedInputs.vendor_name || "");
-        setpanno(location.state.preservedInputs.panno || "");
-        setvendor_gst_no(location.state.preservedInputs.vendor_gst_no || "");
-        setvendor_addr_1(location.state.preservedInputs.vendor_addr_1 || "");
-        setvendor_area_code(location.state.preservedInputs.vendor_area_code || "");
-        setvendor_state_code(location.state.preservedInputs.vendor_state_code || "");
-        setvendor_country_code(location.state.preservedInputs.vendor_country_code || "");
-        setvendor_mobile_no(location.state.preservedInputs.vendor_mobile_no || "");
-        setopening_balanceSC(location.state.preservedInputs.opening_balanceSC || "");
-        setbalance_type(location.state.preservedInputs.balance_type || "");
-        setstatus(location.state.preservedInputs.status || "");
-        setVendorType(location.state.preservedInputs.vendorType || "");
+        const inputs = location.state.preservedInputs;
+
+        setvendor_code(inputs.vendor_code || "");
+        setvendor_name(inputs.vendor_name || "");
+        setpanno(inputs.panno || "");
+        setvendor_gst_no(inputs.vendor_gst_no || "");
+        setvendor_addr_1(inputs.vendor_addr_1 || "");
+        setvendor_area_code(inputs.vendor_area_code || "");
+        setvendor_state_code(inputs.vendor_state_code || "");
+        setvendor_country_code(inputs.vendor_country_code || "");
+        setvendor_mobile_no(inputs.vendor_mobile_no || "");
+        setopening_balanceSC(inputs.opening_balanceSC || "");
+        setbalance_type(inputs.balance_type || "");
+        setstatus(inputs.status || "");
+        setVendorType(inputs.vendorType || "");
     
-        if (location.state.preservedInputs.balance_type) {
+        if (inputs.balance_type) {
           setSelectedBT({
-            label: location.state.preservedInputs.balance_type,
-            value: location.state.preservedInputs.balance_type,
+            label: inputs.balance_type,
+            value: inputs.balance_type,
           });
         }
-        if (location.state.preservedInputs.status) {
+        if (inputs.status) {
           setSelectedStatus({
-            label: location.state.preservedInputs.status,
-            value: location.state.preservedInputs.status,
+            label: inputs.status,
+            value: inputs.status,
           });
         }
-        if (location.state.preservedInputs.vendorType) {
+        if (inputs.vendorType) {
           setselectedVendorType({
-            label: location.state.preservedInputs.vendorType,
-            value: location.state.preservedInputs.vendorType,
+            label: inputs.vendorType,
+            value: inputs.vendorType,
           });
         }
+
+        if (location.state?.refreshGrid) {
+        handleSearch(inputs); 
+      }
       }
     }, [location.state]);
+
+  const clearInputFields = () => {
+    setvendor_code("");
+    setvendor_name("");
+    setpanno("");
+    setvendor_gst_no("");
+    setvendor_addr_1("");
+    setvendor_area_code("");
+    setvendor_state_code("");
+    setvendor_country_code("");
+    setvendor_mobile_no("");
+    setopening_balanceSC("");
+    setbalance_type("");
+    setstatus("");
+    setSelectedBT("");
+    setSelectedStatus("");
+    setselectedVendorType("");
+
+    setRowData([]);
+  };
+
+    // useEffect(() => {
+    //   if (location.state?.preservedRowData) {
+    //     setRowData(location.state.preservedRowData);
+    //   }
+    
+    //   if (location.state?.preservedInputs) {
+    //     setvendor_code(location.state.preservedInputs.vendor_code || "");
+    //     setvendor_name(location.state.preservedInputs.vendor_name || "");
+    //     setpanno(location.state.preservedInputs.panno || "");
+    //     setvendor_gst_no(location.state.preservedInputs.vendor_gst_no || "");
+    //     setvendor_addr_1(location.state.preservedInputs.vendor_addr_1 || "");
+    //     setvendor_area_code(location.state.preservedInputs.vendor_area_code || "");
+    //     setvendor_state_code(location.state.preservedInputs.vendor_state_code || "");
+    //     setvendor_country_code(location.state.preservedInputs.vendor_country_code || "");
+    //     setvendor_mobile_no(location.state.preservedInputs.vendor_mobile_no || "");
+    //     setopening_balanceSC(location.state.preservedInputs.opening_balanceSC || "");
+    //     setbalance_type(location.state.preservedInputs.balance_type || "");
+    //     setstatus(location.state.preservedInputs.status || "");
+    //     setVendorType(location.state.preservedInputs.vendorType || "");
+    
+    //     if (location.state.preservedInputs.balance_type) {
+    //       setSelectedBT({
+    //         label: location.state.preservedInputs.balance_type,
+    //         value: location.state.preservedInputs.balance_type,
+    //       });
+    //     }
+    //     if (location.state.preservedInputs.status) {
+    //       setSelectedStatus({
+    //         label: location.state.preservedInputs.status,
+    //         value: location.state.preservedInputs.status,
+    //       });
+    //     }
+    //     if (location.state.preservedInputs.vendorType) {
+    //       setselectedVendorType({
+    //         label: location.state.preservedInputs.vendorType,
+    //         value: location.state.preservedInputs.vendorType,
+    //       });
+    //     }
+    //   }
+    // }, [location.state]);
 
   useEffect(() => {
     const company_code = sessionStorage.getItem("selectedCompanyCode");
@@ -361,7 +446,7 @@ function VenDetGrid() {
     }
   };
 
-  const handleSearch = async () => {
+  const handleSearch = async (searchParams = null) => {
     setLoading(true);
     try {
       const response = await fetch(`${config.apiBaseUrl}/vendorsearchdata`, {
@@ -371,21 +456,19 @@ function VenDetGrid() {
         },
         body: JSON.stringify({
           company_code: sessionStorage.getItem("selectedCompanyCode"),
-          vendor_code,
-          vendor_name,
-          panno,
-          vendor_gst_no,
-          vendor_addr_1,
-          vendor_area_code,
-          vendor_state_code,
-          vendor_country_code,
-          vendor_mobile_no,
-          opening_balance: opening_balanceSC
-            ? parseFloat(opening_balanceSC)
-            : 0,
-          balance_type,
-          status,
-          vendor_type: vendorType
+          vendor_code : searchParams?.vendor_code ?? vendor_code,
+          vendor_name: searchParams?.vendor_name ?? vendor_name,
+          panno: searchParams?.panno ?? panno,
+          vendor_gst_no: searchParams?.vendor_gst_no ?? vendor_gst_no,
+          vendor_addr_1: searchParams?.vendor_addr_1 ?? vendor_addr_1,
+          vendor_area_code: searchParams?.vendor_area_code ?? vendor_area_code,
+          vendor_state_code: searchParams?.vendor_state_code ?? vendor_state_code,
+          vendor_country_code: searchParams?.vendor_country_code ?? vendor_country_code,
+          vendor_mobile_no: searchParams?.vendor_mobile_no ?? vendor_mobile_no,
+          opening_balance: Number( searchParams?.opening_balanceSC ?? opening_balanceSC ?? 0) || 0,
+          balance_type: searchParams?.balance_type ?? balance_type,
+          status: searchParams?.status ?? status,
+          vendor_type: searchParams?.vendorType ?? vendorType,
         }),
       });
       if (response.ok) {
@@ -896,9 +979,9 @@ function VenDetGrid() {
   navigate("/AddVendorDetails", {
     state: {
       mode: "update",
-      selectedRow,
+        keyfield: selectedRow.keyfield,
 
-      preservedRowData: rowData,
+      // preservedRowData: rowData,
 
       preservedInputs: {
         vendor_code,
@@ -1505,7 +1588,7 @@ function VenDetGrid() {
                   <div>
                     <icon
                       className="popups-btn fs-6 p-3"
-                      onClick={reloadGridData}
+                      onClick={clearInputFields}
                       required
                       title="Refresh"
                     >

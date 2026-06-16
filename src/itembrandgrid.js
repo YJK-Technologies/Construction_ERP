@@ -461,8 +461,8 @@ function ItemBrandGrid() {
           Item_short_name: searchParams?.Item_short_name ?? Item_short_name,
           Item_Our_Brand: searchParams?.Item_Our_Brand ?? Item_Our_Brand,
           status: searchParams?.status ?? status,
-          standard_cost: standardCost ? standardCost : 0,
-          costing_methods: costingMethod
+          standard_cost: searchParams?.standardCost ?? standardCost ? standardCost : 0,
+          costing_methods: searchParams?.costingMethod ?? costingMethod
         })
       });
       if (response.ok) {
