@@ -36259,7 +36259,7 @@ const Expenses_HdrInsert = async (req, res) => {
     } else {
       res.status(404).json(err.message);
     }
-    return res.status(200).json(result.recordset);
+    
   } catch (err) {
     console.error("Error", err);
     res.status(500).json({ message: err.message || 'Internal Server Error' });
@@ -36421,7 +36421,7 @@ const Expenses_HdrLoopDelete = async (req, res) => {
 
 // Code added by Dinesh Gokul 25-05-2026
 const getCustomerCodeExpenses = async (req, res) => {
-  const { company_code, customer_code } = req.body;
+  const { company_code, Location_Code, customer_code } = req.body;
 
   try {
     // Connect to the database
@@ -36432,8 +36432,9 @@ const getCustomerCodeExpenses = async (req, res) => {
       .request()
       .input("mode", sql.NVarChar, "CCE")
       .input("company_code", sql.NVarChar, company_code)
+      .input("Location_Code", sql.NVarChar, Location_Code)
       .input("customer_code", sql.NVarChar, customer_code)
-      .query(`EXEC sp_customer_details_info @mode,@customer_code,@company_code,'','','','','','','','','','','','','','','','','',0,0,'',
+      .query(`EXEC sp_customer_details_info @mode,@customer_code,@company_code,@Location_Code,'','','','','','','','','','','','','','','','','',0,0,'',
           '','','','','','','','','','',NULL,NULL,NULL,null,null,null,null,null`);
 
     // Send response
