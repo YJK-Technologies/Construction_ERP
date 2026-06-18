@@ -831,7 +831,7 @@ const UnplannedReturn = () => {
           const detailResult = await InventoryDetailDelete();
           const headerResult = await InventoryHeaderDelete();
 
-          if (headerResult = true && detailResult === true) {
+          if (headerResult === true && detailResult === true) {
             console.log("All API calls completed successfully");
             toast.success("Successfully Deleted", {
               autoClose: true,
@@ -965,7 +965,7 @@ const UnplannedReturn = () => {
               approvalStatus: item.ApprovalStatus,
               actionTaken: item.ActionTaken,
               notes: item.Notes,
-              SerialNo: item.Serial_No
+              Serial_no: item.Serial_No
             };
           });
 
@@ -1141,7 +1141,7 @@ const UnplannedReturn = () => {
             approvalStatus: ApprovalStatus,
             actionTaken: ActionTaken,
             notes: Notes,
-            SerialNo: Serial_no
+            Serial_no: Serial_no
 
           });
         });
