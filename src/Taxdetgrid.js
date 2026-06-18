@@ -939,7 +939,7 @@ function TaxDetGrid() {
                   <div>
                     <icon
                       className="popups-btn fs-6 p-3"
-                      onClick={reloadGridData}
+                      onClick={clearInputFields}
                       required
                       title="Refresh"
                     >
