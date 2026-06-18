@@ -965,7 +965,7 @@ const UnplannedReturn = () => {
               approvalStatus: item.ApprovalStatus,
               actionTaken: item.ActionTaken,
               notes: item.Notes,
-              SerialNo: item.Serial_No
+              Serial_no: item.Serial_No
             };
           });
 
@@ -1141,7 +1141,7 @@ const UnplannedReturn = () => {
             approvalStatus: ApprovalStatus,
             actionTaken: ActionTaken,
             notes: Notes,
-            SerialNo: Serial_no
+            Serial_no: Serial_no
 
           });
         });
