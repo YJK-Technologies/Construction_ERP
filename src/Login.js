@@ -160,37 +160,66 @@ const Login = () => {
     }
   };
 
-  const fetchUserData = async () => {
-    try {
-      const response = await fetch(`${config.apiBaseUrl}/getusercompany`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ user_code })
-      });
+  // const fetchUserData = async () => {
+  //   try {
+  //     const response = await fetch(`${config.apiBaseUrl}/getusercompany`, {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json"
+  //       },
+  //       body: JSON.stringify({ user_code })
+  //     });
 
-      if (response.ok) {
-        const searchData = await response.json();
-        if (searchData.length > 0) {
-          const { user_code, user_name ,company_no,company_name,location_name,location_no} = searchData[0];
-          handleSave(searchData[0]);
+  //     if (response.ok) {
+  //       const searchData = await response.json();
+  //       if (searchData.length > 0) {
+  //         const { user_code, user_name ,company_no,company_name,location_name,location_no} = searchData[0];
+  //         handleSave(searchData[0]);
 
-        navigate('/AccountInformation');
+  //       navigate('/AccountInformation');
         
-        // window.location.reload();
+  //       // window.location.reload();
 
-        } else {
-          console.log("Data not found");
-        }
-      } else {
-        console.log("Bad request");
-      }
-    } catch (error) {
-      console.error("Error fetching search data:", error);
-    }
-  };
+  //       } else {
+  //         console.log("Data not found");
+  //       }
+  //     } else {
+  //       console.log("Bad request");
+  //     }
+  //   } catch (error) {
+  //     console.error("Error fetching search data:", error);
+  //   }
+  // };
   
+const fetchUserData = async (userCode) => {
+  try {
+    const res = await fetch(`${config.apiBaseUrl}/getDefaultUserCompany`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ user_code: userCode }),
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+
+      if (data.length > 0) {
+       handleSave(data[0]);
+
+        const defaultScreen = data[0].DefaultScreenId?.trim();
+              
+        if (defaultScreen) {
+          navigate(`/${defaultScreen}`);
+        } else {
+          navigate("/AccountInformation");
+        }
+      }
+    } else {
+      console.error("No company mapping found.");
+    }
+  } catch (err) {
+    console.error("Error fetching default user company:", err);
+  }
+};  
 
   const handleSave = (data) => {
     if (data) {
@@ -201,6 +230,7 @@ const Login = () => {
         sessionStorage.setItem('selectedShortName', data.short_name);
         sessionStorage.setItem('selectedUserName', data.user_name);
         sessionStorage.setItem('selectedUserCode', data.user_code);
+        sessionStorage.setItem( "DefaultScreenId", data.DefaultScreenId || "" );
     }
     console.log(data);
 };
