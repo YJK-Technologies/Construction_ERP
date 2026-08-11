@@ -1279,6 +1279,10 @@ router.post("/getItemData",dataController.getItemData)
 router.post("/getSiteData",dataController.getSiteData)
 router.post("/getTaxData",dataController.getTaxData)
 router.post("/getVendorData",dataController.getVendorData)
+router.post("/userSettingsInsert",dataController.userSettingsInsert)
+router.post("/getUserSettings",dataController.getUserSettings)
+router.post("/getDefaultUserCompany",dataController.getDefaultUserCompany)
+router.post("/getDefaultScreens",dataController.getDefaultScreens)
 
 
 module.exports = router;
