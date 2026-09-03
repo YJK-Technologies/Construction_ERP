@@ -517,7 +517,7 @@ const AddAddSiteMasterScreen = () => {
                 }),
             });
             if (response.ok) {
-                toast.success("Data inserted Successfully", {
+                toast.success("Data Updated Successfully", {
                     // onClose: () => clearInputFields()
                 });
             } else {
@@ -526,8 +526,8 @@ const AddAddSiteMasterScreen = () => {
                 toast.warning(errorResponse.message);
             }
         } catch (error) {
-            console.error("Error inserting data:", error);
-            toast.error('Error inserting data: ' + error.message);
+            console.error("Error updating data:", error);
+            toast.error('Error updating data: ' + error.message);
         }
         finally {
             setLoading(false);

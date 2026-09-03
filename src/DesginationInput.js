@@ -381,7 +381,7 @@ function DesginationInput({ }) {
 
                 <div className="col-md-3 form-group">
                   <div class="exp-form-floating">
-                    <label for="rid" className={`exp-form-labels ${error && !status ? 'text-danger' : ''}`}>
+                    <label for="rid" className={`exp-form-labels ${error && !selectedStatus ? 'text-danger' : ''}`}>
                       Status<span className="text-danger">*</span>
                     </label>
                     <div title="Select the Status">

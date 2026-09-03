@@ -208,7 +208,7 @@ function OpeningbalanceGrid() {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ company_code }),
+      body: JSON.stringify({ company_code, Location_Code: sessionStorage.getItem("selectedLocationCode") }),
     })
       .then((response) => response.json())
       .then((data) => {

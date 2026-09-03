@@ -13302,7 +13302,7 @@ const inventoryReceiptsAll = async (req, res) => {
 };
 
 const addInventoryReturnheader = async (req, res) => {
-  const { company_code, ReturnID, DateReturned, Return_Type, created_by, modified_by,
+  const { company_code, Location_Code, ReturnID, DateReturned, Return_Type, created_by, modified_by,
     tempstr1, tempstr2, tempstr3, tempstr4, datetime1, datetime2, datetime3, datetime4,
 
   } = req.body;
@@ -13313,6 +13313,7 @@ const addInventoryReturnheader = async (req, res) => {
       .request()
       .input("mode", sql.NVarChar, "I") // Insert mode
       .input("company_code", sql.NVarChar, company_code)
+      .input("Location_Code", sql.NVarChar, Location_Code)
       .input("ReturnID", sql.NVarChar, ReturnID)
       .input("DateReturned", sql.NVarChar, DateReturned)
       .input("Return_Type", sql.NVarChar, Return_Type)
@@ -13326,7 +13327,7 @@ const addInventoryReturnheader = async (req, res) => {
       .input("datetime2", sql.NVarChar, datetime2)
       .input("datetime3", sql.NVarChar, datetime3)
       .input("datetime4", sql.NVarChar, datetime4)
-      .query(`EXEC sp_InventoryReturns_hdr_Ramya @mode,@company_code,@Location_Code,@ReturnID,@DateReturned,@Return_Type,
+      .query(`EXEC sp_InventoryReturns_hdr @mode,@company_code,@Location_Code,@ReturnID,@DateReturned,@Return_Type,
               @created_by, @modified_by, NULL, NULL, NULL, NULL, NULL, NULL,NULL,NULL`);
     if (result.recordset.length > 0) {
       res.status(200).json(result.recordset);
@@ -13348,7 +13349,7 @@ const inventoryReturnHeaderDelete = async (req, res) => {
       .input("company_code", sql.NVarChar, company_code)
       .input("Location_Code", sql.NVarChar, Location_Code)
       .input("ReturnID", sql.NVarChar, ReturnID)
-      .query(`EXEC sp_InventoryReturns_hdr_Ramya 'D',@company_code,@Location_Code,@ReturnID,'','','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`)
+      .query(`EXEC sp_InventoryReturns_hdr 'D',@company_code,@Location_Code,@ReturnID,'','','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`)
     res.status(200).json("InventoryReturn deleted successfully");
   } catch (err) {
     console.error("Error", err);
@@ -13368,7 +13369,7 @@ const inventoryReturnHeaderAll = async (req, res) => {
       .input("company_code", sql.NVarChar, company_code)
       .input("Location_Code", sql.NVarChar, Location_Code)
 
-      .query(`EXEC sp_InventoryReturns_hdr_Ramya  @mode,@company_code,@Location_Code, '', '', '', '','', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL`);
+      .query(`EXEC sp_InventoryReturns_hdr  @mode,@company_code,@Location_Code, '', '', '', '','', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL`);
 
     res.json(result.recordset);
   } catch (err) {
@@ -13419,7 +13420,7 @@ const addInventoryReturndetails = async (req, res) => {
       .input("datetime3", sql.NVarChar, datetime3)
       .input("datetime4", sql.NVarChar, datetime4)
       .query(
-        `EXEC sp_InventoryReturns_details_Ramya @mode,@company_code,@Location_Code,@ReturnID,@DateReturned,@Warehouse,@Supplier,@ItemSNo,@ItemCode,@ItemName,@Serial_no,@QuantityReturned,@ReasonForReturn,
+        `EXEC sp_InventoryReturns_details @mode,@company_code,@Location_Code,@ReturnID,@DateReturned,@Warehouse,@Supplier,@ItemSNo,@ItemCode,@ItemName,@Serial_no,@QuantityReturned,@ReasonForReturn,
           @Condition,@ProcessedBy,@ApprovalStatus,@ActionTaken,@Notes,@created_by,@modified_by,
           @tempstr1,@tempstr2,@tempstr3,@tempstr4,@datetime1,@datetime2,@datetime3,@datetime4`);
     res.json({ success: true, message: "Data inserted successfully" });
@@ -13440,7 +13441,7 @@ const InventoryReturnDeleteDetailData = async (req, res) => {
       .input("company_code", sql.NVarChar, company_code)
       .input("Location_Code", sql.NVarChar, Location_Code)
       .input("ReturnID", sql.NVarChar, ReturnID)
-      .query(`EXEC sp_InventoryReturns_details_Ramya 'D',@company_code,@Location_Code,@ReturnID,'','','',0,'','','',0,'',
+      .query(`EXEC sp_InventoryReturns_details 'D',@company_code,@Location_Code,@ReturnID,'','','',0,'','','',0,'',
           '','','','','','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
     res.status(200).json(" InventoryReturn deleted successfully");
   } catch (err) {
@@ -13450,7 +13451,7 @@ const InventoryReturnDeleteDetailData = async (req, res) => {
 };
 
 const getAllInventoryReturndetailData = async (req, res) => {
-  const { company_code } = req.body;
+  const { company_code, Location_Code} = req.body;
   let pool;
   try {
     pool = await sql.connect(dbConfig);
@@ -13458,7 +13459,8 @@ const getAllInventoryReturndetailData = async (req, res) => {
       .request()
       .input("mode", sql.NVarChar, "A") // Insert mode
       .input("company_code", sql.NVarChar, company_code)
-      .query(`EXEC sp_InventoryReturns_details_Ramya @mode,@company_code,@Location_Code,'','','','',0,'','','',0,'',
+      .input("Location_Code", sql.NVarChar, Location_Code)
+      .query(`EXEC sp_InventoryReturns_details @mode,@company_code,@Location_Code,'','','','',0,'','','',0,'',
           '','','','','','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
 
     res.json(result.recordset);
@@ -14360,7 +14362,7 @@ const InventoryReturnSearchData = async (req, res) => {
       .input("ReturnID", sql.NVarChar, ReturnID)
       .input("DateReturned", sql.NVarChar, DateReturned)
       .input("Return_Type", sql.NVarChar, Return_Type)
-      .query(`EXEC sp_InventoryReturns_hdr_Ramya @mode,@company_code,@Location_Code,@ReturnID,@DateReturned,@Return_Type,'','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
+      .query(`EXEC sp_InventoryReturns_hdr @mode,@company_code,@Location_Code,@ReturnID,@DateReturned,@Return_Type,'','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
     if (result.recordset.length > 0) {
       res.status(200).json(result.recordset);
     } else {
@@ -14373,17 +14375,19 @@ const InventoryReturnSearchData = async (req, res) => {
 };
 
 const InventoryReceiptSearchData = async (req, res) => {
-  const { ReceiptID, DateReceived, Receipt_Type } = req.body;
+  const { company_code, Location_Code, ReceiptID, DateReceived, Receipt_Type } = req.body;
 
   try {
     const pool = await connection.connectToDatabase();
     const result = await pool
       .request()
       .input("mode", sql.NVarChar, "SC")
+      .input("company_code", sql.NVarChar, company_code)
+      .input("Location_Code", sql.NVarChar, Location_Code)
       .input("ReceiptID", sql.NVarChar, ReceiptID)
       .input("DateReceived", sql.NVarChar, DateReceived)
       .input("Receipt_Type", sql.NVarChar, Receipt_Type)
-      .query(`EXEC sp_InventoryReceipts_hdr @mode,'','',@ReceiptID,@DateReceived,@Receipt_Type,'','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
+      .query(`EXEC sp_InventoryReceipts_hdr @mode,@company_code,@Location_Code,@ReceiptID,@DateReceived,@Receipt_Type,'','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
     if (result.recordset.length > 0) {
       res.status(200).json(result.recordset);
     } else {
@@ -36255,7 +36259,7 @@ const Expenses_HdrInsert = async (req, res) => {
     } else {
       res.status(404).json(err.message);
     }
-    return res.status(200).json(result.recordset);
+    
   } catch (err) {
     console.error("Error", err);
     res.status(500).json({ message: err.message || 'Internal Server Error' });
@@ -36417,7 +36421,7 @@ const Expenses_HdrLoopDelete = async (req, res) => {
 
 // Code added by Dinesh Gokul 25-05-2026
 const getCustomerCodeExpenses = async (req, res) => {
-  const { company_code, customer_code } = req.body;
+  const { company_code, Location_Code, customer_code } = req.body;
 
   try {
     // Connect to the database
@@ -36428,8 +36432,9 @@ const getCustomerCodeExpenses = async (req, res) => {
       .request()
       .input("mode", sql.NVarChar, "CCE")
       .input("company_code", sql.NVarChar, company_code)
+      .input("Location_Code", sql.NVarChar, Location_Code)
       .input("customer_code", sql.NVarChar, customer_code)
-      .query(`EXEC sp_customer_details_info @mode,@customer_code,@company_code,'','','','','','','','','','','','','','','','','',0,0,'',
+      .query(`EXEC sp_customer_details_info @mode,@customer_code,@company_code,@Location_Code,'','','','','','','','','','','','','','','','','',0,0,'',
           '','','','','','','','','','',NULL,NULL,NULL,null,null,null,null,null`);
 
     // Send response
@@ -37991,7 +37996,117 @@ const getFinancialYearAccessData = async (req, res) => {
     res.status(500).json({ message: err.message || "Internal Server Error" });
   }
 };
+
+const userSettingsInsert = async (req, res) => {
+  const { User_Code, Status, company_code, Location_Code, DefaultCompanyId, DefaultScreenId, role_id, created_by, } = req.body;
+
+  try {
+    const pool = await sql.connect(dbConfig);
+
+    await pool
+      .request()
+      .input("mode", sql.NVarChar, "I")
+      .input("User_Code", sql.NVarChar, User_Code)
+      .input("Status", sql.NVarChar, Status)
+      .input("company_code", sql.NVarChar, company_code)
+      .input("Location_Code", sql.NVarChar, Location_Code)
+      .input("keyfield", sql.NVarChar, company_code)
+      .input("DefaultCompanyId", sql.NVarChar, DefaultCompanyId)
+      .input("DefaultScreenId", sql.NVarChar, DefaultScreenId)
+      .input("role_id", sql.NVarChar, role_id)
+      .input("created_by", sql.NVarChar, created_by)
+      .query(` EXEC sp_UserSettings @mode, @User_Code, @Status, @company_code, @Location_Code, @keyfield, 
+        @DefaultCompanyId, @DefaultScreenId, @role_id, @created_by, '', '', '' `);
+
+    res.status(200).json({
+      success: true,
+      message: "User Settings saved successfully",
+    });
+  } catch (err) {
+    console.error("Error during User Settings insert:", err);
+    res.status(500).json({
+      success: false,
+      message: err.message || "Internal Server Error",
+    });
+  }
+};
+
+const getUserSettings = async (req, res) => {
+  const { User_Code, company_code } = req.body;
+
+  try {
+    const pool = await sql.connect(dbConfig);
+
+    const result = await pool
+      .request()
+      .input("mode", sql.NVarChar, "S")
+      .input("company_code", sql.NVarChar, company_code)
+      .input("User_Code", sql.NVarChar, User_Code)
+      .query(` EXEC sp_UserSettings @mode, @User_Code, '', @company_code, '', '', '', '', '', '', '', '', '' `);
+
+    if (result.recordset.length > 0) {
+      res.status(200).json(result.recordset);
+    } else {
+      res.status(404).json({
+        success: false,
+        message: "Data not found",
+      });
+    }
+  } catch (err) {
+    console.error("Error getting User Settings:", err);
+    res.status(500).json({
+      success: false,
+      message: err.message || "Internal Server Error",
+    });
+  }
+};
 //Code ended by sakthi on 16-06-2026
+
+const getDefaultScreens = async (req, res) => {
+  const { role_id, company_code, Location_Code } = req.body;
+
+  try {
+    const pool = await connection.connectToDatabase();
+
+    const result = await pool.request()
+      .input("mode", sql.VarChar, "GDS")
+      .input("role_id", sql.VarChar, role_id)
+      .input("company_code", sql.VarChar, company_code)
+      .input("Location_Code", sql.VarChar, Location_Code)
+      .query(`EXEC sp_UserSettings @mode, '', '', @company_code, @Location_Code, '', '', '', @role_id, '', '', '', '' `);
+
+    res.status(200).json(result.recordset);
+  } catch (error) {
+    console.error("Error fetching default screens:", error);
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+const getDefaultUserCompany = async (req, res) => {
+  const { user_code } = req.body;
+
+  try {
+    const pool = await connection.connectToDatabase();
+
+    const result = await pool
+      .request()
+      .input("mode", sql.NVarChar, "UCLD")
+      .input("user_code", sql.NVarChar, user_code)
+      .query(` EXEC sp_user_company_mapping @mode, '', @user_code, '', '', '', 0, '', '', '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL `);
+
+    if (result.recordset.length > 0) {
+      res.status(200).json(result.recordset);
+    } else {
+      res.status(404).json({ message: "Default company not found" });
+    }
+  } catch (err) {
+    console.error("Error:", err);
+    res.status(500).json({ message: err.message || "Internal Server Error" });
+  }
+};
+
 
 
 module.exports = {
@@ -39241,7 +39356,11 @@ module.exports = {
   getSiteData,
   getTaxData,
   getVendorData,
-  getFinancialYearAccessData
+  getFinancialYearAccessData,
+  userSettingsInsert,
+  getUserSettings,
+  getDefaultScreens,
+  getDefaultUserCompany
 
 
 };
