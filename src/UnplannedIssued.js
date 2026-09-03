@@ -1482,6 +1482,7 @@ const UnplannedIssued = () => {
                     onChange={handleChangeIssued}
                     options={filteredOptionIssued}
                     data-tip="Please select a transaction type"
+                    styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                   />
                 </div>
               </div>
@@ -1503,6 +1504,7 @@ const UnplannedIssued = () => {
                       className=" exp-input-field position-relative "
                       data-tip="Please select a department ID"
                       placeholder=""
+                      styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                     />
                   </div>
                 </div>
@@ -1522,6 +1524,7 @@ const UnplannedIssued = () => {
                     onChange={handleChangeWarehouse}
                     options={filteredOptionWarehouse}
                     data-tip="Please select a default warehouse"
+                    styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                   />
                 </div>
               </div>

@@ -4101,6 +4101,7 @@ function PurchaseOrder() {
                       onChange={handleChangeScreens}
                       options={filteredOptionScreens}
                       data-tip="Please select a default warehouse"
+                      styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                     />
                   </div>
                   {buttonsVisible &&
@@ -4307,6 +4308,7 @@ function PurchaseOrder() {
                           options={filteredOptionParty}
                           className="exp-input-field"
                           placeholder=""
+                          styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                         />
                       </div>
                     </div>
@@ -4598,6 +4600,7 @@ function PurchaseOrder() {
                       onChange={handleChangeScreens}
                       options={filteredOptionScreens}
                       data-tip="Please select a default warehouse"
+                      styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                     />
                   </div>
                 </div>

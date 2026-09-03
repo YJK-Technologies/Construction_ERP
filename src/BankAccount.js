@@ -775,6 +775,7 @@ function BankAccInput({ }) {
                         placeholder=""
                         ref={User}
                         onKeyDown={(e) => handleKeyDown(e, Bank, User)}
+                        styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                       />
                     </div>
                   </div>
@@ -872,6 +873,7 @@ function BankAccInput({ }) {
                         ref={Account}
                         onKeyDown={(e) => handleKeyDown(e, Branch, Account)}
                         required title="Please select the Account Type "
+                        styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                       />
                     </div>
                   </div>
@@ -1002,6 +1004,7 @@ function BankAccInput({ }) {
                         isClearable
                         ref={City}
                         onKeyDown={(e) => handleKeyDown(e, State, City)}
+                        styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                       />
                     </div>
                   </div>
@@ -1023,6 +1026,7 @@ function BankAccInput({ }) {
                         placeholder=""
                         ref={State}
                         onKeyDown={(e) => handleKeyDown(e, Country, State)}
+                        styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                       />
                     </div>
                   </div>
@@ -1048,6 +1052,7 @@ function BankAccInput({ }) {
                         placeholder=""
                         ref={Country}
                         onKeyDown={(e) => handleKeyDown(e, defaultbank, Country)}
+                        styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                       />
                     </div>
                   </div>
@@ -1069,6 +1074,7 @@ function BankAccInput({ }) {
                         placeholder=""
                         ref={defaultbank}
                         onKeyDown={(e) => handleKeyDown(e, img, defaultbank)}
+                        styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                       />
                     </div>
                   </div>

@@ -754,6 +754,7 @@ const TaxInvoiceanalysis = () => {
               placeholder=""
               required title="Please select a item code"
               maxLength={18}
+              styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
             />
             </div>
           </div>
@@ -843,6 +844,7 @@ const TaxInvoiceanalysis = () => {
               value={selectedInvoice}
               onKeyDown={(e) => e.key === "Enter" && fetchDCData()}
               onChange={handleChangeInvoice}
+              styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
             />
             </div>
           </div>

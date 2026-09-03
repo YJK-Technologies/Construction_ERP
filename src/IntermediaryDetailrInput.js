@@ -542,6 +542,7 @@ function IntermediaryDetailInput({ }) {
                         readOnly={mode === "update"}
                         isDisabled={mode === "update"}
                         onKeyDown={(e) => handleKeyDown(e, codeD, code)}
+                        styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                       />
                       {mode !== "update" && (<button onClick={handleClickOpen} class="inthdrcode position-absolute pb-2  me-5" required title="Add Header"><i class="fa-solid fa-plus"></i></button>)}
                     </div>
@@ -665,6 +666,7 @@ function IntermediaryDetailInput({ }) {
                         placeholder=""
                         ref={City}
                         onKeyDown={(e) => handleKeyDown(e, State, City)}
+                        styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                       />
                     </div>
                   </div>
@@ -686,6 +688,7 @@ function IntermediaryDetailInput({ }) {
                         placeholder=""
                         ref={State}
                         onKeyDown={(e) => handleKeyDown(e, Country, State)}
+                        styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                       />
                     </div>
                   </div>
@@ -707,6 +710,7 @@ function IntermediaryDetailInput({ }) {
                         placeholder=""
                         ref={Country}
                         onKeyDown={(e) => handleKeyDown(e, IMEx, Country)}
+                        styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                       />
                     </div>
                   </div>

@@ -440,6 +440,7 @@ function NumberSeriesInput({ }) {
                         readOnly={mode === "update"}
                         isDisabled={mode === "update"}
                         onKeyDown={(e) => handleKeyDown(e, startyear, screentype)}
+                        styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                       />
                     </div>
                   </div>
@@ -587,6 +588,7 @@ function NumberSeriesInput({ }) {
                         ref={Status}
                         required title="Please select a status"
                         onKeyDown={(e) => handleKeyDown(e, numpre, Status)}
+                        styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                       />
                     </div>
                   </div>
@@ -617,6 +619,7 @@ function NumberSeriesInput({ }) {
                             }
                           }
                         }}
+                        styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                       />
                     </div>
                   </div>
