@@ -1134,6 +1134,7 @@ function BankAccGrid() {
                     options={filteredOptionAccountype}
                     className="exp-input-field"
                     placeholder=""
+                    styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                   />
                 </div>
               </div>

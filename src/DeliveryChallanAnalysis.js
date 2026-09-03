@@ -625,6 +625,7 @@ const DCanalysis = () => {
               placeholder=""
               required title="Please select a item code"
               maxLength={18}
+              styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
             />
             </div>
           </div>

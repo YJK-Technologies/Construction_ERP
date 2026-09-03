@@ -1122,7 +1122,7 @@ const AddSiteMasterScreen = () => {
                                 Site ID
                             </label>
                             <input
-                                className="form-control"
+                                class="form-control"
                                 title="Enter Site ID"
                                 className="exp-input-field form-control"
                                 value={siteId}
@@ -1137,7 +1137,7 @@ const AddSiteMasterScreen = () => {
                                 Site Name
                             </label>
                             <input
-                                className="form-control"
+                                class="form-control"
                                 title="Enter Site Name"
                                 className="exp-input-field form-control"
                                 value={siteName}
@@ -1152,7 +1152,7 @@ const AddSiteMasterScreen = () => {
                                 Site Location
                             </label>
                             <input
-                                className="form-control"
+                                class="form-control"
                                 title="Enter Site Location"
                                 className="exp-input-field form-control"
                                 value={siteLocation}
@@ -1172,6 +1172,7 @@ const AddSiteMasterScreen = () => {
                                 options={filteredOptionCustomer}
                                 className="exp-input-field"
                                 onChange={handleChangeCustomerCode}
+                                styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                             />
                         </div>
                     </div>
@@ -1187,6 +1188,7 @@ const AddSiteMasterScreen = () => {
                                 options={filteredOptionProjectType}
                                 className="exp-input-field"
                                 onChange={handleChangeProjectType}
+                                styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                             />
                         </div>
                     </div>
@@ -1199,7 +1201,7 @@ const AddSiteMasterScreen = () => {
                             <input
                                 type="date"
                                 title="Select Start Date"
-                                className="form-control"
+                                class="form-control"
                                 className="exp-input-field form-control"
                                 value={startDate}
                                 onChange={(e) => setStartDate(e.target.value)}
@@ -1215,7 +1217,7 @@ const AddSiteMasterScreen = () => {
                             <input
                                 type="date"
                                 title="Select End Date"
-                                className="form-control"
+                                class="form-control"
                                 className="exp-input-field form-control"
                                 value={endDate}
                                 onChange={(e) => setEndDate(e.target.value)}
@@ -1234,6 +1236,7 @@ const AddSiteMasterScreen = () => {
                                 options={filteredOptionSiteStatus}
                                 className="exp-input-field"
                                 onChange={handleChangeSiteStatus}
+                                styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                             />
                         </div>
                     </div>
@@ -1244,7 +1247,7 @@ const AddSiteMasterScreen = () => {
                                 Total Budget
                             </label>
                             <input
-                                className="form-control"
+                                class="form-control"
                                 className="exp-input-field form-control"
                                 value={totalBudget}
                                 onChange={handleTotalBudgetChange}
@@ -1278,6 +1281,7 @@ const AddSiteMasterScreen = () => {
                                 options={filteredOptionToleranceType}
                                 className="exp-input-field"
                                 onChange={handleChangeToleranceType}
+                                styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                             />
                         </div>
                     </div>
@@ -1288,7 +1292,7 @@ const AddSiteMasterScreen = () => {
                                 Tolerance Values
                             </label>
                             <input
-                                className="form-control"
+                                class="form-control"
                                 className="exp-input-field form-control"
                                 value={toleranceValues}
                                 onChange={handleToleranceValueChange}
@@ -1307,6 +1311,7 @@ const AddSiteMasterScreen = () => {
                                 options={filteredOptionWarehouse}
                                 className="exp-input-field"
                                 onChange={handleChangeSiteWarehouse}
+                                styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                             />
                         </div>
                     </div>
@@ -1322,6 +1327,7 @@ const AddSiteMasterScreen = () => {
                                 options={filteredOptionStatus}
                                 className="exp-input-field"
                                 onChange={handleChangeStatus}
+                                styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                             />
                         </div>
                     </div>

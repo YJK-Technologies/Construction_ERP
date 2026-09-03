@@ -1557,6 +1557,7 @@ const Product = () => {
                     className="exp-input-field"
                     placeholder=""
                     maxLength={50}
+                    styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                   />
                 </div>
               </div>
@@ -1580,6 +1581,7 @@ const Product = () => {
                     className="exp-input-field"
                     placeholder=""
                     maxLength={50}
+                    styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                   />
                 </div>
               </div>
@@ -1614,6 +1616,7 @@ const Product = () => {
                     required
                     maxLength={10}
                     data-tip="Please select a payment type"
+                    styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                   />
                 </div>
               </div>
@@ -1697,15 +1700,8 @@ const Product = () => {
               </div>
             </div>
           </div>
-          <div
-            class="d-flex justify-content-between ms-2"
-            style={{ marginBlock: "", marginTop: "20px" }}
-          >
-            <div
-              align="left"
-              class="d-flex justify-content-start"
-              style={{ marginLeft: "25px" }}
-            >
+          <div class="d-flex justify-content-between ms-2"style={{ marginBlock: "", marginTop: "20px" }}>
+            <div align="left" class="d-flex justify-content-start" style={{ marginLeft: "25px" }}>
               <purButton
                 type="button"
                 className={`"toggle-btn"  ${activeTable === "myTable" ? "active" : ""}`}

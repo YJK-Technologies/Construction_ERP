@@ -591,7 +591,7 @@ const AddAddSiteMasterScreen = () => {
                                     Site ID<span className="text-danger">*</span>
                                 </label>
                                 <input
-                                    className="form-control"
+                                    class="form-control"
                                     title="Enter Site ID"
                                     className="exp-input-field form-control"
                                     value={siteId}
@@ -607,7 +607,7 @@ const AddAddSiteMasterScreen = () => {
                                     Site Name<span className="text-danger">*</span>
                                 </label>
                                 <input
-                                    className="form-control"
+                                    class="form-control"
                                     title="Enter Site Name"
                                     className="exp-input-field form-control"
                                     value={siteName}
@@ -622,7 +622,7 @@ const AddAddSiteMasterScreen = () => {
                                     Site Location
                                 </label>
                                 <input
-                                    className="form-control"
+                                    class="form-control"
                                     title="Enter Site Location"
                                     className="exp-input-field form-control"
                                     value={siteLocation}
@@ -642,6 +642,7 @@ const AddAddSiteMasterScreen = () => {
                                     options={filteredOptionCustomer}
                                     className="exp-input-field"
                                     onChange={handleChangeCustomerCode}
+                                    styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                                 />
                             </div>
                         </div>
@@ -657,6 +658,7 @@ const AddAddSiteMasterScreen = () => {
                                     options={filteredOptionProjectType}
                                     className="exp-input-field"
                                     onChange={handleChangeProjectType}
+                                    styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                                 />
                             </div>
                         </div>
@@ -669,7 +671,7 @@ const AddAddSiteMasterScreen = () => {
                                 <input
                                     type="date"
                                     title="Select Start Date"
-                                    className="form-control"
+                                    class="form-control"
                                     className="exp-input-field form-control"
                                     value={startDate}
                                     onChange={(e) => setStartDate(e.target.value)}
@@ -685,7 +687,7 @@ const AddAddSiteMasterScreen = () => {
                                 <input
                                     type="date"
                                     title="Select End Date"
-                                    className="form-control"
+                                    class="form-control"
                                     className="exp-input-field form-control"
                                     value={endDate}
                                     onChange={(e) => setEndDate(e.target.value)}
@@ -704,6 +706,7 @@ const AddAddSiteMasterScreen = () => {
                                     options={filteredOptionSiteStatus}
                                     className="exp-input-field"
                                     onChange={handleChangeSiteStatus}
+                                    styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                                 />
                             </div>
                         </div>
@@ -714,7 +717,7 @@ const AddAddSiteMasterScreen = () => {
                                     Total Budget
                                 </label>
                                 <input
-                                    className="form-control"
+                                    class="form-control"
                                     title="Enter Total Budget"
                                     className="exp-input-field form-control"
                                     value={totalBudget}
@@ -734,6 +737,7 @@ const AddAddSiteMasterScreen = () => {
                                     options={filteredOptionToleranceType}
                                     className="exp-input-field"
                                     onChange={handleChangeToleranceType}
+                                    styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                                 />
                             </div>
                         </div>
@@ -744,7 +748,7 @@ const AddAddSiteMasterScreen = () => {
                                     Tolerance Values
                                 </label>
                                 <input
-                                    className="form-control"
+                                    class="form-control"
                                     title="Enter Tolerance Values"
                                     className="exp-input-field form-control"
                                     value={toleranceValues}
@@ -779,6 +783,7 @@ const AddAddSiteMasterScreen = () => {
                                     options={filteredOptionStatus}
                                     className="exp-input-field"
                                     onChange={handleChangeStatus}
+                                    styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                                 />
                             </div>
                         </div>
