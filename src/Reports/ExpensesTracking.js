@@ -948,6 +948,7 @@ const ExpensesTracking = () => {
                                 options={filteredOptionPeriod}
                                 className="border-secondary"
                                 placeholder=""
+                                styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                             />
                         </div>
                     </div>
@@ -1053,6 +1054,7 @@ const ExpensesTracking = () => {
                                             placeholder=""
                                             required
                                             data-tip="Please select a payment type"
+                                            styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                                           />
                                         </div>
                                       </div>
@@ -1073,6 +1075,7 @@ const ExpensesTracking = () => {
                                             placeholder=""
                                             required
                                             data-tip="Please select a payment type"
+                                            styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                                           />
                                         </div>
                                       </div>
@@ -1093,6 +1096,7 @@ const ExpensesTracking = () => {
                                             placeholder=""
                                             required
                                             data-tip="Please select a payment type"
+                                            styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                                           />
                                         </div>
                                       </div>
@@ -1147,6 +1151,7 @@ const ExpensesTracking = () => {
                                             placeholder=""
                                             required
                                             data-tip="Please select a payment type"
+                                            styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                                           />
                                         </div>
                                       </div>

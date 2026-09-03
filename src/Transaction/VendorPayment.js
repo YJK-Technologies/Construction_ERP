@@ -921,6 +921,7 @@ function VendorPayment({ }) {
                     options={filteredOptionVendor}
                     className="exp-input-field"
                     placeholder=""
+                    styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                   />
                 </div>
               </div>
@@ -954,6 +955,7 @@ function VendorPayment({ }) {
                   options={filteredOptionType}
                   className="exp-input-field"
                   placeholder=""
+                  styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                 />
               </div>
             </div>

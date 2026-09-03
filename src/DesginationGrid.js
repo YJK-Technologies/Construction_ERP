@@ -809,13 +809,12 @@ setLoading(true);
               </div>
             </div>
 
-
             <div className="col-md-3 form-group">
               <div class="exp-form-floating">
                 <label class="exp-form-labels">
                   Status
                 </label>
-<div title="Select the Status">
+                <div title="Select the Status">
                 <Select
                   id="status"
                   isClearable
@@ -826,8 +825,9 @@ setLoading(true);
                   placeholder=""
                   onKeyDown={handleKeyDownStatus}
                   ref={Status}
+                  styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                 />
-</div>
+              </div>
               </div>
             </div>
 

@@ -815,6 +815,7 @@ function CustomerDetInput({ }) {
                         isClearable
                         ref={code}
                         onKeyDown={(e) => handleKeyDown(e, Address1, code)}
+                        styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                       />
                       {mode !== "update" && (<button onClick={handleClickOpen} class="atthdrcode position-absolute me-5 pb-2 " required title="Add Header"><i class="fa-solid fa-plus"></i></button>)}
                     </div>
@@ -916,6 +917,7 @@ function CustomerDetInput({ }) {
                         placeholder=""
                         ref={City}
                         onKeyDown={(e) => handleKeyDown(e, code, City)}
+                        styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                       />
                     </div>
                   </div>
@@ -937,6 +939,7 @@ function CustomerDetInput({ }) {
                         placeholder=""
                         ref={code}
                         onKeyDown={(e) => handleKeyDown(e, Country, code)}
+                        styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                       />
                     </div>
                   </div>
@@ -958,6 +961,7 @@ function CustomerDetInput({ }) {
                         placeholder=""
                         ref={Country}
                         onKeyDown={(e) => handleKeyDown(e, IMEx, Country)}
+                        styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                       />
                     </div>
                   </div>
@@ -1100,6 +1104,7 @@ function CustomerDetInput({ }) {
                         placeholder=""
                         ref={Transport}
                         onKeyDown={(e) => handleKeyDown(e, Salesman, Transport)}
+                        styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                       />
                     </div>
                   </div>
@@ -1122,6 +1127,7 @@ function CustomerDetInput({ }) {
                         placeholder=""
                         ref={Salesman}
                         onKeyDown={(e) => handleKeyDown(e, Broker, Salesman)}
+                        styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                       />
                     </div>
                   </div>
@@ -1143,6 +1149,7 @@ function CustomerDetInput({ }) {
                         placeholder=""
                         ref={Broker}
                         onKeyDown={(e) => handleKeyDown(e, Weekday, Broker)}
+                        styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                       />
                     </div>
                   </div>
@@ -1184,6 +1191,7 @@ function CustomerDetInput({ }) {
                         placeholder=""
                         ref={Office}
                         onKeyDown={(e) => handleKeyDown(e, Contact, Office)}
+                        styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                       />
                     </div>
                   </div>
@@ -1205,6 +1213,7 @@ function CustomerDetInput({ }) {
                         placeholder=""
                         ref={Office}
                         onKeyDown={(e) => handleKeyDown(e, Contact, Office)}
+                        styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                       />
                     </div>
                   </div>
@@ -1262,6 +1271,7 @@ function CustomerDetInput({ }) {
                         placeholder=""
                         ref={BalanceType}
                         onKeyDown={(e) => handleKeyDown(e, Salesman, BalanceType)}
+                        styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                       />
                     </div>
                   </div>

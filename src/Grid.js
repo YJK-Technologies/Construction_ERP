@@ -1180,6 +1180,7 @@ function Grid() {
                   className="exp-input-field"
                   placeholder=""
                   isClearable
+                  styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                 />
               </div>
             </div>

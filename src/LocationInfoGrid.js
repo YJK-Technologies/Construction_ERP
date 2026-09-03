@@ -982,6 +982,7 @@ function LocInfoGrid() {
                     onKeyDown={handleKeyDownStatus}
                     ref={Status}
                     isClearable
+                    styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                   />
                 </div>
               </div>

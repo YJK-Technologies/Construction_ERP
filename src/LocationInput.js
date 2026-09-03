@@ -669,15 +669,8 @@ function LocInfoInput({ }) {
                           maxLength={100}
                           ref={City}
                           isClearable
-                          onKeyDown={(e) =>
-                            handleKeyDown(
-                              e,
-                              State,
-                              City,
-                              hasValueChanged,
-                              setHasValueChanged
-                            )
-                          }
+                          onKeyDown={(e) => handleKeyDown( e, State, City, hasValueChanged, setHasValueChanged ) }
+                          styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                         />
                       </div>
                     </div>
@@ -702,15 +695,8 @@ function LocInfoInput({ }) {
                           maxLength={100}
                           ref={State}
                           isClearable
-                          onKeyDown={(e) =>
-                            handleKeyDown(
-                              e,
-                              Pincode,
-                              State,
-                              hasValueChanged,
-                              setHasValueChanged
-                            )
-                          }
+                          onKeyDown={(e) => handleKeyDown( e, Pincode, State, hasValueChanged, setHasValueChanged ) }
+                          styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                         />
                       </div>
                     </div>
@@ -764,6 +750,7 @@ function LocInfoInput({ }) {
                           ref={Country}
                           isClearable
                           onKeyDown={(e) => handleKeyDown(e, email, Status)}
+                          styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                         />
                       </div>
                     </div>
@@ -812,6 +799,7 @@ function LocInfoInput({ }) {
                           ref={Status}
                           isClearable
                           onKeyDown={(e) => handleKeyDown(e, Contactno, Status)}
+                          styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                         />
                       </div>
                     </div>

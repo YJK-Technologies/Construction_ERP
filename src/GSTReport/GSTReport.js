@@ -574,6 +574,7 @@ function Grid() {
                 options={filteredOptionPeriod}
                 className="exp-input-field"
                 placeholder=""
+                styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
               />
             </div>
           </div>
@@ -614,6 +615,7 @@ function Grid() {
                 options={filteredOptionTax}
                 className="exp-input-field"
                 placeholder=""
+                styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
               />
             </div>
           </div>
@@ -631,6 +633,7 @@ function Grid() {
                 options={filteredOptionParty}
                 className="exp-input-field"
                 placeholder=""
+                styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
               />
             </div>
           </div>

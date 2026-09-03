@@ -402,6 +402,7 @@ function UserScreenInput({ }) {
                           onKeyDown={(e) =>
                             handleKeyDown(e, screentype, roleId)
                           }
+                          styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                         />
                       </div>
                     </div>
