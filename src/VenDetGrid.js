@@ -1533,6 +1533,7 @@ function VenDetGrid() {
                     options={filteredOptionBT}
                     className="exp-input-field"
                     placeholder=""
+                    styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                   />
                 </div>
               </div>
@@ -1550,6 +1551,7 @@ function VenDetGrid() {
                     options={filteredOptionStatus}
                     className="exp-input-field"
                     placeholder=""
+                    styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                   />
                 </div>
               </div>
@@ -1568,6 +1570,7 @@ function VenDetGrid() {
                     options={filteredOptionVendorType}
                     className="exp-input-field"
                     placeholder=""
+                    styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                   />
                 </div>
               </div>

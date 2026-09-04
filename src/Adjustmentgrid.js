@@ -1085,6 +1085,7 @@ function AdjustmentGrid() {
                   className="exp-input-field"
                   placeholder=""
                   required title="Please select a transaction type here"
+                  styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                 />
               </div>
             </div>

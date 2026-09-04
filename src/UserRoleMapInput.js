@@ -326,6 +326,7 @@ function UserRoleInput({ }) {
                           ref={usercode}
                           isClearable
                           onKeyDown={(e) => handleKeyDown(e, roleid, usercode)}
+                          styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                         />
                       </div>
                     </div>
@@ -360,6 +361,7 @@ function UserRoleInput({ }) {
                               }
                             }
                           }}
+                          styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                         />
                       </div>
                     </div>

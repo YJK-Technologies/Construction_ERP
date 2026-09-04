@@ -3559,7 +3559,7 @@ function Sales() {
                         value={selectedscreens}
                         onChange={handleChangeScreens}
                         options={filteredOptionScreens}
-
+                        styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                       />
                     </div>
                   </div>
@@ -3692,6 +3692,7 @@ function Sales() {
                           onChange={handleChangeStatus}
                           getOptionLabel={(option) => option.label || ""}
                           getOptionValue={(option) => option.value || ""}
+                          styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                         />
                       </div>
                     </div>
@@ -3772,6 +3773,7 @@ function Sales() {
                         required
                         data-tip="Please select a payment type"
                         autoComplete="off"
+                        styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                       // ref={paytype}
                       // onKeyDown={(e) => handleKeyDown(e, SaleS, paytype)}
                       />
@@ -3792,6 +3794,7 @@ function Sales() {
                         required
                         data-tip="Please select a payment type"
                         autoComplete="off"
+                        styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                       // ref={SaleS}
                       // onKeyDown={(e) => handleKeyDown(e, order, SaleS)}
                       />
@@ -3812,6 +3815,7 @@ function Sales() {
                         required
                         data-tip="Please select a payment type"
                         autoComplete="off"
+                        styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                       // ref={order}
                       // onKeyDown={(e) => handleKeyDown(e, billdate, order)}
                       />
@@ -3868,6 +3872,7 @@ function Sales() {
                         onChange={handleChangeWarehouse}
                         options={filteredOptionWarehouse}
                         data-tip="Please select a default warehouse"
+                        styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                       />
                     </div>
                   </div>
@@ -3885,6 +3890,7 @@ function Sales() {
                         onChange={handleChangeSalesMode}
                         options={filteredOptionSalesMode}
                         isDisabled={isLocked}
+                        styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                       />
                     </div>
                   </div>
@@ -3987,6 +3993,7 @@ function Sales() {
                           value={selectedItem}
                           onChange={handleChangeItem}
                           options={filteredOptionItem}
+                          styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                         />
                       </div>
                     </div>
@@ -4031,6 +4038,7 @@ function Sales() {
                       className="exp-input-field"
                       placeholder=""
                       required
+                      styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                     />
                   </div>
                 </div>
@@ -4046,6 +4054,7 @@ function Sales() {
                     autoComplete="off"
                     options={dynamicOptions}
                     onChange={handleItemCode}
+                    styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                   />
                 </div>
 
@@ -4058,6 +4067,7 @@ function Sales() {
                     options={filteredOptionCount}
                     className="exp-input-field"
                     required
+                    styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                   />
                 </div>
 
@@ -4236,6 +4246,7 @@ function Sales() {
                     onChange={handleChangeScreens}
                     options={filteredOptionScreens}
                     data-tip="Please select a default warehouse"
+                    styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                   />
                 </div>
               </div>

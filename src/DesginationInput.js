@@ -332,6 +332,7 @@ function DesginationInput({ }) {
                           placeholder=""
                           ref={departmentid}
                           onKeyDown={(e) => handleKeyDown(e, desgid, departmentid)}
+                          styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                         />
                       </div>
                     </div>
@@ -404,6 +405,7 @@ function DesginationInput({ }) {
                             }
                           }
                         }}
+                        styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                       />
                     </div>
                   </div>

@@ -664,9 +664,9 @@ function Grid() {
                 options={filteredOptionItem}
                 className="exp-input-field"
                 placeholder=""
-
                 onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
                 maxLength={25}
+                styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
               />
             </div>
           </div>
@@ -683,6 +683,7 @@ function Grid() {
                 className="exp-input-field"
                 placeholder=""
                 maxLength={25}
+                styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
               />
             </div>
           </div>

@@ -698,6 +698,7 @@ const SiteWarehouseMappingScreen = () => {
                                 options={filteredOptionSiteId}
                                 className="exp-input-field"
                                 onChange={handleChangeSiteId}
+                                styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                             />
                         </div>
                     </div>
@@ -714,6 +715,7 @@ const SiteWarehouseMappingScreen = () => {
                                 options={filteredOptionWarehouseCode}
                                 className="exp-input-field"
                                 onChange={handleChangeWarehouseCode}
+                                styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                             />
                         </div>
                     </div>
@@ -730,6 +732,7 @@ const SiteWarehouseMappingScreen = () => {
                                 options={filteredOptionStatus}
                                 className="exp-input-field"
                                 onChange={handleChangeStatus}
+                                styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                             />
                         </div>
                     </div>
@@ -746,6 +749,7 @@ const SiteWarehouseMappingScreen = () => {
                                 options={filteredOptionPrimary}
                                 className="exp-input-field"
                                 onChange={handleChangePrimary}
+                                styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                             />
                         </div>
                     </div>
@@ -787,6 +791,7 @@ const SiteWarehouseMappingScreen = () => {
                                 options={filteredOptionSiteIdSc}
                                 className="exp-input-field"
                                 onChange={handleChangeSiteIdSc}
+                                styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                             />
                         </div>
                     </div>
@@ -803,6 +808,7 @@ const SiteWarehouseMappingScreen = () => {
                                 options={filteredOptionWarehouseCodeSc}
                                 className="exp-input-field"
                                 onChange={handleChangeWarehouseCodeSc}
+                                styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                             />
                         </div>
                     </div>
@@ -819,6 +825,7 @@ const SiteWarehouseMappingScreen = () => {
                                 options={filteredOptionStatusSc}
                                 className="exp-input-field"
                                 onChange={handleChangeStatusSc}
+                                styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                             />
                         </div>
                     </div>
@@ -835,6 +842,7 @@ const SiteWarehouseMappingScreen = () => {
                                 options={filteredOptionPrimarySc}
                                 className="exp-input-field"
                                 onChange={handleChangePrimarySc}
+                                styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                             />
                         </div>
                     </div>

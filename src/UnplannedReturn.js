@@ -1513,6 +1513,7 @@ const UnplannedReturn = () => {
                   onChange={handleChangeReturn}
                   options={filteredOptionReturn}
                   data-tip="Please select a transaction type"
+                  styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                 />
                 </div>
               </div>
@@ -1530,9 +1531,9 @@ const UnplannedReturn = () => {
                   onChange={handleChangeWarehouse}
                   options={filteredOptionWarehouse}
                   data-tip="Please select a default warehouse"
+                  styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                 />
-                
-</div>
+                </div>
               </div>
             </div>
           </div>

@@ -3262,6 +3262,7 @@ const columDeletedPatch = [
                       onChange={handleChangeScreens}
                       options={filteredOptionScreens}
                       data-tip="Please select a default warehouse"
+                      styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                     />
                   </div>
                   {buttonsVisible &&
@@ -3525,6 +3526,7 @@ const columDeletedPatch = [
                         placeholder=""
                         required
                         title="Please select the product/items filter"
+                        styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                       />
                     </div>
                   </div>
@@ -3543,6 +3545,7 @@ const columDeletedPatch = [
                         options={dynamicOptions}
                         onChange={handleChangeDynamicOption}
                         title="Please select the product/items name"
+                        styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                       />
                     </div>
                   </div>
@@ -3665,6 +3668,7 @@ const columDeletedPatch = [
                       onChange={handleChangeScreens}
                       options={filteredOptionScreens}
                       data-tip="Please select a default warehouse"
+                      styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                     />
                   </div>
                 </div>

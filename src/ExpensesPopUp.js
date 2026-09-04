@@ -422,6 +422,7 @@ export default function OIPopup({ open, handleClose, handleOb }) {
                                                                     value={Selectedexpense_type}
                                                                     options={filteredOptionexpense_type}
                                                                     onChange={handleChangeexpense_type}
+                                                                    styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                                                                 />
                                                             </div>
                                                         </div>
@@ -438,6 +439,7 @@ export default function OIPopup({ open, handleClose, handleOb }) {
                                                                     value={Selectedreference_type}
                                                                     onChange={handleChangereference_type}
                                                                     options={filteredOptionreference_type}
+                                                                    styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                                                                 />
                                                             </div>
                                                         </div>
@@ -480,6 +482,7 @@ export default function OIPopup({ open, handleClose, handleOb }) {
                                                                     value={Selectedpayment_mode}
                                                                     onChange={handleChangepayment_mode}
                                                                     options={filteredOptionpayment_mode}
+                                                                    styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                                                                 />
                                                             </div>
                                                         </div>
@@ -521,6 +524,7 @@ export default function OIPopup({ open, handleClose, handleOb }) {
                                                                     options={filteredOptionis_approved}
                                                                     className="exp-input-field"
                                                                     placeholder="Is Approved"
+                                                                    styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                                                                 />
                                                             </div>
                                                         </div>
@@ -628,6 +632,7 @@ export default function OIPopup({ open, handleClose, handleOb }) {
                                                                     value={Selectedexpense_type}
                                                                     options={filteredOptionexpense_type}
                                                                     onChange={handleChangeexpense_type}
+                                                                    styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                                                                 />
                                                             </div>
                                                         </div>
@@ -644,6 +649,7 @@ export default function OIPopup({ open, handleClose, handleOb }) {
                                                                     value={Selectedreference_type}
                                                                     onChange={handleChangereference_type}
                                                                     options={filteredOptionreference_type}
+                                                                    styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                                                                 />
                                                             </div>
                                                         </div>
@@ -686,6 +692,7 @@ export default function OIPopup({ open, handleClose, handleOb }) {
                                                                     value={Selectedpayment_mode}
                                                                     onChange={handleChangepayment_mode}
                                                                     options={filteredOptionpayment_mode}
+                                                                    styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                                                                 />
                                                             </div>
                                                         </div>
@@ -727,6 +734,7 @@ export default function OIPopup({ open, handleClose, handleOb }) {
                                                                     options={filteredOptionis_approved}
                                                                     className="exp-input-field"
                                                                     placeholder="Is Approved"
+                                                                    styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                                                                 />
                                                             </div>
                                                         </div>

@@ -640,6 +640,7 @@ if (type?.toLowerCase() !== "advance") {
                                     options={filteredOptionType}
                                     className="exp-input-field"
                                     placeholder=""
+                                    styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                                 />
                             </div>
                         </div>
@@ -654,6 +655,7 @@ if (type?.toLowerCase() !== "advance") {
                                         options={filteredOptionCustomer}
                                         className="exp-input-field"
                                         placeholder=""
+                                        styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                                     />
                                 </div>
                             </div>

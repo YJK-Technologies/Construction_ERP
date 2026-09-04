@@ -2737,6 +2737,7 @@ function DeliveryChallan() {
                                             onChange={handleChangeScreens}
                                             options={filteredOptionScreens}
                                             data-tip="Please select a default warehouse"
+                                            styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                                         />
                                     </div>
                                     {buttonsVisible && ['add', 'all permission'].some(permission => DcPermission.includes(permission)) && (
@@ -2885,6 +2886,7 @@ function DeliveryChallan() {
                                                 data-tip="Please select a payment type"
                                                 autoComplete="off"
                                                 ref={payTypeRef}
+                                                styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                                             />
                                         </div>
                                     </div>
@@ -2902,6 +2904,7 @@ function DeliveryChallan() {
                                                 data-tip="Please select a sales type"
                                                 autoComplete="off"
                                                 ref={salesTypeRef}
+                                                styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                                             />
                                         </div>
                                     </div>
@@ -3046,7 +3049,7 @@ function DeliveryChallan() {
                                                 className="exp-input-field"
                                                 placeholder=""
                                                 required
-
+                                                styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                                             />
                                         </div>
                                     </div>
@@ -3064,6 +3067,7 @@ function DeliveryChallan() {
                                                 autoComplete='off'
                                                 options={dynamicOptions}
                                                 onChange={handleItemCode}
+                                                styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                                             />
                                         </div>
                                     </div>
@@ -3135,6 +3139,7 @@ function DeliveryChallan() {
                                             onChange={handleChangeScreens}
                                             options={filteredOptionScreens}
                                             data-tip="Please select a default warehouse"
+                                            styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                                         />
                                     </div>
                                 </div>
@@ -3205,6 +3210,7 @@ function DeliveryChallan() {
                                                 required
                                                 data-tip="Please select a payment type"
                                                 autoComplete="off"
+                                                styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                                             />
                                         </div>
                                         </div>
@@ -3222,6 +3228,7 @@ function DeliveryChallan() {
                                                 required
                                                 data-tip="Please select a sales type"
                                                 autoComplete="off"
+                                                styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                                             /></div>
                                         </div>
                                     </div>

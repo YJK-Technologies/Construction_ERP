@@ -857,6 +857,7 @@ function Input({ }) {
                         ref={City}
                         isClearable
                         onKeyDown={(e) => handleKeyDown(e, State, City)}
+                        styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                       />
                     </div>
                   </div>
@@ -879,6 +880,7 @@ function Input({ }) {
                         ref={State}
                         isClearable
                         onKeyDown={(e) => handleKeyDown(e, Pincode, State)}
+                        styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                       />
                     </div>
                   </div>
@@ -922,6 +924,7 @@ function Input({ }) {
                         ref={Country}
                         isClearable
                         onKeyDown={(e) => handleKeyDown(e, Email, Country)}
+                        styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                       />
                     </div>
                   </div>
@@ -965,6 +968,7 @@ function Input({ }) {
                         ref={Status}
                         isClearable
                         onKeyDown={(e) => handleKeyDown(e, found, Status)}
+                        styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                       />
                     </div>
                   </div>
@@ -1076,6 +1080,7 @@ function Input({ }) {
                         ref={locatioN}
                         isClearable
                         onKeyDown={(e) => handleKeyDown(e, logo, locatioN)}
+                        styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                       />
                     </div>
                   </div>

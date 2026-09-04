@@ -1172,6 +1172,7 @@ function ItemInput({ }) {
                         readOnly={mode === "update"}
                         isDisabled={mode === "update"}
                         onKeyDown={(e) => handleKeyDown(e, nam, variant)}
+                        styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                       />
                     </div>
                   </div>
@@ -1245,6 +1246,7 @@ function ItemInput({ }) {
                         onKeyDown={(e) =>
                           handleKeyDown(e, seceondoryuom, baseuom)
                         }
+                        styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                       />
                     </div>
                   </div>
@@ -1272,6 +1274,7 @@ function ItemInput({ }) {
                         onKeyDown={(e) =>
                           handleKeyDown(e, shortname, seceondoryuom)
                         }
+                        styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                       />
                     </div>
                   </div>
@@ -1466,6 +1469,7 @@ function ItemInput({ }) {
                         onKeyDown={(e) =>
                           handleKeyDown(e, Opurchasetaxtype, Lpurchasetaxtype)
                         }
+                        styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                       />
                     </div>
                   </div>
@@ -1494,6 +1498,7 @@ function ItemInput({ }) {
                         onKeyDown={(e) =>
                           handleKeyDown(e, Lsalestaxtype, Opurchasetaxtype)
                         }
+                        styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                       />
                     </div>
                   </div>
@@ -1521,6 +1526,7 @@ function ItemInput({ }) {
                         onKeyDown={(e) =>
                           handleKeyDown(e, Osalestaxtype, Lsalestaxtype)
                         }
+                        styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                       />
                     </div>
                   </div>
@@ -1548,6 +1554,7 @@ function ItemInput({ }) {
                         onKeyDown={(e) =>
                           handleKeyDown(e, stockcode, Osalestaxtype)
                         }
+                        styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                       />
                     </div>
                   </div>
@@ -1639,6 +1646,7 @@ function ItemInput({ }) {
                         maxLength={30}
                         ref={regbrand}
                         onKeyDown={(e) => handleKeyDown(e, ourbrand, regbrand)}
+                        styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                       />
                     </div>
                   </div>
@@ -1664,6 +1672,7 @@ function ItemInput({ }) {
                         maxLength={30}
                         ref={ourbrand}
                         onKeyDown={(e) => handleKeyDown(e, Status, ourbrand)}
+                        styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                       />
                     </div>
                   </div>
@@ -1686,6 +1695,7 @@ function ItemInput({ }) {
                         maxLength={250}
                         ref={Status}
                         onKeyDown={(e) => handleKeyDown(e, img, Status)}
+                        styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                       />
                     </div>
                   </div>
@@ -1811,6 +1821,7 @@ function ItemInput({ }) {
                             }
                           }
                         }}
+                        styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                       />
                     </div>
                   </div>

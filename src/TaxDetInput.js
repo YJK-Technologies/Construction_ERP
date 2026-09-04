@@ -445,6 +445,7 @@ function TaxDetInput({ }) {
                         readOnly={mode === "update"}
                         isDisabled={mode === "update"}
                         onKeyDown={(e) => handleKeyDown(e, taxnamedet, taxtypehdr)}
+                        styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                       />
                       {mode !== "update" && (<button onClick={handleClickOpen} class="taxhdrcode position-absolute pt-2 me-5" required title="Add Header"><i class="fa-solid fa-plus"></i></button>)}
                     </div>
@@ -549,6 +550,7 @@ function TaxDetInput({ }) {
                         maxLength={250}
                         ref={transactiontype}
                         onKeyDown={(e) => handleKeyDown(e, StatuS, transactiontype)}
+                        styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                       />
                     </div>
                   </div>
@@ -579,6 +581,7 @@ function TaxDetInput({ }) {
                             }
                           }
                         }}
+                        styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                       />
                     </div>
                   </div>

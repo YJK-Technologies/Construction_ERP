@@ -3021,6 +3021,7 @@ function Purchase() {
                         onChange={handleChangeScreens}
                         options={filteredOptionScreens}
                         data-tip="Please select a default warehouse"
+                        styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                       />
                     </div>
                   </div>
@@ -3205,6 +3206,7 @@ function Purchase() {
                         onChange={handleChangeStatus}
                         getOptionLabel={(option) => option.label || ""}
                         getOptionValue={(option) => option.value || ""}
+                        styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                       />
                     </div>
                   </div>
@@ -3312,6 +3314,7 @@ function Purchase() {
                         data-tip="Please select a payment type"
                         onKeyDown={(e) => handleKeyDown(e, purchasetype, paytype)} // No next field after this
                         ref={paytype} // Attach ref to Purchase Type
+                        styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                       />
                     </div>
                   </div>
@@ -3331,6 +3334,7 @@ function Purchase() {
                         placeholder=""
                         onKeyDown={(e) => handleKeyDown(e, DatE, purchasetype)} // No next field after this
                         ref={purchasetype} // Attach ref to Purchase Type
+                        styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                       />
                     </div>
                   </div>
@@ -3366,6 +3370,7 @@ function Purchase() {
                         onChange={handleChangeWarehouse}
                         options={filteredOptionWarehouse}
                         data-tip="Please select a default warehouse"
+                        styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                       />
                     </div>
                   </div>
@@ -3579,6 +3584,7 @@ function Purchase() {
                     onChange={handleChangeScreens}
                     options={filteredOptionScreens}
                     data-tip="Please select a default warehouse"
+                    styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                   />
                 </div>
 

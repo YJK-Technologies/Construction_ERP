@@ -818,6 +818,7 @@ function CompanyMappingGrid() {
                     placeholder=""
                     onKeyDown={handleKeyDownStatus}
                     isClearable
+                    styles={{menu: (provided) => ({ ...provided, zIndex: 9999 })}}
                   />
                 </div>
               </div>
