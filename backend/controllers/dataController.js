@@ -340,7 +340,7 @@ const getvariant = async (req, res) => {
       .request()
       .input("company_code", sql.NVarChar, company_code)
       .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'Item_variant','','', '','','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+        "EXEC sp_attribute_Info_sakthi 'F',@company_code,'Item_variant','','','', '','','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
       );
     res.json(result.recordset);
   } catch (err) {
@@ -393,7 +393,7 @@ const getuom = async (req, res) => {
       .request()
       .input("company_code", sql.NVarChar, company_code)
       .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'BaseUOM','','', '','','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+        "EXEC sp_attribute_Info_sakthi 'F',@company_code,'BaseUOM','','','', '','','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
       );
 
     res.json(result.recordset);
@@ -411,7 +411,7 @@ const getCity = async (req, res) => {
       .request()
       .input("company_code", sql.NVarChar, company_code)
       .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'city','','', '','','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+        "EXEC sp_attribute_Info_sakthi 'F',@company_code,'city','','','', '','','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
       );
 
     res.json(result.recordset);
@@ -431,7 +431,7 @@ const getCountry = async (req, res) => {
       .request()
       .input("company_code", sql.NVarChar, company_code)
       .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'country','','', '','','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+        "EXEC sp_attribute_Info_sakthi 'F',@company_code,'country','','','', '','','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
       );
 
     res.json(result.recordset);
@@ -449,7 +449,7 @@ const getState = async (req, res) => {
       .request()
       .input("company_code", sql.NVarChar, company_code)
       .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'state','',' ', ' ' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+        "EXEC sp_attribute_Info_sakthi 'F',@company_code,'state','','',' ', ' ' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
       );
 
     res.json(result.recordset);
@@ -467,7 +467,7 @@ const getStatus = async (req, res) => {
       .request()
       .input("company_code", sql.NVarChar, company_code)
       .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'status','','', '' , '','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+        "EXEC sp_attribute_Info_sakthi 'F',@company_code,'status','','','', '' , '','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
       );
 
     res.json(result.recordset);
@@ -503,7 +503,7 @@ const getShift = async (req, res) => {
       .request()
       .input("company_code", sql.NVarChar, company_code)
       .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'Shift','','', '' , '','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+        "EXEC sp_attribute_Info_sakthi 'F',@company_code,'Shift','','','', '' , '','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
       );
 
     res.json(result.recordset);
@@ -521,7 +521,7 @@ const getTransaction = async (req, res) => {
       .request()
       .input("company_code", sql.NVarChar, company_code)
       .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'Transaction Type','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+        "EXEC sp_attribute_Info_sakthi 'F',@company_code,'Transaction Type','','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
       );
 
     res.json(result.recordset);
@@ -539,7 +539,7 @@ const getGender = async (req, res) => {
       .request()
       .input("company_code", sql.NVarChar, company_code)
       .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'Gender','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+        "EXEC sp_attribute_Info_sakthi 'F',@company_code,'Gender','','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
       );
 
     res.json(result.recordset);
@@ -557,7 +557,7 @@ const getLoginorout = async (req, res) => {
       .request()
       .input("company_code", sql.NVarChar, company_code)
       .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'Log IN/OUT','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+        "EXEC sp_attribute_Info_sakthi 'F',@company_code,'Log IN/OUT','','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
       );
 
     res.json(result.recordset);
@@ -577,7 +577,7 @@ const getDeletepermission = async (req, res) => {
       .request()
       .input("company_code", sql.NVarChar, company_code)
       .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'deletepermission','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+        "EXEC sp_attribute_Info_sakthi 'F',@company_code,'deletepermission','','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
       );
 
     res.json(result.recordset);
@@ -595,7 +595,7 @@ const getregisterbrand = async (req, res) => {
       .request()
       .input("company_code", sql.NVarChar, company_code)
       .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'Register_brand','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+        "EXEC sp_attribute_Info_sakthi 'F',@company_code,'Register_brand','','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
       );
 
     res.json(result.recordset);
@@ -613,7 +613,7 @@ const getboolean = async (req, res) => {
       .request()
       .input("company_code", sql.NVarChar, company_code)
       .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'boolean','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+        "EXEC sp_attribute_Info_sakthi 'F',@company_code,'boolean','','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
       );
 
     res.json(result.recordset);
@@ -632,7 +632,7 @@ const getourbrand = async (req, res) => {
       .request()
       .input("company_code", sql.NVarChar, company_code)
       .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'our_brand','','', '' , '','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+        "EXEC sp_attribute_Info_sakthi 'F',@company_code,'our_brand','','','', '' , '','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
       );
 
     res.json(result.recordset);
@@ -668,7 +668,7 @@ const gethdrcode = async (req, res) => {
 
       .query(
 
-        "EXEC sp_attribute_Info 'TS',@company_code,'', '','','','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+        "EXEC sp_attribute_Info_sakthi 'TS',@company_code,'','', '','','','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
       );
 
     res.json(result.recordset);
@@ -719,7 +719,7 @@ const getUsertype = async (req, res) => {
       .request()
       .input("company_code", sql.NVarChar, company_code)
       .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'User Type', '','','','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+        "EXEC sp_attribute_Info_sakthi 'F',@company_code,'User Type','', '','','','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
       );
 
     res.json(result.recordset);
@@ -736,7 +736,7 @@ const getscreentype = async (req, res) => {
       .request()
       .input("company_code", sql.NVarChar, company_code)
       .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'Sc type', '','','','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+        "EXEC sp_attribute_Info_sakthi 'F',@company_code,'Sc type','', '','','','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
 
       );
 
@@ -825,7 +825,7 @@ const getPaytype = async (req, res) => {
       .request()
       .input("company_code", sql.NVarChar, company_code)
       .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'paytype','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+        "EXEC sp_attribute_Info_sakthi 'F',@company_code,'paytype','','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
       );
 
     res.json(result.recordset);
@@ -843,7 +843,7 @@ const getPurchasetype = async (req, res) => {
       .request()
       .input("company_code", sql.NVarChar, company_code)
       .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'PurchaseType','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+        "EXEC sp_attribute_Info_sakthi 'F',@company_code,'PurchaseType','','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
       );
 
     res.json(result.recordset);
@@ -861,7 +861,7 @@ const getSalestype = async (req, res) => {
       .request()
       .input("company_code", sql.NVarChar, company_code)
       .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'SalesType','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+        "EXEC sp_attribute_Info_sakthi 'F',@company_code,'SalesType','','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
       );
 
     res.json(result.recordset);
@@ -879,7 +879,7 @@ const getordertype = async (req, res) => {
       .request()
       .input("company_code", sql.NVarChar, company_code)
       .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'ORDER TYPE','','', '' , '','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+        "EXEC sp_attribute_Info_sakthi 'F',@company_code,'ORDER TYPE','','','', '' , '','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
       );
 
     res.json(result.recordset);
@@ -971,7 +971,7 @@ const gettypeperdata = async (req, res) => {
       .input("mode", sql.NVarChar, "TS")
       .input("company_code", sql.VarChar, company_code)
       .input("tax_type_header", sql.NVarChar, tax_type_header)
-      .query(`EXEC sp_tax_name_details @mode,@company_code,@tax_type_header,'',0,'','','','','','',
+      .query(`EXEC sp_tax_name_details_sakthi @mode,@company_code,@tax_type_header,'','',0,'','','','','','',
         NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL `);
 
     // Send response
@@ -1759,7 +1759,7 @@ const addattrihdrData = async (req, res) => {
 const getAllattributedetData = async (req, res) => {
   try {
     await connection.connectToDatabase();
-    const result = await sql.query(`EXEC sp_attribute_info 'A','','', '','','','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL
+    const result = await sql.query(`EXEC sp_attribute_Info_sakthi 'A','','','', '','','','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL
     `);
 
     res.json(result.recordset);
@@ -1818,7 +1818,7 @@ const addattridetData = async (req, res) => {
       .input('datetime3', sql.NVarChar, datetime3)
       .input('datetime4', sql.NVarChar, datetime4)
       .query(
-        `EXEC sp_attribute_Info @mode,@company_code,@attributeheader_code, @attributedetails_code,@attributedetails_name,@descriptions,@created_by,@modified_by,@tempstr1, @tempstr2, @tempstr3, @tempstr4, 
+        `EXEC sp_attribute_Info_sakthi @mode,@company_code,@attributeheader_code,'', @attributedetails_code,@attributedetails_name,@descriptions,@created_by,@modified_by,@tempstr1, @tempstr2, @tempstr3, @tempstr4, 
         @datetime1, @datetime2, @datetime3, @datetime4`
       );
     // Return success response
@@ -1939,7 +1939,7 @@ const deleteAttriDetailData = async (req, res) => {
   try {
     const pool = await connection.connectToDatabase();
 
-    const deleteQuery = `EXEC sp_attribute_Info 'D',@company_code,@attributeheader_code, @attributedetails_code,'','','',@modified_by,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL
+    const deleteQuery = `EXEC sp_attribute_Info_sakthi 'D',@company_code,@attributeheader_code, '',@attributedetails_code,'','','',@modified_by,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL
     `;
     for (let i = 0; i < attributeheader_codesToDelete.length; i++) {
       try {
@@ -1989,6 +1989,7 @@ const updattridetData = async (req, res) => {
         .input("attributeheader_code", attributeheader_codesToUpdate[i])
         .input("attributedetails_code", attributedetails_codesToUpdate[i])
         .input("attributedetails_name", sql.NVarChar, updatedRow.attributedetails_name)
+        .input("attributeheader_name", sql.NVarChar, updatedRow.attributeheader_name)
         .input("descriptions", sql.NVarChar, updatedRow.descriptions)
         .input("created_by", sql.NVarChar, updatedRow.created_by)
         .input("modified_by", sql.NVarChar, req.headers['modified-by'])
@@ -2001,7 +2002,7 @@ const updattridetData = async (req, res) => {
         .input("datetime3", sql.NVarChar, updatedRow.datetime3)
         .input("datetime4", sql.NVarChar, updatedRow.datetime4)
         .query(
-          `EXEC sp_attribute_Info @mode,@company_code, @attributeheader_code, @attributedetails_code, @attributedetails_name, @descriptions, @created_by,@modified_by, @tempstr1, @tempstr2, @tempstr3, @tempstr4, @datetime1, @datetime2, @datetime3, @datetime4`
+          `EXEC sp_attribute_Info_sakthi @mode,@company_code, @attributeheader_code,@attributeheader_name, @attributedetails_code, @attributedetails_name, @descriptions, @created_by,@modified_by, @tempstr1, @tempstr2, @tempstr3, @tempstr4, @datetime1, @datetime2, @datetime3, @datetime4`
         );
     }
 
@@ -2595,7 +2596,7 @@ const addTaxHdrData = async (req, res) => {
 const getAllTaxDetailsData = async (req, res) => {
   try {
     await connection.connectToDatabase();
-    const result = await sql.query(`EXEC sp_tax_name_details 'A','','',0,'','','','','','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
+    const result = await sql.query(`EXEC sp_tax_name_details_sakthi 'A','','','','',0,'','','','','','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
 
     res.json(result.recordset);
   } catch (err) {
@@ -2651,7 +2652,7 @@ const addTaxDetailsData = async (req, res) => {
       .input("datetime3", sql.NVarChar, datetime3)
       .input("datetime4", sql.NVarChar, datetime4)
       .query(
-        `EXEC sp_tax_name_details @mode,@company_code,@tax_type_header, @tax_name_details, @tax_percentage,@tax_shortname,@tax_accountcode,@transaction_type,@status,@created_by,@modified_by,
+        `EXEC sp_tax_name_details_sakthi @mode,@company_code,@tax_type_header,'', @tax_name_details, @tax_percentage,@tax_shortname,@tax_accountcode,@transaction_type,@status,@created_by,@modified_by,
         @tempstr1,@tempstr2,@tempstr3,@tempstr4,@datetime1,@datetime2,@datetime3,@datetime4`);
 
     if (result.recordset.length > 0) {
@@ -2684,6 +2685,7 @@ const updtaxdetaildata = async (req, res) => {
         .input("company_code", sql.VarChar, req.headers['company_code'])
         .input("tax_type_header", updatedRow.tax_type_header)
         .input("tax_name_details", updatedRow.tax_name_details)
+        .input("tax_name", updatedRow.tax_name)
         .input("tax_percentage", updatedRow.tax_percentage)
         .input("tax_shortname", updatedRow.tax_shortname)
         .input("tax_accountcode", updatedRow.tax_accountcode)
@@ -2699,7 +2701,7 @@ const updtaxdetaildata = async (req, res) => {
         .input("datetime2", updatedRow.datetime2)
         .input("datetime3", updatedRow.datetime3)
         .input("datetime4", updatedRow.datetime4)
-        .query(`EXEC sp_tax_name_details @mode,@company_code,@tax_type_header, @tax_name_details, @tax_percentage, @tax_shortname, @tax_accountcode, @transaction_type, @status, @created_by, @modified_by,
+        .query(`EXEC sp_tax_name_details_sakthi @mode,@company_code,@tax_type_header,@tax_name, @tax_name_details, @tax_percentage, @tax_shortname, @tax_accountcode, @transaction_type, @status, @created_by, @modified_by,
              @tempstr1, @tempstr2, @tempstr3, @tempstr4, 
             @datetime1, @datetime2, @datetime3, @datetime4`);
     }
@@ -4581,7 +4583,7 @@ const getattributeSearchdata = async (req, res) => {
       .input("attributedetails_code", sql.NVarChar, attributedetails_code)
       .input("attributedetails_name", sql.NVarChar, attributedetails_name)
       .input("descriptions", sql.NVarChar, descriptions)
-      .query(`EXEC sp_attribute_Info @mode,@company_code,@attributeheader_code,@attributedetails_code,@attributedetails_name,@descriptions,'','','','','','','','','',''`);
+      .query(`EXEC sp_attribute_Info_sakthi @mode,@company_code,@attributeheader_code,'',@attributedetails_code,@attributedetails_name,@descriptions,'','','','','','','','','',''`);
 
     // Send response
     if (result.recordset.length > 0) {
@@ -4895,7 +4897,7 @@ const gettaxSearchdata = async (req, res) => {
       .input("tax_accountcode", sql.NVarChar, tax_accountcode)
       .input("transaction_type", sql.NVarChar, transaction_type)
       .input("status", sql.NVarChar, status)
-      .query(`EXEC sp_tax_name_details @mode,@company_code,@tax_type_header, @tax_name_details, @tax_percentage , @tax_shortname, @tax_accountcode, @transaction_type, @status,
+      .query(`EXEC sp_tax_name_details_sakthi @mode,@company_code,@tax_type_header,'', @tax_name_details, @tax_percentage , @tax_shortname, @tax_accountcode, @transaction_type, @status,
       NULL, NULL, NULL, NULL,'','','','','',''`);
 
     // Send response
@@ -5138,7 +5140,7 @@ const gettranstype = async (req, res) => {
       .request()
       .input("company_code", sql.NVarChar, company_code)
       .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'TRANSATION','','', '','','' , NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+        "EXEC sp_attribute_Info_sakthi 'F',@company_code,'TRANSATION','','','', '','','' , NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
       );
 
     res.json(result.recordset);
@@ -6459,7 +6461,7 @@ const getScreens = async (req, res) => {
       .request()
       .input("company_code", sql.NVarChar, company_code)
       .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'Screens','',' ', ' ','','' , NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+        "EXEC sp_attribute_Info_sakthi 'F',@company_code,'Screens','','',' ', ' ','','' , NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
       );
 
     res.json(result.recordset);
@@ -6477,7 +6479,7 @@ const getPermissions = async (req, res) => {
       .request()
       .input("company_code", sql.NVarChar, company_code)
       .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'Permissions','',' ', ' ' , '','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+        "EXEC sp_attribute_Info_sakthi 'F',@company_code,'Permissions','','',' ', ' ' , '','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
       );
 
     res.json(result.recordset);
@@ -9677,7 +9679,7 @@ const deleteTaxData = async (req, res) => {
   try {
     const pool = await connection.connectToDatabase();
 
-    const deleteQuery = `EXEC [sp_tax_name_details] 'D',@company_code,@tax_type_header,@tax_name_details,0,'','','','','','',
+    const deleteQuery = `EXEC [sp_tax_name_details_sakthi] 'D',@company_code,@tax_type_header,'',@tax_name_details,0,'','','','','','',
                           NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`;
     for (let i = 0; i < tax_type_headersToDelete.length; i++) {
       try {
@@ -9727,6 +9729,7 @@ const updTaxdetData = async (req, res) => {
         .input("tax_type_header", tax_type_headersToUpdate[i])
         .input("tax_name_details", tax_name_detailssToUpdate[i])
         .input("tax_accountcode", sql.NVarChar, updatedRow.tax_accountcode)
+        .input("tax_name", sql.NVarChar, updatedRow.tax_name)
         .input("tax_percentage", sql.Decimal(14, 2), updatedRow.tax_percentage)
         .input("tax_shortname", sql.NVarChar, updatedRow.tax_shortname)
         .input("transaction_type", sql.NVarChar, updatedRow.transaction_type)
@@ -9742,7 +9745,7 @@ const updTaxdetData = async (req, res) => {
         .input("datetime3", sql.NVarChar, updatedRow.datetime3)
         .input("datetime4", sql.NVarChar, updatedRow.datetime4)
         .query(
-          `EXEC sp_tax_name_details @mode,@company_code,@tax_type_header, @tax_name_details, @tax_percentage, @tax_shortname, @tax_accountcode,
+          `EXEC sp_tax_name_details_sakthi @mode,@company_code,@tax_type_header, @tax_name,@tax_name_details, @tax_percentage, @tax_shortname, @tax_accountcode,
             @transaction_type, @status,@created_by,@modified_by, @tempstr1, @tempstr2, @tempstr3, @tempstr4, @datetime1, @datetime2,
             @datetime3, @datetime4`
         );
@@ -10663,7 +10666,7 @@ const getacctype = async (req, res) => {
       .request()
       .input("company_code", sql.NVarChar, company_code)
       .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'account type','','', '','','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+        "EXEC sp_attribute_Info_sakthi 'F',@company_code,'account type','','','', '','','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
       );
 
     res.json(result.recordset);
@@ -11006,7 +11009,7 @@ const getofftype = async (req, res) => {
       .request()
       .input("company_code", sql.NVarChar, company_code)
       .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'OfficeType','','', '','','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+        "EXEC sp_attribute_Info_sakthi 'F',@company_code,'OfficeType','','','', '','','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
       );
 
     res.json(result.recordset);
@@ -13679,7 +13682,7 @@ const getInventoryTransaction = async (req, res) => {
       .request()
       .input("company_code", sql.NVarChar, company_code)
       .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'InventoryTransacti','','', '','','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+        "EXEC sp_attribute_Info_sakthi 'F',@company_code,'InventoryTransacti','','','', '','','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
       );
 
     res.json(result.recordset);
@@ -14499,7 +14502,7 @@ const getEmptype = async (req, res) => {
       .request()
       .input("company_code", sql.NVarChar, company_code)
       .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'EmployeeType','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+        "EXEC sp_attribute_Info_sakthi 'F',@company_code,'EmployeeType','','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
       );
 
     res.json(result.recordset);
@@ -14935,7 +14938,7 @@ const getCondition = async (req, res) => {
       .request()
       .input("company_code", sql.NVarChar, company_code)
       .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'Condition','','', '','','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+        "EXEC sp_attribute_Info_sakthi 'F',@company_code,'Condition','','','', '','','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
       );
 
     res.json(result.recordset);
@@ -15782,7 +15785,7 @@ const RoleMappingUpdate = async (req, res) => {
 };
 
 const AttributeUpdate = async (req, res) => {
-  const { company_code, attributeheader_code, attributedetails_code, attributedetails_name, descriptions, created_by, modified_by } = req.body;
+  const { company_code, attributeheader_code,attributeheader_name, attributedetails_code, attributedetails_name, descriptions, created_by, modified_by } = req.body;
 
   let pool;
   try {
@@ -15793,12 +15796,13 @@ const AttributeUpdate = async (req, res) => {
       .input("company_code", sql.NVarChar, company_code)
       .input("attributeheader_code", sql.NVarChar, attributeheader_code)
       .input("attributedetails_code", sql.NVarChar, attributedetails_code)
+      .input("attributeheader_name", sql.NVarChar, attributeheader_name)
       .input("attributedetails_name", sql.NVarChar, attributedetails_name)
       .input("descriptions", sql.NVarChar, descriptions)
       .input("created_by", sql.NVarChar, created_by)
       .input("modified_by", sql.NVarChar, modified_by)
       .query(
-        `EXEC sp_attribute_Info @mode,@company_code, @attributeheader_code, @attributedetails_code, @attributedetails_name, @descriptions, @created_by,@modified_by, '', '', '', '', '', '', '', ''`
+        `EXEC sp_attribute_Info_sakthi @mode,@company_code, @attributeheader_code,@attributeheader_name, @attributedetails_code, @attributedetails_name, @descriptions, @created_by,@modified_by, '', '', '', '', '', '', '', ''`
       );
     res.status(200).json("Updated data successfully");
   } catch (err) {
@@ -15908,7 +15912,7 @@ const ItemUpdate = async (req, res) => {
 };
 
 const TaxUpdate = async (req, res) => {
-  const { company_code, tax_type_header, tax_name_details, tax_accountcode, tax_percentage, tax_shortname, transaction_type, status, created_by, modified_by } = req.body;
+  const { company_code, tax_type_header,tax_name, tax_name_details, tax_accountcode, tax_percentage, tax_shortname, transaction_type, status, created_by, modified_by } = req.body;
 
   let pool;
   try {
@@ -15918,6 +15922,7 @@ const TaxUpdate = async (req, res) => {
       .input("mode", sql.NVarChar, "U")
       .input("company_code", sql.VarChar, company_code)
       .input("tax_type_header", sql.NVarChar, tax_type_header)
+      .input("tax_name", sql.NVarChar, tax_name)
       .input("tax_name_details", sql.NVarChar, tax_name_details)
       .input("tax_accountcode", sql.NVarChar, tax_accountcode)
       .input("tax_percentage", sql.Decimal(14, 2), tax_percentage)
@@ -15927,7 +15932,7 @@ const TaxUpdate = async (req, res) => {
       .input("created_by", sql.NVarChar, created_by)
       .input("modified_by", sql.NVarChar, modified_by)
       .query(
-        `EXEC sp_tax_name_details @mode,@company_code,@tax_type_header, @tax_name_details, @tax_percentage, @tax_shortname, @tax_accountcode,
+        `EXEC sp_tax_name_details_sakthi @mode,@company_code,@tax_type_header, @tax_name,@tax_name_details, @tax_percentage, @tax_shortname, @tax_accountcode,
                @transaction_type, @status,@created_by,@modified_by, '', '', '', '', '', '','', ''`);
 
     res.status(200).json("Updated data successfully");
@@ -17326,7 +17331,7 @@ const getEvent = async (req, res) => {
       .request()
       .input("company_code", sql.NVarChar, company_code)
       .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'Transactions Event','','', '','','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+        "EXEC sp_attribute_Info_sakthi 'F',@company_code,'Transactions Event','','','', '','','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
       );
 
     res.json(result.recordset);
@@ -19511,7 +19516,7 @@ const getsiblings = async (req, res) => {
       .request()
       .input("company_code", sql.NVarChar, company_code)
       .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'Siblings','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+        "EXEC sp_attribute_Info_sakthi 'F',@company_code,'Siblings','','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
       );
 
     res.json(result.recordset);
@@ -19530,7 +19535,7 @@ const getkids = async (req, res) => {
       .request()
       .input("company_code", sql.NVarChar, company_code)
       .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'Kids','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+        "EXEC sp_attribute_Info_sakthi 'F',@company_code,'Kids','','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
       );
 
     res.json(result.recordset);
@@ -19549,7 +19554,7 @@ const getMartial = async (req, res) => {
       .request()
       .input("company_code", sql.NVarChar, company_code)
       .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'Marital Status','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+        "EXEC sp_attribute_Info_sakthi 'F',@company_code,'Marital Status','','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
       );
 
     res.json(result.recordset);
@@ -19697,7 +19702,7 @@ const getSalaryType = async (req, res) => {
       .request()
       .input("company_code", sql.NVarChar, company_code)
       .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'Salary Type','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+        "EXEC sp_attribute_Info_sakthi 'F',@company_code,'Salary Type','','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
       );
 
     res.json(result.recordset);
@@ -19715,7 +19720,7 @@ const getPayscale = async (req, res) => {
       .request()
       .input("company_code", sql.NVarChar, company_code)
       .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'Payscale','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+        "EXEC sp_attribute_Info_sakthi 'F',@company_code,'Payscale','','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
       );
 
     res.json(result.recordset);
@@ -19763,7 +19768,7 @@ const getLoanID = async (req, res) => {
       .request()
       .input("company_code", sql.NVarChar, company_code)
       .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'LoanID','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+        "EXEC sp_attribute_Info_sakthi 'F',@company_code,'LoanID','','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
       );
 
     res.json(result.recordset);
@@ -19851,7 +19856,7 @@ const getItem = async (req, res) => {
       .request()
       .input("company_code", sql.NVarChar, company_code)
       .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'product','','', '','','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+        "EXEC sp_attribute_Info_sakthi 'F',@company_code,'product','','','', '','','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
       );
 
     res.json(result.recordset);
@@ -20288,7 +20293,7 @@ const getDocumentType = async (req, res) => {
       .request()
       .input("company_code", sql.NVarChar, company_code)
       .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'document type','','', '','','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+        "EXEC sp_attribute_Info_sakthi 'F',@company_code,'document type','','','', '','','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
       );
 
     res.json(result.recordset);
@@ -20485,7 +20490,7 @@ const getrelation = async (req, res) => {
       .request()
       .input("company_code", sql.NVarChar, company_code)
       .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'Relationship','','', '','','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+        "EXEC sp_attribute_Info_sakthi 'F',@company_code,'Relationship','','','', '','','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
       );
 
     res.json(result.recordset);
@@ -20618,7 +20623,7 @@ const getannoncementtype = async (req, res) => {
       .request()
       .input("company_code", sql.NVarChar, company_code)
       .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'AnnouncementType','','', '' , '','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+        "EXEC sp_attribute_Info_sakthi 'F',@company_code,'AnnouncementType','','','', '' , '','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
       );
     res.json(result.recordset);
   } catch (err) {
@@ -20634,7 +20639,7 @@ const getAnnouncementDetail = async (req, res) => {
       .request()
       .input("company_code", sql.NVarChar, company_code)
       .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'AnnouncementDetail','','', '' , '','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+        "EXEC sp_attribute_Info_sakthi 'F',@company_code,'AnnouncementDetail','','','', '' , '','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
       );
     res.json(result.recordset);
   } catch (err) {
@@ -20770,7 +20775,7 @@ const getAnnouncement_Msg = async (req, res) => {
       .request()
       .input("company_code", sql.NVarChar, company_code)
       .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'Announcement_Msg','','', '' , '','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+        "EXEC sp_attribute_Info_sakthi 'F',@company_code,'Announcement_Msg','','','', '' , '','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
       );
     res.json(result.recordset);
   } catch (err) {
@@ -21246,7 +21251,7 @@ const getAnnouncement = async (req, res) => {
       .request()
       .input("company_code", sql.NVarChar, company_code)
       .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'Annoucement','','', '' , '','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+        "EXEC sp_attribute_Info_sakthi 'F',@company_code,'Annoucement','','','', '' , '','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
       );
 
     res.json(result.recordset);
@@ -21327,7 +21332,7 @@ const getcompanyshift = async (req, res) => {
       .request()
       .input("company_code", sql.NVarChar, company_code)
       .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'ESS_SHIFT','','', '' , '','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+        "EXEC sp_attribute_Info_sakthi 'F',@company_code,'ESS_SHIFT','','','', '' , '','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
       );
 
     res.json(result.recordset);
@@ -21616,7 +21621,7 @@ const getOverallTAX = async (req, res) => {
       .request()
       .input("company_code", sql.NVarChar, company_code)
       .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'tax type','','', '' , '','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+        "EXEC sp_attribute_Info_sakthi 'F',@company_code,'tax type','','','', '' , '','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
       );
 
     res.json(result.recordset);
@@ -22091,7 +22096,7 @@ const getInvocieType = async (req, res) => {
       .request()
       .input("company_code", sql.NVarChar, company_code)
       .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'Invoice Type','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+        "EXEC sp_attribute_Info_sakthi 'F',@company_code,'Invoice Type','','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
       );
 
     res.json(result.recordset);
@@ -22386,7 +22391,7 @@ const TermsDC = async (req, res) => {
       .request()
       .input("company_code", sql.NVarChar, company_code)
       .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'TermsConditionDC','','', '' , '','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+        "EXEC sp_attribute_Info_sakthi 'F',@company_code,'TermsConditionDC','','','', '' , '','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
       );
 
     res.json(result.recordset);
@@ -22404,7 +22409,7 @@ const TermsQO = async (req, res) => {
       .request()
       .input("company_code", sql.NVarChar, company_code)
       .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'TermsConditionQO','','', '' , '','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+        "EXEC sp_attribute_Info_sakthi 'F',@company_code,'TermsConditionQO','','','', '' , '','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
       );
 
     res.json(result.recordset);
@@ -22422,7 +22427,7 @@ const TermsPO = async (req, res) => {
       .request()
       .input("company_code", sql.NVarChar, company_code)
       .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'TermsConditionsPO','','', '' , '','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+        "EXEC sp_attribute_Info_sakthi 'F',@company_code,'TermsConditionsPO','','','', '' , '','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
       );
 
     res.json(result.recordset);
@@ -22440,7 +22445,7 @@ const TermsTI = async (req, res) => {
       .request()
       .input("company_code", sql.NVarChar, company_code)
       .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'TermsConditionTI','','', '' , '','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+        "EXEC sp_attribute_Info_sakthi 'F',@company_code,'TermsConditionTI','','','', '' , '','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
       );
 
     res.json(result.recordset);
@@ -22570,7 +22575,7 @@ const getLeaveType = async (req, res) => {
       .request()
       .input("company_code", sql.NVarChar, company_code)
       .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'LeaveType','','', '' , '','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+        "EXEC sp_attribute_Info_sakthi 'F',@company_code,'LeaveType','','','', '' , '','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
       );
 
     res.json(result.recordset);
@@ -22588,7 +22593,7 @@ const getSelectSlot = async (req, res) => {
       .request()
       .input("company_code", sql.NVarChar, company_code)
       .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'Select_Slot','','', '' , '','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+        "EXEC sp_attribute_Info_sakthi 'F',@company_code,'Select_Slot','','','', '' , '','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
       );
 
     res.json(result.recordset);
@@ -22631,7 +22636,7 @@ const getDashBoardType = async (req, res) => {
       .request()
       .input("company_code", sql.NVarChar, company_code)
       .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'DB Type','','', '' , '','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+        "EXEC sp_attribute_Info_sakthi 'F',@company_code,'DB Type','','','', '' , '','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
       );
 
     res.json(result.recordset);
@@ -22649,7 +22654,7 @@ const getGST = async (req, res) => {
       .request()
       .input("company_code", sql.NVarChar, company_code)
       .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'GST','','', '','','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+        "EXEC sp_attribute_Info_sakthi 'F',@company_code,'GST','','','', '','','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
       );
 
     res.json(result.recordset);
@@ -22667,7 +22672,7 @@ const getPartyName = async (req, res) => {
       .request()
       .input("company_code", sql.NVarChar, company_code)
       .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'PartyName','','', '','','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+        "EXEC sp_attribute_Info_sakthi 'F',@company_code,'PartyName','','','', '','','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
       );
 
     res.json(result.recordset);
@@ -22685,7 +22690,7 @@ const getGSTReport = async (req, res) => {
       .request()
       .input("company_code", sql.NVarChar, company_code)
       .query(
-        "EXEC sp_attribute_Info 'GF',@company_code,'GSTReport','','', '','','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+        "EXEC sp_attribute_Info_sakthi 'GF',@company_code,'GSTReport','','','', '','','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
       );
 
     res.json(result.recordset);
@@ -23245,7 +23250,7 @@ const getType = async (req, res) => {
       .request()
       .input("company_code", sql.NVarChar, company_code)
       .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'Type','','', '' , '','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+        "EXEC sp_attribute_Info_sakthi 'F',@company_code,'Type','','','', '' , '','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
       );
 
     res.json(result.recordset);
@@ -23263,7 +23268,7 @@ const getAccrual = async (req, res) => {
       .request()
       .input("company_code", sql.NVarChar, company_code)
       .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'AccrualType','','', '' , '','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+        "EXEC sp_attribute_Info_sakthi 'F',@company_code,'AccrualType','','','', '' , '','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
       );
 
     res.json(result.recordset);
@@ -23285,7 +23290,7 @@ const getExceedLeave = async (req, res) => {
       .request()
       .input("company_code", sql.NVarChar, company_code)
       .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'Exceed_Leave','','', '' , '','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+        "EXEC sp_attribute_Info_sakthi 'F',@company_code,'Exceed_Leave','','','', '' , '','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
       );
 
     res.json(result.recordset);
@@ -23304,7 +23309,7 @@ const getLeaveReason = async (req, res) => {
       .request()
       .input("company_code", sql.NVarChar, company_code)
       .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'Leave_Reason','','', '' , '','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+        "EXEC sp_attribute_Info_sakthi 'F',@company_code,'Leave_Reason','','','', '' , '','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
       );
 
     res.json(result.recordset);
@@ -23622,7 +23627,7 @@ const getPendingStatus = async (req, res) => {
       .request()
       .input("company_code", sql.NVarChar, company_code)
       .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'PendingStatus','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+        "EXEC sp_attribute_Info_sakthi 'F',@company_code,'PendingStatus','','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
       );
 
     res.json(result.recordset);
@@ -24581,7 +24586,7 @@ const getdefCustomer = async (req, res) => {
       .request()
       .input("company_code", sql.NVarChar, company_code)
       .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'DefaultCust','','', '','','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+        "EXEC sp_attribute_Info_sakthi 'F',@company_code,'DefaultCust','','','', '','','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
       );
 
     res.json(result.recordset);
@@ -25060,7 +25065,7 @@ const getSalesMode = async (req, res) => {
       .request()
       .input("company_code", sql.NVarChar, company_code)
       .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'SalesMode','','', '','','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+        "EXEC sp_attribute_Info_sakthi 'F',@company_code,'SalesMode','','','', '','','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
       );
 
     res.json(result.recordset);
@@ -25261,7 +25266,7 @@ const getPurchaseAnalysis = async (req, res) => {
       .request()
       .input("company_code", sql.NVarChar, company_code)
       .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'Purchase','','', '' , '','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+        "EXEC sp_attribute_Info_sakthi 'F',@company_code,'Purchase','','','', '' , '','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
       );
 
     res.json(result.recordset);
@@ -25712,7 +25717,7 @@ const getTaskstatus = async (req, res) => {
       .request()
       .input("company_code", sql.NVarChar, company_code)
       .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'Taskstatus','','', '' , '','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+        "EXEC sp_attribute_Info_sakthi 'F',@company_code,'Taskstatus','','','', '' , '','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
       );
 
     res.json(result.recordset);
@@ -25860,7 +25865,7 @@ const PendingCustomer = async (req, res) => {
       .request()
       .input("company_code", sql.NVarChar, company_code)
       .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'PendingCustomer','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+        "EXEC sp_attribute_Info_sakthi 'F',@company_code,'PendingCustomer','','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
       );
 
     res.json(result.recordset);
@@ -26030,7 +26035,7 @@ const getPriority = async (req, res) => {
       .request()
       .input("company_code", sql.NVarChar, company_code)
       .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'PriorityLevel','','', '','','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+        "EXEC sp_attribute_Info_sakthi 'F',@company_code,'PriorityLevel','','','', '','','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
       );
 
     res.json(result.recordset);
@@ -27110,7 +27115,7 @@ const getAnnouncementDuration = async (req, res) => {
       .request()
       .input("company_code", sql.NVarChar, company_code)
       .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'AnnounceDuration','','', '' , '','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+        "EXEC sp_attribute_Info_sakthi 'F',@company_code,'AnnounceDuration','','','', '' , '','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
       );
     res.json(result.recordset);
   } catch (err) {
@@ -27893,7 +27898,7 @@ const getDocument = async (req, res) => {
     const result = await pool
       .request()
       .input("company_code", sql.NVarChar, company_code)
-      .query("EXEC sp_attribute_Info 'F',@company_code,'DocumentType','','', '','','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL");
+      .query("EXEC sp_attribute_Info_sakthi 'F',@company_code,'DocumentType','','','', '','','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL");
 
     res.json(result.recordset);
   } catch (err) {
@@ -28280,7 +28285,7 @@ const termsandCondition = async (req, res) => {
     const result = await pool
       .request()
       .input("company_code", sql.NVarChar, company_code)
-      .query(`EXEC sp_attribute_Info 'F',@company_code,'Terms&Conditions','','', '' , '','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
+      .query(`EXEC sp_attribute_Info_sakthi 'F',@company_code,'Terms&Conditions','','','', '' , '','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL`);
     res.json(result.recordset);
   } catch (err) {
     console.error("Error", err);
@@ -28521,7 +28526,7 @@ const getLockType = async (req, res) => {
       .request()
       .input("company_code", sql.NVarChar, company_code)
       .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'Lock_Type','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+        "EXEC sp_attribute_Info_sakthi 'F',@company_code,'Lock_Type','','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
       );
 
     res.json(result.recordset);
@@ -28772,7 +28777,7 @@ const getPrint = async (req, res) => {
       .request()
       .input("company_code", sql.NVarChar, company_code)
       .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'Print_options','','', '','','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+        "EXEC sp_attribute_Info_sakthi 'F',@company_code,'Print_options','','','', '','','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
       );
 
     res.json(result.recordset);
@@ -28790,7 +28795,7 @@ const getcopies = async (req, res) => {
       .request()
       .input("company_code", sql.NVarChar, company_code)
       .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'Print_copies','','', '','','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+        "EXEC sp_attribute_Info_sakthi 'F',@company_code,'Print_copies','','','', '','','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
       );
 
     res.json(result.recordset);
@@ -28924,7 +28929,7 @@ const WeekOff = async (req, res) => {
       .request()
       .input("company_code", sql.NVarChar, company_code)
       .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'Week_Off','','', '','','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+        "EXEC sp_attribute_Info_sakthi 'F',@company_code,'Week_Off','','','', '','','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
       );
     res.json(result.recordset);
   } catch (err) {
@@ -29169,7 +29174,7 @@ const GenerateEmployee = async (req, res) => {
       .request()
       .input("company_code", sql.NVarChar, company_code)
       .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'GenerateEmpId','','', '','','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+        "EXEC sp_attribute_Info_sakthi 'F',@company_code,'GenerateEmpId','','','', '','','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
       );
     res.json(result.recordset);
   } catch (err) {
@@ -29589,7 +29594,7 @@ const getLeaveStatus = async (req, res) => {
       .request()
       .input("mode", sql.NVarChar, "F")
       .input("company_code", sql.NVarChar, company_code)
-      .query("EXEC sp_attribute_Info 'F',@company_code,'LeaveStatus','','', '' ,'','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL");
+      .query("EXEC sp_attribute_Info_sakthi 'F',@company_code,'LeaveStatus','','','', '' ,'','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL");
 
     res.json(result.recordset);
   } catch (err) {
@@ -30051,7 +30056,7 @@ const GetPaymentMode = async (req, res) => {
       .request()
       .input("company_code", sql.NVarChar, company_code)
       .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'PaymentMode','','', '','','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+        "EXEC sp_attribute_Info_sakthi 'F',@company_code,'PaymentMode','','','', '','','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
       );
     res.json(result.recordset);
   } catch (err) {
@@ -30067,7 +30072,7 @@ const GetPaymentType = async (req, res) => {
       .request()
       .input("company_code", sql.NVarChar, company_code)
       .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'PaymentType','','', '','','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+        "EXEC sp_attribute_Info_sakthi 'F',@company_code,'PaymentType','','','', '','','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
       );
     res.json(result.recordset);
   } catch (err) {
@@ -31426,7 +31431,7 @@ const getDateRangeCRM = async (req, res) => {
     const result = await pool
       .request()
       .input("company_code", sql.NVarChar, company_code)
-      .query("EXEC sp_attribute_Info 'F',@company_code,'DateRange','','', '','','' , NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL");
+      .query("EXEC sp_attribute_Info_sakthi 'F',@company_code,'DateRange','','','', '','','' , NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL");
 
     res.json(result.recordset);
   } catch (err) {
@@ -32837,7 +32842,7 @@ const getDomain = async (req, res) => {
     const result = await pool
       .request()
       .input("company_code", sql.NVarChar, company_code)
-      .query("EXEC sp_attribute_Info 'F',@company_code,'Domain','','', '','','' , NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL");
+      .query("EXEC sp_attribute_Info_sakthi 'F',@company_code,'Domain','','','', '','','' , NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL");
 
     res.json(result.recordset);
   } catch (err) {
@@ -33234,7 +33239,7 @@ const getCount = async (req, res) => {
       .request()
       .input("company_code", sql.NVarChar, company_code)
       .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'weight','','', '','','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+        "EXEC sp_attribute_Info_sakthi 'F',@company_code,'weight','','','', '','','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
       );
 
     res.json(result.recordset);
@@ -33253,7 +33258,7 @@ const getSecondaryuom = async (req, res) => {
       .request()
       .input("company_code", sql.NVarChar, company_code)
       .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'SecondaryUOM','','', '','','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+        "EXEC sp_attribute_Info_sakthi 'F',@company_code,'SecondaryUOM','','','', '','','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
       );
 
     res.json(result.recordset);
@@ -33273,7 +33278,7 @@ const EmpStatus = async (req, res) => {
       .request()
       .input("company_code", sql.NVarChar, company_code)
       .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'EmpStatus','','', '','','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+        "EXEC sp_attribute_Info_sakthi 'F',@company_code,'EmpStatus','','','', '','','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
       );
     res.json(result.recordset);
   } catch (err) {
@@ -33951,7 +33956,7 @@ const getIdProofType = async (req, res) => {
     const result = await pool
       .request()
       .input("company_code", sql.NVarChar, company_code)
-      .query("EXEC sp_attribute_Info 'F',@company_code,'IdProofType','','', '','','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL");
+      .query("EXEC sp_attribute_Info_sakthi 'F',@company_code,'IdProofType','','','', '','','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL");
     res.json(result.recordset);
   } catch (err) {
     console.error("Error during update:", err);
@@ -33966,7 +33971,7 @@ const getCustomerType = async (req, res) => {
     const result = await pool
       .request()
       .input("company_code", sql.NVarChar, company_code)
-      .query("EXEC sp_attribute_Info 'F',@company_code,'CustomerType','','', '','','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL");
+      .query("EXEC sp_attribute_Info_sakthi 'F',@company_code,'CustomerType','','','', '','','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL");
     res.json(result.recordset);
   } catch (err) {
     console.error("Error during update:", err);
@@ -34458,7 +34463,7 @@ const getPurpose = async (req, res) => {
       .request()
       .input("company_code", sql.NVarChar, company_code)
       .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'Purpose','','', '','','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+        "EXEC sp_attribute_Info_sakthi 'F',@company_code,'Purpose','','','', '','','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
       );
     res.json(result.recordset);
   } catch (err) {
@@ -35704,7 +35709,7 @@ const getbalance_type = async (req, res) => {
       .request()
       .input("company_code", sql.NVarChar, company_code)
       .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'BalanceType','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+        "EXEC sp_attribute_Info_sakthi 'F',@company_code,'BalanceType','','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
       );
 
     res.json(result.recordset);
@@ -35724,7 +35729,7 @@ const getProjectType = async (req, res) => {
       .request()
       .input("company_code", sql.NVarChar, company_code)
       .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'Project Type','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+        "EXEC sp_attribute_Info_sakthi 'F',@company_code,'Project Type','','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
       );
 
     res.json(result.recordset);
@@ -35742,7 +35747,7 @@ const getSiteStatus = async (req, res) => {
       .request()
       .input("company_code", sql.NVarChar, company_code)
       .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'Site Status','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+        "EXEC sp_attribute_Info_sakthi 'F',@company_code,'Site Status','','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
       );
 
     res.json(result.recordset);
@@ -35760,7 +35765,7 @@ const getToleranceType = async (req, res) => {
       .request()
       .input("company_code", sql.NVarChar, company_code)
       .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'Tolerance Type','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+        "EXEC sp_attribute_Info_sakthi 'F',@company_code,'Tolerance Type','','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
       );
 
     res.json(result.recordset);
@@ -36179,7 +36184,7 @@ const getExpenseType = async (req, res) => {
       .request()
       .input("company_code", sql.NVarChar, company_code)
       .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'Expense Type','','', '','','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+        "EXEC sp_attribute_Info_sakthi 'F',@company_code,'Expense Type','','','', '','','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
       );
 
     res.json(result.recordset);
@@ -36197,7 +36202,7 @@ const getReferenceType = async (req, res) => {
       .request()
       .input("company_code", sql.NVarChar, company_code)
       .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'Reference Type','','', '','','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+        "EXEC sp_attribute_Info_sakthi 'F',@company_code,'Reference Type','','','', '','','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
       );
 
     res.json(result.recordset);
@@ -36215,7 +36220,7 @@ const getExpensePaymentType = async (req, res) => {
       .request()
       .input("company_code", sql.NVarChar, company_code)
       .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'ExpensePaymentType','','', '','','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+        "EXEC sp_attribute_Info_sakthi 'F',@company_code,'ExpensePaymentType','','','', '','','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
       );
 
     res.json(result.recordset);
@@ -36747,7 +36752,7 @@ const CustRecTransDrop = async (req, res) => {
       .request()
       .input("company_code", sql.NVarChar, company_code)
       .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'CustRecTransType','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+        "EXEC sp_attribute_Info_sakthi 'F',@company_code,'CustRecTransType','','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
       );
 
     res.json(result.recordset);
@@ -36809,7 +36814,7 @@ const PendingVendor = async (req, res) => {
       .request()
       .input("company_code", sql.NVarChar, company_code)
       .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'PendingVendor','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+        "EXEC sp_attribute_Info_sakthi 'F',@company_code,'PendingVendor','','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
       );
 
     res.json(result.recordset);
@@ -37166,7 +37171,7 @@ const getVendorType = async (req, res) => {
       .request()
       .input("company_code", sql.NVarChar, company_code)
       .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'VendorType','','', '','','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+        "EXEC sp_attribute_Info_sakthi 'F',@company_code,'VendorType','','','', '','','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
       );
     res.json(result.recordset);
   } catch (err) {
@@ -37183,7 +37188,7 @@ const getCostingMethods = async (req, res) => {
       .request()
       .input("company_code", sql.NVarChar, company_code)
       .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'Costing Methods','','', '','','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+        "EXEC sp_attribute_Info_sakthi 'F',@company_code,'Costing Methods','','','', '','','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
       );
     res.json(result.recordset);
   } catch (err) {
@@ -37471,7 +37476,7 @@ const getYorN = async (req, res) => {
       .request()
       .input("company_code", sql.NVarChar, company_code)
       .query(
-        "EXEC sp_attribute_Info 'F',@company_code,'YorN','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
+        "EXEC sp_attribute_Info_sakthi 'F',@company_code,'YorN','','','', '' ,'','', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL"
       );
 
     res.json(result.recordset);
@@ -37698,7 +37703,7 @@ const getAttributeData = async (req, res) => {
       .input("company_code", sql.NVarChar, company_code)
       .input("attributeheader_code", sql.NVarChar, attributeheader_code)
       .input("attributedetails_code", sql.NVarChar, attributedetails_code)
-      .query(`EXEC sp_attribute_Info @mode,@company_code,@attributeheader_code,@attributedetails_code,'','','','','','','','','','','',''`);
+      .query(`EXEC sp_attribute_Info_sakthi @mode,@company_code,@attributeheader_code,'',@attributedetails_code,'','','','','','','','','','','',''`);
 
     if (result.recordset.length > 0) {
       res.status(200).json(result.recordset); 
@@ -37938,7 +37943,7 @@ const getTaxData = async (req, res) => {
       .input("tax_type_header", sql.NVarChar, tax_type_header)
       .input("tax_name_details", sql.NVarChar, tax_name_details)
       .input("tax_accountcode", sql.NVarChar, tax_accountcode)
-      .query(`sp_tax_name_details @mode,@company_code,@tax_type_header, @tax_name_details, 0, '', @tax_accountcode,
+      .query(`sp_tax_name_details_sakthi @mode,@company_code,@tax_type_header,'', @tax_name_details, 0, '', @tax_accountcode,
                '', '','','', '', '', '', '', '', '','', ''`);
 
     if (result.recordset.length > 0) {

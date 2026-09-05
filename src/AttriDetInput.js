@@ -16,6 +16,7 @@ function AttriDetInput({ }) {
   const [attributeheader_code, setAttributeheader_Code] = useState("");
   const [attributedetails_code, setAttributedetails_code] = useState("");
   const [attributedetails_name, setAttributedetails_name] = useState("");
+  const [attributeheader_name, setattributeheader_name] = useState("");
   const [descriptions, setDescriptions] = useState("");
   const navigate = useNavigate();
   const [statusdrop, setCodedrop] = useState([]);
@@ -82,6 +83,7 @@ function AttriDetInput({ }) {
         setAttributeheader_Code(attribute.attributeheader_code || "");
         setAttributedetails_code(attribute.attributedetails_code || "");
         setAttributedetails_name(attribute.attributedetails_name || "");
+        setattributeheader_name(attribute.attributeheader_name || "");
         setDescriptions(attribute.descriptions || "");
       }
     } catch (err) {
@@ -97,6 +99,7 @@ function AttriDetInput({ }) {
     setAttributeheader_Code("");
     setAttributedetails_code("");
     setAttributedetails_name("");
+    setattributeheader_name("");
     setDescriptions("");
   };
 
@@ -249,6 +252,7 @@ function AttriDetInput({ }) {
           attributeheader_code,
           attributedetails_code,
           attributedetails_name,
+          attributeheader_name,
           descriptions,
           created_by,
           modified_by,
