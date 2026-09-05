@@ -973,7 +973,7 @@ function AccNameInput({ }) {
                   <div class="d-flex justify-content-start">
                     <div>
                       <label for="rid" className={`exp-form-labels ${error && !status ? 'text-danger' : ''}`}>
-                      City<span className="text-danger">*</span>
+                      Status<span className="text-danger">*</span>
                     </label>
                     </div>
                   </div>
