@@ -22,14 +22,20 @@ jobs:
           }
 
       # -------------------------------------------------
-      # 1️⃣ Capture JOB START TIME (IST)
+      # 2️⃣ Capture Job Start Time
       # -------------------------------------------------
-      - name: Capture Job Start Time (IST)
+      - name: Capture Job Start Time
         shell: powershell
         run: |
-          $ist = Get-Date
-          $log = "D:\Action-Runners\construction-runner\_diag\job-runtime-IST.log"
-          "START | $($ist.ToString('yyyy-MM-dd HH:mm:ss')) | Repo=$env:GITHUB_REPOSITORY | RunId=$env:GITHUB_RUN_ID" | Out-File -Append $log
+          $logDir = "D:\Action-Runners\construction-erp-runner\_diag"
+          $log = "$logDir\job-runtime-IST.log"
+
+          if (!(Test-Path $logDir)) {
+              New-Item -ItemType Directory -Path $logDir -Force | Out-Null
+          }
+
+          "START | $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') | Repo=$env:GITHUB_REPOSITORY | RunId=$env:GITHUB_RUN_ID" |
+          Out-File -Append $log -Encoding utf8
 
       # -------------------------------------------------
       # 2️⃣ Checkout source (FORCE CLEAN)
@@ -146,12 +152,18 @@ jobs:
           if ($LASTEXITCODE -le 7) { exit 0 } else { exit $LASTEXITCODE }
 
       # -------------------------------------------------
-      # 🔟 Capture JOB END TIME (IST)
+      # 1️⃣1️⃣ Capture Job End Time
       # -------------------------------------------------
-      - name: Capture Job End Time (IST)
+      - name: Capture Job End Time
         if: always()
         shell: powershell
         run: |
-          $ist = Get-Date
-          $log = "D:\Action-Runners\construction-runner\_diag\job-runtime-IST.log"
-          "END   | $($ist.ToString('yyyy-MM-dd HH:mm:ss')) | Repo=$env:GITHUB_REPOSITORY | RunId=$env:GITHUB_RUN_ID | Status=${{ job.status }}" | Out-File -Append $log
+          $logDir = "D:\Action-Runners\construction-erp-runner\_diag"
+          $log = "$logDir\job-runtime-IST.log"
+      
+          if (!(Test-Path $logDir)) {
+              New-Item -ItemType Directory -Path $logDir -Force | Out-Null
+          }
+      
+          "END | $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') | Repo=$env:GITHUB_REPOSITORY | RunId=$env:GITHUB_RUN_ID | Status=${{ job.status }}" |
+          Out-File -Append $log -Encoding utf8
