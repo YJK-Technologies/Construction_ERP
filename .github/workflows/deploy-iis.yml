@@ -60,7 +60,7 @@ jobs:
 
           Write-Host "Syncing backend files..."
 
-          robocopy $src $dest /MIR /XD node_modules .git
+          robocopy $src $dest /MIR /XD node_modules /XF .env .git
 
           $code = $LASTEXITCODE
 
