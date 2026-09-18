@@ -269,19 +269,32 @@ function StdAccInput({ }) {
   };
 
   const handleUpdate = async () => {
-    if (
-      !startYear ||
-      !endYear ||
-      !TransactionType ||
-      !LockType
-    ) {
-      setError(true);
-      toast.warning("Error: Missing required fields");
-      return;
-    }
+  if (
+    !startYear ||
+    !endYear ||
+    !TransactionType ||
+    !LockType
+  ) {
+    setError(true);
+    toast.warning("Error: Missing required fields");
+    return;
+  }
 
-    setError(false);
-    setLoading(true);
+  const start = new Date(startYear);
+  const end = new Date(endYear);
+
+  if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+    toast.warning("Please enter valid date values for Start Year and End Year.");
+    return;
+  }
+
+  if (start > end) {
+    toast.warning("Start Year cannot be greater than End Year.");
+    return;
+  }
+
+  setError(false);
+  setLoading(true);
 
     try {
       const response = await fetch(`${config.apiBaseUrl}/UpdateFinacnialyearlock`, {
@@ -397,6 +410,7 @@ function StdAccInput({ }) {
                     class="exp-input-field form-control"
                     type="Date"
                     value={endYear}
+                    min={startYear || undefined}
                     onChange={(e) => setEndYear(e.target.value)}
                     ref={EndYear}
                     onKeyDown={(e) => handleKeyDown(e, transactionType, EndYear)}

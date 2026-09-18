@@ -81,6 +81,7 @@ function DesginationInput({ }) {
           label: designation.dept_id,
           value: designation.dept_id,
         });
+        setStatus(designation.status || "");
         setSelectedStatus({
           label: designation.status,
           value: designation.status,
