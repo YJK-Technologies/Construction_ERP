@@ -1564,7 +1564,7 @@ function PurchaseOrder() {
         const { context } = params;
         const cellWidth = params.column.getActualWidth();
         const isWideEnough = cellWidth > 30;
-        const showSearchIcon = isWideEnough && context?.buttonsVisible;
+        const showSearchIcon = isWideEnough;
 
         return (
           <div
@@ -1598,7 +1598,7 @@ function PurchaseOrder() {
               >
                 <i className="fa fa-search"></i>
               </span>
-            )}
+             )} 
           </div>
         );
       },
