@@ -5,7 +5,7 @@ const express = require("express");
 const cors = require("cors");
 const dataRoutes = require("./routes/dataRoutes");
 const app = express();
-const PORT = 5500;
+const PORT = 5514;
 
 const fs = require("fs");
 const path = require("path");
